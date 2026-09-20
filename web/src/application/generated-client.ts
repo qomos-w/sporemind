@@ -65,10 +65,10 @@ export function onReconnectStateChange(cb: (state: ReconnectState) => void): () 
   return () => reconnectListeners.delete(cb)
 }
 
-function handleAuthFailure(): void {
+function handleAuthFailure(err?: Error): void {
   if (isRefreshing) return
   authFailCount++
-  console.warn(`[auth] failure #${authFailCount}`)
+  console.warn(`[auth] failure #${authFailCount}${err ? `: ${err.message}` : ''}`)
 
   if (authFailCount >= MAX_AUTH_RETRIES && getRefreshToken()) {
     isRefreshing = true

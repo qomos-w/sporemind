@@ -261,7 +261,7 @@ export interface WailsRawTransportOptions {
   url: string
   getAuthToken?: () => string | null
   getUrl?: () => string
-  onAuthFailure?: () => void
+  onAuthFailure?: (err: Error) => void
   lazyConnect?: boolean
   reconnectBaseMs?: number
   reconnectMaxMs?: number
