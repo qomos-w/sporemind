@@ -23,6 +23,22 @@ vi.mock('../../../config/buildConfig', () => ({
   buildFlavor: 'default',
 }))
 
+// The dynamic binding import in useBuildInfo would pull in @wailsio/runtime,
+// whose drag module schedules a timer that can outlive the jsdom teardown
+// (unhandled "window is not defined" on CI). Serve a stub instead.
+vi.mock('../../../bindings/github.com/qomos-w/sporemind/pkg/desktop/app', () => ({
+  GetBuildInfo: vi.fn(async () => ({
+    version: '1.2.3',
+    build_type: 'release',
+    build_flavor: 'default',
+    commit: 'deadbee',
+    build_time: '2026-01-01T00:00:00Z',
+    dirty: false,
+    public_version: '0.5.1',
+    channel: 'stable',
+  })),
+}))
+
 describe('AboutOverlay', () => {
   let container: HTMLDivElement
   let root: Root
