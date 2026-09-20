@@ -100,6 +100,14 @@ const wailsBridgeMocks = vi.hoisted(() => ({
 // mount a browser view, so the stub is inert for them.
 const browserViewMounts = vi.hoisted(() => ({ count: 0 }))
 
+// The workbench takeover tests cover the dev-build workbench segment
+// (buildConfig.buildType === 'dev'); pin it so the suite is build-type stable.
+// Keep the module's other exports intact — other consumers read them.
+vi.mock('../../config/buildConfig', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  buildType: 'dev' as const,
+}))
+
 vi.mock('../../application/runtime', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../application/runtime')>()),
   isWails: isWailsMock,

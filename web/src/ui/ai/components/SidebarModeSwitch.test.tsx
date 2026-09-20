@@ -6,6 +6,13 @@ import { act } from 'react'
 import { I18nProvider } from '../../../i18n'
 import { SidebarModeSwitch, type LauncherMode } from './SidebarModeSwitch'
 
+// The workbench segment is dev-build only (buildConfig.buildType); these tests
+// exercise the full three-segment UI, so pin the build type.
+vi.mock('../../../config/buildConfig', async (importOriginal) => ({
+  ...(await importOriginal<object>()),
+  buildType: 'dev' as const,
+}))
+
 ;(globalThis as any).IS_REACT_ACT_ENVIRONMENT = true
 
 describe('SidebarModeSwitch', () => {
