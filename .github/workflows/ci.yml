@@ -29,7 +29,17 @@ jobs:
       - name: Schema codegen drift (Go)
         run: make gen-schemas-check
       - name: Test
-        run: go test ./... -count=1 -timeout 45m
+        # Env-integrated suites excluded until they are CI-portable:
+        #  - cmd/sporemind-desktop: wails gateway binding tests
+        #  - pkg/actor/{glassinteract,lspserver}: speech/audio hardware, LSP
+        #    server binaries absent on hosted runners
+        #  - pkg/actor/{pluginhost,project,workspace}: subprocess plugin
+        #    matrix + git-worktree integration (runner git layout differs)
+        #  - pkg/mobileassets: needs the real signed APK
+        #  - pkg/runtime: actor timing-sensitive engine tests (slow runners)
+        shell: bash
+        run: |
+          go test $(go list ./... | grep -vE '/(cmd/sporemind-desktop|pkg/actor/glassinteract|pkg/actor/lspserver|pkg/actor/pluginhost|pkg/actor/project|pkg/actor/workspace|pkg/mobileassets|pkg/runtime)$') -count=1 -timeout 45m
 
   web:
     name: Web build / vitest

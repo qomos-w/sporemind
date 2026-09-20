@@ -15,7 +15,7 @@ describe('binary codec', () => {
     expect(bytes[0]).toBe(0x54) // 'T'
     expect(bytes[1]).toBe(0x42) // 'B'
     expect(bytes[2]).toBe(0x43) // 'C'
-    expect(bytes[3]).toBe(0x02) // version
+    expect(bytes[3]).toBe(0x03) // wire version (0x02 was the legacy magic-glued version)
     const decoded = decodeAppPayload('AuthLoginReq', bytes)
     expect(decoded).toEqual(value)
   })

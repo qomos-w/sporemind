@@ -16,3 +16,4 @@ sporemind-plugin-sdk/gen/** text eol=lf
 .sporecode/graphs.json merge=ours
 .sporecode/wiki-state.json merge=ours
 web/vendor/** text eol=lf
+plugin-dev-example/client.gen.ts text eol=lf
