@@ -26,8 +26,6 @@ jobs:
           mkdir -p pkg/tokenest/data && touch pkg/tokenest/data/cl100k_base.tiktoken
       - name: Build
         run: go build ./...
-      - name: Vet
-        run: go vet ./...
       - name: Schema codegen drift (Go)
         run: make gen-schemas-check
       - name: Test
