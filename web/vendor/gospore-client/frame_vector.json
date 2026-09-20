@@ -1,0 +1,221 @@
+{
+  "version": 2,
+  "format": "GSF v2: magic 47534601, version byte 02, flags, type, corId u64be, seq u32be, transId u64be, uvarint strings callId/subId/target/errorMsg, uvarint payload, sorted headers, trailing from",
+  "cases": [
+    {
+      "name": "binary_encoded_chunk",
+      "frame": {
+        "flags": 1,
+        "type": 4,
+        "corId": "2",
+        "seq": 42,
+        "transId": "0",
+        "callId": "test.stream",
+        "subId": "",
+        "target": "",
+        "from": "",
+        "errorMsg": "",
+        "payload": null,
+        "headers": null
+      },
+      "wire": "4753460102010400000000000000020000002a00000000000000000b746573742e73747265616d000000000000"
+    },
+    {
+      "name": "empty_payload_explicit",
+      "frame": {
+        "flags": 0,
+        "type": 2,
+        "corId": "5",
+        "seq": 0,
+        "transId": "0",
+        "callId": "",
+        "subId": "",
+        "target": "",
+        "from": "",
+        "errorMsg": "",
+        "payload": null,
+        "headers": null
+      },
+      "wire": "47534601020002000000000000000500000000000000000000000000000000000000"
+    },
+    {
+      "name": "error_frame",
+      "frame": {
+        "flags": 0,
+        "type": 3,
+        "corId": "7",
+        "seq": 0,
+        "transId": "0",
+        "callId": "diag.slow",
+        "subId": "",
+        "target": "",
+        "from": "",
+        "errorMsg": "gospore.timeout: deadline exceeded",
+        "payload": null,
+        "headers": null
+      },
+      "wire": "47534601020003000000000000000700000000000000000000000009646961672e736c6f77000022676f73706f72652e74696d656f75743a20646561646c696e65206578636565646564000000"
+    },
+    {
+      "name": "from_trailing",
+      "frame": {
+        "flags": 0,
+        "type": 2,
+        "corId": "9",
+        "seq": 0,
+        "transId": "0",
+        "callId": "c",
+        "subId": "",
+        "target": "",
+        "from": "actor-0001",
+        "errorMsg": "",
+        "payload": null,
+        "headers": null
+      },
+      "wire": "475346010200020000000000000009000000000000000000000000016300000000000a6163746f722d30303031"
+    },
+    {
+      "name": "headers_bytesort_pins_locale",
+      "frame": {
+        "flags": 0,
+        "type": 1,
+        "corId": "128",
+        "seq": 0,
+        "transId": "0",
+        "callId": "h",
+        "subId": "",
+        "target": "",
+        "from": "",
+        "errorMsg": "",
+        "payload": null,
+        "headers": [
+          [
+            "a-key",
+            "3"
+          ],
+          [
+            "z-key",
+            "1"
+          ],
+          [
+            "é-key",
+            "2"
+          ]
+        ]
+      },
+      "wire": "4753460102000100000000000000800000000000000000000000000168000000000305612d6b65790133057a2d6b6579013106c3a92d6b6579013200"
+    },
+    {
+      "name": "invoke_minimal",
+      "frame": {
+        "flags": 0,
+        "type": 1,
+        "corId": "1",
+        "seq": 0,
+        "transId": "0",
+        "callId": "test.echo",
+        "subId": "",
+        "target": "",
+        "from": "",
+        "errorMsg": "",
+        "payload": null,
+        "headers": null
+      },
+      "wire": "47534601020001000000000000000100000000000000000000000009746573742e6563686f000000000000"
+    },
+    {
+      "name": "ping_minimal",
+      "frame": {
+        "flags": 0,
+        "type": 10,
+        "corId": "0",
+        "seq": 0,
+        "transId": "0",
+        "callId": "",
+        "subId": "",
+        "target": "",
+        "from": "",
+        "errorMsg": "",
+        "payload": null,
+        "headers": null
+      },
+      "wire": "4753460102000a000000000000000000000000000000000000000000000000000000"
+    },
+    {
+      "name": "reply_with_payload",
+      "frame": {
+        "flags": 0,
+        "type": 2,
+        "corId": "300",
+        "seq": 0,
+        "transId": "0",
+        "callId": "test.echo",
+        "subId": "",
+        "target": "",
+        "from": "",
+        "errorMsg": "",
+        "payload": "7b226f6b223a747275657d",
+        "headers": null
+      },
+      "wire": "47534601020002000000000000012c00000000000000000000000009746573742e6563686f0000000b7b226f6b223a747275657d0000"
+    },
+    {
+      "name": "subscribe_unicode",
+      "frame": {
+        "flags": 0,
+        "type": 6,
+        "corId": "4294967296",
+        "seq": 0,
+        "transId": "0",
+        "callId": "",
+        "subId": "sub-日本語",
+        "target": "workspace.agent",
+        "from": "",
+        "errorMsg": "",
+        "payload": null,
+        "headers": null
+      },
+      "wire": "475346010200060000000100000000000000000000000000000000000d7375622de697a5e69cace8aa9e0f776f726b73706163652e6167656e7400000000"
+    },
+    {
+      "name": "uvarint_edges",
+      "frame": {
+        "flags": 5,
+        "type": 5,
+        "corId": "18446744073709551615",
+        "seq": 4294967295,
+        "transId": "18446744073709551615",
+        "callId": "x",
+        "subId": "",
+        "target": "",
+        "from": "",
+        "errorMsg": "",
+        "payload": null,
+        "headers": null
+      },
+      "wire": "47534601020505ffffffffffffffffffffffffffffffffffffffff0178000000000000"
+    }
+  ],
+  "errors": [
+    {
+      "name": "bad_magic",
+      "wire": "5853460102",
+      "error": "malformed"
+    },
+    {
+      "name": "bad_version",
+      "wire": "4753460103",
+      "error": "malformed"
+    },
+    {
+      "name": "truncated_fixed",
+      "wire": "4753460102000100",
+      "error": "truncated"
+    },
+    {
+      "name": "truncated_varint_string",
+      "wire": "4753460102000100000000000000000000000000000000000000000561",
+      "error": "truncated"
+    }
+  ]
+}

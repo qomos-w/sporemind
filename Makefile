@@ -102,21 +102,15 @@ ensure-node-dists:
 	@test -d theme/node_modules && test -n "$$(ls -A theme/node_modules 2>/dev/null)" || (echo "[ensure-node-dists] theme deps missing — installing..." && cd theme && bun install && bun run build)
 	@test -d $(DESKTOP_STAGING) && test -n "$$(ls -A $(DESKTOP_STAGING) 2>/dev/null)" || (echo "[ensure-node-dists] web dist missing — building..." && cd web && bun install && bun run build)
 
-# Sync vendored @qomos packages from the sibling upstream checkouts when they
-# exist (dev machine layout). Fresh clones build from the committed vendor/
-# trees and never need the siblings. Use `make sync-vendor-check` in CI to
-# catch drift between vendor/ and the upstream tags.
-VENDOR_GOSPORE := ../gospore/web-client
-VENDOR_SPORE := ../spore/ts
-
+# Sync vendored @qomos packages from the upstream TAGS pinned in go.mod (not
+# the sibling working trees, which may be ahead). Fresh clones build from the
+# committed vendor/ trees and never need the siblings. `make sync-vendor-check`
+# is the CI drift gate.
 sync-vendor:
-	@test -d $(VENDOR_GOSPORE) || (echo "sync-vendor: $(VENDOR_GOSPORE) not found (sibling checkout absent) — nothing to sync"; exit 0)
-	@test -d $(VENDOR_SPORE) || (echo "sync-vendor: $(VENDOR_SPORE) not found (sibling checkout absent) — nothing to sync"; exit 0)
-	bash scripts/sync-vendor.sh $(VENDOR_GOSPORE) $(VENDOR_SPORE)
+	bash scripts/sync-vendor.sh
 
 sync-vendor-check:
-	@test -d $(VENDOR_GOSPORE) && test -d $(VENDOR_SPORE) || (echo "sync-vendor-check: sibling checkouts absent — skip"; exit 0)
-	bash scripts/sync-vendor.sh $(VENDOR_GOSPORE) $(VENDOR_SPORE) --check
+	bash scripts/sync-vendor.sh --check
 
 
 # Headless backend is pure Go: pin CGO_ENABLED=0 so the binary is always a
