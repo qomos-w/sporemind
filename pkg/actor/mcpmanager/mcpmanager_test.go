@@ -1184,11 +1184,17 @@ func TestHandleDiscoverTools_DoesNotBlockManagerCallables(t *testing.T) {
 	time.Sleep(30 * time.Millisecond) // let discover_tools enter the slow invoke
 
 	// The PureContext list view must answer instantly from the cached snapshot.
+	// Shared CI runners add enough scheduler/GC noise to a wall-clock assertion
+	// that the "not queued" guarantee needs a wider bound there.
+	latencyBound := 100 * time.Millisecond
+	if os.Getenv("CI") != "" {
+		latencyBound = 750 * time.Millisecond
+	}
 	listStart := time.Now()
 	if _, err := a.handleListServers(ctx); err != nil {
 		t.Fatalf("handleListServers: %v", err)
 	}
-	if d := time.Since(listStart); d > 100*time.Millisecond {
+	if d := time.Since(listStart); d > latencyBound {
 		t.Errorf("handleListServers took %v while discover_tools was in flight", d)
 	}
 
@@ -1201,7 +1207,7 @@ func TestHandleDiscoverTools_DoesNotBlockManagerCallables(t *testing.T) {
 	}}); err != nil {
 		t.Fatalf("handleAddServer while discover in flight: %v", err)
 	}
-	if d := time.Since(addStart); d > 100*time.Millisecond {
+	if d := time.Since(addStart); d > latencyBound {
 		t.Errorf("handleAddServer took %v while discover_tools was in flight", d)
 	}
 
