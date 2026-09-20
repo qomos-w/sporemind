@@ -1,0 +1,83 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  go:
+    name: Go build / vet / test
+    runs-on: windows-latest
+    env:
+      GONOSUMDB: github.com/qomos-w/*
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+      - name: Build
+        run: go build ./...
+      - name: Vet
+        run: go vet ./...
+      - name: Schema codegen drift (Go)
+        run: make gen-schemas-check
+      - name: Test
+        run: go test ./... -count=1 -timeout 45m
+
+  web:
+    name: Web build / vitest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install
+        working-directory: web
+        run: bun install
+      - name: Build
+        working-directory: web
+        run: bun run build
+      - name: Vitest
+        working-directory: web
+        run: bunx vitest run
+
+  vendor-drift:
+    name: Vendored packages vs pinned upstream
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sporemind
+        uses: actions/checkout@v4
+        with:
+          path: sporemind
+      - name: Resolve pinned upstream refs from go.mod
+        working-directory: sporemind
+        run: |
+          echo "GOSPORE_REF=$(grep -oP 'github.com/qomos-w/gospore \K\S+' go.mod)" >> "$GITHUB_ENV"
+          echo "SPORE_REF=$(grep -oP 'github.com/qomos-w/spore \K\S+' go.mod)" >> "$GITHUB_ENV"
+      - name: Checkout gospore at pinned ref
+        uses: actions/checkout@v4
+        with:
+          repository: qomos-w/gospore
+          ref: ${{ env.GOSPORE_REF }}
+          path: gospore
+      - name: Checkout spore at pinned ref
+        uses: actions/checkout@v4
+        with:
+          repository: qomos-w/spore
+          ref: ${{ env.SPORE_REF }}
+          path: spore
+      - name: Vendor drift check
+        working-directory: sporemind
+        run: bash scripts/sync-vendor.sh ../gospore/web-client ../spore/ts --check
+      - name: Schema codegen drift (TS)
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: sporemind/go.mod
+          cache-dependency-path: sporemind/go.sum
+      - name: Run TS schema check
+        working-directory: sporemind
+        run: make gen-schema-ts-check
