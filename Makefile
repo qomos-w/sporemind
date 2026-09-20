@@ -92,14 +92,32 @@ define BUMP_VERSION
 	@node -e "const fs=require('fs'); const f='$(VERSION_FILE)'; let v=parseFloat(fs.readFileSync(f,'utf8').trim()); v+=0.01; const s=v.toFixed(2); fs.writeFileSync(f,s+'\\n'); console.log('[version] bumped to',s);"
 endef
 
+PHONY_SYNC=.PHONY: sync-vendor sync-vendor-check
+
 .PHONY: build build-backend build-desktop build-desktop-core build-desktop-full build-desktop-frontend build-desktop-info build-desktop-icons build-apk build-mobile-asset build-mobile-asset-if-needed copy-mobile-asset build-sdk-asset run run-desktop test test-smoke gen gen-ts gen-schemas gen-schemas-check gen-sdk-schemas gen-schema-ts gen-schema-ts-check sync-wails-bindings clean dev dev-api dev-web dev-desktop dev-all lint check ensure-node-dists validate-envelope release beta dev-build dev-release beta-desktop release-desktop
 
 
 ensure-node-dists:
 	@test -d shell/node_modules && test -n "$$(ls -A shell/node_modules 2>/dev/null)" || (echo "[ensure-node-dists] shell deps missing — installing..." && cd shell && bun install && bun run build)
 	@test -d theme/node_modules && test -n "$$(ls -A theme/node_modules 2>/dev/null)" || (echo "[ensure-node-dists] theme deps missing — installing..." && cd theme && bun install && bun run build)
-	@test -d ../gospore/web-client/node_modules && test -n "$$(ls -A ../gospore/web-client/node_modules 2>/dev/null)" || (echo "[ensure-node-dists] gospore-client deps missing — installing..." && cd ../gospore/web-client && bun install)
-	@test -d $(DESKTOP_STAGING) && test -n "$$(ls -A $(DESKTOP_STAGING) 2>/dev/null)" || (echo "[ensure-node-dists] web dist missing — building..." && rm -rf web/node_modules/@qomos && cd web && (bun install || true) && rm -rf node_modules/@qomos && mkdir -p node_modules/@qomos && cp -r ../shell node_modules/@qomos/sporemind-shell && cp -r ../theme node_modules/@qomos/sporemind-theme && cp -r ../../gospore/web-client node_modules/@qomos/gospore-client && cp -r ../../spore/ts node_modules/@qomos/spore-ts && bun run build)
+	@test -d $(DESKTOP_STAGING) && test -n "$$(ls -A $(DESKTOP_STAGING) 2>/dev/null)" || (echo "[ensure-node-dists] web dist missing — building..." && cd web && bun install && bun run build)
+
+# Sync vendored @qomos packages from the sibling upstream checkouts when they
+# exist (dev machine layout). Fresh clones build from the committed vendor/
+# trees and never need the siblings. Use `make sync-vendor-check` in CI to
+# catch drift between vendor/ and the upstream tags.
+VENDOR_GOSPORE := ../gospore/web-client
+VENDOR_SPORE := ../spore/ts
+
+sync-vendor:
+	@test -d $(VENDOR_GOSPORE) || (echo "sync-vendor: $(VENDOR_GOSPORE) not found (sibling checkout absent) — nothing to sync"; exit 0)
+	@test -d $(VENDOR_SPORE) || (echo "sync-vendor: $(VENDOR_SPORE) not found (sibling checkout absent) — nothing to sync"; exit 0)
+	bash scripts/sync-vendor.sh $(VENDOR_GOSPORE) $(VENDOR_SPORE)
+
+sync-vendor-check:
+	@test -d $(VENDOR_GOSPORE) && test -d $(VENDOR_SPORE) || (echo "sync-vendor-check: sibling checkouts absent — skip"; exit 0)
+	bash scripts/sync-vendor.sh $(VENDOR_GOSPORE) $(VENDOR_SPORE) --check
+
 
 # Headless backend is pure Go: pin CGO_ENABLED=0 so the binary is always a
 # fully static, dependency-free build regardless of host cgo default. Desktop
@@ -115,8 +133,10 @@ build-desktop-frontend:
 	cd shell && bun install && bun run build
 	cd theme && bun install && bun run build
 	$(BUMP_VERSION)
-	cd ../gospore/web-client && bun install
-	rm -rf web/node_modules/@qomos && cd web && (bun install || true) && rm -rf node_modules/@qomos && mkdir -p node_modules/@qomos && cp -r ../shell node_modules/@qomos/sporemind-shell && cp -r ../theme node_modules/@qomos/sporemind-theme && cp -r ../../gospore/web-client node_modules/@qomos/gospore-client && cp -r ../../spore/ts node_modules/@qomos/spore-ts && cd node_modules/@qomos/gospore-client && rm -f src/*.js && ../../../node_modules/.bin/tsc && cd ../../.. && bun run build
+	# `|| true`: bun on Windows may report EPERM copying the in-repo file: deps
+	# (shell/theme) whose source dirs contain their own node_modules — the
+	# links are still created. `bun run build` below is the real gate.
+	cd web && (bun install || true) && bun run build
 
 build-desktop-info:
 	@node scripts/update-desktop-info.cjs $(DESKTOP_APP_DIR) $(SPOREMIND_VERSION)

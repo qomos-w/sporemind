@@ -27,19 +27,19 @@ export default defineConfig({
       },
       {
         find: "@qomos/gospore-client",
-        replacement: fileURLToPath(new URL("../../gospore/web-client/src/index.ts", import.meta.url)),
+        replacement: fileURLToPath(new URL("./vendor/gospore-client/src/index.ts", import.meta.url)),
       },
       {
         find: "@qomos/spore-ts/registry",
-        replacement: fileURLToPath(new URL("../../spore/ts/src/registry.ts", import.meta.url)),
+        replacement: fileURLToPath(new URL("./vendor/spore-ts/src/registry.ts", import.meta.url)),
       },
       {
         find: "@qomos/spore-ts/callables",
-        replacement: fileURLToPath(new URL("../../spore/ts/src/callables.ts", import.meta.url)),
+        replacement: fileURLToPath(new URL("./vendor/spore-ts/src/callables.ts", import.meta.url)),
       },
       {
         find: "@qomos/spore-ts",
-        replacement: fileURLToPath(new URL("../../spore/ts/src/index.ts", import.meta.url)),
+        replacement: fileURLToPath(new URL("./vendor/spore-ts/src/index.ts", import.meta.url)),
       },
     ],
   },
