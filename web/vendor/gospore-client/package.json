@@ -1,0 +1,32 @@
+{
+  "name": "@qomos/gospore-client",
+  "version": "0.1.0",
+  "description": "Gospore TypeScript client — HTTP/SSE and WebSocket transports with pluggable auth",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./src/index.ts",
+      "types": "./src/index.ts"
+    }
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc --noEmit",
+    "check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "@types/pako": "^2.0.4",
+    "typescript": "^5.9.3",
+    "vitest": "^1.6.0"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "pako": "^2.1.0"
+  }
+}

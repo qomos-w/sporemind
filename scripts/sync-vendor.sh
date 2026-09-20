@@ -30,7 +30,13 @@ sibling() { # <repo-name> <tag> <subdir> <dst-name>
     [ "$mode" = "--check" ] && exit 1 || exit 0
   fi
   local tmp; tmp="$(mktemp -d)"
-  (cd "$tmp" && git -C "$dir" archive "$tag:$subdir" | tar -x --strip-components=1)
+  # git archive of <tag>:<subdir> is rooted at the subtree itself — no prefix
+  # to strip. Keep the vendor conventions: no lockfiles, build outputs, or
+  # dependency dirs.
+  (cd "$tmp" && git -C "$dir" archive "$tag:$subdir" | tar -x)
+  (cd "$tmp" && rm -rf node_modules dist .git \
+    && rm -f bun.lock package-lock.json pnpm-lock.yaml \
+    && find . -name '*.js' -o -name '*.tsbuildinfo' | xargs -r rm -f)
   local dst="$root/web/vendor/$name"
   if [ "$mode" = "--check" ]; then
     if ! diff -r "$tmp" "$dst" >/dev/null 2>&1; then
