@@ -1,0 +1,9 @@
+.shell-user-settings {
+  width: 100%;
+  max-width: 960px;
+}
+
+.shell-user-settings .up-panel {
+  height: auto;
+  min-height: 320px;
+}

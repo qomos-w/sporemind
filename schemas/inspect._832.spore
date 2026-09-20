@@ -1,0 +1,133 @@
+// inspect namespace — inspector wire shapes (non-discriminated portions).
+// @ts-export
+//
+// Sources of truth for:
+//   - inspect.ref (target descriptor used everywhere)
+//   - open targets (router payloads)
+//   - capability triangle / context-bar atomic section payloads
+//   - status badge / relation list rows
+//   - inspector polymorphic section/row/list/action/document containers
+//   - inspect.document request
+//
+
+// preserving wire compatibility.
+
+struct InspectRef {
+    Kind:           string
+    Id:             string
+    optional Scope: map<string, string>
+}
+
+
+struct OpenTarget {
+    View:            string
+    optional Kind:   string
+    optional Id:     string
+    optional Scope:  map<string, string>
+    optional Params: map<string, string>
+}
+
+
+struct InspectCapability {
+    Performance: double
+    Cost:        double
+    Speed:       double
+}
+
+
+struct InspectContextSegment {
+    Id:                  string
+    Label:               string
+    Kind:                string
+    Chars:               int
+    Priority:            int
+    optional Source:     string
+    optional Path:       string
+    optional Editable:   bool
+    optional FragmentId: string
+    optional Content:    string
+}
+
+
+struct InspectStatus {
+    State: string
+    Label: string
+}
+
+
+struct InspectRelation {
+    Label: string
+    Ref:   InspectRef
+}
+
+
+struct InspectDocumentReq {
+    Kind:           string
+    Id:             string
+    optional Scope: map<string, string>
+}
+
+
+// ---- polymorphic section / row / list / action / document containers ----
+
+struct InspectRow {
+    Label:          string
+    Value:          string
+    optional Mono:  bool
+    optional Badge: string
+    optional Ref:   InspectRef
+    optional Tooltip: string
+    optional ExpandedRows: array<InspectRow>
+}
+
+
+struct InspectListItem {
+    Label:                 string
+    optional Description:  string
+    optional Ref:          InspectRef
+    optional OpenTarget:   OpenTarget
+}
+
+
+struct InspectSection {
+    Type:               string
+    Id:                 string
+    Title:              string
+    optional Rows:      array<InspectRow>
+    optional Items:     array<InspectListItem>
+    optional Body:      string
+    optional Capability: InspectCapability
+    optional Segments:  array<InspectContextSegment>
+}
+
+
+struct InspectAction {
+    Id:              string
+    Label:           string
+    optional Target: OpenTarget
+}
+
+
+struct InspectPage {
+    Id:    string
+    Label: string
+    optional Icon: string
+}
+
+
+struct InspectPagesResp {
+    Items: array<InspectPage>
+}
+
+
+struct InspectDocument {
+    Ref:                  InspectRef
+    Title:                string
+    optional Subtitle:    string
+    optional Summary:     string
+    optional Status:      InspectStatus
+    Sections:             array<InspectSection>
+    optional Actions:     array<InspectAction>
+    optional Relations:   array<InspectRelation>
+    optional Pages:       array<InspectPage>
+}

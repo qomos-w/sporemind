@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Sporemind Cookie Bridge</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Cookie Bridge</h1>
+      <button id="settings-btn" title="Settings" aria-label="Settings">&#9881;</button>
+    </header>
+
+    <section id="status" class="status" hidden></section>
+
+    <div id="settings" hidden>
+      <label for="server-url">Sporemind URL</label>
+      <input id="server-url" type="text" spellcheck="false" placeholder="http://127.0.0.1:47613" />
+      <label for="pairing-token">Pairing token</label>
+      <input id="pairing-token" type="password" spellcheck="false" autocomplete="off" />
+      <button id="save-settings">Save</button>
+      <p class="hint">
+        Get both from sporemind: Settings &rarr; MCP &rarr; Cookie Bridge.
+      </p>
+    </div>
+
+    <div id="requests">
+      <p id="no-requests" class="empty">No pending import requests.<br /><span class="hint">Ask your sporemind agent to migrate a site's login, then reopen this popup.</span></p>
+      <div id="request-list"></div>
+    </div>
+
+    <footer>
+      <span id="server-state" class="hint">checking&hellip;</span>
+    </footer>
+
+    <script src="popup.js"></script>
+  </body>
+</html>

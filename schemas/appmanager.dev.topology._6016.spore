@@ -1,0 +1,21 @@
+// appmanager dev topology — read-only runtime topology diagnostic for native
+// app panels. Answers the "where do I actually point a request" question that
+// previously required netstat port-scanning: the gateway base URL, the exact
+// panel route, the plugin process's own loopback listener, and what each
+// 401/404 from those addresses means (auth working vs auth broken).
+// @ts-export
+
+struct AppManagerPanelTopologyReq {
+    Id: string // app id (manifest id, e.g. "app.totp")
+}
+
+struct AppManagerPanelTopologyResp {
+    AppId: string                // resolved app id
+    State: string                // registry state: running | stopped | crashed | failed | unloading | ...
+    Generation: int64            // session generation (cache-busts panel URLs)
+    GatewayBase: string          // http://host:port every panel URL derives from (config gateway_addr, default 127.0.0.1:18080)
+    PanelUrl: string             // GatewayBase + /plugin/{id}/{route}?v={generation} for the first view entrypoint; empty when the app declares no view
+    PluginListener: string       // loopback addr of the plugin process's own HTTP listener (BackendUrl); empty when no listener is attached
+    AuthNotes: array<string>     // what each auth outcome means on each hop
+    ExpectedCodes: array<string> // status-code cheat sheet for common probes
+}

@@ -1,0 +1,205 @@
+// observation namespace — actor topology / DAG wire shapes (non-discriminated
+// portions).
+//
+// Sources of truth for:
+//   - fact snapshot rows (FactSnapshot, FactSnapshotListResp)
+//   - actor callable interface metadata (CallableInterface, CallableParam)
+//   - topology DAG card payloads (TopologyCard*, TopologyNodeDescriptor)
+//   - unified graph nodes / edges and full snapshot
+//
+// 
+// @ts-export
+
+struct CallableParam {
+    Name: string
+    Type: string
+    optional Description: string
+    optional Required: bool
+}
+
+
+struct CallableInterface {
+    Name:               string
+    Kind:               string
+    optional Params:    array<CallableParam>
+    optional FinalType: string
+    optional FinalFields: array<CallableParam>
+    optional NextType:  string
+    optional NextFields: array<CallableParam>
+    optional ReqType:   string
+    optional FinalDesc: string
+    optional ChunkDesc: string
+    optional HasError:  bool
+    optional Stream:    bool
+    optional Permission: string
+    optional Description: string
+    optional Category:  string
+    optional EffectKind: string
+    optional ServiceName:  string
+    optional ToolName:     string
+    optional ReqSchemaID:  int
+    optional FinalSchemaID: int
+}
+
+
+struct TopologyNodeDescriptor {
+    optional CapabilityId:   string
+    optional CapabilityName: string
+    optional CapabilityKind: string
+    optional DisplayName:    string
+    optional Badge:          string
+    optional Sublabel:       string
+}
+
+
+struct TopologyCardRow {
+    Label:            string
+    Value:            string
+    optional Mono:    bool
+    optional Truncate: bool
+    optional Badge:   string
+    optional ExpandedRows: array<TopologyCardRow>
+    optional Tooltip: string
+}
+
+
+struct TopologyCardSection {
+    Key:   string
+    Title: string
+    Rows:  array<TopologyCardRow>
+}
+
+
+struct TopologyCard {
+    optional Label:          string
+    optional Badge:          string
+    optional Sublabel:       string
+    optional DetailSections: array<TopologyCardSection>
+}
+
+
+struct UnifiedGraphEdge {
+    Id:           string
+    From:         string
+    To:           string
+    // Edge kind: "child" (physical actor tree) | "agent_child" (logical
+    // parent→child agent relationship; overrides the physical child edge to
+    // the project when the agent has a logical ParentAgentId) | "call" |
+    // "depends_on" | ...
+    Kind:         string
+    optional Label: string
+    // agent_child edges carry the logical lifecycle so sidebar and topology
+    // render the same relationship with identical status styling.
+    // "turn" (fork child) | "workflow" (persistent workspace agent)
+    optional LifecycleScope: string
+    // Child status: "running" | "completed" | "failed" | "cancelled" |
+    // "deleting" | "archived"
+    optional Status:         string
+}
+
+
+struct UnifiedGraphNode {
+    Id:                   string
+    Kind:                 string
+    Label:                string
+    optional ActorType:   string
+    optional ActorId:     string
+    optional StepKind:    string
+    optional Strategy:    string
+    Status:               string
+    optional ParentId:    string
+    optional ContainerId: string
+    optional Collapsible: bool
+    optional Expanded:    bool
+    optional Detail:      map<string, any>
+    optional Interfaces:  array<CallableInterface>
+    optional Descriptor:  TopologyNodeDescriptor
+    optional Card:        TopologyCard
+}
+
+
+struct UnifiedGraph {
+    Version: string
+    Nodes:   array<UnifiedGraphNode>
+    Edges:   array<UnifiedGraphEdge>
+}
+
+
+struct GraphPatch {
+    Epoch:        int
+    Timestamp:    string
+    AddedNodes:   array<UnifiedGraphNode>
+    RemovedNodes: array<string>
+    UpdatedNodes: array<UnifiedGraphNode>
+    AddedEdges:   array<UnifiedGraphEdge>
+    RemovedEdges: array<string>
+}
+
+
+struct TopologySyncReq {
+    ClientEpoch: int
+}
+
+
+struct TopologySyncResp {
+    CurrentEpoch:     int
+    optional Snapshot: UnifiedGraph
+    Patches:          array<GraphPatch>
+}
+
+
+struct TopologyHistoryEntry {
+    Epoch:       int
+    Timestamp:   string
+    ChangeCount: int
+}
+
+
+struct TopologyHistoryResp {
+    Entries: array<TopologyHistoryEntry>
+}
+
+
+struct TopologyEpochEvent {
+    Epoch:          int
+    optional Patch: GraphPatch
+}
+
+
+// ── Runtime service listing ──
+
+struct ServiceInfo {
+    Name:       string   // exposed service name, e.g. "workspace"
+    ActorId:    string
+    ActorType:  string
+}
+
+
+struct RuntimeListServicesReq {
+}
+
+
+struct RuntimeListServicesResp {
+    Items: array<ServiceInfo>
+}
+
+
+// ── Build info ──
+
+struct RuntimeBuildInfoReq {
+}
+
+
+// RuntimeBuildInfoResp mirrors pkg/buildinfo.Get(): the running process's
+// build identity. Agents (and the frontend debug surface) query it to detect
+// stale-process / stale-frontend drift — e.g. "backend 12.74 vs web 12.72".
+struct RuntimeBuildInfoResp {
+    Version:                string   // internal build number, e.g. 12.75
+    optional BuildType:     string   // dev | beta | release
+    optional BuildFlavor:   string   // default | internal | store | cn
+    optional Commit:        string   // git short hash at link time
+    optional BuildTime:     string   // ISO 8601 link timestamp
+    optional Dirty:         bool     // working tree was dirty at link time
+    optional PublicVersion: string   // external semver for store/channel builds
+    optional Channel:       string   // stable | beta
+}

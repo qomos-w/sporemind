@@ -1,0 +1,21 @@
+// lsp.teardown namespace — path-scoped LSP engine shutdown.
+// @ts-export
+//
+// Source of truth for:
+//   - lsp.shutdown_by_root (internal)
+//
+// lsp.shutdown_by_root shuts down every language server whose workspace root
+// URI decodes to a path at or under RootPath. Internal-only: used by the
+// project actor to release LSP process handles (tsserver/gopls/etc. rooted in
+// a worktree) before deleting a merged/discarded worktree directory on Windows.
+// Unlike lsp.shutdown (exact RootUri match), this prefix-matches a filesystem
+// path so the caller does not need to know which RootUri strings were used.
+
+struct LspShutdownByRootReq {
+    RootPath: string  // absolute filesystem path; engines rooted under it are shut down
+}
+
+
+struct LspShutdownByRootResp {
+    Shutdown: array<string>  // root URIs whose engines were shut down
+}

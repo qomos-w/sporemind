@@ -1,0 +1,65 @@
+// shell.session namespace — interactive shell session wire shapes.
+// @ts-export
+//
+// Sources of truth for:
+//   - shell.session_open / session_write / session_resize / session_close
+//   - shell.session_fetch (replay buffered output by Idx)
+//   - shell.session_output event (per-session output stream)
+//
+// Sessions are volatile (no persistence): each session owns one interactive
+// shell process started from the user's preferred shell kind (see
+// workspace.shell_pref_save / util.SetShellPreference). PTY (ConPTY on
+// Windows where supported) is attempted first; when unavailable the session
+// falls back to plain pipes, which the open response reports via Mode.
+// Output is pushed over the app-scoped event bus as ShellSessionOutputEvent
+// chunks (Kind: "stdout" / "stderr" / "exit"); consumers filter by SessionId.
+// A terminal "exit" chunk is always the last event for a session.
+
+struct ShellSessionOpenReq {
+    optional Cols: int   // initial PTY columns; ignored when falling back to pipe mode
+    optional Rows: int   // initial PTY rows; ignored when falling back to pipe mode
+    optional WorkingDirectory: string // initial shell working directory
+}
+
+
+struct ShellSessionOpenResp {
+    SessionId: string
+    Mode:      string    // "pty" | "pipe"
+}
+
+
+struct ShellSessionWriteReq {
+    SessionId: string
+    Data:      string    // bytes to write to the session's stdin
+}
+
+
+struct ShellSessionWriteResp {}
+
+
+struct ShellSessionResizeReq {
+    SessionId: string
+    Cols:      int
+    Rows:      int
+}
+
+
+struct ShellSessionResizeResp {}
+
+
+struct ShellSessionCloseReq {
+    SessionId: string
+}
+
+
+struct ShellSessionCloseResp {}
+
+
+struct ShellSessionOutputEvent {
+    SessionId: string
+    Idx:       long     // monotonic, zero-based ordinal within the session; used for replay/dedup
+    Kind:      string    // "stdout" | "stderr" | "exit"
+    Data:      string    // raw incremental bytes, or a close/exit reason for Kind "exit"
+    optional ExitCode: int
+    optional Mode:      string   // "pty" | "pipe"
+}

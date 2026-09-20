@@ -1,0 +1,25 @@
+// workspace.builtin.modes namespace — builtin mode card discovery.
+//
+// Exposes the static set of builtin:mode:* cards so the frontend conversation
+// composer can preload a slash-mode interception filter at startup: typing
+// "/<name>" mounts the matching mode (adds its badge) and clears the input,
+// without submitting. Read-only discovery only; mounting flows through
+// agent.component.mount.
+//
+// @ts-export
+
+struct BuiltinMode {
+    CardId: string
+    Name:   string
+    Title:  string
+    Icon:   string
+}
+
+
+struct WorkspaceBuiltinModesListReq {
+}
+
+
+struct WorkspaceBuiltinModesListResp {
+    Modes: array<BuiltinMode>
+}

@@ -1,0 +1,30 @@
+// workspace.logstream namespace — structured log streaming types for the
+// workspace.log live event and the enriched logs_query response shape.
+//
+// Authoring source of truth for:
+//   - workspace.log event payload (batched, cursor-tagged entries)
+//   - structured log entry with file/line split and source tag
+//
+// @ts-export
+
+// WorkspaceLogStreamEntry is a single structured log entry delivered through
+// the workspace.log live event. It carries a monotonic Seq assigned by the
+// batcher (use for in-session ordering/dedup; backward paging still uses
+// Timestamp via workspace.logs_query Before/NextBefore).
+struct WorkspaceLogStreamEntry {
+    Timestamp:   string                 // RFC3339Nano UTC (data-layer canonical)
+    Level:       string                 // debug | info | warn | error
+    CallerFile:  string                 // locatable file path (module-relative or absolute)
+    CallerLine:  int64                  // 1-based source line; 0 when unknown
+    Message:     string
+    optional Fields: map<string, any>   // slog structured attrs
+    Source:      string                 // "backend" | "console"
+    Seq:         int64                  // batcher-assigned monotonic cursor
+}
+
+
+// WorkspaceLogStreamEvent is the payload of the workspace.log event kind.
+// Entries are batched (≤64 entries or 100ms window) to avoid event storms.
+struct WorkspaceLogStreamEvent {
+    Entries: array<WorkspaceLogStreamEntry>
+}

@@ -1,0 +1,712 @@
+.workflow-graph {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background-color: var(--bg-base, transparent);
+  /* Dotted grid backdrop; size and origin follow the network viewport. */
+  background-image: radial-gradient(var(--workflow-grid-dot, var(--workflow-dot)) 1px, transparent 1.4px);
+  background-size: var(--workflow-grid-size, 22px) var(--workflow-grid-size, 22px);
+  background-position: var(--workflow-grid-origin, 0 0);
+}
+
+/* Teal accent for in-flight edges/nodes; read from canvas JS via getCssVar,
+   so it must live on :root (canvas has no DOM ancestor lookup). */
+:root {
+  --workflow-dot: rgba(17, 19, 24, 0.08);
+  --workflow-active: #0d9488;
+}
+
+:root[data-theme='dark'] {
+  --workflow-dot: rgba(255, 255, 255, 0.07);
+  --workflow-active: #2dd4bf;
+}
+
+.workflow-graph--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  font-size: 0.875rem;
+}
+
+/* vis-network canvas container */
+.workflow-graph > div {
+  position: absolute;
+  inset: 0;
+}
+
+/* React-rendered card overlays positioned over the vis-network canvas. */
+.workflow-node-overlay-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  /* Pan/zoom is applied as a single transform on this layer; overlays are
+     positioned in world coordinates underneath it. */
+  transform-origin: 0 0;
+}
+
+.workflow-node-overlay {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.workflow-node-overlay-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  position: relative;
+  /* Chip overlaps the card's top border; clipping must happen on the card. */
+  overflow: visible;
+}
+
+.workflow-node-card {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+  /* overflow:hidden clips the category bar to the card's rounded corners.
+     The corner badge is a sibling of the card (child of the overlay wrapper)
+     so it can straddle the top border without being clipped here. */
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong, var(--border-default));
+  background: linear-gradient(180deg, var(--bg-elevated, #fff), var(--bg-base, #f4f3f0));
+  box-shadow: 0 12px 28px -16px rgba(17, 19, 24, 0.35);
+}
+
+:root[data-theme='dark'] .workflow-node-card {
+  /* Cards sit below the canvas tone in dark mode: darker reads as elevated. */
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-base, #1e1e1e) 82%, #000),
+    color-mix(in srgb, var(--bg-base, #1e1e1e) 62%, #000)
+  );
+}
+
+.workflow-node-card .mono-card-compact-tags-row {
+  margin-top: 6px;
+}
+
+.workflow-node-card .mono-card-compact-title {
+  /* Single-line truncation; multi-line clamp is too tall for graph nodes. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Graph nodes use their title, status badge, and active highlight only. */
+.workflow-node-card .mono-card-compact-type-icon,
+.workflow-node-card .mono-card-compact-status-bar {
+  display: none;
+}
+
+/* Full-height category bar clipped by the card's overflow:hidden, so its
+   top/bottom follow the 12px rounded corners instead of poking past them.
+   No own border-radius: the card's clip handles the curve. */
+.workflow-node-card .mono-card-compact-category-bar {
+  inset: 0 auto 0 0;
+  border-radius: 0;
+}
+
+/* Corner status badge: task state (doing/done/…) rides the card's top
+   border — its center sits a few px below the top edge, top half slightly
+   overhanging the border. It is a direct child of the overlay wrapper
+   (position:relative, overflow:visible), not the card, because the card
+   clips children to round the category bar. */
+.workflow-node-overlay-inner > .mono-card-compact-corner-status {
+  position: absolute;
+  top: 4px;
+  right: 10px;
+  /* Half above, half below: the pill's center sits a few px below the top
+     border line (mostly inside the card, top edge slightly overhanging). */
+  transform: translateY(-50%);
+  z-index: 2;
+  max-width: 65%;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+  /* Opaque-ish pill so the badge reads cleanly against card content. */
+  background: color-mix(in srgb, var(--wiki-status-color, var(--text-tertiary)) 14%, var(--bg-elevated, #ffffff));
+  border: 1px solid color-mix(in srgb, var(--wiki-status-color, var(--text-tertiary)) 35%, transparent);
+  border-radius: 999px;
+}
+
+.workflow-node-overlay-inner--card-done .workflow-node-card {
+  border-color: var(--success, #16a34a);
+}
+
+.workflow-node-overlay-inner--root-doing .workflow-node-card {
+  border-color: var(--info, #3b82f6);
+}
+
+.workflow-node-overlay-inner--root .workflow-node-card .mono-card-compact-status-bar,
+.workflow-node-overlay-inner--root .workflow-node-card .mono-card-compact-dot,
+.workflow-node-overlay-inner--root .workflow-node-card .mono-card-compact-agent-avatar {
+  display: none;
+}
+
+.workflow-node-overlay-inner--pending-delete .workflow-node-card,
+.workflow-node-overlay-inner--pending-delete {
+  border-color: var(--danger, #dc2626) !important;
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--danger, #dc2626) 70%, transparent), 0 0 18px -4px color-mix(in srgb, var(--danger, #dc2626) 55%, transparent) !important;
+}
+
+.workflow-node-overlay-inner--active .workflow-node-card {
+  border-color: color-mix(in srgb, var(--accent, #14b8a6) 70%, transparent);
+  box-shadow:
+    0 12px 28px -16px rgba(17, 19, 24, 0.35),
+    0 0 0 1px color-mix(in srgb, var(--accent, #14b8a6) 45%, transparent),
+    0 0 22px -8px color-mix(in srgb, var(--accent, #14b8a6) 55%, transparent);
+}
+
+/* Template maps (data.template / standalone): noticeably grayer background so
+   they read as non-runnable definitions, distinct from live workflow cards. */
+.workflow-node-overlay-inner--template .workflow-node-card {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-elevated, #fff) 72%, var(--text-tertiary, #64748b)),
+    color-mix(in srgb, var(--bg-base, #f4f3f0) 68%, var(--text-tertiary, #64748b))
+  );
+}
+
+:root[data-theme='dark'] .workflow-node-overlay-inner--template .workflow-node-card {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-base, #1e1e1e) 78%, #6b7280),
+    color-mix(in srgb, var(--bg-base, #1e1e1e) 66%, #6b7280)
+  );
+}
+
+.workflow-node-overlay-inner--template.workflow-node-overlay-inner--sentinel-start,
+.workflow-node-overlay-inner--template.workflow-folded-card {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-elevated, #fff) 72%, var(--text-tertiary, #64748b)),
+    color-mix(in srgb, var(--bg-base, #f4f3f0) 68%, var(--text-tertiary, #64748b))
+  ) !important;
+}
+
+:root[data-theme='dark'] .workflow-node-overlay-inner--template.workflow-node-overlay-inner--sentinel-start,
+:root[data-theme='dark'] .workflow-node-overlay-inner--template.workflow-folded-card {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--bg-base, #1e1e1e) 78%, #6b7280),
+    color-mix(in srgb, var(--bg-base, #1e1e1e) 66%, #6b7280)
+  ) !important;
+}
+
+/* Template instances (data.instance_of): dashed border marks copies spawned
+   from a template, distinct from hand-authored workflows. */
+.workflow-node-overlay-inner--instance .workflow-node-card {
+  border-style: dashed;
+}
+
+.workflow-node-overlay-inner--instance.workflow-node-overlay-inner--sentinel-start,
+.workflow-node-overlay-inner--instance.workflow-folded-card {
+  border-style: dashed !important;
+}
+
+/* Scheduler node mirrors the start sentinel: the overlay itself is the card
+   box (border/background/shadow, same footprint as task cards), and the
+   circular clock button — the scheduler analogue of the sentinel's
+   three-state status button — sits embedded in-flow inside the box ahead of
+   the borderless compact content. The fold toggle closes the row. */
+.workflow-node-overlay-inner--scheduler {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong, var(--border-default));
+  padding: 4px 8px;
+  background: var(--bg-elevated, #ffffff);
+  box-shadow: var(--shadow-sm);
+  box-sizing: border-box;
+}
+
+:root[data-theme='dark'] .workflow-node-overlay-inner--scheduler {
+  background: color-mix(in srgb, var(--bg-base, #0f172a) 82%, #000);
+}
+
+/* The compact card is content inside the box, not the box itself: strip its
+   chrome (border/background/shadow/padding) so the node reads as a single
+   bordered surface with the clock embedded, like the start sentinel. */
+.workflow-node-overlay-inner--scheduler .workflow-node-card {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.workflow-node-overlay-inner--scheduler .workflow-node-card:hover {
+  border: none;
+  box-shadow: none;
+}
+
+/* Selection glow and centering pulse belong on the box, not the inner card. */
+.workflow-node-overlay--selected .workflow-node-overlay-inner--scheduler {
+  box-shadow:
+    0 12px 28px -16px rgba(17, 19, 24, 0.35),
+    0 0 0 2px #22c55e,
+    0 0 20px -4px rgba(34, 197, 94, 0.6);
+}
+
+.workflow-node-overlay--selected .workflow-node-overlay-inner--scheduler .workflow-node-card,
+.workflow-node-overlay--centering .workflow-node-overlay-inner--scheduler .workflow-node-card {
+  box-shadow: none;
+  animation: none;
+}
+
+.workflow-node-overlay--centering .workflow-node-overlay-inner--scheduler {
+  animation: workflow-centering-pulse 1.4s ease-in-out infinite;
+}
+
+/* Ghost template preview under an expanded zero-instance scheduler: dashed
+   and dimmed so it reads as simulated, never as a live workflow. */
+.workflow-node-overlay-inner--ghost {
+  pointer-events: auto;
+}
+.workflow-ghost-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 2px;
+  padding: 0 10px;
+  border: 1.5px dashed color-mix(in srgb, var(--text-tertiary) 45%, transparent);
+  background: color-mix(in srgb, var(--bg-elevated, #fff) 75%, transparent);
+  opacity: 0.62;
+  cursor: pointer;
+}
+.workflow-ghost-tag {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  letter-spacing: 0.04em;
+}
+.workflow-ghost-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Leading dot: bound agent kind (or status fallback) in the title row. */
+.workflow-node-card .mono-card-compact-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  align-self: center;
+}
+
+.workflow-node-overlay-inner--active .workflow-node-card .mono-card-compact-dot {
+  animation: workflow-dot-breathe 1.6s ease-in-out infinite;
+}
+
+@keyframes workflow-dot-breathe {
+  0%, 100% { opacity: 0.6; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.25); }
+}
+
+/* Sentinel nodes: start = compact circle entry marker, end = rectangle
+   terminator that keeps the rounded-card look (the original start style). */
+.workflow-node-overlay-inner--sentinel {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated, #ffffff);
+  border: 1px solid var(--border-subtle, #475569);
+  border-radius: 12px;
+  padding: 4px 12px;
+  box-sizing: border-box;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Start node is a card-sized entry marker (same footprint as task cards),
+   with a fold button on its right edge. */
+.workflow-node-overlay-inner--sentinel-start {
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong, var(--border-default));
+  padding: 4px 8px;
+  background: var(--bg-elevated, #ffffff);
+  box-shadow: var(--shadow-sm);
+}
+
+:root[data-theme='dark'] .workflow-node-overlay-inner--sentinel-start {
+  background: color-mix(in srgb, var(--bg-base, #0f172a) 82%, #000);
+}
+
+.workflow-node-overlay-inner--sentinel-start.workflow-node-overlay-inner--active {
+  border-color: var(--info, #3b82f6);
+  box-shadow: var(--shadow-sm);
+}
+
+.workflow-node-overlay-inner--sentinel-start.workflow-node-overlay-inner--active .workflow-sentinel-dot {
+  background: var(--workflow-active, #14b8a6) !important;
+}
+
+.workflow-node-overlay-inner--sentinel-start.workflow-node-overlay-inner--active .workflow-sentinel-label {
+  color: var(--workflow-active, #14b8a6);
+}
+
+.workflow-node-overlay-inner--sentinel-start.workflow-node-overlay-inner--sentinel-done {
+  border-color: var(--border-subtle, #475569);
+  background: var(--bg-elevated, #ffffff);
+  background-clip: border-box;
+  box-shadow: 0 12px 28px -16px rgba(17, 19, 24, 0.35);
+}
+
+.workflow-node-overlay-inner--sentinel-start.workflow-node-overlay-inner--sentinel-done .workflow-sentinel-label {
+  color: var(--text-tertiary, #64748b);
+}
+
+
+
+/* Orchestrator kind dot inside the start sentinel. */
+.workflow-sentinel-dot {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.workflow-sentinel-label {
+  font-size: 0.75rem;
+  line-height: 1.2;
+  color: var(--text-secondary, #64748b);
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.workflow-node-overlay-inner--sentinel-start .workflow-sentinel-label {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Expanded start sentinel: shows the workflow title instead of a status
+   text; the owner agent's avatar sits in the bottom-right corner. */
+.workflow-sentinel-title {
+  color: var(--text-primary, #0f172a);
+  font-weight: 600;
+}
+
+.workflow-sentinel-agent-corner {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+  display: flex;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.workflow-node-overlay-inner--sentinel-start {
+  position: relative;
+}
+
+/* Fold toggle on the start node: `<` collapses (expanded card, right edge),
+   `>` expands (folded card, leading edge). pointer-events re-enabled because
+   the overlay layer is pointer-transparent. */
+.workflow-fold-btn {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 0;
+  pointer-events: auto;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.workflow-fold-btn:hover {
+  background: color-mix(in srgb, var(--text-tertiary) 14%, transparent);
+  color: var(--text-primary);
+}
+
+.workflow-status-btn {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.workflow-status-btn--doing { color: var(--info, #3b82f6); }
+.workflow-status-btn--paused { color: var(--warning, #d97706); }
+.workflow-status-btn--done { color: var(--success, #16a34a); }
+.workflow-status-btn--failed { color: var(--danger, #dc2626); }
+
+/* ── Selected card: green glow ─────────────────────────────────────── */
+
+.workflow-node-overlay--selected .workflow-node-card {
+  box-shadow:
+    0 12px 28px -16px rgba(17, 19, 24, 0.35),
+    0 0 0 2px #22c55e,
+    0 0 20px -4px rgba(34, 197, 94, 0.6);
+}
+
+.workflow-node-overlay--selected .workflow-node-overlay-inner--sentinel-start:not(.workflow-node-overlay-inner--sentinel-done) {
+  border-color: #22c55e;
+  box-shadow:
+    0 8px 22px -12px color-mix(in srgb, var(--accent, #3b82f6) 70%, transparent),
+    0 0 0 2px #22c55e,
+    0 0 20px -4px rgba(34, 197, 94, 0.6);
+}
+
+/* ── Centering state: subtle pulse while the view is actively locking on a card */
+
+.workflow-node-overlay--centering .workflow-node-card,
+.workflow-node-overlay--centering .workflow-node-overlay-inner--sentinel-start:not(.workflow-node-overlay-inner--sentinel-done) {
+  animation: workflow-centering-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes workflow-centering-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px #22c55e, 0 0 20px -4px rgba(34, 197, 94, 0.6); }
+  50% { box-shadow: 0 0 0 3px #22c55e, 0 0 24px -2px rgba(34, 197, 94, 0.75); }
+}
+
+/* ── Floating above-card toolbar (rendered inside the selected node overlay) */
+
+.workflow-card-toolbar {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 6px;
+  white-space: nowrap;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.workflow-card-toolbar__btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  padding: 0;
+  pointer-events: auto;
+  transition: background 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.workflow-card-toolbar__btn:hover {
+  background: transparent;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45), 0 2px 4px rgba(0, 0, 0, 0.25);
+}
+
+.workflow-card-toolbar__btn:active {
+  background: transparent;
+  transform: scale(0.94);
+}
+
+.workflow-card-toolbar__btn--reset {
+  /* Keep reset visually similar to open; no extra coloring needed */
+}
+
+/* ── Epic tree structural nodes ─────────────────────────────────────── */
+
+.workflow-epic-root-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 20px;
+  border-radius: 14px;
+  border: 2px solid var(--accent, hsl(210 90% 55%));
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent, #3b82f6) 10%, var(--bg-elevated, #fff)), var(--bg-elevated, #fff));
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  box-shadow: 0 8px 24px -12px color-mix(in srgb, var(--accent, #3b82f6) 60%, transparent);
+  white-space: nowrap;
+}
+
+:root[data-theme='dark'] .workflow-epic-root-badge {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--accent, #3b82f6) 16%, var(--bg-base, #1e1e1e)), var(--bg-base, #1e1e1e));
+}
+
+.workflow-epic-category-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 6px 0 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong, var(--border-default));
+  background: var(--bg-elevated, #fff);
+  font-weight: 600;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+:root[data-theme='dark'] .workflow-epic-category-badge {
+  background: color-mix(in srgb, var(--bg-base, #1e1e1e) 80%, #000);
+}
+
+.workflow-epic-category-label {
+  text-transform: capitalize;
+}
+
+/* Fold toggle mirrors the start sentinel's (`<` collapse / `>` expand) and
+   always sits on the badge's right edge. */
+.workflow-epic-category-badge .workflow-fold-btn,
+.workflow-epic-bucket-badge .workflow-fold-btn {
+  margin-left: auto;
+}
+
+.workflow-epic-category-badge--collapsed {
+  color: var(--text-tertiary);
+}
+
+.workflow-epic-category-count {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-tertiary) 16%, transparent);
+  color: var(--text-tertiary);
+}
+
+/* Category accent colors */
+.workflow-epic-category-badge--in-progress {
+  border-color: var(--info, #3b82f6);
+  color: var(--info, #3b82f6);
+}
+.workflow-epic-category-badge--to-start {
+  border-color: var(--warning, #eab308);
+  color: var(--warning, #eab308);
+}
+.workflow-epic-category-badge--template {
+  border-color: var(--text-tertiary, #94a3b8);
+}
+.workflow-epic-category-badge--planned {
+  border-color: #a855f7;
+  color: #a855f7;
+}
+.workflow-epic-category-badge--completed {
+  border-color: var(--success, #16a34a);
+  color: var(--success, #16a34a);
+}
+.workflow-epic-category-badge--archived {
+  border-color: var(--text-tertiary, #94a3b8);
+  color: var(--text-tertiary, #94a3b8);
+}
+
+/* Virtual archived time-bucket badge (date / month / year) */
+.workflow-epic-bucket-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 0 6px 0 12px;
+  border-radius: 8px;
+  border: 1px dashed var(--border-strong, var(--border-default));
+  background: var(--bg-elevated, #fff);
+  font-weight: 500;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.workflow-epic-bucket-badge--collapsed {
+  color: var(--text-tertiary);
+}
+
+:root[data-theme='dark'] .workflow-epic-bucket-badge {
+  background: color-mix(in srgb, var(--bg-base, #1e1e1e) 80%, #000);
+}
+
+/* ── Folded workflow card (epic mode collapsed state) ────────────────── */
+
+.workflow-folded-card {
+  flex-direction: row !important;
+  border-radius: 12px !important;
+  border: 1px solid var(--border-strong, var(--border-default)) !important;
+  background: linear-gradient(180deg, var(--bg-elevated, #fff), var(--bg-base, #f4f3f0)) !important;
+  background-clip: border-box !important;
+  padding: 8px 12px !important;
+  box-shadow: 0 12px 28px -16px rgba(17, 19, 24, 0.35);
+  cursor: pointer;
+}
+
+:root[data-theme='dark'] .workflow-folded-card {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg-base, #1e1e1e) 82%, #000), color-mix(in srgb, var(--bg-base, #1e1e1e) 62%, #000)) !important;
+}
+
+.workflow-folded-card-body {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+.workflow-folded-chevron {
+  flex: none;
+  color: var(--text-tertiary);
+}
+
+.workflow-folded-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.workflow-folded-card-title {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workflow-folded-card-meta {
+  font-size: 0.72rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workflow-folded-card.workflow-node-overlay-inner--active {
+  border-color: color-mix(in srgb, var(--accent, #14b8a6) 70%, transparent) !important;
+  box-shadow: 0 12px 28px -16px rgba(17, 19, 24, 0.35), 0 0 0 1px color-mix(in srgb, var(--accent, #14b8a6) 45%, transparent), 0 0 22px -8px color-mix(in srgb, var(--accent, #14b8a6) 55%, transparent);
+}

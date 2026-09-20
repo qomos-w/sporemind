@@ -1,0 +1,14 @@
+{
+  "public_version": "0.4.0",
+  "channel": "stable",
+  "build_seq": "11.43",
+  "platform": "windows-x64",
+  "file": "sporemind-0.4.0-stable.exe",
+  "url": "https://pub-0bbae7fdac9547609439416396df20e4.r2.dev/releases/stable/0.4.0/sporemind-0.4.0-stable.exe",
+  "md5": "2e8e4c5346afbf6cd19517d8cd3128b0",
+  "sha256": "7853263ac54641a46e97a05ae7bb70899f175468c58e8a5590c06b275530f485",
+  "size": 113266176,
+  "git_commit": "8e60c5ba",
+  "build_time": "2026-09-12T10:48:20Z",
+  "notes": "SporeMind 0.4.0 beta: provider presets swap to domestic GLM/DeepSeek, icon/splash refresh"
+}

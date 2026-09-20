@@ -1,0 +1,14 @@
+{
+  "public_version": "0.3.3",
+  "channel": "stable",
+  "build_seq": "9.79",
+  "platform": "windows-x64",
+  "file": "sporemind-0.3.3-stable.exe",
+  "url": "https://pub-0bbae7fdac9547609439416396df20e4.r2.dev/releases/stable/0.3.3/sporemind-0.3.3-stable.exe",
+  "md5": "65643980aa578fb53220bc3ae0b6f046",
+  "sha256": "1e598dde78db708b57352282e37b877538c3820cd45075a67bc55ea7bfced693",
+  "size": 111477056,
+  "git_commit": "f17e488a4",
+  "build_time": "2026-09-07T03:09:10Z",
+  "notes": "tutorials, plugin zip export/install, browser-chat component, message cache"
+}

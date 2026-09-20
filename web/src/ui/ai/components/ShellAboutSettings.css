@@ -1,0 +1,224 @@
+.sp-about-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sp-about-value {
+  font-size: 0.875rem;
+  color: var(--color-foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.sp-about-app-name {
+  font-weight: 600;
+}
+
+.sp-about-commit {
+  font-family: 'JetBrains Mono', 'Cascadia Code', ui-monospace, monospace;
+  font-size: 0.8125rem;
+  background: var(--color-muted);
+  padding: 0.125rem 0.375rem;
+  border-radius: 0.25rem;
+}
+
+.sp-about-time {
+  font-size: 0.8125rem;
+  color: var(--color-muted-foreground);
+}
+
+.sp-about-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: lowercase;
+  letter-spacing: 0.01em;
+}
+
+.sp-about-badge--release {
+  background: oklch(70% 0.15 145 / 0.15);
+  color: oklch(55% 0.2 145);
+}
+
+.sp-about-badge--beta {
+  background: oklch(70% 0.15 85 / 0.15);
+  color: oklch(55% 0.2 85);
+}
+
+.sp-about-badge--dev {
+  background: oklch(70% 0.12 280 / 0.15);
+  color: oklch(55% 0.18 280);
+}
+
+.sp-about-badge--flavor {
+  background: oklch(70% 0.1 200 / 0.15);
+  color: oklch(55% 0.15 200);
+}
+
+.sp-about-tutorial-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+}
+
+.sp-about-badge--agent {
+  background: oklch(70% 0.12 280 / 0.15);
+  color: oklch(55% 0.18 280);
+  text-transform: none;
+  font-size: 0.6875rem;
+  flex-shrink: 0;
+}
+
+.sp-about-tutorial-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  flex-shrink: 0;
+}
+
+.sp-about-link-btn {
+  gap: 0.375rem;
+  font-size: 0.8125rem;
+}
+
+.sp-about-link-btn svg:last-child {
+  opacity: 0.6;
+}
+
+.sp-about-terms {
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  max-height: 320px;
+  overflow-y: auto;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  color: var(--color-foreground);
+  background: var(--color-muted/30);
+}
+
+.sp-about-terms h1 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.sp-about-terms h2 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.sp-about-terms h3 {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  margin-top: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.sp-about-terms p {
+  margin: 0.25rem 0;
+}
+
+.sp-about-terms ul,
+.sp-about-terms ol {
+  padding-left: 1.25rem;
+  margin: 0.25rem 0;
+}
+
+.sp-about-terms li {
+  margin: 0.125rem 0;
+}
+
+.sp-about-terms blockquote {
+  border-left: 3px solid var(--color-border);
+  padding-left: 0.75rem;
+  margin: 0.5rem 0;
+  color: var(--color-muted-foreground);
+}
+
+.sp-about-terms hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 0.75rem 0;
+}
+
+.sp-about-license-groups {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.sp-about-license-group {
+  border: 1px solid var(--color-border);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.sp-about-license-group-header {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-muted);
+  color: var(--color-foreground);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sp-about-license-group-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sp-about-license-group-count {
+  color: var(--color-muted-foreground);
+  flex-shrink: 0;
+}
+
+.sp-about-license-group-body {
+  display: flex;
+  flex-direction: column;
+  max-height: 260px;
+  overflow-y: auto;
+}
+
+.sp-about-license-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.5rem 0.75rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.sp-about-license-entry-name {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.sp-about-license-entry-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.sp-about-license-badge {
+  font-size: 0.6875rem;
+  flex-shrink: 0;
+}
+
+.sp-about-license-copyright {
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+}

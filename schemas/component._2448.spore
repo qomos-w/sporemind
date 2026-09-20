@@ -1,0 +1,102 @@
+// component namespace — MonoCard-backed hot-pluggable prompt/tool components.
+// @ts-export
+//
+// A component card is a declarative resource. Mounting selects it for an
+// agent; composing a turn projects the same mounted set into prompt and tools.
+
+struct ComponentRef {
+    CardId:  string
+    Kind:    string   // tool | skill | prompt | mode | capability | bundle |
+                     // virtual kinds mirror agent-chat: agent-chat:<AgentRef.ID>
+                     // | browser-chat:<instanceId> (per-target virtual cards,
+                     // no backing card entity — see agent component descriptor)
+    optional Version: int
+    optional Source:  string
+}
+
+struct ComponentDependency {
+    CardId:  string
+    optional Required: bool
+    optional Reason:   string
+}
+
+struct ComponentPromptContribution {
+    Id:          string
+    CardId:      string
+    optional Title: string
+    Text:        string
+    optional Placement: string   // system | context
+    optional Priority: int
+}
+
+struct ComponentToolContribution {
+    Id:          string
+    CardId:      string
+    CallableId:  string
+    optional Name: string
+    optional Description: string
+    optional Usage: string
+    optional Constraints: string
+    optional Priority: int
+}
+
+struct ComponentDescriptor {
+    Ref:          ComponentRef
+    Title:        string
+    optional Icon: string
+    optional Visual: ComponentVisual
+    optional Protected: bool
+    Dependencies: array<ComponentDependency>
+    Prompts:      array<ComponentPromptContribution>
+    Tools:        array<ComponentToolContribution>
+    // ShadowedById is non-empty when this card shadows (overrides) another
+    // card with the same ID from a different source (e.g. a persisted card
+    // overriding a builtin card). The value equals this card's own CardId;
+    // its presence is the signal that a local override is active.
+    optional ShadowedById: string
+}
+
+// ComponentVisual carries the card icon-library presentation hints (lucide icon
+// name resolved by the frontend, accent palette, explicit icon color). Mirrors
+// the data.visual block of a MonoCard so badges and the omnibox render colored
+// lucide icons consistent with card topology nodes.
+struct ComponentVisual {
+    optional Icon:      string
+    optional Accent:    string
+    optional Emphasis:  string
+    optional Color:     string
+    optional Background: string
+    optional Border:    string
+    optional Size:      int
+}
+
+struct AgentComponentMount {
+    MountId:       string
+    CardId:        string
+    optional Kind: string
+    optional Version: int
+    optional Enabled: bool
+    optional Order: int
+    optional Scope: string
+    optional Title: string
+    optional Icon: string
+    optional Visual: ComponentVisual
+    optional MountedAt: string
+    optional UpdatedAt: string
+}
+
+struct ComponentDiagnostic {
+    CardId:    string
+    Level:     string   // error | warning | info
+    Message:   string
+    optional Reason: string
+}
+
+struct AgentComponentSnapshot {
+    Revision: int
+    optional TurnId: string
+    Mounts: array<AgentComponentMount>
+    Prompts: array<ComponentPromptContribution>
+    Tools: array<ComponentToolContribution>
+    optional Diagnostics: array<ComponentDiagnostic>
+}

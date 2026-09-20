@@ -1,0 +1,420 @@
+/* Full-pane database client (sporecloud sql-client layout, repo tokens). */
+
+.dbc-root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow: hidden;
+}
+
+.dbc-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dbc-brand {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  min-width: 0;
+}
+
+.dbc-brand-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 220px;
+}
+
+.dbc-brand-backend {
+  font-size: 10.5px;
+  font-family: var(--font-mono, monospace);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 0 7px;
+  line-height: 16px;
+  white-space: nowrap;
+}
+
+.dbc-conn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+.dbc-led {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+.dbc-conn-ok .dbc-led { background: var(--status-success, #46b95e); }
+.dbc-conn-err .dbc-led { background: var(--error); }
+.dbc-conn-lat { font-family: var(--font-mono, monospace); }
+
+.dbc-spacer { flex: 1; }
+
+.dbc-select,
+.dbc-side-tools input {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 6px);
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.dbc-select { max-width: 260px; min-width: 140px; }
+
+.dbc-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: var(--accent-primary);
+  color: var(--text-inverse, #fff);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md, 6px);
+  padding: 4px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.dbc-btn:hover:not(:disabled) { filter: brightness(1.1); }
+.dbc-btn:disabled { opacity: 0.5; cursor: default; }
+
+.dbc-btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-subtle);
+}
+
+.dbc-btn-ghost:hover:not(:disabled) { color: var(--text-primary); filter: none; }
+
+.dbc-main { flex: 1; display: flex; min-height: 0; }
+
+/* ── sidebar tree (generic, any depth) ── */
+.dbc-side {
+  width: 230px;
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-elevated);
+  border-right: 1px solid var(--border-subtle);
+  min-height: 0;
+}
+
+.dbc-side-tools {
+  display: flex;
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dbc-side-tools input { flex: 1; min-width: 0; }
+
+.dbc-tree { flex: 1; overflow: auto; padding: 6px 4px; }
+
+.dbc-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  border-radius: var(--radius-md, 6px);
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.dbc-row:hover { background: var(--bg-hover); }
+.dbc-row-loading { opacity: 0.6; }
+.dbc-row-on { background: color-mix(in srgb, var(--accent-primary) 14%, transparent); color: var(--text-primary); }
+
+.dbc-row-toggle { display: inline-flex; width: 12px; color: var(--text-tertiary); }
+.dbc-row-icon { display: inline-flex; color: var(--text-tertiary); }
+
+.dbc-row-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dbc-leaf-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+}
+
+.dbc-children { /* nested container; rows carry their own indent */ }
+
+.dbc-more {
+  background: transparent;
+  border: none;
+  color: var(--accent-primary);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 3px 8px;
+}
+
+.dbc-more:hover { text-decoration: underline; }
+
+.dbc-tree-error {
+  padding: 4px 8px;
+  font-size: 11px;
+  color: var(--error);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dbc-sub-loading { padding: 2px 8px 2px 26px; font-size: 11px; color: var(--text-tertiary); }
+.dbc-sub-error {
+  padding: 2px 8px 2px 26px;
+  font-size: 11px;
+  color: var(--error);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── main work area ── */
+.dbc-work {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+
+.dbc-crumbs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 11px;
+  min-height: 30px;
+}
+
+.dbc-path {
+  font-family: var(--font-mono, monospace);
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dbc-chip {
+  font-family: var(--font-mono, monospace);
+  color: var(--text-tertiary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 999px;
+  padding: 0 8px;
+  line-height: 16px;
+  font-size: 10px;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dbc-tabs {
+  display: flex;
+  gap: 2px;
+  padding: 0 10px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dbc-tab {
+  background: transparent;
+  color: var(--text-tertiary);
+  border: none;
+  border-bottom: 2px solid transparent;
+  border-radius: 0;
+  padding: 7px 13px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.dbc-tab:hover:not(:disabled) { color: var(--text-primary); background: var(--bg-hover); }
+.dbc-tab-on { color: var(--text-primary) !important; border-bottom-color: var(--accent-primary); }
+.dbc-tab:disabled { opacity: 0.4; cursor: default; }
+
+.dbc-page { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+
+.dbc-toolbar,
+.dbc-query-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-wrap: wrap;
+}
+
+.dbc-toolbar label,
+.dbc-query-bar label { color: var(--text-tertiary); font-size: 11px; white-space: nowrap; }
+
+.dbc-toolbar select {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 6px);
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+.dbc-muted { color: var(--text-tertiary); font-size: 11px; }
+
+/* ── results grid ── */
+.dbc-grid-wrap { flex: 1; overflow: auto; min-height: 0; }
+
+.dbc-grid {
+  border-collapse: collapse;
+  font-family: var(--font-mono, monospace);
+  font-size: 11.5px;
+  min-width: 100%;
+}
+
+.dbc-grid th {
+  position: sticky;
+  top: 0;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  text-align: left;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  white-space: nowrap;
+  z-index: 1;
+}
+
+.dbc-grid td {
+  padding: 4px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-secondary);
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.dbc-grid tr:hover td { background: var(--bg-hover); }
+.dbc-cell-null { color: var(--text-tertiary); font-style: italic; }
+.dbc-cell-long { cursor: pointer; }
+.dbc-cell-long:hover { color: var(--text-primary); }
+
+.dbc-empty { padding: 30px; text-align: center; color: var(--text-tertiary); font-size: 12px; }
+.dbc-error { padding: 16px; color: var(--error); font-size: 12px; white-space: pre-wrap; word-break: break-word; }
+
+/* query mode badge (SQL / JSON / CMD) */
+.dbc-mode {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  letter-spacing: 0.05em;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  padding: 1px 6px;
+  color: var(--text-secondary);
+}
+
+.dbc-result-message {
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+}
+
+/* ── structure tab ── */
+.dbc-struct-wrap { flex: 1; overflow: auto; padding: 12px; min-height: 0; }
+.dbc-struct-wrap h3 { margin: 0 0 6px; font-size: 12px; color: var(--text-secondary); font-weight: 600; }
+.dbc-struct-wrap h3:not(:first-child) { margin-top: 16px; }
+.dbc-grid-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 6px);
+  overflow: auto;
+  margin-bottom: 8px;
+}
+
+/* ── query tab ── */
+.dbc-sql {
+  width: 100%;
+  height: 96px;
+  flex: 0 0 auto;
+  resize: vertical;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  padding: 10px 12px;
+  font-size: 12px;
+  font-family: var(--font-mono, monospace);
+}
+
+.dbc-sql:focus { outline: none; }
+
+/* ── modals ── */
+.dbc-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 50;
+}
+
+.dbc-modal-box {
+  width: min(760px, 94vw);
+  max-height: 88vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg, 10px);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+}
+
+.dbc-modal-head {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.dbc-modal-head h2 { margin: 0; font-size: 13px; font-weight: 600; }
+
+.dbc-modal-body { flex: 1; display: flex; min-height: 0; overflow: auto; }
+
+.dbc-modal-cell { width: min(680px, 94vw); }
+
+.dbc-cell-full {
+  margin: 0;
+  padding: 12px 14px;
+  overflow: auto;
+  max-height: 60vh;
+  font-family: var(--font-mono, monospace);
+  font-size: 12px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-secondary);
+}

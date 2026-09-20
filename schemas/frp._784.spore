@@ -1,0 +1,152 @@
+// frp namespace — manager + instance wire shapes.
+// @ts-export
+//
+// Sources of truth for:
+//   - frpmanager.list / get / create / remove
+//   - frpinstance.status / start / stop / configure
+//   - persisted FrpInstanceConfig (one per child)
+//
+// Topology:
+//   /frpmanager                holds []FrpInstanceConfig
+//   /frpmanager/inst-N         one frpc client per child
+//
+
+// embeds frpc (github.com/fatedier/frp) on each frpinstance child.
+
+struct FrpProxy {
+    Name:       string
+    Kind:       string  // "tcp" / "udp"
+    LocalIP:    string
+    LocalPort:  int
+    RemotePort: int
+}
+
+
+// FrpWebProxy exposes the sporemind HTTP gateway (which serves the web UI) through
+// the tunnel. localPort is the sporemind gateway port (currently :18080) and is
+// supplied by the backend.
+//
+// mode = "" or "tcp" (default): plain TCP proxy on remotePort. Anyone reaching
+//   frps:remotePort hits the sporemind web UI over plain HTTP.
+// mode = "https": frpc-side TLS termination via the https2http plugin. Requires
+//   frps to have vhostHTTPSPort configured. SNI routing by customDomains; the
+//   PEM cert/key are stored inline and materialized to disk only while frpc is
+//   running. keyPem is treated as a secret — Public callables strip it.
+struct FrpWebProxy {
+    Enabled:                    bool
+    Name:                       string
+    optional Mode:              string
+    optional RemotePort:        int
+    optional CustomDomains:     array<string>
+    optional CertPem:           string
+    optional KeyPem:            string
+    optional HostHeaderRewrite: string
+}
+
+
+struct FrpInstanceConfig {
+    Id:                string
+    Name:              string
+    ServerAddr:        string
+    optional Token:    string
+    optional Tls:         bool
+    optional LegacyMode:  bool
+    optional Disabled:    bool
+    Proxies:              array<FrpProxy>
+    optional WebProxy: FrpWebProxy
+}
+
+
+// FrpProxyStatus is the live per-proxy state reported by the embedded frpc.
+// Status mirrors frp's proxy phases: "new" | "wait start" | "start error" |
+// "running" | "check failed" | "closed". Only "running" means the tunnel is
+// actually established end-to-end.
+struct FrpProxyStatus {
+    Name:            string
+    Status:          string
+    optional Err:        string
+    optional RemoteAddr: string
+}
+
+
+struct FrpInstanceStatus {
+    Id:                       string
+    Running:                  bool
+    // Connected is the true tunnel-up judgment: the frpc process is running
+    // AND every configured proxy is in the "running" phase. Running alone
+    // only means frpc started (it may still be logging in, or a proxy may
+    // have failed with a remote-port conflict).
+    optional Connected:       bool
+    // Proxies carries the live per-proxy phases powering the connected
+    // judgment; empty when frpc is not running.
+    optional Proxies:         array<FrpProxyStatus>
+    optional DetectedVersion: string
+    optional Error:           string
+    optional StartedAt:       string
+}
+
+
+struct FrpInstance {
+    Config: FrpInstanceConfig
+    Status: FrpInstanceStatus
+}
+
+
+struct FrpManagerCreateReq {
+    Name:              string
+    ServerAddr:        string
+    optional Token:      string
+    optional Tls:        bool
+    optional LegacyMode: bool
+    Proxies:             array<FrpProxy>
+    optional WebProxy: FrpWebProxy
+}
+
+
+struct FrpManagerRemoveReq {
+    Id: string
+}
+
+
+struct FrpManagerGetReq {
+    Id: string
+}
+
+
+struct FrpManagerListResp {
+    Items: array<FrpInstance>
+    GatewayPort: int
+}
+
+
+struct FrpInstanceConfigureReq {
+    Config: FrpInstanceConfig
+}
+
+
+struct FrpManagerUpdateReq {
+    Id:     string
+    Config: FrpInstanceConfig
+}
+
+
+struct FrpManagerStartReq {
+    Id: string
+}
+
+
+struct FrpManagerStopReq {
+    Id: string
+}
+
+
+struct FrpManagerDetectReq {
+    ServerAddr: string
+    optional Token: string
+}
+
+
+struct FrpManagerDetectResp {
+    LegacyMode: bool
+    optional Error: string
+}

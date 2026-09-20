@@ -1,0 +1,23 @@
+// appmanager internal process-state reporting namespace. pluginhost reports
+// native plugin process verdicts (running/stopped/crashed) to appmanager via
+// appmanager.report_process_state so the registry record reflects the real
+// transport state and crashes surface as app_lifecycle events + problems.
+// Internal actor-to-actor protocol: no @ts-export on purpose.
+
+struct AppManagerReportProcessStateReq {
+    PluginID: string
+    State: string               // running | stopped | crashed
+    optional CrashCause: string // set when State == "crashed"
+    optional HttpAddr: string   // plugin HTTP listener host:port when State == "running" (cold-start restore re-attach)
+    optional SessionSecret: string // the per-instance secret the running process was ACTUALLY spawned with (from the delivered OnLoadConfig). appmanager adopts it over its persisted record when they drifted (crash between the two actors' Saves), so gateway proxy tokens always match the live listener instead of 401ing until a manual unload/load.
+}
+
+// pluginhost fires appmanager.pluginhost_online once at the end of its OnStart
+// (after its own domain is exposed). appmanager reconciles gateway proxy
+// routes for running native apps then: the cold-start "running" reports fire
+// from inside pluginhost's restore loop BEFORE pluginhost exposes, so their
+// proxy_attach tells cannot resolve pluginhost and are dropped — without this
+// trigger the routes stay unattached (405/404 on /plugin/{id}/invoke|events)
+// until an external reload. Internal actor-to-actor protocol: no @ts-export.
+struct AppManagerPluginhostOnlineReq {
+}

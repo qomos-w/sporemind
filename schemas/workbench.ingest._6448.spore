@@ -1,0 +1,44 @@
+// workbench.ingest namespace — internal event-ingest request shapes.
+//
+// These wrap the bus events the workbench actor subscribes to (app lifecycle,
+// agent step / turn) into lane-routed internal callables. They are an
+// actor-internal protocol and are intentionally kept off the frontend type
+// surface (this file carries no ts-export marker).
+
+// WorkbenchLifecycleIngestReq carries an app lifecycle event to the lane.
+struct WorkbenchLifecycleIngestReq {
+    Event: AppLifecycleEvent
+}
+
+// WorkbenchStepIngestReq carries an agent step event plus the emitting agent's
+// actor id (the event envelope carries it; the step payload does not).
+struct WorkbenchStepIngestReq {
+    EmitterId: string
+    Step:      StepEvent
+}
+
+// WorkbenchTurnIngestReq carries an agent turn event plus the emitting actor id.
+struct WorkbenchTurnIngestReq {
+    EmitterId: string
+    Turn:      TurnEvent
+}
+
+// WorkbenchAgentModeInfo is the workbench-side projection of one workspace
+// agent list item — only the fields the attention model needs.
+struct WorkbenchAgentModeInfo {
+    ActorId:     string
+    Kind:        string     // workspace AgentKind (coordinator / worker / ...)
+    DisplayName: string
+    // AgentModeState derived flags: an agent owning an active workflow map is
+    // "workflow"; an agent bound to a task card is "worker".
+    WorkflowActive: bool
+    BoundTask:      bool
+}
+
+// WorkbenchAgentListIngestReq carries the workspace agent list snapshot to the
+// lane. The workbench derives per-card attention modes from it (coordinator /
+// workflow / worker / normal) and materializes the global Coordinator card —
+// agent chatter itself no longer moves attention.
+struct WorkbenchAgentListIngestReq {
+    Items: array<WorkbenchAgentModeInfo>
+}

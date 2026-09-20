@@ -1,0 +1,37 @@
+// app.appdef — forced-tool-call live test app. Exercises the llm.complete
+// tools + tool_choice surface: the model must end with a tool call and the
+// handler reports the returned name + arguments.
+app ToolTest {
+    id:        "app.tooltest"
+    name:      "ToolTest"
+    version:   "0.1.0"
+    namespace: tooltest
+    permissions: ["llm.complete"]
+
+    struct ForcedToolRequest {
+        Prompt: string
+        optional Provider: string   // unit pin, e.g. "deepseek"
+        optional Model:    string   // unit pin, e.g. "deepseek-v4-flash"
+        optional Choice:   string   // tool name to force; default "extract_meta"
+        optional Mode:     string   // "name" (default) | "required" | "auto"
+    }
+    struct ForcedToolResponse {
+        ToolName:      string
+        Arguments:     string
+        StopInfo:      string
+        Raw:           string
+    }
+
+    callable forced_tool {
+        request:  ForcedToolRequest
+        response: ForcedToolResponse
+        effect:   "read"
+        toolName: "tooltest-forced-tool"
+        timeout:  4m
+    }
+
+    entrypoint view main {
+        title: "ToolTest"
+        route: "/"
+    }
+}

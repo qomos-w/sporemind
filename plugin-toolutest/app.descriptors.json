@@ -1,0 +1,83 @@
+{
+  "ForcedToolRequest": {
+    "Kind": "struct",
+    "Name": "ForcedToolRequest",
+    "Fields": [
+      {
+        "Name": "Prompt",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Provider",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      },
+      {
+        "Name": "Model",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      },
+      {
+        "Name": "Choice",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      },
+      {
+        "Name": "Mode",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      }
+    ],
+    "SchemaId": 1810892
+  },
+  "ForcedToolResponse": {
+    "Kind": "struct",
+    "Name": "ForcedToolResponse",
+    "Fields": [
+      {
+        "Name": "ToolName",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Arguments",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "StopInfo",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Raw",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      }
+    ],
+    "SchemaId": 1800192
+  }
+}

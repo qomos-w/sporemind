@@ -1,0 +1,1059 @@
+/* Workbench board skin, aligned 1:1 with tmp/blackboard.html.
+ * Colours come from the `--workbench-*` theme tokens (theme/src/tokens.css,
+ * light + dark) with the blackboard values as fallbacks. Layout coordinates
+ * are percentages of `.wb-field`, matching the reference layout engine
+ * (web/src/ui/workbench/cardLayout.ts). */
+
+/* ── Fullscreen takeover ───────────────────────────────────────
+ * The board is the launcher-mode third pane (构建/应用/工作台): fixed over the
+ * whole window so it covers the topbar, sidebar and right panel. */
+.wb-surface {
+  position: fixed;
+  inset: 0;
+  z-index: 2400;
+  overflow: hidden;
+  background: var(--workbench-bg, #f4f2ea);
+  color: var(--workbench-fg, #23262b);
+  font: 15px/1.55 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.wb-board {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: var(--workbench-bg, #f4f2ea);
+  color: var(--workbench-fg, #23262b);
+}
+
+/* The board hides the native topbar, so this strip keeps the window drag
+ * handle alive along the top edge (same mechanism as .ai-shell-topbar). */
+.wb-drag-region {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--titlebar-height, 32px);
+  z-index: 45;
+  --wails-draggable: drag;
+}
+
+/* ── Aurora backdrop ─────────────────────────────────────────── */
+/* The board's ambient backdrop (aurora wash + paper grain) is staged on a
+ * body-level marker class injected from
+ * web/src/application/workbench-surface.ts (spec §6, app-background pattern);
+ * the surface mounts it while the workbench is up. */
+
+.wb-aurora {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.wb-aurora--1 {
+  width: 58vw;
+  height: 58vw;
+  left: -14vw;
+  top: -20vw;
+  filter: blur(90px);
+  opacity: var(--workbench-aurora-1-opacity, 0.55);
+  background: radial-gradient(circle, var(--workbench-aurora-1, #ffe7cd) 0%, transparent 62%);
+  animation: wb-drift-1 47s ease-in-out infinite alternate;
+}
+
+.wb-aurora--2 {
+  width: 50vw;
+  height: 50vw;
+  right: -12vw;
+  bottom: -16vw;
+  filter: blur(100px);
+  opacity: var(--workbench-aurora-2-opacity, 0.5);
+  background: radial-gradient(circle, var(--workbench-aurora-2, #dce9d5) 0%, transparent 62%);
+  animation: wb-drift-2 59s ease-in-out infinite alternate;
+}
+
+.wb-aurora--3 {
+  width: 44vw;
+  height: 44vw;
+  left: 30vw;
+  top: 38vh;
+  filter: blur(110px);
+  opacity: var(--workbench-aurora-3-opacity, 0.38);
+  background: radial-gradient(circle, var(--workbench-aurora-3, #e3e1f2) 0%, transparent 62%);
+  animation: wb-drift-3 52s ease-in-out infinite alternate;
+}
+
+@keyframes wb-drift-1 {
+  to { transform: translate(9vw, 6vh) scale(1.12); }
+}
+@keyframes wb-drift-2 {
+  to { transform: translate(-8vw, -7vh) scale(1.06) rotate(8deg); }
+}
+@keyframes wb-drift-3 {
+  to { transform: translate(-6vw, -9vh) scale(1.15); }
+}
+
+.wb-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: var(--workbench-grain-opacity, 0.05);
+  mix-blend-mode: var(--workbench-grain-blend, multiply);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* ── Corner controls ─────────────────────────────────────────── */
+.wb-corner {
+  position: absolute;
+  left: 24px;
+  top: 22px;
+  z-index: 60;
+  display: flex;
+  gap: 8px;
+  --wails-draggable: no-drag;
+}
+
+.wb-corner--r {
+  left: auto;
+  right: 24px;
+}
+
+.wb-cbtn {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--workbench-muted, #a9a28d);
+  border: 1px solid var(--workbench-cbtn-border, rgba(216, 210, 191, 0.7));
+  border-radius: 50%;
+  background: var(--workbench-cbtn-bg, rgba(255, 255, 255, 0.55));
+  backdrop-filter: blur(8px);
+  cursor: pointer;
+  transition: 0.25s;
+  user-select: none;
+  padding: 0;
+}
+
+.wb-cbtn:hover {
+  color: var(--workbench-fg, #23262b);
+  border-color: var(--workbench-muted, #a9a28d);
+}
+
+.wb-cbtn.on {
+  color: var(--workbench-tag-fg, #f2f0e9);
+  background: var(--workbench-tag-bg, rgba(38, 41, 47, 0.78));
+  border-color: var(--workbench-tag-bg, rgba(38, 41, 47, 0.78));
+}
+
+.wb-cbtn svg {
+  width: 13px;
+  height: 13px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Window-control trio (desktop host): same glass circle, Windows-close red. */
+.wb-cbtn--close {
+  color: #e81123;
+}
+
+.wb-cbtn--close:hover {
+  color: #fff;
+  border-color: #e81123;
+  background: #e81123;
+}
+
+.wb-corner-sep {
+  width: 1px;
+  height: 14px;
+  background: var(--workbench-cbtn-border, rgba(216, 210, 191, 0.7));
+  flex: none;
+}
+
+/* ── Field: the absolute-positioned card canvas ──────────────── */
+.wb-field {
+  position: absolute;
+  inset: 64px 24px 100px;
+  transition: transform 0.5s cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+
+.wb-board.veiled .wb-field {
+  transform: scale(0.955);
+}
+
+/* Hydration settle: while the projection fills in, cards land instantly instead
+   of animating every intermediate reflow (the visible opening shuffle). */
+.wb-board.settling .wb-field,
+.wb-board.settling .wb-card {
+  transition: none;
+}
+
+/* ── Attention tags (⚑ capture proposal / capture) ───────────── */
+.wb-tag {
+  position: absolute;
+  left: 41%;
+  top: -14px;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--workbench-tag-bg, #23262b);
+  color: var(--workbench-tag-fg, #f5f3ec);
+  font-size: 11.5px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 8px 22px rgba(35, 38, 43, 0.25);
+  animation: wb-note-in 0.35s;
+}
+
+.wb-tag--proposal {
+  left: 50%;
+}
+
+.wb-tag-flag {
+  color: #ffb454;
+}
+
+.wb-tag kbd {
+  font: 10px ui-monospace, Consolas, monospace;
+  color: #8b8574;
+  border: 1px solid #4a4d45;
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+
+[data-theme="dark"] .wb-tag kbd {
+  border-color: #b8b2a0;
+}
+
+@keyframes wb-note-in {
+  from { transform: translateY(8px); opacity: 0; }
+}
+
+/* ── Frost veil (conversation open) ──────────────────────────── */
+.wb-frost {
+  position: absolute;
+  inset: 0;
+  z-index: 35;
+  background: rgba(242, 240, 231, 0.4);
+  backdrop-filter: blur(22px) saturate(1.2);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.42s;
+}
+
+.wb-frost.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+[data-theme="dark"] .wb-frost {
+  background: rgba(20, 21, 24, 0.45);
+}
+
+/* ── Cards ───────────────────────────────────────────────────── */
+.wb-card {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--workbench-card-bg, rgba(255, 255, 255, 0.92));
+  border-radius: 16px;
+  box-shadow: var(--workbench-card-shadow, 0 12px 34px rgba(40, 35, 20, 0.1)), 0 0 0 1px var(--workbench-card-border, #e9e4d2);
+  transition:
+    left 0.95s cubic-bezier(0.3, 0.8, 0.3, 1),
+    top 0.95s cubic-bezier(0.3, 0.8, 0.3, 1),
+    width 0.95s cubic-bezier(0.3, 0.8, 0.3, 1),
+    height 0.95s cubic-bezier(0.3, 0.8, 0.3, 1),
+    opacity 0.6s,
+    filter 0.6s;
+  animation: wb-card-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+}
+
+@keyframes wb-card-in {
+  from { transform: scale(0.7); opacity: 0; }
+}
+
+.wb-card--focused {
+  box-shadow: var(--workbench-card-shadow-lg, 0 26px 64px rgba(40, 35, 20, 0.15)), 0 0 0 1px var(--workbench-card-border-strong, #e3dcc6);
+}
+
+.wb-card--focused > .wb-card-head {
+  font-size: 16px;
+  padding: 15px 22px;
+}
+
+.wb-card--focused > .wb-card-body {
+  font-size: 13.5px;
+  padding: 18px 22px;
+}
+
+.wb-card--maxed {
+  z-index: 6;
+  border-radius: 20px;
+  box-shadow: var(--workbench-card-shadow-max, 0 34px 90px rgba(40, 35, 20, 0.22)), 0 0 0 1px var(--workbench-card-border-strong, #ddd5bd);
+}
+
+.wb-card--maxed > .wb-card-head {
+  font-size: 17px;
+  padding: 16px 24px;
+}
+
+.wb-card--maxed > .wb-card-body {
+  font-size: 14.5px;
+  padding: 20px 24px;
+}
+
+.wb-card--railed {
+  opacity: 0.38;
+  filter: saturate(0.5);
+  cursor: pointer;
+  z-index: 3;
+}
+
+.wb-card--railed:hover {
+  opacity: 0.85;
+  filter: none;
+}
+
+.wb-card--proposing {
+  box-shadow: 0 0 0 1.5px var(--workbench-proposing, rgba(194, 94, 75, 0.6)), var(--workbench-card-shadow, 0 12px 34px rgba(40, 35, 20, 0.1));
+  animation: wb-propping 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes wb-propping {
+  to { box-shadow: 0 0 0 1.5px rgba(194, 94, 75, 0.22), var(--workbench-card-shadow, 0 12px 34px rgba(40, 35, 20, 0.1)); }
+}
+
+.wb-card-head {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  font-size: 13px;
+  font-weight: 650;
+  color: var(--workbench-card-head-fg, #3a3d43);
+  border-bottom: 1px solid var(--workbench-card-head-border, #efece0);
+  cursor: default;
+}
+
+.wb-card-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Debug attention-score badge (toggle: corner gauge button). */
+.wb-card-score {
+  flex: none;
+  font-size: 11px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--workbench-accent-flame, #b3541e);
+  background: color-mix(in srgb, var(--workbench-accent-flame, #b3541e) 12%, transparent);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
+/* Debug mode chip: shows whether attention is actor-owned (projection) or
+ * local fallback while the score overlay is on. */
+.wb-debug-chip {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--workbench-muted, #a9a28d);
+  background: var(--workbench-cbtn-bg, rgba(255, 255, 255, 0.55));
+  border: 1px solid var(--workbench-cbtn-border, rgba(216, 210, 191, 0.7));
+  border-radius: 8px;
+  padding: 2px 10px;
+  pointer-events: none;
+}
+
+/* Pin toggle (explicit header button on the main card): dim when unpinned,
+ * accent when the card holds the main slot against promotion. */
+.wb-card-pin {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--workbench-card-head-fg, #3a3d43);
+  opacity: 0.35;
+  cursor: pointer;
+  --wails-draggable: no-drag;
+}
+
+.wb-card-pin:hover {
+  opacity: 0.75;
+}
+
+.wb-card-pin.on {
+  opacity: 1;
+  color: var(--workbench-accent-flame, #b3541e);
+}
+
+.wb-card-close {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: inherit;
+  opacity: 0.5;
+  cursor: pointer;
+  transition: opacity 0.15s, background 0.15s;
+}
+
+.wb-card-close:hover {
+  opacity: 1;
+  background: var(--workbench-card-hover, rgba(127, 208, 138, 0.14));
+}
+
+.wb-card-body {
+  flex: 1;
+  min-height: 0;
+  padding: 12px 15px;
+  font-size: 12px;
+  overflow: hidden;
+}
+
+/* Expanded bodies (iframe / terminal) run flush, like `.body.flush`. */
+.wb-card-body--expanded {
+  padding: 0;
+}
+
+/* Hover attribution (zero standing pixels), mirroring the reference `.attr`. */
+.wb-card-attr {
+  display: none;
+  position: absolute;
+  top: 42px;
+  left: 12px;
+  z-index: 8;
+  font: 11px/1.5 ui-monospace, Consolas, monospace;
+  color: var(--workbench-tag-fg, #e8e5d8);
+  background: var(--workbench-tag-bg, rgba(35, 38, 43, 0.88));
+  padding: 5px 10px;
+  border-radius: 7px;
+  pointer-events: none;
+  white-space: nowrap;
+  box-shadow: 0 6px 18px rgba(35, 38, 43, 0.25);
+}
+
+.wb-card-head:hover ~ .wb-card-attr {
+  display: block;
+}
+
+[data-theme="dark"] .wb-card-attr {
+  background: rgba(232, 229, 216, 0.92);
+  color: #33362f;
+}
+
+/* ── Compact metadata tile (MonoCardCompact shape) ───────────── */
+.wb-compact {
+  height: 100%;
+  overflow: hidden;
+}
+
+.wb-compact-status {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  font-size: 11px;
+  color: var(--text-tertiary, #a0a0a0);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Chat card body (expanded) ───────────────────────────────── */
+.wb-chat {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+  padding: 14px 15px;
+  overflow: auto;
+}
+
+.wb-chat-summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.wb-chat-status {
+  flex: none;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: var(--workbench-term-fg, #c9e7ce);
+  background: var(--workbench-tag-bg, rgba(35, 38, 43, 0.82));
+}
+
+.wb-chat-session {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--workbench-card-head-fg, #3a3d43);
+}
+
+.wb-chat-time {
+  flex: none;
+  margin-left: auto;
+  font: 11px ui-monospace, Consolas, monospace;
+  color: var(--workbench-muted, #a9a28d);
+}
+
+.wb-chat-open {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 13px;
+  border: 1px solid var(--workbench-cbtn-border, rgba(216, 210, 191, 0.7));
+  border-radius: 999px;
+  background: var(--workbench-cbtn-bg, rgba(255, 255, 255, 0.72));
+  color: var(--workbench-fg, #23262b);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.18s;
+}
+
+.wb-chat-open:hover {
+  border-color: var(--workbench-accent-flame, #b3541e);
+  color: var(--workbench-accent-flame, #b3541e);
+}
+
+/* ── App fallback body (no view/panel entrypoint) ────────────── */
+.wb-app-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 15px;
+  overflow: auto;
+}
+
+.wb-app-fallback-status {
+  flex: none;
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  padding: 2px 8px;
+  border-radius: 999px;
+  color: var(--workbench-term-fg, #c9e7ce);
+  background: var(--workbench-tag-bg, rgba(35, 38, 43, 0.82));
+}
+
+.wb-app-fallback-hint {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--workbench-muted, #a9a28d);
+}
+
+.wb-app-fallback-error {
+  margin: 0;
+  max-width: 100%;
+  font: 11px/1.5 ui-monospace, Consolas, monospace;
+  color: #b3541e;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Launcher (shown when nothing is on the board) ───────────── */
+.wb-launcher {
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  width: max-content;
+  height: max-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 30px;
+  border-radius: 16px;
+  border: 1px solid var(--workbench-launcher-border, rgba(127, 208, 138, 0.28));
+  background: var(--workbench-launcher-bg, rgba(21, 26, 23, 0.06));
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.12s ease, border-color 0.12s ease, background 0.12s ease;
+}
+
+.wb-launcher:hover {
+  transform: translateY(-2px);
+  border-color: var(--workbench-launcher-border-hover, rgba(127, 208, 138, 0.55));
+}
+
+.wb-launcher-title {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.wb-launcher-hint {
+  font-size: 11px;
+  color: var(--workbench-muted, #a9a28d);
+}
+
+/* ── Dock (bottom command bar) ───────────────────────────────── */
+.wb-dock {
+  position: absolute;
+  left: 50%;
+  bottom: 22px;
+  transform: translateX(-50%);
+  z-index: 50;
+  width: min(580px, 72vw);
+  transition: width 0.42s cubic-bezier(0.3, 0.8, 0.3, 1);
+}
+
+.wb-dock.open {
+  width: min(660px, 76vw);
+}
+
+.wb-convo {
+  display: none;
+  flex-direction: column;
+  min-height: 32vh;
+  max-height: 64vh;
+  margin-bottom: 26px;
+}
+
+.wb-dock.open .wb-convo {
+  display: flex;
+  animation: wb-convo-in 0.42s cubic-bezier(0.2, 0.9, 0.3, 1.05);
+}
+
+@keyframes wb-convo-in {
+  from { transform: translateY(18px) scale(0.98); opacity: 0; }
+}
+
+.wb-vlist {
+  flex: 1;
+  overflow-y: auto;
+  padding: 6px 4px 16px;
+  scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(transparent, #000 8px, #000 calc(100% - 44px), transparent);
+  mask-image: linear-gradient(transparent, #000 8px, #000 calc(100% - 44px), transparent);
+}
+
+.wb-vlist::-webkit-scrollbar {
+  display: none;
+}
+
+.wb-vrow {
+  max-width: 86%;
+  margin-bottom: 16px;
+  font-size: 14px;
+  line-height: 1.78;
+  color: var(--workbench-fg, #23262b);
+  animation: wb-vrise 0.35s ease backwards;
+}
+
+@keyframes wb-vrise {
+  from { transform: translateY(6px); opacity: 0; }
+}
+
+.wb-vrow.u {
+  margin-left: auto;
+  width: fit-content;
+  max-width: 78%;
+  padding: 8px 15px;
+  border-radius: 15px;
+  background: rgba(238, 234, 222, 0.82);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 0 4px 14px rgba(40, 35, 20, 0.08);
+  color: var(--workbench-card-head-fg, #3a3d43);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Status hints: never let the dock conversation go silent. */
+.wb-vrow--hint {
+  font-size: 12px;
+  opacity: 0.6;
+  font-style: italic;
+}
+
+.wb-vrow--error {
+  opacity: 0.85;
+  font-style: normal;
+  color: #c0392b;
+}
+
+/* Coordinator is composing: a soft pulsing bubble while the turn streams. */
+.wb-vrow--pending {
+  width: 34px;
+  height: 24px;
+  border-radius: 12px;
+  background: rgba(238, 234, 222, 0.55);
+  animation: wb-pending 1.1s ease-in-out infinite;
+}
+
+@keyframes wb-pending {
+  50% { opacity: 0.45; }
+}
+
+[data-theme="dark"] .wb-vrow.u {
+  background: rgba(70, 72, 68, 0.55);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--workbench-fg, #e6e4d9);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+}
+
+/* Focus halo ring: outer gradient + 2px pill inset keeps the ring width
+ * constant (padding prevents margin collapse). */
+.wb-halo {
+  position: relative;
+  border-radius: 999px;
+  padding: 2px;
+}
+
+.wb-halo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: linear-gradient(100deg, #c25e4b, #f2b880, #8fc9a3, #c25e4b, #f2b880, #8fc9a3, #c25e4b);
+  background-size: 300% 100%;
+  opacity: 0;
+  transition: opacity 0.45s;
+  pointer-events: none;
+  animation: wb-halo-slide 3.2s linear infinite paused;
+}
+
+@keyframes wb-halo-slide {
+  to { background-position: -300% 0; }
+}
+
+.wb-halo .wb-pill {
+  position: relative;
+}
+
+.wb-dock:focus-within .wb-halo::before {
+  opacity: 1;
+  animation-play-state: running;
+}
+
+.wb-dock.listening .wb-halo::before {
+  opacity: 1;
+  animation-play-state: running;
+  animation-duration: 1.7s;
+  background: linear-gradient(100deg, #8b7ec9, #6bb5a8, #7fa8c9, #8b7ec9, #6bb5a8, #7fa8c9, #8b7ec9);
+  background-size: 300% 100%;
+}
+
+.wb-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--workbench-card-bg, rgba(255, 255, 255, 0.96));
+  backdrop-filter: blur(12px);
+  border-radius: 999px;
+  padding: 12px 18px;
+  border: 1px solid var(--workbench-card-border, rgba(224, 218, 198, 0.9));
+  box-shadow: var(--workbench-card-shadow, 0 10px 30px rgba(40, 35, 20, 0.13));
+  transition: box-shadow 0.3s, border-color 0.3s, background 0.3s;
+}
+
+.wb-dock.open .wb-pill {
+  background: var(--workbench-card-bg, rgba(255, 255, 255, 0.92));
+  border-color: var(--workbench-card-border-strong, rgba(255, 255, 255, 0.85));
+  box-shadow: var(--workbench-card-shadow-lg, 0 18px 48px rgba(40, 35, 20, 0.2));
+}
+
+.wb-spark {
+  display: flex;
+  color: #b6ae97;
+  transition: color 0.3s;
+  flex: none;
+}
+
+.wb-spark svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: currentColor;
+  fill-opacity: 0.18;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wb-dock:focus-within .wb-spark {
+  color: #c25e4b;
+}
+
+.wb-dock.listening .wb-spark {
+  color: #8b7ec9;
+}
+
+[data-theme="dark"] .wb-dock:focus-within .wb-spark {
+  color: #ffb454;
+}
+
+.wb-dock-input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  color: var(--workbench-fg, #23262b);
+}
+
+.wb-dock-input::placeholder {
+  color: var(--workbench-muted, #a9a28d);
+}
+
+.wb-mic {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: var(--workbench-muted, #a9a28d);
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  transition: color 0.3s, background 0.3s;
+}
+
+.wb-mic:hover {
+  color: var(--workbench-fg, #23262b);
+}
+
+.wb-mic svg {
+  width: 14px;
+  height: 14px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wb-dock.listening .wb-mic {
+  color: #fff;
+  background: #8b7ec9;
+  animation: wb-micpulse 1.3s ease-in-out infinite;
+}
+
+@keyframes wb-micpulse {
+  50% { box-shadow: 0 0 0 7px rgba(139, 126, 201, 0.18); }
+}
+
+.wb-wave {
+  display: none;
+  align-items: center;
+  gap: 2.5px;
+  height: 14px;
+  flex: none;
+}
+
+.wb-dock.listening .wb-wave {
+  display: flex;
+}
+
+.wb-wave i {
+  width: 2.5px;
+  height: 5px;
+  border-radius: 2px;
+  background: #8b7ec9;
+  animation: wb-wv 1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.wb-wave i:nth-child(2) { animation-delay: 0.14s; height: 9px; }
+.wb-wave i:nth-child(3) { animation-delay: 0.28s; height: 12px; }
+.wb-wave i:nth-child(4) { animation-delay: 0.42s; height: 8px; }
+.wb-wave i:nth-child(5) { animation-delay: 0.56s; }
+
+@keyframes wb-wv {
+  50% { transform: scaleY(2.1); }
+}
+
+/* ── Fullscreen launcher pad ─────────────────────────────────── */
+.wb-pad {
+  position: absolute;
+  inset: 0;
+  z-index: 55;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 11vh 24px 24px;
+  background: rgba(242, 240, 231, 0.55);
+  backdrop-filter: blur(30px) saturate(1.25);
+  -webkit-backdrop-filter: blur(30px) saturate(1.25);
+  overflow-y: auto;
+}
+
+.wb-pad.open {
+  display: flex;
+  animation: wb-padin 0.32s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+
+@keyframes wb-padin {
+  from { opacity: 0; }
+}
+
+[data-theme="dark"] .wb-pad {
+  background: rgba(20, 21, 24, 0.55);
+}
+
+.wb-psearch {
+  width: min(380px, 70vw);
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px solid var(--workbench-card-border, rgba(224, 218, 198, 0.9));
+  border-radius: 999px;
+  padding: 10px 16px;
+  box-shadow: 0 8px 24px rgba(40, 35, 20, 0.1);
+  margin-bottom: 44px;
+  flex: none;
+}
+
+.wb-psearch input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  color: var(--workbench-fg, #23262b);
+  min-width: 0;
+}
+
+.wb-psearch input::placeholder {
+  color: var(--workbench-muted, #a9a28d);
+}
+
+[data-theme="dark"] .wb-psearch {
+  background: rgba(37, 39, 43, 0.8);
+  border-color: var(--workbench-cbtn-border, rgba(70, 72, 66, 0.9));
+}
+
+[data-theme="dark"] .wb-psearch input {
+  color: var(--workbench-fg, #e6e4d9);
+}
+
+.wb-pgrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 92px);
+  gap: 30px 26px;
+  max-width: 720px;
+  justify-content: center;
+}
+
+.wb-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  padding: 0;
+  font: inherit;
+  animation: wb-padin 0.4s backwards;
+}
+
+.wb-tile-ic {
+  width: 62px;
+  height: 62px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #fff;
+  background: var(--workbench-muted, #a9a28d);
+  box-shadow: 0 8px 20px rgba(40, 35, 20, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  transition: transform 0.22s cubic-bezier(0.2, 0.9, 0.3, 1.4);
+}
+
+.wb-tile-ic--term {
+  background: linear-gradient(135deg, #3a413d, #151a17);
+}
+
+.wb-tile:hover .wb-tile-ic {
+  transform: scale(1.1);
+}
+
+.wb-tile-ic svg {
+  width: 26px;
+  height: 26px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.wb-tile-ic img {
+  width: 26px;
+  height: 26px;
+}
+
+.wb-tile > span:last-child {
+  font-size: 12px;
+  color: #4a4d45;
+}
+
+[data-theme="dark"] .wb-tile > span:last-child {
+  color: #b9b6a8;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wb-aurora,
+  .wb-card,
+  .wb-card--proposing,
+  .wb-tag,
+  .wb-convo,
+  .wb-vrow,
+  .wb-pad,
+  .wb-tile {
+    animation: none;
+  }
+
+  .wb-card {
+    transition: none;
+  }
+}

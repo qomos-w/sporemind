@@ -1,0 +1,148 @@
+// oracle namespace — capability discovery wire shapes.
+// @ts-export
+//
+// oracle is the global capability discovery / tuning / path guidance hub.
+// It does not execute business tools directly; it returns ranked candidates
+// for the caller (agent) to expand and use.
+
+struct OracleCapabilityDiscoverReq {
+    AgentKind:                    string
+    optional Intent:              string
+    optional Task:                string
+    optional CompressedHistory:   string
+    optional InstalledSkillIDs:   array<string>
+    optional AvailableToolNames:  array<string>
+    optional Limit:               int
+}
+
+
+struct CapabilityCandidate {
+    Kind:                string
+    Id:                  string
+    Name:                string
+    optional RelevanceScore: float   // 0-1, higher is more relevant
+    optional Rationale:      string  // one-sentence reason for the recommendation
+}
+
+
+struct OracleCapabilityDiscoverResp {
+    Items: array<CapabilityCandidate>
+}
+
+
+// Detailed explanation for a single capability. The caller already has the raw
+// JSON schema via its callable map; this endpoint returns task-oriented guidance.
+
+struct OracleCapabilityExplainReq {
+    Id:                  string   // capability ID, e.g. "project.read"
+    optional AgentKind:  string
+    optional Intent:     string
+    optional Task:       string
+}
+
+
+struct OracleCapabilityExplainResp {
+    Summary:             string
+    optional ExpandMode: string   // "inline" | "fork_child" | "confirm"
+    optional WhenToUse:  string
+    optional Examples:   string
+    optional RelatedIds: array<string>
+}
+
+
+// ── Diagnostics ──
+
+struct Diagnostic {
+    Id:              string
+    Severity:        string       // "error" | "warning" | "info"
+    Source:          string       // "tool_call" | "dispatch" | "compaction" | "explore" | "agent" | "frontend"
+    Message:         string
+    Timestamp:       string
+    optional AgentId:       string
+    optional TurnId:        string
+    optional StepId:        string
+    optional CallableId:    string
+    optional TargetService: string          // actor service targeted by the tool call (e.g. "project", "filesystem")
+    optional ToolUseId:     string          // LLM tool_use block id, correlates with step.Content[tool_use]
+    optional Input:         string          // tool call input JSON (may be truncated for very large payloads)
+    optional Output:        string          // tool call output text (may be truncated for very large payloads)
+    optional Unit:          ModelUnit
+    optional HttpStatus:    int          // HTTP status code when the diagnostic relates to a failed network request (429, 502, ...)
+    optional RawData:       string
+}
+
+
+struct OracleReportDiagnosticReq {
+    Severity:        string
+    Source:          string
+    Message:         string
+    optional AgentId:       string
+    optional TurnId:        string
+    optional StepId:        string
+    optional CallableId:    string
+    optional TargetService: string
+    optional ToolUseId:     string
+    optional Input:         string
+    optional Output:        string
+    optional Unit:          ModelUnit
+    optional HttpStatus:    int
+    optional RawData:       string
+}
+
+
+// DiagnosticSummary mirrors Diagnostic field-for-field so the list endpoint
+// (used on page load / reconnect) does not silently drop toolcall metadata
+// (TargetService/Input/Output/ToolUseId) or the previously-dropped
+// Unit/HttpStatus/RawData fields.
+struct DiagnosticSummary {
+    Id:              string
+    Severity:        string
+    Source:          string
+    Message:         string
+    Timestamp:       string
+    optional AgentId:       string
+    optional TurnId:        string
+    optional StepId:        string
+    optional CallableId:    string
+    optional TargetService: string
+    optional ToolUseId:     string
+    optional Input:         string
+    optional Output:        string
+    optional Unit:          ModelUnit
+    optional HttpStatus:    int
+    optional RawData:       string
+}
+
+
+struct OracleListDiagnosticsReq {
+    optional Severity: string       // "error" | "warning" | "info"
+    optional Source:   string       // substring match
+    optional AgentId:  string
+    optional TurnId:   string
+    optional Since:    string       // ISO-8601 timestamp
+    optional Limit:    int          // default 50, max 200
+    optional Offset:   int
+}
+
+
+struct OracleListDiagnosticsResp {
+    Items: array<DiagnosticSummary>
+}
+
+
+struct OracleGetDiagnosticReq {
+    Id: string
+}
+
+
+// ── Service search ──
+
+struct OracleSearchServicesReq {
+    optional Query: string   // substring match against service name
+    optional Limit: int
+}
+
+
+struct OracleSearchServicesResp {
+    Items: array<ServiceInfo>
+}

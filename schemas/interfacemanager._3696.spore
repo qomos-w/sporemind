@@ -1,0 +1,207 @@
+// interfacemanager namespace — agent-driven UI control for the omnibox surfaces.
+// @ts-export
+//
+// Sources of truth for:
+//   - interfacemanager.control (single callable driving view/settings/project/agent)
+//
+// Topology:
+//   /interfacemanager            stateless actor owning the interface_manager_event stream
+//
+
+// GuideStep describes one step in an interactive guide overlay.
+// Placement controls where the guide element is anchored: top/bottom/left/right/auto.
+// ExpectedInteraction is an optional action gate: while unmet the overlay's
+// Next button stays disabled and the tour auto-advances when the interaction
+// is observed. Spec forms: "click:<guide-id>" | "text:<substring>" | "submit",
+// or a comma-separated union (any alternative satisfies the gate).
+// CapabilityKind is the semantic domain this step teaches (e.g.
+// permission/conversation/workflow/tools) used for guidance-profile reporting.
+// I18nTitleKey and I18nBodyKey are optional overrides: when set the frontend
+// renders the translated value via t() instead of the raw Title/Body string.
+// Used by backend-driven hint steps where the translation must vary by locale.
+struct GuideStep {
+    TargetGuideId: string
+    Title:        string
+    Body:         string
+    optional Placement: string
+    optional ExpectedInteraction: string
+    optional CapabilityKind: string
+    optional I18nTitleKey: string
+    optional I18nBodyKey: string
+}
+
+// TutorialSpec describes a dynamic tutorial the backend can register and
+// drive at runtime. Unlike static guides it carries literal Title/Body text
+// in its Steps (GuideStep.I18nTitleKey/I18nBodyKey stay empty — dynamic
+// tutorials never go through i18n keys). CreatedAt is the UTC timestamp of
+// registration.
+struct TutorialSpec {
+    TutorialId:  string
+    Title:       string
+    optional Description: string
+    Steps:       array<GuideStep>
+    CreatedAt:   string
+}
+
+// UiInteractionRecord captures one user interaction with the UI for analytics
+// and replay. Kind values: click/input/navigate/guide_error/guide_progress/
+// remote_ack. guide_progress is fed back by external tutorials to report
+// progress on a guide.
+struct UiInteractionRecord {
+    Id:      string
+    Ts:      string
+    Kind:    string
+    GuideId: string
+    optional Label:  string
+    optional View:  string
+    optional Detail: string
+}
+
+// InterfaceManagerControlReq drives the omnibox surfaces via a single callable.
+// Action selects the behaviour; the matching parameter must be set and is
+// validated by the handler (the .spore DSL has no enum keyword).
+struct InterfaceManagerControlReq {
+    // One of: "set_view" | "open_settings" | "switch_project" | "focus_agent" |
+    // "show_guide" | "hide_guide" | "interact" | "open_app_view" |
+    // "anchor_catalog" | "create_tutorial" | "delete_tutorial" |
+    // "tutorial_catalog".
+    // For action="tutorial_catalog": no other parameter is required; the
+    // response carries the registered dynamic tutorials in Resp.Tutorials,
+    // mirroring anchor_catalog's synchronous response pattern.
+    // For action="create_tutorial": registers (upserts) a dynamic tutorial
+    // from Title/Steps/Description; optional AutoPlay asks the frontend to
+    // start it immediately after registration.
+    // For action="delete_tutorial": TutorialId selects the tutorial to remove.
+    Action: string
+    // For action="set_view": one of "conversation" | "topology" | "files" |
+    // "problems" | "notes" | "ssh" | "multiconsole".
+    optional Mode: string
+    // For action="open_settings": one of "general" | "account" | "voice" |
+    // "model" | "agent" | "skills" | "prompts" | "frp" | "mcp" | "plugins" |
+    // "commands" | "index" | "developer".
+    optional Category: string
+    // For action="switch_project": target project id.
+    optional ProjectId: string
+    // For action="focus_agent": target agent id.
+    optional AgentId: string
+    // For action="show_guide": one or more guide steps to display.
+    // For action="create_tutorial": the tutorial steps (required); step text
+    // is literal Title/Body, GuideStep.I18nTitleKey/I18nBodyKey stay empty.
+    optional Steps: array<GuideStep>
+    // For action="interact": interaction kind (click/focus/input/scroll_into_view).
+    optional Interaction: string
+    // For action="interact" with Interaction="input": the text to inject.
+    optional Text: string
+    // For action="interact": target guide id.
+    optional GuideId: string
+    // For action="open_app_view": target app id (e.g. "app.authenticator").
+    optional AppId: string
+    // For action="open_app_view": target view entrypoint id. Empty opens the
+    // app's first view entrypoint.
+    optional ViewId: string
+    // For action="anchor_catalog": no other parameter is required; the
+    // response carries the full UI anchor catalog in Resp.Anchors, for the
+    // agent to orchestrate tutorials.
+    // For action="create_tutorial": optional slug; empty lets the backend
+    // generate one. Upsert semantics: re-registering an existing id overwrites
+    // Title/Description/Steps. Echoed back as Resp.TutorialId.
+    // For action="delete_tutorial": id of the tutorial to remove.
+    optional TutorialId: string
+    // For action="create_tutorial": display title of the tutorial (required).
+    optional Title: string
+    // For action="create_tutorial": longer description of the tutorial.
+    optional Description: string
+    // For action="create_tutorial": when true the frontend starts the tutorial
+    // immediately after registration, without a confirmation step.
+    optional AutoPlay: bool
+}
+
+
+struct InterfaceManagerControlResp {
+    Accepted:      bool
+    optional Error: string
+    // For action="anchor_catalog": full catalog of UI anchors the agent can
+    // target when composing guide steps.
+    optional Anchors: array<GuideAnchor>
+    // For action="tutorial_catalog": all registered dynamic tutorials,
+    // mirroring anchor_catalog's synchronous response pattern.
+    optional Tutorials: array<TutorialSpec>
+    // For action="create_tutorial": the id of the registered (or upserted)
+    // tutorial; empty when the action does not register one.
+    optional TutorialId: string
+}
+
+
+// InterfaceManagerEvent is emitted on every successful control invocation.
+// The frontend subscribes via onInterfaceManagerEvent and dispatches by Action
+// to the matching omnibox handler.
+struct InterfaceManagerEvent {
+    Action:   string
+    optional Mode:        string
+    optional Category:    string
+    optional ProjectId:   string
+    optional AgentId:     string
+    optional Steps:       array<GuideStep>
+    optional Interaction: string
+    optional Text:        string
+    optional GuideId:     string
+    optional AppId:       string
+    optional ViewId:      string
+    // For action="create_tutorial": the full registered tutorial spec
+    // (literal Title/Body steps, no i18n keys).
+    optional Tutorial:    TutorialSpec
+    // For action="create_tutorial": start immediately after registration,
+    // without confirmation.
+    optional AutoPlay:    bool
+    // For action="create_tutorial": id of the registered tutorial.
+    // For action="delete_tutorial": id of the removed tutorial.
+    optional TutorialId:  string
+}
+
+// ReportInteractionReq records a user interaction with the UI.
+// Kind values: click/input/navigate/guide_error/guide_progress/remote_ack;
+// guide_progress is fed back by external tutorials to report progress on a
+// guide.
+struct ReportInteractionReq {
+    Kind:   string
+    GuideId: string
+    optional Label:  string
+    optional View:  string
+    optional Detail: string
+}
+
+// ReportInteractionResp acknowledges a reported interaction.
+struct ReportInteractionResp {
+    Accepted: bool
+}
+
+// QueryInteractionsReq filters the interaction history.
+struct QueryInteractionsReq {
+    optional Since:   string
+    optional GuideId: string
+    optional Kind:    string
+    optional Limit:   int32
+}
+
+// QueryInteractionsResp returns matching interaction records in reverse
+// chronological order.
+struct QueryInteractionsResp {
+    Items: array<UiInteractionRecord>
+}
+
+// GuideAnchor describes one addressable UI anchor the agent can target when
+// composing guide steps. GuideId is the stable anchor id the frontend
+// resolves (matches GuideStep.TargetGuideId). Area locates the anchor within
+// the shell: topbar/sidebar/composer/settings/mode/canvas. Summary is a
+// one-line human-readable description of what the anchor is. VisibleWhen,
+// when set, explains the condition under which the anchor is visible (e.g.
+// "only when a project is open"). SuggestedGates, when set, suggests an
+// ExpectedInteraction spec (click:<guide-id> | text:<substring> | submit
+// forms) suitable for gating a tutorial step on this anchor.
+struct GuideAnchor {
+    GuideId:         string
+    Area:            string
+    Summary:         string
+    optional VisibleWhen:    string
+    optional SuggestedGates: string
+}

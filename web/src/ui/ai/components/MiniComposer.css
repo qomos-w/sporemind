@@ -1,0 +1,208 @@
+.mini-composer {
+  position: fixed;
+  z-index: 10000;
+  width: 360px;
+  max-width: calc(100vw - 16px);
+  max-height: calc(100vh - 16px);
+  background: var(--bg-elevated, #1e1e22);
+  border: 1px solid var(--border-color, #33333a);
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  font-size: 13px;
+  color: var(--text-primary, #e4e4e7);
+}
+
+.mini-composer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px 6px;
+  flex-shrink: 0;
+}
+
+.mini-composer-title {
+  font-weight: 600;
+  font-size: 12px;
+  opacity: 0.85;
+  letter-spacing: 0.02em;
+}
+
+.mini-composer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #a1a1aa);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.mini-composer-close:hover {
+  background: var(--bg-hover, #2a2a30);
+  color: var(--text-primary, #e4e4e7);
+}
+
+.mini-composer-thread {
+  margin: 0 10px 6px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: var(--bg-subtle, #18181c);
+  border: 1px solid var(--border-color, #2a2a30);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 42vh;
+  overflow-y: auto;
+  min-height: 28px;
+}
+
+.mini-composer-empty {
+  color: var(--text-tertiary, #6b6b73);
+  font-size: 12px;
+  line-height: 1.5;
+  padding: 2px 0;
+}
+
+.mini-composer-msg {
+  display: flex;
+  flex-direction: column;
+}
+.mini-composer-msg-user {
+  align-items: flex-end;
+}
+
+.mini-composer-bubble {
+  max-width: 100%;
+  border-radius: 8px;
+  padding: 5px 9px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  word-break: break-word;
+}
+.mini-composer-bubble-user {
+  background: var(--accent, #6ea8fe);
+  color: #fff;
+}
+.mini-composer-bubble-assistant {
+  background: var(--bg-elevated, #1e1e22);
+  border: 1px solid var(--border-color, #2a2a30);
+  color: var(--text-primary, #e4e4e7);
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+/* Inline markdown rendering inside the assistant bubble. */
+.mini-composer-bubble-assistant .ai-step-text {
+  font-size: 12.5px;
+  line-height: 1.5;
+}
+.mini-composer-bubble-assistant .ai-step-text p:first-child {
+  margin-top: 0;
+}
+.mini-composer-bubble-assistant .ai-step-text p:last-child {
+  margin-bottom: 0;
+}
+.mini-composer-bubble-assistant pre {
+  margin: 6px 0;
+  font-size: 11.5px;
+}
+
+.mini-composer-stream-spinner {
+  animation: mini-composer-spin 0.9s linear infinite;
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--accent, #6ea8fe);
+}
+
+.mini-composer-textarea {
+  margin: 0 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color, #33333a);
+  border-radius: 8px;
+  background: var(--bg-input, #141418);
+  color: var(--text-primary, #e4e4e7);
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.45;
+  resize: none;
+  outline: none;
+  min-height: 44px;
+  max-height: 160px;
+  flex-shrink: 0;
+}
+.mini-composer-textarea:focus {
+  border-color: var(--accent, #6ea8fe);
+}
+
+.mini-composer-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px 10px;
+  flex-shrink: 0;
+}
+
+.mini-composer-action,
+.mini-composer-send,
+.mini-composer-stop {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mini-composer-action {
+  background: var(--bg-subtle, #18181c);
+  color: var(--text-secondary, #a1a1aa);
+  border: 1px solid var(--border-color, #2a2a30);
+}
+.mini-composer-action:hover {
+  color: var(--text-primary, #e4e4e7);
+}
+.mini-composer-action[data-active="true"] {
+  color: var(--accent, #6ea8fe);
+  border-color: var(--accent, #6ea8fe);
+}
+
+.mini-composer-send {
+  margin-left: auto;
+  background: var(--bg-subtle, #18181c);
+  color: var(--text-tertiary, #6b6b73);
+  border: 1px solid var(--border-color, #2a2a30);
+}
+.mini-composer-send[data-active="true"] {
+  background: var(--accent, #6ea8fe);
+  color: #fff;
+  border-color: var(--accent, #6ea8fe);
+}
+.mini-composer-send[data-active="true"]:hover {
+  filter: brightness(1.08);
+}
+.mini-composer-send:disabled {
+  cursor: default;
+}
+
+.mini-composer-stop {
+  margin-left: auto;
+  background: var(--danger, #ef4444);
+  color: #fff;
+}
+.mini-composer-stop:hover {
+  filter: brightness(1.08);
+}
+
+@keyframes mini-composer-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

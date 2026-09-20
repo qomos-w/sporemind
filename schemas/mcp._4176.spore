@@ -1,0 +1,205 @@
+// mcp namespace — MCP server manager + instance wire shapes.
+// @ts-export
+//
+// Sources of truth for:
+//   - mcp.list_servers / add_server / update_server / remove_server
+//   - mcp.connect / disconnect / call_tool
+//   - mcp.discover_tools (agent tool injection: connected servers + tool list)
+//   - mcpinstance.tools (per-child cached tool list, Internal)
+//   - mcp.server_status event
+//   - persisted McpServerConfig (one per child)
+//
+// Topology:
+//   /mcpmanager                holds []McpServerConfig
+//   /mcpmanager/srv-N          one MCP client session per child
+//
+// Transport: "stdio" | "http" (Streamable HTTP). Legacy SSE is out of scope.
+//
+// Secret masking contract:
+//   - McpServerConfig (with full Stdio.Env / Http.Headers values) is WRITE-ONLY:
+//     it appears in add/update requests and in persisted state, never in any
+//     callable response.
+//   - All responses use the safe views McpServerView / McpStdioTransportView /
+//     McpHttpTransportView, which expose only env/header KEY NAMES plus a
+//     Configured flag — never values.
+//   - mcp.* callables must not be exposed to the anonymous role. Two
+//     agent-facing callables (mcp.discover_tools, mcp.call_tool) additionally
+//     accept internal callers — the agent turn engine routing
+//     mcp.<server>.<tool> tool calls arrives with the manager's own "system"
+//     role (service-ref default caller role) or zero identity on raw internal
+//     invokes; the CRUD/lifecycle callables remain strictly human-only.
+
+struct McpStdioTransport {
+    Command: string
+    Args:    array<string>
+    Env:     map<string, string>
+}
+
+
+struct McpHttpTransport {
+    Url:     string
+    Headers: map<string, string>
+    optional Proxy: string
+}
+
+
+struct McpServerConfig {
+    Id:        string
+    Name:      string
+    Transport: string            // "stdio" | "http"
+    optional Stdio:  McpStdioTransport
+    optional Http:   McpHttpTransport
+    Enabled:   bool
+}
+
+
+struct McpServerStatus {
+    Id:        string
+    Connected: bool
+    ToolCount: int
+    optional Error: string
+}
+
+
+struct McpEnvVarEntry {
+    Key:        string
+    Configured: bool
+}
+
+
+struct McpStdioTransportView {
+    Command: string
+    Args:    array<string>
+    Env:     array<McpEnvVarEntry>   // key names only; values never exposed
+}
+
+
+struct McpHttpTransportView {
+    Url:     string
+    Headers: array<McpEnvVarEntry>   // key names only; values never exposed
+    optional Proxy: string
+}
+
+
+struct McpServerView {
+    Id:        string
+    Name:      string
+    Transport: string
+    optional Stdio:  McpStdioTransportView
+    optional Http:   McpHttpTransportView
+    Enabled:   bool
+    Status:    McpServerStatus
+}
+
+
+struct McpListServersReq {
+}
+
+
+struct McpListServersResp {
+    Items: array<McpServerView>
+}
+
+
+struct McpAddServerReq {
+    Config: McpServerConfig
+}
+
+
+struct McpAddServerResp {
+    Server: McpServerView
+}
+
+
+struct McpUpdateServerReq {
+    Id:     string
+    Config: McpServerConfig
+}
+
+
+struct McpUpdateServerResp {
+    Server: McpServerView
+}
+
+
+struct McpRemoveServerReq {
+    Id: string
+}
+
+
+struct McpRemoveServerResp {
+}
+
+
+struct McpConnectReq {
+    Id: string
+}
+
+
+struct McpConnectResp {
+    Status: McpServerStatus
+}
+
+
+struct McpDisconnectReq {
+    Id: string
+}
+
+
+struct McpDisconnectResp {
+    Status: McpServerStatus
+}
+
+
+struct McpToolContent {
+    Type: string   // "text" | "image" | "resource" | "other" | "unknown"
+    Text: string
+
+    // Image content blocks carry the base64-encoded payload here so the
+    // turn engine can pass it to the LLM (audio/resource blocks degrade to a
+    // diagnostic Text placeholder instead).
+    optional Data: string     // base64-encoded binary payload
+    optional MimeType: string // MIME type of Data (e.g. "image/png")
+}
+
+
+struct McpCallToolReq {
+    Id:        string
+    Tool:      string
+    Arguments: map<string, any>
+}
+
+
+struct McpCallToolResp {
+    Content:   array<McpToolContent>
+    optional IsError: bool
+    optional Error: string
+}
+
+
+struct McpServerStatusEvent {
+    Status: McpServerStatus
+}
+
+
+struct McpToolView {
+    Name:        string
+    Description: string
+    InputSchema: string   // 原始 JSON Schema 序列化字符串（inputSchema 透传）
+}
+
+
+struct McpServerTools {
+    Id:    string
+    Name:  string
+    Tools: array<McpToolView>
+}
+
+
+struct McpDiscoverToolsReq {
+}
+
+
+struct McpDiscoverToolsResp {
+    Servers: array<McpServerTools>
+}

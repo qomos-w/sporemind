@@ -1,0 +1,50 @@
+// cookiebridge namespace — Chrome cookie bridge (extension push + MCP server).
+// @ts-export
+//
+// Sources of truth for:
+//   - cookiebridge.pairing_info / cookiebridge.regen_token
+//
+// Topology:
+//   /cookiebridge    single actor hosting a loopback HTTP listener:
+//                    /mcp (Streamable HTTP MCP endpoint), /pending, /push
+//
+// Security:
+//   - Every endpoint is 127.0.0.1-only and bearer-token gated (constant-time
+//     compare). PairingToken is a local secret; it is returned by
+//     pairing_info (AdminOnly, for pasting into the Chrome extension and the
+//     MCP server config header) and never appears in any other response.
+//   - Cookie VALUES never cross this schema: import results carry counts and
+//     domain names only, so credentials cannot leak into LLM context or logs.
+//
+// Schema IDs (6256-6259) are placed after toast._6208 to avoid collisions.
+
+// CookieBridgePairingInfoReq is empty; pairing info is actor state.
+struct CookieBridgePairingInfoReq {
+}
+
+// CookieBridgePairingInfoResp exposes the loopback endpoints and pairing
+// token so an admin can pair the Chrome extension and configure the MCP
+// server row.
+struct CookieBridgePairingInfoResp {
+    // Streamable HTTP MCP endpoint, e.g. "http://127.0.0.1:47613/mcp".
+    McpUrl: string
+    // Extension push endpoint for confirmed cookie payloads.
+    PushUrl: string
+    // Extension poll endpoint listing pending import requests.
+    PendingUrl: string
+    // Bearer token shared by /mcp and /push (constant-time checked).
+    PairingToken: string
+    // Listening port (informational; included in the URLs).
+    Port: long
+}
+
+// CookieBridgeRegenTokenReq is empty; regeneration needs no parameters.
+struct CookieBridgeRegenTokenReq {
+}
+
+// CookieBridgeRegenTokenResp carries the freshly minted pairing token.
+// Regenerating invalidates the previous token immediately.
+struct CookieBridgeRegenTokenResp {
+    // New bearer token; the old one stops working right away.
+    PairingToken: string
+}

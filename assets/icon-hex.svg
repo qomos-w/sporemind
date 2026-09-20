@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" rx="180" fill="#eeeeee"/>
+  <rect x="14" y="14" width="996" height="996" rx="168" fill="none" stroke="#d5d5d5" stroke-width="4"/>
+
+  <defs>
+    <path id="hex" d="M -115 0 L -57.5 -99.59 L 57.5 -99.59 L 115 0 L 57.5 99.59 L -57.5 99.59 Z"/>
+  </defs>
+
+  <g fill="none" stroke="#7b8194" stroke-width="8" stroke-linecap="round" opacity="0.62">
+    <path d="M 512 221 A 291 291 0 0 1 512 512 A 291 291 0 0 0 512 803"/>
+    <path d="M 512 221 A 291 291 0 0 1 512 512 A 291 291 0 0 0 512 803" transform="rotate(120 512 512)"/>
+    <path d="M 512 221 A 291 291 0 0 1 512 512 A 291 291 0 0 0 512 803" transform="rotate(240 512 512)"/>
+  </g>
+
+  <g>
+    <use href="#hex" transform="translate(512 221)" fill="#f15b5b"/>
+    <use href="#hex" transform="translate(763.8 366.5)" fill="#f2a33a"/>
+    <use href="#hex" transform="translate(763.8 657.5)" fill="#62c174"/>
+    <use href="#hex" transform="translate(512 803)" fill="#42b8c4"/>
+    <use href="#hex" transform="translate(260.2 657.5)" fill="#6684d8"/>
+    <use href="#hex" transform="translate(260.2 366.5)" fill="#a56dcc"/>
+  </g>
+</svg>

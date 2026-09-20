@@ -1,0 +1,25 @@
+// appmanager dev generate — codegen callable entry point.
+// Reads .appdef from a project and produces five artifacts plus go.mod.
+// @ts-export
+
+struct AppManagerDevGenerateReq {
+    optional ProjectId: string   // project ID; if empty, uses the caller's bound project
+    optional CallerAgentId: string  // injected by turn engine: calling agent's actor ID; used to route worktree-bound callers to their bound worktree
+    optional AppDir: string      // subdirectory holding the app, relative to the project root; "." or empty = project root; rejects "..", absolute paths and backslashes
+    optional Template: bool      // explicitly request the default template scaffold when the target directory has no .appdef; without this flag dev_generate fails instead of writing anything
+}
+
+struct AppManagerDevGenerateFileEntry {
+    Path: string                 // relative file path (e.g. "main.gen.go")
+    ContentHash: string          // SHA-256 hex of the generated content
+}
+
+struct AppManagerDevGenerateResp {
+    Files: array<AppManagerDevGenerateFileEntry>
+    AppDefHash: string           // SHA-256 hex of the .appdef content that was processed
+    SDKPath: string              // resolved SDK directory path
+    FreshSDK: bool               // true if SDK was freshly released from embed
+    Template: bool               // true if default template was generated (no .appdef files)
+    optional Warnings: array<string>  // advisory diagnostics that do not block generation, e.g. orphan handlers in handlers.go whose callable is no longer declared in .appdef (they break the build and must be removed)
+    optional Error: string       // non-empty on parse/validation failure
+}

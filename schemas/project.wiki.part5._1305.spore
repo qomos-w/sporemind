@@ -1,0 +1,65 @@
+// project.wiki namespace — template run history and query (part5, IDs 3430+).
+// @ts-export
+//
+// Sources of truth for:
+//   - project.wiki.list_template_runs
+
+// Each time a template is instantiated — whether by a scheduler fire
+// (executeWorkflowTimerCard), a one-step workspace.workflow_start with
+// TemplateMapId, or a direct project.wiki.template_instantiate call — a
+// TemplateRunRecord is appended to the template's run log. The scheduler card
+// also stamps a data.run_count integer counting its own fires. The run log is
+// persisted in the project actor's meta directory (template-runs.json) and
+// surfaced through project.wiki.list_template_runs.
+
+struct WikiListTemplateRunsReq {
+    TemplateMapId: string
+    optional Limit:       int  // max runs to return, newest first; default 10, 0 = all
+}
+
+
+struct WikiListTemplateRunsResp {
+    Runs: array<TemplateRunRecord>  // most-recent-first, capped at Limit
+}
+
+
+struct TemplateRunRecord {
+    InstanceMapId:     string       // instance map card created from this template run
+    StartedAt:         string       // UTC RFC3339 of the instantiation
+    optional SchedulerCardId: string  // scheduler card that fired the run (empty for manual)
+    optional Source:   string         // "scheduler" | "workspace" | "manual"
+}
+
+struct WikiGetCardsBatchReq {
+    Ids:    array<string>  // card ids to fetch; empty ids are skipped
+}
+
+struct WikiCardRaw {
+    Id:     string          // requested card id
+    Raw:    string          // raw card markdown; empty when Found is false
+    Found:  bool            // false when the card does not exist
+}
+
+struct WikiGetCardsBatchResp {
+    Cards:  array<WikiCardRaw>  // one entry per requested id, in request order
+}
+
+// ---- knowledge-base starred cards (project-owned UI state, .ropen) ----
+//
+// Starred is a per-project, UI-only reference list. Starring a card never
+// rewrites the card body/frontmatter; the list lives in the project actor's
+// uiStateCard persist record (".ropen") alongside OpenCards. Backs
+// project.wiki_get_starred and project.wiki_set_starred, and is aggregated
+// across projects by workspace.wiki_list_starred.
+
+struct WikiSetStarredReq {
+    Id:      string  // card id to star / un-star
+    Starred: bool    // true = add to the list, false = remove
+}
+
+struct WikiGetStarredReq {
+}
+
+struct WikiStarredResp {
+    Starred: array<string>  // card ids, most-recently-starred first
+}

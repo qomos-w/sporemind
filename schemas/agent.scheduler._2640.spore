@@ -1,0 +1,39 @@
+// agent.scheduler namespace — scheduler binding lifecycle protocol types.
+// @ts-export
+//
+// Sources of truth for:
+//   - agent.scheduler_bind  (registered on the agent actor as the flat
+//     callable scheduler_bind)
+//   - agent.scheduler_unbind (registered on the agent actor as the flat
+//     callable scheduler_unbind)
+//
+// Design: the project execution engine maintains the scheduler binding on the
+// target agent. A bound scheduler card mounts builtin:mode:scheduler on the
+// agent and records the binding in RawSession.ActiveScheduler
+// ([]ActiveSchedulerEntry). scheduler_bind upserts one entry (and ensures the
+// mode is mounted); scheduler_unbind removes one entry and unmounts the mode
+// when the list becomes empty. These mirror the goal/workflow session-state
+// write pattern (workflow_start writes RawSession.ActiveWorkflow) but through
+// an agent-owned lifecycle callable so the project side only ever drives the
+// agent via its public callable surface.
+
+// AgentSchedulerBindReq records one bound-mode scheduler card on the agent.
+struct AgentSchedulerBindReq {
+    SchedulerCardID: string
+    optional SchedulerName: string
+}
+
+// AgentSchedulerBindResp reports the resulting ActiveScheduler entry count.
+struct AgentSchedulerBindResp {
+    ActiveScheduler: array<ActiveSchedulerEntry>
+}
+
+// AgentSchedulerUnbindReq removes one scheduler card from the agent's binding.
+struct AgentSchedulerUnbindReq {
+    SchedulerCardID: string
+}
+
+// AgentSchedulerUnbindResp reports the remaining ActiveScheduler entries.
+struct AgentSchedulerUnbindResp {
+    ActiveScheduler: array<ActiveSchedulerEntry>
+}

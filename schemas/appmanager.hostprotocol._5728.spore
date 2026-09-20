@@ -1,0 +1,35 @@
+// appmanager host protocol — query the plugin-reachable host capability
+// surface: which host capabilities exist, which SDK host callIDs they gate,
+// and the request/response Go type names + schema IDs behind each callID.
+// Read-only discovery for the plugin dev flow (query → declare via
+// appdef `permissions:` → dev_generate auto-extracts hostproto.gen.go).
+// @ts-export
+
+struct AppManagerHostProtocolReq {
+    optional Query: string       // substring filter across capability IDs, titles and callIDs; empty = all
+    optional Capability: string  // exact capability filter (e.g. "llm.invoke"); empty = all
+}
+
+struct AppManagerHostCallInfo {
+    CallId: string               // SDK-facing host callID a plugin passes to Host.Invoke
+    TargetCallId: string         // actual callID of the backing registered callable (alias target)
+    optional Service: string     // service name of the backing callable
+    Streaming: bool              // true when the backing callable streams chunks
+    optional RequestType: string // canonical Go struct name of the request payload, empty when opaque
+    RequestSchemaId: uint64      // schema ID of the request payload (0 when opaque)
+    optional ResponseType: string // canonical Go struct name of the response payload, empty when opaque
+    ResponseSchemaId: uint64     // schema ID of the response payload (0 when opaque)
+    optional Note: string        // extra semantics (e.g. "payload handled locally by the SDK client; no wire protocol to extract")
+}
+
+struct AppManagerHostCapabilityInfo {
+    Capability: string           // host capability identifier (e.g. "llm.invoke")
+    optional Title: string       // human-readable title (default locale)
+    optional Description: string // human-readable description (default locale)
+    optional RiskLevel: string   // "low" | "medium" | "high"
+    Calls: array<AppManagerHostCallInfo> // host callIDs gated by this capability
+}
+
+struct AppManagerHostProtocolResp {
+    Capabilities: array<AppManagerHostCapabilityInfo> // capabilities matching the filter, ordered by capability ID
+}

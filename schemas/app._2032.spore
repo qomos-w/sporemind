@@ -1,0 +1,285 @@
+// app namespace — shared SporeApp and NativePlugin App Contract.
+// @ts-export
+//
+// Runtime values use "spore" for SporeApp and "native" for NativePlugin.
+// Manifest metadata is JSON; callable/event payloads use the generated schema
+// and BinaryCodec contract.
+
+struct AppSchemaRef {
+    Name: string
+    Hash: string
+    optional SchemaId: long
+}
+
+struct AppTypeDescriptor {
+    Kind: string
+    optional Name: string
+    optional TypeId: long
+    optional Element: AppTypeDescriptor
+    optional Key: AppTypeDescriptor
+    optional Value: AppTypeDescriptor
+    optional ClassName: string
+    optional ClassId: long
+}
+
+struct AppFieldDescriptor {
+    Name: string
+    Type: AppTypeDescriptor
+    optional Description: string
+    optional Private: bool
+    optional Optional: bool
+}
+
+struct AppObjectDescriptor {
+    Kind: string
+    Name: string
+    Fields: array<AppFieldDescriptor>
+    optional SchemaId: long
+}
+
+struct AppCallableDescriptor {
+    Id: string
+    // Human-readable description sourced from the contiguous `//` doc-comment
+    // above the callable block in .appdef; shown in the PluginToolbar
+    // capability panel. Empty when no doc-comment exists.
+    optional Description: string
+    RequestSchema: string
+    ResponseSchema: string
+    optional Encoding: string
+    optional Permission: string
+    optional Scope: string
+    optional TimeoutMs: long
+    optional Streaming: bool
+    optional Effect: string
+    optional Service: string
+    optional ToolName: string
+    // Expose controls which consumer surfaces may call this callable:
+    // "frontend" (panel only), "agent" (LLM tool only), or "both" (default
+    // when omitted). The host enforces this at the routing boundary.
+    optional Expose: string
+    // Watch lists declared event IDs whose emission invalidates cached
+    // results of this callable (cache-invalidation hint). Each entry must
+    // reference an event declared in the same .appdef.
+    optional Watch: array<string>
+}
+
+struct AppEventDescriptor {
+    Id: string
+    PayloadSchema: string
+    optional Encoding: string
+    optional Permission: string
+}
+
+struct AppProjectionDescriptor {
+    Id: string
+    PayloadSchema: string
+    optional Permission: string
+}
+
+struct AppEntrypoint {
+    Kind: string
+    Id: string
+    Title: string
+    optional Route: string
+    optional Zone: string
+}
+
+struct AppDependency {
+    Id: string
+    Version: string
+    optional Hash: string
+}
+
+struct AgentCapabilityBinding {
+    Callables: array<string>
+    optional ProjectScope: string
+}
+
+struct AgentSurfaceBinding {
+    Entrypoint: string
+    optional AgentId: string
+    Projections: array<string>
+    Events: array<string>
+}
+
+struct FreeAgentBinding {
+    AllowCreate: bool
+    AllowSwitch: bool
+    AllowMessage: bool
+    optional AgentKinds: array<string>
+}
+
+// PluginAgentBinding requests a dedicated workspace-global agent provisioned
+// by the host at registration time (appdef plugin_agent block). The agent is
+// created in the same workspace registry as the Coordinator, auto-mounts the
+// app's own bundles, and is removed with the app registration. An app may
+// declare multiple plugin_agent blocks; Name is the binding slot ("default"
+// for the unnamed block) and the workspace keys one agent per (app, slot).
+struct PluginAgentBinding {
+    // Binding slot: [a-z][a-z0-9-]*; the unnamed appdef block maps to
+    // "default". Unique within one manifest.
+    Name: string
+    // Agent display name; empty falls back to the app Name.
+    optional DisplayName: string
+    // Per-app role override appended after the builtin plugin-agent profile
+    // prompt. Capped at 8192 bytes per block at appdef validation time.
+    optional SystemPrompt: string
+    // Extra builtin bundle card IDs (e.g. "builtin:bundle:web-search")
+    // mounted on the agent in addition to the app's own app-bundle cards.
+    optional Bundles: array<string>
+    // Optional "Provider|Model" unit string that pins the slot agent's
+    // primary model slot at registration time. Empty (default) leaves the
+    // host default in place; the appdef validator only checks the encoding
+    // shape, not provider/model existence. See pkg/appdef validate.go.
+    optional Model: string
+}
+
+struct AppAgentBinding {
+    optional Capability: AgentCapabilityBinding
+    optional Surface: AgentSurfaceBinding
+    optional FreeAgent: FreeAgentBinding
+    // One entry per plugin_agent block declared in the appdef, in
+    // declaration order; slot names are unique within the manifest.
+    optional PluginAgents: array<PluginAgentBinding>
+}
+
+// AppSecurityPolicy declares the runtime security envelope for a SporeApp.
+// Zero-value limits leave the corresponding budget dimension disabled.
+// AllowNativeAccess defaults to false (deny). AllowCapabilities is the
+// allowlist of host capabilities the app may request; empty means none.
+struct AppSecurityPolicy {
+    optional AllowNativeAccess: bool
+    optional AllowCapabilities: array<string>
+    optional MaxInstructions: long
+    optional MaxDurationMs: long
+    optional MaxHostCalls: long
+    optional MaxOutputBytes: long
+}
+
+// AppBundleTool declares a single tool entry within a bundle, carrying the
+// full runtime declaration set (effect/service/toolName/stream) aligned with
+// [[Tool动态发现]] security prerequisite #1 "声明完整性".
+struct AppBundleTool {
+    // CallableId references an AppCallableDescriptor.Id declared in the
+    // same manifest; the bundle re-exports the callable's declaration.
+    CallableId: string
+    optional Effect: string
+    optional Service: string
+    optional ToolName: string
+    optional Stream: bool
+}
+
+// AppBundle is a named grouping of tools that an app exposes as a discoverable
+// protocol asset. The directory service aggregates bundles from all providers
+// and agents discover them via catalog callables (bundle.search / bundle.list).
+struct AppBundle {
+    Title: string
+    optional Description: string
+    // Icon names the host icon-library glyph stamped on the published bundle
+    // card (data.icon / data.visual.icon). Empty falls back to "package".
+    // Valid names come from appmanager.icon_names.
+    optional Icon: string
+    // Color is an optional hex color (e.g. "#9333ea") for the published bundle
+    // card's visual accent; empty means the consumer derives a stable color by
+    // hashing the bundle name.
+    optional Color: string
+    optional GuideCardId: string
+    Tools: array<AppBundleTool>
+}
+
+struct AppManifest {
+    Id: string
+    Name: string
+    Version: string
+    Runtime: string
+    ProtocolVersion: int
+    // SdkVersion is the plugin SDK semver the app was generated/built with
+    // (sdk.Version of the vendored SDK). The plugin store filters entries by
+    // major equality + minor.patch <= the host's SDK version; empty on apps
+    // predating the field (treated as unknown, not incompatible).
+    optional SdkVersion: string
+    Namespace: string
+    Permissions: array<string>
+    // Host event kinds the app subscribes to (appdef `listen <kind> {}`);
+    // the pluginhost subscribes the gospore event bus and forwards matching
+    // kinds into the plugin's registered OnEvent handlers.
+    optional Listens: array<string>
+    Schemas: array<AppSchemaRef>
+    Callables: array<AppCallableDescriptor>
+    Events: array<AppEventDescriptor>
+    Projections: array<AppProjectionDescriptor>
+    Entrypoints: array<AppEntrypoint>
+    Dependencies: array<AppDependency>
+    optional Bundles: array<AppBundle>
+    optional AgentBinding: AppAgentBinding
+    optional Security: AppSecurityPolicy
+}
+
+struct AppAbiDescriptor {
+    Name: string
+    Version: int
+    Encoding: string
+}
+
+struct AppProtocolDescriptor {
+    Namespace: string
+    ProtocolVersion: int
+    SchemaHash: string
+    Abi: AppAbiDescriptor
+    Schemas: array<AppSchemaRef>
+    Callables: array<AppCallableDescriptor>
+    Events: array<AppEventDescriptor>
+    Projections: array<AppProjectionDescriptor>
+}
+
+struct AppStatus {
+    Id: string
+    // Name is the manifest display name; the sidebar uses it to label the
+    // virtual per-app directory that groups the app's dedicated plugin agents.
+    optional Name: string
+    Runtime: string
+    State: string
+    optional Version: string
+    optional Namespace: string
+    optional PackageHash: string
+    optional ArtifactHash: string
+    // Generation is the app session-generation counter: 1 on register,
+    // incremented on every reload. The frontend keys plugin iframes and
+    // cache-busting URL params on it so a reload forces a fresh fetch.
+    optional Generation: int64
+    optional Error: string
+    optional SchemaDescriptors: map<string, AppObjectDescriptor>
+    optional Callables: array<AppCallableDescriptor>
+    optional Events: array<AppEventDescriptor>
+    optional Bundles: array<AppBundle>
+    Entrypoints: array<AppEntrypoint>
+    optional Permissions: array<string>
+    optional GrantedCapabilities: array<string>
+    // Dependencies mirrors the manifest's declared dependency list.
+    // Dependents is the reverse edge — registered apps whose manifests
+    // depend on this one — computed by appmanager at query time for the
+    // dependency-graph view (plugin_load ordering, reload impact analysis).
+    optional Dependencies: array<AppDependency>
+    optional Dependents: array<string>
+    // BackendPort / BackendUrl describe the native plugin's direct HTTP
+    // listener (subprocess transport, SDK HTTP server): the port the child
+    // process bound at OnLoad and the origin the plugin iframe loads from.
+    // Empty/zero when the app runs no listener (spore runtime, in-process
+    // transport, stopped state).
+    optional BackendPort: int
+    optional BackendUrl: string
+}
+
+struct AppLifecycleEvent {
+    Kind: string
+    Id: string
+    Runtime: string
+    State: string
+    optional Version: string
+    optional Generation: int64
+    optional Error: string
+}
+
+struct AppStatusProjection {
+    Items: array<AppStatus>
+}

@@ -1,0 +1,60 @@
+/* ── Auto-update button (topbar) ── */
+.ai-shell-update-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--accent-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  flex-shrink: 0;
+  white-space: nowrap;
+  --wails-draggable: no-drag;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-shell-update-btn:hover {
+  background: var(--bg-hover);
+}
+
+.ai-shell-update-btn.available {
+  background: var(--accent-primary-dim);
+}
+
+.ai-shell-update-btn.ready {
+  background: var(--accent-primary);
+  color: var(--accent-on-primary, #fff);
+}
+
+.ai-shell-update-btn.ready:hover {
+  background: var(--accent-primary);
+  filter: brightness(1.1);
+}
+
+.ai-shell-update-btn.downloading {
+  color: var(--text-secondary);
+  cursor: default;
+}
+
+.ai-shell-update-btn.error {
+  color: var(--danger, #d64545);
+}
+
+.ai-shell-update-btn-label {
+  white-space: nowrap;
+}
+
+.ai-shell-update-spin {
+  animation: ai-shell-update-spin 1s linear infinite;
+}
+
+@keyframes ai-shell-update-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

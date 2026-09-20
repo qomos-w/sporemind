@@ -1,0 +1,398 @@
+// computeruse namespace — sandboxed mouse/keyboard/screen operations.
+//
+// Sources of truth for:
+//   - computeruse.screenshot         (Public, read-only)
+//   - computeruse.stream             (NOT Public — continuous capture)
+//   - computeruse.interact           (NOT Public — full mouse/keyboard control)
+//   - computeruse.clipboard_get      (NOT Public — may leak user secrets)
+//   - computeruse.clipboard_set      (NOT Public — writes user clipboard)
+//   - computeruse.list_displays      (Public, read-only)
+//   - computeruse.list_windows       (Public, read-only, filtered)
+//   - computeruse.list_processes     (Public, read-only)
+//   - computeruse.get_window_info    (Public, read-only)
+//   - computeruse.cursor_position    (Public, read-only)
+//
+
+// LLM tool input schemas (computer_screenshot / computer_interact).
+//
+// Coordinate system: all (x, y) values in this namespace are *physical
+// pixels* in the virtual desktop. On Windows the sporemind-desktop process
+// declares PerMonitorV2 DPI awareness in its manifest, so GDI / SendInput
+// see physical pixels regardless of system / per-monitor scale. Headless
+// builds inherit whatever the launching process declared.
+
+// Region is a sub-rectangle, in screen-pixel coordinates by default;
+// when nested under WindowTarget with mode="window_region", the rect
+// is interpreted in window-local coordinates (window top-left = 0,0).
+
+struct ComputerUseRegion {
+    X:      int
+    Y:      int
+    Width:  int
+    Height: int
+}
+
+
+// WindowTarget selects what to capture. Used by screenshot.mode and
+// stream. Four modes:
+//
+//   - "display" (default): full display chosen by display index
+//   - "region":            absolute screen rectangle in region
+//   - "window":            entire window, follows the window if it moves
+//   - "window_region":     sub-rect of a window in window-local coords
+//
+// Window identification: prefer windowID (HWND/handle, exact); fall
+// back to windowTitle (substring, case-insensitive, first match).
+struct ComputerUseWindowTarget {
+    optional Mode:        string
+    optional Display:     int
+    optional Region:      ComputerUseRegion
+    optional WindowID:    int
+    optional WindowTitle: string
+}
+
+
+// TargetSpec selects a screen location for an interaction. One of:
+//   - {x, y} absolute coords
+//   - {gridCoord} from an annotated screenshot (e.g. "B3")
+//   - {elementDescription} best-effort window-title match
+//   - {windowID} center of the named window (used by focus_window)
+struct ComputerUseTargetSpec {
+    optional X: int
+    optional Y: int
+    optional GridCoord:          string
+    optional ElementDescription: string
+    optional WindowID:           int
+}
+
+
+// ScrollDelta is a 2D scroll amount. Positive Y = scroll down.
+struct ComputerUseScrollDelta {
+    optional X: int
+    optional Y: int
+}
+
+
+// ScreenshotReq captures the screen for LLM analysis. The legacy
+// {mode, region, windowTitle, display} fields are kept for backward
+// compatibility; new callers should use the unified `target` field.
+struct ComputerUseScreenshotReq {
+    optional Target: ComputerUseWindowTarget
+    // Legacy fields (still honoured when target is unset).
+    optional Mode: string
+    optional Display: int
+    optional Region: ComputerUseRegion
+    optional WindowTitle: string
+    // Overlay coordinate grid + mark interactive elements.
+    optional Annotate: bool
+    // "jpeg" (default) or "png".
+    optional Format: string
+    // JPEG quality 1-100 (default: 85).
+    optional Quality: int
+    // Scale factor 0.1-1.0 (default: 1.0).
+    optional Scale: float
+    // Include cursor in the screenshot.
+    optional IncludeCursor: bool
+    // Convert to grayscale to reduce tokens.
+    optional Grayscale: bool
+}
+
+
+struct ComputerUseScreenshotResp {
+    ImageBytes:            bytes
+    Format:                string
+    Width:                 int
+    Height:                int
+    optional DisplayName:  string
+    optional CursorX:      int
+    optional CursorY:      int
+    // True when delta mode detected no significant changes.
+    optional Unchanged:    bool
+    optional Message:      string
+}
+
+
+// StreamReq drives a continuous low-bandwidth tile-diff stream.
+// The handler captures the chosen target at up to maxFPS, emits a
+// keyframe (full JPEG) on first chunk and every keyframeIntervalMs,
+// and otherwise emits only the changed tiles. Static frames produce
+// zero-tile chunks (heartbeats) so the client can detect liveness.
+struct ComputerUseStreamReq {
+    Target: ComputerUseWindowTarget
+    // Max FPS server-side throttle (default: 10).
+    optional MaxFPS: int
+    // Tile size in pixels (default: 64).
+    optional TileSize: int
+    // Force a keyframe every N ms (default: 5000).
+    optional KeyframeIntervalMs: int
+    // JPEG quality for tile encoding (default: 75).
+    optional Quality: int
+    // Include cursor overlay drawn into tiles (default: false).
+    optional IncludeCursor: bool
+}
+
+
+// StreamTile is one changed rectangular block of pixels.
+struct ComputerUseStreamTile {
+    X:        int
+    Y:        int
+    Width:    int
+    Height:   int
+    // JPEG-encoded pixel data.
+    ImageBytes: bytes
+}
+
+
+// StreamChunk is one emitted frame on the stream.
+//   - kind="keyframe": frameWidth/frameHeight set, tiles[0] is the
+//     whole frame.
+//   - kind="delta":    tiles[] lists changed regions only.
+//   - kind="heartbeat": no tiles; just cursor / timing info.
+//   - kind="window_hidden": target window is not visible right now;
+//     client may keep the stream open and wait.
+struct ComputerUseStreamChunk {
+    Kind:          string
+    FrameIndex:    long
+    TimestampMs:   long
+    // Total frame dimensions (for the chosen target's current bounds).
+    FrameWidth:    int
+    FrameHeight:   int
+    // Tiles changed in this chunk; empty on heartbeat / window_hidden.
+    optional Tiles:        array<ComputerUseStreamTile>
+    // Cursor position relative to the captured frame.
+    optional CursorX:      int
+    optional CursorY:      int
+    // For "window_*" modes — current absolute window position.
+    optional WindowOriginX: int
+    optional WindowOriginY: int
+    // Diagnostic / status message ("window minimized", "throttled", ...).
+    optional Message:      string
+}
+
+
+// InteractReq performs one mouse / keyboard / clipboard / window action.
+//
+// Recognised action values:
+//   - "click" / "double_click" / "right_click" / "middle_click"
+//   - "move" / "scroll"
+//   - "type" — types `text`
+//   - "key" — presses `key` with optional `modifiers`
+//   - "key_down" / "key_up" — hold/release `key` (paired by the caller)
+//   - "copy" / "paste"
+//   - "drag" — press-move-release from `target` to `dragTo`
+//   - "wait" — server-side sleep `waitMs` (capped at 30000)
+//   - "focus_window" — bring `target.windowID` to foreground
+//   - "window_state" — `showState` ∈ "minimize" | "maximize" | "restore"
+//     on `target.windowID`
+//   - "window_move" — move/resize `target.windowID` to `windowPos`;
+//     pos x==y==0 keeps position, w==h==0 keeps size
+//   - "window_close" — send WM_CLOSE to `target.windowID`
+//   - "element_click" — Invoke / Toggle / SelectionItem.Select on
+//     `elementID`; falls back to a coordinate click on the bounding rect
+//   - "element_focus" — request keyboard focus on `elementID`
+//   - "element_set_value" — set ValuePattern text on `elementID` to
+//     `elementValue` (edit boxes, combo boxes)
+//   - "screenshot_then_click" — click `target` (legacy)
+struct ComputerUseInteractReq {
+    Action: string
+    optional Target:        ComputerUseTargetSpec
+    optional Text:          string
+    optional Key:           string
+    optional Modifiers:     array<string>
+    optional ScrollDelta:   ComputerUseScrollDelta
+    optional Button:        string
+    // For action="drag": end point of the drag.
+    optional DragTo:        ComputerUseTargetSpec
+    // For action="wait": duration in milliseconds (capped at 30000).
+    optional WaitMs:        int
+    // For action="window_state": "minimize" | "maximize" | "restore".
+    optional ShowState:     string
+    // For action="window_move": target window placement.
+    optional WindowPos:     ComputerUseRegion
+    // For action="element_*": element handle returned by list_elements.
+    optional ElementID:     string
+    // For action="element_set_value": new value text.
+    optional ElementValue:  string
+}
+
+
+struct ComputerUseInteractResp {
+    Success: bool
+    Message: string
+    CursorX: int
+    CursorY: int
+}
+
+
+// =========================================================================
+// Clipboard.
+// =========================================================================
+
+struct ComputerUseClipboardGetReq {
+}
+
+
+struct ComputerUseClipboardGetResp {
+    Text: string
+}
+
+
+struct ComputerUseClipboardSetReq {
+    Text: string
+}
+
+
+struct ComputerUseClipboardSetResp {
+    Success: bool
+}
+
+
+// ClipboardRichGetReq pulls every supported clipboard format. Each
+// field is set independently; "kind" reports which formats were present.
+struct ComputerUseClipboardRichGetReq {
+}
+
+
+struct ComputerUseClipboardRichGetResp {
+    // "text" | "image" | "files" | "empty" | "mixed"
+    Kind:           string
+    optional Text:  string
+    // Base64-encoded PNG of the CF_DIB / image payload, when present.
+    optional ImageBase64: string
+    optional ImageWidth:  int
+    optional ImageHeight: int
+    // Absolute paths when CF_HDROP is present.
+    optional Files: array<string>
+    // HTML fragment when CF_HTML is present.
+    optional Html:  string
+}
+
+
+// ClipboardRichSetReq writes one of the supported types. Exactly one of
+// text / imageBase64 / files / html should be set; the first non-empty
+// field wins.
+struct ComputerUseClipboardRichSetReq {
+    optional Text:        string
+    optional ImageBase64: string
+    optional Files:       array<string>
+    optional Html:        string
+}
+
+
+struct ComputerUseClipboardRichSetResp {
+    Success: bool
+    // "text" | "image" | "files" | "html" — what was actually written.
+    Kind:    string
+}
+
+
+// =========================================================================
+// Process + window introspection.
+// =========================================================================
+
+struct ComputerUseProcessInfo {
+    Pid:                int
+    ParentPid:          int
+    Name:               string
+    optional ExePath:   string
+}
+
+
+struct ComputerUseListProcessesReq {
+    // Substring (case-insensitive) of process name.
+    optional NameContains: string
+    // Restrict to one PID (useful as a "process exists" probe).
+    optional Pid: int
+}
+
+
+struct ComputerUseProcessesResp {
+    Items: array<ComputerUseProcessInfo>
+    Count: int
+}
+
+
+// Extended ListWindows filter. All filters are AND'd together.
+struct ComputerUseListWindowsReq {
+    // Filter by process ID.
+    optional Pid: int
+    // Filter by process name substring (case-insensitive).
+    optional ProcessName: string
+    // Filter by window-title substring (case-insensitive).
+    optional TitlePattern: string
+    // Only the current foreground window.
+    optional ForegroundOnly: bool
+    // Hit-test: window at (atPoint.x, atPoint.y) on screen.
+    optional AtPoint: ComputerUseTargetSpec
+    // Include invisible / off-screen windows.
+    optional IncludeInvisible: bool
+}
+
+
+struct ComputerUseWindowInfo {
+    Id:                    int
+    Title:                 string
+    Bounds:                ComputerUseRegion
+    optional ProcessName:  string
+    optional Pid:          int
+    optional IsVisible:    bool
+}
+
+
+struct ComputerUseWindowsResp {
+    Items: array<ComputerUseWindowInfo>
+    Count: int
+}
+
+
+struct ComputerUseGetWindowInfoReq {
+    WindowID: int
+}
+
+
+// Detailed window info, including state + flags.
+struct ComputerUseWindowInfoDetailed {
+    Id:                   int
+    Title:                string
+    Bounds:               ComputerUseRegion
+    ProcessName:          string
+    Pid:                  int
+    IsVisible:            bool
+    // "normal", "minimized", "maximized".
+    State:                string
+    ClassName:            string
+    IsForeground:         bool
+    IsTopmost:            bool
+}
+
+
+// =========================================================================
+// Displays / cursor.
+// =========================================================================
+
+struct ComputerUseDisplayInfo {
+    Id:        int
+    Name:      string
+    Bounds:    ComputerUseRegion
+    IsPrimary: bool
+}
+
+
+struct ComputerUseDisplaysResp {
+    Items: array<ComputerUseDisplayInfo>
+    Count: int
+}
+
+
+struct ComputerUseListDisplaysReq {
+}
+
+
+struct ComputerUseCursorPosResp {
+    X: int
+    Y: int
+}
+
+
+struct ComputerUseCursorPositionReq {
+}

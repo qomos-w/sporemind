@@ -1,0 +1,75 @@
+/* Quick-start cards (workflow / goal / plugin-dev) floating above the composer
+   in a fresh conversation. Boxy card: colored glyph at top-left, bold text
+   below, no colored fills — mirrors .project-new-chat-quick-action on
+   ProjectNewChatPage. */
+.ai-quick-start-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  padding: 2px 12px 14px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ai-quick-start-action {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1 1 0;
+  max-width: 300px;
+  min-height: 84px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+}
+
+.ai-quick-start-action:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-strong);
+  transform: translateY(-1px);
+}
+
+.ai-quick-start-action:active {
+  transform: translateY(0);
+}
+
+.ai-quick-start-action-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--qa-accent);
+  flex-shrink: 0;
+}
+
+.ai-quick-start-action-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ai-quick-start-action-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+}
+
+.ai-quick-start-action-label {
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.ai-quick-start-action-hint {
+  font-size: 11px;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}

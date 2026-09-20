@@ -1,0 +1,57 @@
+.srfe-save {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--accent-primary);
+  background: var(--accent-primary-dim, transparent);
+  color: var(--accent-primary);
+  font: inherit;
+  font-size: var(--text-sm);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.srfe-save:hover:not(:disabled) {
+  background: var(--accent-primary);
+  color: var(--bg-elevated, #fff);
+}
+
+.srfe-save:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.srfe-refresh {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  border-radius: var(--radius-sm, 4px);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.srfe-refresh:hover:not(:disabled) {
+  color: var(--text-primary);
+  background: var(--bg-tertiary);
+}
+
+.srfe-refresh:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.srfe-spin {
+  animation: srfe-spin 0.8s linear infinite;
+}
+
+@keyframes srfe-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

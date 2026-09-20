@@ -1,0 +1,383 @@
+/* Global app background image.
+   The theme tint and the image are painted as two background layers on <body>
+   (propagated to the viewport canvas) and fused via background-blend-mode —
+   no extra overlay element, no stacking issues. Structural containers become
+   transparent so the blended image shows through; content-level surfaces
+   (message bubbles, cards, dropdowns) keep their own backgrounds. Blend mode
+   is tunable via --app-bg-blend (normal | soft-light | multiply | ...). */
+
+body.app-bg-active {
+  background-color: var(--bg-base);
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--bg-base) 45%, transparent),
+      color-mix(in srgb, var(--bg-base) 45%, transparent)
+    ),
+    var(--app-bg-image);
+  background-size: cover, cover;
+  background-position: center center, center center;
+  background-repeat: no-repeat, no-repeat;
+  background-attachment: fixed, fixed;
+  background-blend-mode: var(--app-bg-blend, normal);
+}
+
+/* Scrollbar thumbs paint over the translucent surfaces, so the default solid
+   fill reads as a patch — make them semi-transparent while a background image
+   is active. */
+body.app-bg-active ::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--border-default) 45%, transparent);
+}
+
+body.app-bg-active ::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--border-strong) 55%, transparent);
+}
+
+/* Everything except the main card (topbar, sidebar, and the gaps/padding
+   around them) shares one continuous translucent surface carried by the
+   layout itself, so margins no longer cut raw image stripes between bars. */
+body.app-bg-active .ai-shell-layout {
+  background: color-mix(in srgb, var(--bg-surface) 55%, transparent);
+}
+
+body.app-bg-active .ai-shell-topbar {
+  background: transparent;
+}
+
+body.app-bg-active .ai-sidebar {
+  background: transparent;
+}
+
+/* Main card keeps a strong translucent surface for readability, but drops
+   the drop-shadow and hard border that look unnatural over an image. */
+body.app-bg-active .ai-shell-main-card {
+  background: color-mix(in srgb, var(--bg-base) 65%, transparent);
+  box-shadow: none;
+  border-color: color-mix(in srgb, var(--border-subtle) 65%, transparent);
+}
+
+/* User message bubble in the message stream: solid --bg-overlay reads as a
+   patch over the blended image — go translucent like the main card. */
+body.app-bg-active .ai-user-bubble {
+  background: color-mix(in srgb, var(--bg-overlay) 55%, transparent);
+}
+
+/* Tool edit card in the message stream: solid --bg-surface reads as a patch
+   over the blended image — go translucent like the main card. */
+body.app-bg-active .ai-edit-card {
+  background: color-mix(in srgb, var(--bg-elevated) 80%, transparent);
+  box-shadow: none;
+}
+
+body.app-bg-active .ai-edit-card:hover,
+body.app-bg-active .ai-edit-card.expanded:hover,
+body.app-bg-active .ai-edit-card.reverted:hover {
+  background: color-mix(in srgb, var(--accent-primary) 10%, color-mix(in srgb, var(--bg-elevated) 80%, transparent));
+  box-shadow: none;
+}
+
+/* Markdown surfaces in the message stream: inline code, fenced code blocks,
+   and table headers paint solid fills that read as patches over the blended
+   image — make them translucent. Blockquotes only have a border; soften it
+   to match. This also covers code-styled wikiword links (`WikiWord`), which
+   inherit the inline-code background. */
+body.app-bg-active .markdown-content code {
+  background: color-mix(in srgb, var(--bg-overlay) 55%, transparent);
+}
+
+body.app-bg-active .markdown-content pre code {
+  background: color-mix(in srgb, var(--bg-surface) 55%, transparent);
+  border-color: color-mix(in srgb, var(--border-subtle) 65%, transparent);
+}
+
+body.app-bg-active .markdown-content th {
+  background: color-mix(in srgb, var(--bg-surface) 55%, transparent);
+}
+
+body.app-bg-active .markdown-content blockquote {
+  border-left-color: color-mix(in srgb, var(--border-default) 65%, transparent);
+}
+
+/* Tool output blocks and diff blocks carry solid fills; inside the now-
+   translucent edit cards they would still read as patches. Diff line tints
+   use the *-dim tokens (already alpha-blended) and need no override. */
+body.app-bg-active .ai-tool-code {
+  background: color-mix(in srgb, var(--bg-surface) 55%, transparent);
+  border-color: color-mix(in srgb, var(--border-subtle) 65%, transparent);
+}
+
+body.app-bg-active .ai-tool-diff {
+  background: color-mix(in srgb, var(--bg-base) 55%, transparent);
+  border-color: color-mix(in srgb, var(--border-subtle) 65%, transparent);
+}
+
+/* Large pass-through containers that would otherwise hide the image. */
+body.app-bg-active .ai-conversation,
+body.app-bg-active .scheduled-view,
+body.app-bg-active .scheduled-list-panel,
+body.app-bg-active .scheduled-detail-panel {
+  background: transparent;
+}
+
+/* The conversation top fade is a solid --bg-base gradient; over the image
+   that reads as a solid-color strip, so fade from a translucent tint
+   instead — the soft scroll fade stays, the patch is gone. */
+body.app-bg-active .ai-conversation::before {
+  background: linear-gradient(to bottom, color-mix(in srgb, var(--bg-base) 55%, transparent), transparent);
+}
+
+body.app-bg-active .sp-settings-content {
+  background: transparent;
+}
+
+body.app-bg-active .workflow-graph {
+  background-color: transparent;
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--workflow-dot) 45%, transparent) 1px,
+    transparent 1.4px
+  );
+}
+
+/* Settings category list panel. */
+body.app-bg-active .sp-settings-sidebar {
+  background: transparent;
+}
+
+/* ── Right panel: built-in mode and tab content surfaces ──
+   The right panel lives inside the main card, which is already translucent,
+   but these panels paint their own solid backgrounds that hide the blended
+   image. Make their structural containers transparent so the image shows
+   through — the same treatment as the topbar and sidebar. Content-level
+   surfaces (address bar, inputs, cards, message bubbles, terminal canvas)
+   keep their own backgrounds. */
+body.app-bg-active .file-browser,
+body.app-bg-active .fdv-container,
+body.app-bg-active .browser-view,
+body.app-bg-active .browser-toolbar,
+body.app-bg-active .browser-frame,
+body.app-bg-active .review-panel,
+body.app-bg-active .review-header,
+body.app-bg-active .memory-node-panel,
+body.app-bg-active .mono-card-panel,
+body.app-bg-active .mono-card,
+body.app-bg-active .mono-card-kb-sidebar,
+body.app-bg-active .shell-ssh-content,
+body.app-bg-active .multiconsole-content {
+  background: transparent;
+}
+
+/* SSH session tab: the xterm canvas is fully transparent while
+   app-bg-active is set (see SshSessionView), so the containers below it
+   must let the image through. The translucent dark tint is painted on
+   .ssh-terminal-body itself so it fills the whole rounded rectangle —
+   including the edges and the bottom strip under the floating command
+   bar that the canvas does not cover. */
+body.app-bg-active .ssh-session-view,
+body.app-bg-active .ssh-terminal-pane {
+  background: transparent;
+}
+
+body.app-bg-active .ssh-terminal-body {
+  background: rgba(0, 0, 0, 0.78);
+}
+
+/* Notes mode sticky knowledge sidebar in stacked layouts: content scrolls
+   underneath it, so keep a translucent surface instead of full transparency
+   (mirrors the layout shell surface). */
+body.app-bg-active .ai-wiki-tab .mono-card-kb-sidebar,
+body.app-bg-active .ai-wiki-tab-stack .mono-card-kb-sidebar {
+  background: color-mix(in srgb, var(--bg-surface) 55%, transparent);
+}
+
+/* Multiconsole cells are per-agent cards: give them the same translucent
+   surface as the main card instead of a solid fill. */
+body.app-bg-active .multiconsole-cell {
+  background: color-mix(in srgb, var(--bg-base) 65%, transparent);
+}
+
+:root[data-theme='light'] body.app-bg-active .multiconsole-cell {
+  background: color-mix(in srgb, var(--bg-base) 50%, transparent);
+}
+
+/* Timeline icon slot: normally solid to mask the previous step's connector
+   line, which extends 8px into the next step. Over the blended image the
+   solid square reads as a patch, so make the slot transparent and stop the
+   line at the step's own bottom edge instead. */
+body.app-bg-active .ai-step-icon-slot {
+  background: transparent;
+}
+
+body.app-bg-active .ai-step-line {
+  bottom: 0;
+}
+
+/* Mobile shell: every bar except the center main card stays fully opaque
+   even with a background image — the translucent treatment leaves the
+   overlay sidebar and topbar unreadable over content/the image. */
+body.app-bg-active .ai-shell-mobile .ai-shell-topbar,
+body.app-bg-active .ai-shell-mobile .ai-sidebar {
+  background: var(--bg-surface);
+}
+
+/* Mobile: the settings category sidebar and the right-panel sheet stack
+   above scrolling content (the center main card stays translucent on the
+   mobile shell), so they must keep their own solid backgrounds. */
+body.app-bg-active .ai-shell-mobile .sp-settings-sidebar,
+body.app-bg-active .ai-shell-mobile .sp-settings-content,
+body.app-bg-active .ai-shell-mobile .rpt-mobile-container {
+  background: var(--bg-base);
+}
+
+/* Light theme stays readable with even more of the image showing through. */
+:root[data-theme='light'] body.app-bg-active {
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--bg-base) 15%, transparent),
+      color-mix(in srgb, var(--bg-base) 15%, transparent)
+    ),
+    var(--app-bg-image);
+}
+
+:root[data-theme='light'] body.app-bg-active .ai-shell-layout {
+  background: color-mix(in srgb, var(--bg-surface) 40%, transparent);
+}
+
+:root[data-theme='light'] body.app-bg-active .ai-shell-main-card {
+  background: color-mix(in srgb, var(--bg-base) 50%, transparent);
+}
+
+/* Sidebar mode group title: tertiary text washes out over the blended
+   image. Deepen it toward the primary text color (in dark theme this
+   brightens instead — both directions raise contrast). */
+body.app-bg-active .ai-sidebar-mode-group-title {
+  color: color-mix(in srgb, var(--text-primary) 45%, var(--text-tertiary));
+}
+
+/* With a background image the scrim only covers part of the image, so text
+   sits on a brighter, busier backdrop than the plain theme background.
+   Raise contrast: darken text in the light theme, brighten it in the dark
+   theme. The semantic text vars are redefined on body so every descendant
+   inherits the adjusted colors. */
+:root[data-theme='light'] body.app-bg-active {
+  --text-primary: color-mix(in srgb, var(--_text-primary) 70%, #000000);
+  --text-secondary: color-mix(in srgb, var(--_text-secondary) 65%, #000000);
+  --text-tertiary: color-mix(in srgb, var(--_text-tertiary) 55%, #000000);
+  --text-muted: color-mix(in srgb, var(--_text-muted) 55%, #000000);
+  --text-body: color-mix(in srgb, var(--_text-primary) 70%, #000000);
+  --text-caption: color-mix(in srgb, var(--_text-secondary) 65%, #000000);
+}
+
+:root[data-theme='dark'] body.app-bg-active {
+  --text-primary: color-mix(in srgb, var(--_text-primary) 75%, #ffffff);
+  --text-secondary: color-mix(in srgb, var(--_text-secondary) 65%, #ffffff);
+  --text-tertiary: color-mix(in srgb, var(--_text-tertiary) 55%, #ffffff);
+  --text-muted: color-mix(in srgb, var(--_text-muted) 65%, #ffffff);
+  --text-body: color-mix(in srgb, var(--_text-primary) 75%, #ffffff);
+  --text-caption: color-mix(in srgb, var(--_text-secondary) 65%, #ffffff);
+}
+
+/* Settings background image list */
+.sp-settings-bg-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sp-settings-bg-item {
+  position: relative;
+  width: 96px;
+  height: 54px;
+}
+
+.sp-settings-bg-thumb {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--bg-base);
+}
+
+.sp-settings-bg-thumb img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sp-settings-bg-item.active .sp-settings-bg-thumb {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 1px var(--accent-primary);
+}
+
+/* "Default" (no image) tile at the head of the list. */
+.sp-settings-bg-default {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+
+.sp-settings-bg-default:hover {
+  color: var(--text-secondary);
+}
+
+.sp-settings-bg-item.active .sp-settings-bg-default {
+  color: var(--accent-primary);
+}
+
+/* Delete badge pinned to the thumbnail's top-right corner. */
+.sp-settings-bg-delete {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.sp-settings-bg-item:hover .sp-settings-bg-delete,
+.sp-settings-bg-delete:focus-visible {
+  opacity: 1;
+}
+
+.sp-settings-bg-delete:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.sp-settings-bg-add {
+  width: 96px;
+  height: 54px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  border: 1px dashed var(--border-default);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.sp-settings-bg-add:hover {
+  color: var(--text-secondary);
+  border-color: var(--border-strong);
+}

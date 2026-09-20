@@ -1,0 +1,554 @@
+/* Right panel tabs — capsule redesign.
+   Two populations share the bar, distinguished by data-tab-id:
+   - mode:* tabs are persistent navigation segments → accent-filled pill when
+     active (segmented-control treatment);
+   - everything else is a closable document/session → active state is a raised
+     surface chip (border + shadow, the "selected card" metaphor). */
+
+.rpt-container {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  flex-shrink: 0;
+  height: 100%;
+  background: transparent;
+  overflow: hidden;
+  transition: width 200ms cubic-bezier(0.22, 1, 0.36, 1), opacity 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ── Tab bar shell ── */
+.rpt-tabbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 40px;
+  flex-shrink: 0;
+  padding: 6px 6px 0 8px;
+  background: transparent;
+}
+
+.rpt-tabbar-scroll {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.rpt-tabbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+  /* Anchor to the first tab row even when the tab strip wraps. */
+  align-self: flex-start;
+  margin-top: 1px;
+}
+
+.rpt-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  flex-shrink: 0;
+  --wails-draggable: no-drag;
+}
+
+/* ── Base tab (document chip) ── */
+.rpt-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 8px 0 10px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast);
+  user-select: none;
+}
+
+.rpt-tab:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Active document = raised surface chip */
+.rpt-tab.active {
+  background: var(--bg-elevated);
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-sm);
+  color: var(--text-primary);
+}
+
+.rpt-tab.draggable {
+  cursor: grab;
+}
+
+.rpt-tab.dragging {
+  opacity: 0.5;
+  cursor: grabbing;
+}
+
+/* Drop indicator: 2px accent pill, no layout shift */
+.rpt-tab.drop-before::before,
+.rpt-tab.drop-after::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: var(--accent-primary);
+}
+
+.rpt-tab.drop-before::before { left: -4px; }
+.rpt-tab.drop-after::after { right: -4px; }
+
+/* ── Mode tabs: accent-filled capsule segments ── */
+.rpt-tab[data-tab-id^="mode:"] {
+  height: 26px;
+  padding: 0 12px;
+  border: none;
+  border-radius: var(--radius-full);
+  color: var(--text-tertiary);
+}
+
+.rpt-tab[data-tab-id^="mode:"]:hover {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.rpt-tab[data-tab-id^="mode:"].active {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  box-shadow: none;
+}
+
+.rpt-tab[data-tab-id^="mode:"].active:hover {
+  background: var(--accent-primary-hover);
+  color: var(--text-inverse);
+}
+
+.rpt-tab[data-tab-id^="mode:"].active .rpt-tab-close:hover {
+  background: color-mix(in srgb, var(--text-inverse) 20%, transparent);
+  color: var(--text-inverse);
+}
+
+/* Hairline separator between the mode group and the document group */
+.rpt-tab[data-tab-id^="mode:"] + .rpt-tab:not([data-tab-id^="mode:"]) {
+  margin-left: 4px;
+  padding-left: 10px;
+  border-left: 1px solid var(--border-subtle);
+}
+
+.rpt-tab[data-tab-id^="mode:"] + .rpt-tab:not([data-tab-id^="mode:"]).drop-before::before {
+  left: -4px;
+}
+
+.rpt-tab.hidden {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.rpt-tab-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: currentColor;
+}
+
+.rpt-tab-favicon {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.rpt-tab-icon-independent {
+  color: var(--status-failed);
+  flex-shrink: 0;
+}
+
+.rpt-tab-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 140px;
+}
+
+/* Close affordance: hidden until the tab is hovered/active/focused */
+.rpt-tab-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  margin-left: 2px;
+  opacity: 0;
+  transition:
+    background var(--transition-fast),
+    color var(--transition-fast),
+    opacity var(--transition-fast);
+}
+
+.rpt-tab:hover .rpt-tab-close,
+.rpt-tab.active .rpt-tab-close,
+.rpt-tab-close:focus-visible {
+  opacity: 1;
+}
+
+.rpt-tab-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.rpt-tab.active .rpt-tab-close:hover {
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+}
+
+/* ── Popovers ── */
+.rpt-context-menu,
+.rpt-new-tab-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 160px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.rpt-context-menu-item,
+.rpt-new-tab-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.rpt-context-menu-item:hover,
+.rpt-new-tab-menu-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.rpt-new-tab-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: currentColor;
+}
+
+/* ── Add-tab button ── */
+.rpt-add-tab-wrapper {
+  position: relative;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+.rpt-add-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin-left: 2px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.rpt-add-tab:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* ── Body ── */
+.rpt-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding-right: 3px;
+}
+
+.rpt-tab-pane {
+  height: 100%;
+  min-height: 0;
+}
+
+.rpt-tab-pane.hidden {
+  display: none;
+}
+
+/* Content-mode tab body: fills the panel with a flex column for proper layout */
+.rpt-content-mode {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.rpt-bottom-slot {
+  flex-shrink: 0;
+  background: var(--browser-bg, transparent);
+  /* No padding here; the slot (ComposerFrame) provides its own padding */
+}
+
+/* Floating composer modes in expanded panel: composer floats over content
+   (no drawer), mirroring the non-fullscreen layout. The body fills all height;
+   the slot is absolutely positioned at the bottom so content scrolls behind it. */
+.rpt-container.rpt-floating-mode {
+  position: relative;
+}
+
+.rpt-container.rpt-floating-mode .rpt-body {
+  position: absolute;
+  top: var(--rpt-tabbar-h, 40px);
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  z-index: 0;
+}
+
+.rpt-container.rpt-floating-mode .rpt-tabbar {
+  position: relative;
+  z-index: 2;
+}
+
+.rpt-container.rpt-floating-mode .rpt-bottom-slot {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: transparent;
+  /* Transparent full-width strip over the scrollable .rpt-body: must not
+     hit-test or it blocks the body scrollbar behind the composer. The
+     ComposerFrame's cards re-enable pointer events. */
+  pointer-events: none;
+}
+
+/* Solid backgrounds for drawer-card and composer inside the bottom slot */
+.rpt-bottom-slot .composer-frame-drawer-card {
+  background: var(--bg-elevated);
+}
+
+/* The peek surfaces must match the solid card beneath, else the strip below
+   the peek (pending submits) shows a hard color break in both themes. */
+.rpt-bottom-slot .message-drawer-peek,
+.rpt-bottom-slot .peek-interaction-bar {
+  background: var(--bg-elevated);
+}
+
+.rpt-bottom-slot .message-drawer-peek:hover {
+  background: color-mix(in srgb, var(--bg-elevated) 92%, white);
+}
+
+/* Pending-attention glow still applies, now over the elevated base. */
+.rpt-bottom-slot .message-drawer.collapsed .peek-interaction-bar {
+  background: var(--accent-subtle, rgba(99, 102, 241, 0.08));
+}
+
+.rpt-bottom-slot .ai-composer {
+  background: var(--bg-elevated);
+}
+
+.rpt-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+}
+
+/* ── Mobile fullscreen overlay ── */
+.rpt-mobile-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgb(0 0 0 / 0.5);
+  display: flex;
+  align-items: flex-end;
+  animation: rpt-mobile-fade-in 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes rpt-mobile-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.rpt-mobile-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 85%;
+  background: var(--bg-base);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  overflow: hidden;
+  animation: rpt-mobile-slide-up 300ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes rpt-mobile-slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.rpt-mobile-container.fullscreen {
+  height: 100%;
+  border-radius: 0;
+  animation: none;
+}
+
+.rpt-mobile-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 48px;
+  flex-shrink: 0;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+  padding-top: env(safe-area-inset-top);
+}
+
+.rpt-mobile-tabbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.rpt-mobile-tabbar::-webkit-scrollbar {
+  display: none;
+}
+
+.rpt-mobile-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+  user-select: none;
+}
+
+.rpt-mobile-tab:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.rpt-mobile-tab.active {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-sm);
+}
+
+.rpt-mobile-close-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 8px;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.rpt-mobile-close-all:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.rpt-mobile-fullscreen-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: 8px;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.rpt-mobile-fullscreen-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.rpt-mobile-body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}

@@ -1,0 +1,1204 @@
+/* ── Git Mode Panel ── */
+
+.git-panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  box-sizing: border-box;
+  /* Lift the panel one surface level above the app background so the
+     history list reads brighter; matches the wt/commit detail panes. */
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+}
+
+/* Header */
+
+.git-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  flex-shrink: 0;
+}
+
+.git-panel-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--text-secondary);
+}
+
+.git-panel-branch {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+
+.git-panel-wt-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  border-radius: var(--radius-sm, 3px);
+  background: var(--accent-primary, #6c8aff);
+  color: var(--text-inverse, #fff);
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.git-panel-counts {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 4px;
+}
+
+.git-panel-count-staged {
+  font-size: var(--text-sm);
+  color: var(--git-added, #81b88b);
+}
+
+.git-panel-count-unstaged {
+  font-size: var(--text-sm);
+  color: var(--git-modified, #e2c08d);
+}
+
+.git-panel-count-clean {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.git-panel-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.git-panel-header-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--accent-primary);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  padding: 2px 6px;
+  transition: background var(--transition-fast);
+}
+
+.git-panel-header-btn:hover {
+  background: var(--bg-hover);
+}
+
+.git-panel-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.git-panel-icon-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.git-panel-icon-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.git-panel-spin {
+  animation: git-panel-spin 1s linear infinite;
+}
+
+@keyframes git-panel-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ── Branch Selector ── */
+
+.git-panel-title {
+  position: relative;
+}
+
+.git-panel-branch-selector {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 4px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.git-panel-branch-selector:hover {
+  background: var(--bg-hover);
+}
+
+.git-panel-branch-chevron {
+  color: var(--text-tertiary);
+  transition: transform var(--transition-fast);
+}
+
+.git-panel-branch-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  min-width: 240px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 4px 0;
+}
+
+.git-panel-branch-section {
+  padding: 6px 10px 4px;
+  font-size: var(--text-xxs);
+  font-weight: 600;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.git-panel-branch-sep {
+  height: 1px;
+  margin: 4px 8px;
+  background: var(--border-subtle);
+}
+
+.git-panel-branch-remote-label {
+  padding: 2px 10px 0;
+  font-size: var(--text-xxs);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono);
+}
+
+.git-panel-branch-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 6px;
+  padding: 5px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-family: var(--font-mono);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+
+.git-panel-branch-item:hover {
+  background: var(--bg-hover);
+}
+
+.git-panel-branch-item.active {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+
+.git-panel-branch-item-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.git-panel-branch-item-hash {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  font-size: var(--text-xxs);
+}
+
+.git-panel-branch-item.active .git-panel-branch-item-hash {
+  color: var(--text-inverse);
+  opacity: 0.7;
+}
+
+.git-panel-branch-item-check {
+  flex-shrink: 0;
+  display: inline-flex;
+}
+
+/* ── Quick Menu ── */
+
+.git-panel-quick-menu {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  height: 34px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  flex-shrink: 0;
+}
+
+.git-panel-quick-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 6px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--text-xxs);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.git-panel-quick-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.git-panel-quick-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.git-panel-quick-sep {
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  background: var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.git-panel-quick-commit {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.git-panel-quick-commit-input {
+  flex: 1;
+  min-width: 60px;
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: var(--text-xxs);
+  font-family: var(--font-mono);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.git-panel-quick-commit-input:focus {
+  border-color: var(--accent-primary);
+}
+
+.git-panel-quick-commit-input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* ── Commit provider dropdown + auto-generate ── */
+
+.git-panel-commit-provider {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.git-panel-commit-provider-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  max-width: 120px;
+  height: 24px;
+  padding: 0 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-size: var(--text-xxs);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.git-panel-commit-provider-btn:hover {
+  border-color: var(--accent-primary);
+  color: var(--text-primary);
+}
+
+.git-panel-commit-provider-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.git-panel-commit-provider-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+}
+
+.git-panel-commit-provider-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 100;
+  min-width: 220px;
+  max-height: 280px;
+  overflow-y: auto;
+  margin-top: 4px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  padding: 4px 0;
+}
+
+.git-panel-commit-provider-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 5px 10px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition-fast);
+}
+
+.git-panel-commit-provider-item:hover {
+  background: var(--bg-hover);
+}
+
+/* Brand icon slot — fixed size, never shrinks. */
+.git-panel-commit-provider-item-icon,
+.git-panel-commit-provider-btn-icon {
+  flex: none;
+}
+
+.git-panel-commit-provider-item.active {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+
+.git-panel-commit-provider-name {
+  font-family: var(--font-mono);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.git-panel-commit-provider-sub {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: var(--text-xxs);
+  color: var(--text-tertiary);
+}
+
+.git-panel-commit-provider-item.active .git-panel-commit-provider-sub {
+  color: var(--text-inverse);
+  opacity: 0.7;
+}
+
+.git-panel-commit-gen-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.git-panel-commit-gen-btn:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.git-panel-commit-gen-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.git-panel-commit-gen-spin {
+  animation: git-panel-gen-spin 1s linear infinite;
+}
+
+@keyframes git-panel-gen-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.git-panel-quick-commit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--accent-primary);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.git-panel-quick-commit-btn:hover:not(:disabled) {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+
+.git-panel-quick-commit-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+@media (max-width: 767px) {
+  .git-panel-quick-menu {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 4px 8px;
+    gap: 4px;
+  }
+  .git-panel-quick-commit {
+    flex-basis: 100%;
+  }
+}
+
+/* ── Error ── */
+
+.git-panel-error {
+  padding: 8px 10px;
+  color: var(--error);
+  font-size: var(--text-sm);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* Tabs */
+
+/* Body */
+
+.git-panel-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  /* The floating composer overlays the panel bottom (fullscreen floating
+     mode and the non-fullscreen main column); keep every inner scroll
+     area's end clear of it. Mirrors FileBrowser/SshManager/Problems. */
+  padding-bottom: calc(var(--composer-card-top, var(--composer-frame-h, 120px)) + 16px);
+}
+
+.git-panel-list {
+  flex: 1;
+  overflow-y: auto;
+  /* No top padding: the sticky history head must stick flush against the
+     scrollport top or scrolled rows leak through a seam above it. */
+  padding: 0 0 4px;
+}
+
+/* Loading indicator while deepening history (continuous scroll). */
+.git-panel-history-more {
+  height: 18px;
+  margin: 2px 10px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(90deg, transparent, var(--border-default), transparent);
+  background-size: 40% 100%;
+  background-repeat: no-repeat;
+  animation: git-panel-more-sweep 0.9s linear infinite;
+}
+
+@keyframes git-panel-more-sweep {
+  from { background-position: -40% 0 }
+  to { background-position: 140% 0 }
+}
+
+/* File rows (Changes) */
+
+.git-panel-file-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-left: 2px solid transparent;
+  box-sizing: border-box;
+}
+
+.git-panel-file-row:hover {
+  background: var(--bg-hover);
+}
+
+.git-panel-file-row.active {
+  background: color-mix(in srgb, var(--accent-primary) 8%, var(--bg-surface));
+  border-left-color: var(--accent-primary);
+}
+
+.git-panel-file-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.git-panel-file-path {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+}
+
+.git-panel-file-action {
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--accent-primary);
+  font-size: 11px;
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  cursor: pointer;
+  padding: 2px 4px;
+}
+
+.git-panel-file-row:hover .git-panel-file-action {
+  opacity: 1;
+}
+
+.git-panel-file-action:hover {
+  background: var(--bg-hover);
+}
+
+/* History split view: list + selected commit detail */
+
+.git-panel-history-view {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.git-panel-commit-detail {
+  display: flex;
+  flex-direction: column;
+  min-height: 80px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+}
+
+.git-panel-commit-detail-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.git-panel-commit-detail-hash {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-primary);
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+  padding: 2px 5px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.git-panel-commit-detail-msg {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.git-panel-commit-detail-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.git-panel-commit-detail-author {
+  color: var(--text-secondary);
+}
+
+.git-panel-commit-detail-email {
+  color: var(--text-tertiary);
+}
+
+.git-panel-commit-detail-when {
+  flex: 1;
+  text-align: right;
+}
+
+.git-panel-commit-detail-files {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.git-panel-commit-file-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-left: 2px solid transparent;
+  box-sizing: border-box;
+}
+
+.git-panel-commit-file-row:hover {
+  background: var(--bg-hover);
+}
+
+/* Commit rows (History) */
+
+.git-panel-history-head {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 24px;
+  padding: 0 10px;
+  /* Once columns are manually resized the cells can exceed the viewport:
+     keep the header background spanning the horizontally scrolled width. */
+  min-width: max-content;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-tertiary);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  user-select: none;
+}
+
+.git-panel-history-head-cell {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.git-panel-history-head-divider {
+  position: absolute;
+  top: 0;
+  right: -4px;
+  width: 8px;
+  height: 100%;
+  cursor: col-resize;
+}
+
+.git-panel-history-head-divider::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  right: 4px;
+  width: 1px;
+  background: var(--border-default);
+}
+
+.git-panel-history-head-divider:hover::after,
+body.git-panel-col-resizing .git-panel-history-head-divider::after {
+  background: var(--accent-primary);
+}
+
+body.git-panel-col-resizing,
+body.git-panel-col-resizing * {
+  cursor: col-resize !important;
+  user-select: none !important;
+}
+
+.git-panel-cell {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.git-panel-col-msg {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.git-panel-commit-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: 22px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  border-left: 2px solid transparent;
+  box-sizing: border-box;
+}
+
+/* Only after the user pins a column (manual widths) may rows exceed the
+   viewport; auto mode clips every column so text never crosses boundaries. */
+.git-panel-commit-row.git-panel-hscroll {
+  min-width: max-content;
+}
+
+.git-panel-commit-row:hover {
+  background: var(--bg-hover);
+}
+
+.git-panel-commit-row.active {
+  background: color-mix(in srgb, var(--accent-primary) 8%, var(--bg-surface));
+  border-left-color: var(--accent-primary);
+}
+
+.git-panel-commit-short {
+  font-family: var(--font-mono);
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.git-panel-commit-msg {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-secondary);
+}
+
+.git-panel-commit-when {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+
+/* Diff view */
+
+.git-panel-diff {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.git-panel-diff-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+}
+
+.git-panel-diff-file {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.git-panel .ai-tool-diff-wrapper {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+.git-panel .ai-tool-diff {
+  margin: 0;
+}
+
+/* Commit bar (bottom of changes view) */
+
+.git-panel-commit-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  flex-shrink: 0;
+}
+
+.git-panel-commit-input {
+  flex: 1;
+  min-width: 0;
+  padding: 5px 8px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.git-panel-commit-input:focus {
+  border-color: var(--accent-primary);
+}
+
+.git-panel-commit-input:disabled {
+  opacity: 0.5;
+}
+
+.git-panel-commit-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.git-panel-commit-btn {
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  padding: 5px 12px;
+  transition: opacity var(--transition-fast);
+}
+
+.git-panel-commit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Empty / placeholder */
+
+.git-panel-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 100%;
+  min-height: 120px;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+}
+
+/* ── Working-tree pseudo node + staged/unstaged dual pane ── */
+
+.git-panel-wt-row .git-panel-commit-msg {
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.git-panel-wt-count {
+  flex-shrink: 0;
+  min-width: 16px;
+  padding: 0 5px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  color: var(--accent-primary);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 15px;
+  text-align: center;
+}
+
+.git-panel-graph-wt-line {
+  stroke: var(--text-tertiary);
+}
+
+/* Higher specificity than .git-panel-graph-node so the base class cannot
+   override the fill/stroke. The fill mixes the accent into the opaque
+   surface color (not transparent) so the connector line underneath is fully
+   covered instead of showing through the node center. No bg-base outer
+   halo — it's invisible on light themes; use accent ring instead. */
+.git-panel-graph-node.git-panel-graph-wt-node {
+  fill: color-mix(in srgb, var(--accent-primary) 15%, var(--bg-surface));
+  stroke: var(--accent-primary);
+}
+
+.git-panel-wt-detail {
+  display: flex;
+  min-height: 80px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+}
+
+/* ── Horizontal split handle between list and detail ── */
+
+.git-panel-split-handle {
+  flex-shrink: 0;
+  height: 5px;
+  cursor: row-resize;
+  background: var(--border-subtle);
+  position: relative;
+  z-index: 2;
+}
+.git-panel-split-handle::after {
+  content: '';
+  position: absolute;
+  inset: -3px 0;
+}
+.git-panel-split-handle:hover,
+.git-panel-split-handle:active {
+  background: var(--accent-primary);
+}
+
+body.git-panel-row-resizing {
+  cursor: row-resize;
+  user-select: none;
+}
+body.git-panel-row-resizing * {
+  cursor: row-resize !important;
+  pointer-events: none;
+}
+
+.git-panel-wt-pane {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.git-panel-wt-pane + .git-panel-wt-pane {
+  border-left: 1px solid var(--border-subtle);
+}
+
+.git-panel-wt-pane-head {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.git-panel-wt-pane-files {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 2px 0;
+}
+
+.git-panel-wt-empty {
+  padding: 12px 10px;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+/* ── History graph lane cell ── */
+
+/* Connections span row centers, so the graph column must not clip the
+   upward escape of a row's incoming lane segments. */
+.git-panel-col-graph {
+  overflow: visible;
+}
+
+.git-panel-graph-cell {
+  flex: 0 0 auto;
+  height: 22px;
+  overflow: visible;
+  /* Allow the 2px seal overlap above (lines start at y=-2, round caps to
+     -3); clip sideways/below so rows never paint over each other's nodes. */
+  clip-path: inset(-3px 0 0 0);
+}
+
+.git-panel-graph {
+  display: block;
+  overflow: visible;
+  shape-rendering: geometricPrecision;
+}
+
+.git-panel-graph-line {
+  fill: none;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Solid dot with a background-colored halo ring so lines visually
+   terminate at the node edge instead of touching the dot. */
+.git-panel-graph-node {
+  stroke: var(--bg-surface);
+  stroke-width: 2;
+}
+
+.git-panel-branch-ref {
+  flex: 0 1 auto;
+  max-width: 10rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0 4px 0 3px;
+  border: 1px solid;
+  border-radius: 7px;
+  background: color-mix(in srgb, var(--bg-surface) 60%, transparent);
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 13px;
+}
+
+/* Branch name must shrink+ellipsis inside the flex pill; without
+   min-width:0 the anonymous text keeps its intrinsic width and pushes
+   past the pill's right border. */
+.git-panel-branch-ref-name {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.git-panel-branch-ref-dot {
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  border: 1px solid var(--bg-base);
+}
+
+.git-panel-branch-ref.current {
+  color: var(--text-primary);
+  font-weight: 600;
+  box-shadow: 0 0 0 1px color-mix(in srgb, currentColor 25%, transparent);
+}
+
+/* Current-branch indicator: a small filled triangle at the right edge */
+.git-panel-branch-ref-current {
+  flex-shrink: 0;
+  width: 0;
+  height: 0;
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
+  border-left: 3px solid var(--accent-primary);
+  margin-left: 2px;
+}
+
+/* ── Mobile (≤767px): stacked commit bar + tabs, wrapping rows ── */
+
+@media (max-width: 767px) {
+  /* Commit composer bar stacks: input on its own line, actions wrap below. */
+  .git-panel-commit-bar {
+    flex-wrap: wrap;
+    row-gap: 6px;
+  }
+
+  .git-panel-commit-input {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+
+  .git-panel-commit-btn,
+  .git-panel-commit-bar .git-panel-icon-btn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+
+  /* File path rows wrap so the action button never overflows. */
+  .git-panel-file-row {
+    flex-wrap: wrap;
+  }
+
+  .git-panel-file-path {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    word-break: break-word;
+  }
+
+  .git-panel-file-action {
+    flex: 0 0 auto;
+    opacity: 1;
+  }
+
+  /* Keep graph rows contiguous; reduce nonessential metadata instead of wrapping. */
+  .git-panel-col-date,
+  .git-panel-col-author {
+    display: none;
+  }
+
+  .git-panel-commit-msg {
+    min-width: 0;
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "sporemind-mobile",
+  "version": "0.31.154",
+  "description": "sporemind Mobile App",
+  "main": "index.js",
+  "scripts": {
+    "android:init": "npx cap add android",
+    "android:sync": "npx cap sync android",
+    "android:open": "npx cap open android",
+    "android:run": "npx cap run android",
+    "android:build": "cd android && ./gradlew assembleDebug",
+    "android:release": "cd android && ./gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.6.0",
+    "@capacitor/app": "^7.0.1",
+    "@capacitor/cli": "^7.6.0",
+    "@capacitor/core": "^7.6.0",
+    "@capacitor/filesystem": "^7.1.8",
+    "@capacitor/keyboard": "^7.0.6",
+    "@capacitor/preferences": "^7.0.4",
+    "@capgo/capacitor-audio-recorder": "^7.1.10",
+    "sharp": "^0.35.3"
+  },
+  "devDependencies": {
+    "@capacitor/assets": "^3.0.5"
+  }
+}

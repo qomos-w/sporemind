@@ -1,0 +1,2 @@
+# Ignore the embedded APK artifact; only the 0-byte placeholder is tracked.
+sporemind.apk

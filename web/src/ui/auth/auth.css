@@ -1,0 +1,244 @@
+/* ── LoginPage ── */
+
+.auth-page {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-base);
+  z-index: 100;
+}
+
+.auth-page-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.auth-card {
+  width: 340px;
+  max-width: 90vw;
+  padding: 28px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg, 10px);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.auth-logo {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--accent-primary);
+  letter-spacing: -0.5px;
+}
+
+.auth-title {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.auth-error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--status-failed) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--status-failed) 25%, var(--border-default));
+  color: var(--status-failed);
+  font-size: 12px;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.auth-field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.auth-field input {
+  padding: 8px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.auth-field input:focus {
+  border-color: var(--accent-primary);
+}
+
+.auth-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: filter 0.15s;
+  margin-top: 4px;
+}
+
+.auth-submit:hover {
+  filter: brightness(1.1);
+}
+
+.auth-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ── LoadingOverlay ── */
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-base);
+  z-index: 200;
+}
+
+.loading-overlay-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+}
+
+.loading-overlay-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.loading-overlay-icon {
+  color: var(--accent-primary);
+}
+
+.loading-overlay-error {
+  color: var(--status-failed);
+}
+
+.loading-overlay-text {
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+.loading-overlay-retry {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  padding: 8px 20px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.loading-overlay-retry:hover {
+  filter: brightness(1.1);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ── ReconnectOverlay (transparent, no text) ── */
+
+.reconnect-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  z-index: 200;
+  pointer-events: none;
+}
+
+.reconnect-overlay-spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid color-mix(in srgb, var(--accent-primary) 25%, transparent);
+  border-top-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  opacity: 0.9;
+}
+
+/* ── AuthTitleBar (wails only) ── */
+
+.auth-titlebar {
+  display: flex;
+  align-items: center;
+  height: var(--titlebar-height);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  user-select: none;
+  --wails-draggable: no-drag;
+}
+
+.auth-titlebar-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 100%;
+  color: var(--accent-primary);
+  opacity: 0.7;
+}
+
+.auth-titlebar-drag {
+  flex: 1;
+  height: 100%;
+  --wails-draggable: drag;
+}

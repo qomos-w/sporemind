@@ -1,0 +1,20 @@
+// workspace.agent_loaded namespace — async notification from project to
+// workspace when a timer-triggered local spawn completes. The project
+// spawns the agent directly (to avoid the deadlock cycle) and then
+// fire-and-forgets this notification so workspace can update its in-memory
+// agent registry (LoadState, ActorID) without any synchronous back-edge.
+//
+// Authoring source of truth for:
+//   - workspace.agent_loaded notification callable types
+//
+// @ts-export
+
+struct WorkspaceAgentLoadedReq {
+    AgentId:     string  // stable agent ID in the workspace registry
+    ActorId:     string  // actor ID of the spawned agent
+    ProjectId:   string  // project actor ID that owns this agent
+}
+
+
+struct WorkspaceAgentLoadedResp {
+}

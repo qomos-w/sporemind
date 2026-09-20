@@ -1,0 +1,33 @@
+// desktop namespace — desktop shell infrastructure wire shapes.
+// @ts-export
+//
+// Sources of truth for:
+//   - persisted desktop window geometry
+//   - frontend error report (web → backend log forwarding)
+//   - root directory (module) entry inside a project
+//
+
+struct DesktopWindowState {
+    X:         int
+    Y:         int
+    Width:     int
+    Height:    int
+    Maximised: bool
+}
+
+
+struct FrontendErrorReport {
+    RequestId:       string
+    Severity:        string
+    SourceComponent: string
+    Message:         string
+    StackTrace:      string
+    UserAgent:       string
+    SessionId:       string
+}
+
+
+struct RootDirEntry {
+    Name: string
+    Path: string
+}

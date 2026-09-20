@@ -1,0 +1,217 @@
+// project namespace — project-scoped file / shell / git operations.
+// @ts-export
+//
+// Sources of truth for:
+//   - project.* file request / response shapes (read/write/edit/glob/grep/list/rm)
+//   - project.git_* request / response shapes (all of them)
+//   - project.info response shape
+//
+// File and shell operation wire shapes are intentionally reused from the
+// filesystem and shell namespaces; this schema only owns project-specific
+// wrappers and legacy project.* request types.
+
+struct ProjectFileListReq {
+    Path: string
+}
+
+
+struct ProjectFileReadReq {
+    Path: string
+}
+
+
+struct ProjectInfoRoot {
+    Name: string
+    Path: string
+}
+
+
+struct ProjectInfoResp {
+    Roots: array<ProjectInfoRoot>
+}
+
+
+struct ProjectGitStatusReq {
+    // Repo selects the repository a git callable operates on: "" (default)
+    // resolves to the caller's bound worktree when attached, else the main
+    // repo; "main" forces the main repo root and is restricted to root
+    // agents (spawned workers stay confined to their worktree). Workflow
+    // owners use "main" to inspect/stash the main repo and clear merge
+    // blockers reported by workflow_stop.
+    optional Repo: string
+}
+
+
+struct ProjectGitStatusResp {
+    Branch:      string
+    MainBranch:  string
+    Status:      string
+    Log:         string
+    Files:       array<ProjectGitFileStatus>
+    optional UserName: string
+    optional IsGit:    bool
+}
+
+
+struct ProjectGitFileStatus {
+    Path:     string
+    Staging:  string
+    Worktree: string
+}
+
+
+struct ProjectSyncRootsReq {
+    Roots: array<ProjectInfoRoot>
+}
+
+
+// ---- shared git domain types (project-local copies) ----
+// IDs 997+ chosen to avoid collisions with auto-assigned IDs in the
+// 760-900 range (provider / aimanager / shell / etc. namespaces).
+
+struct ProjectGitCommitInfo {
+    Hash:    string
+    Short:   string
+    Message: string
+    Author:  string
+    Email:   string
+    When:    string
+    optional Parents: array<string>
+}
+
+
+struct ProjectGitBranchInfo {
+    Name:     string
+    Current:  bool
+    Hash:     string
+    IsRemote: bool     // true when the branch lives under refs/remotes
+    Remote:   string   // remote name (e.g. "origin"); empty for local branches
+}
+
+
+struct ProjectGitStashInfo {
+    Index:   int
+    Message: string
+    Hash:    string
+    When:    string
+}
+
+
+struct ProjectGitRemoteInfo {
+    Name: string
+    Urls: array<string>
+}
+
+
+struct ProjectGitBlameLine {
+    Hash:    string
+    Author:  string
+    Email:   string
+    When:    string
+    Line:    int
+    Content: string
+}
+
+
+// ---- project.git_* request / response wrappers ----
+// Note: no ProjectId field — project actor resolves root via a.rootPath()
+// and routing happens via ExposeToChildren within the project subtree.
+
+struct ProjectGitLogReq {
+    Limit: int
+    optional Repo: string
+}
+
+
+struct ProjectGitLogResp {
+    Commits: array<ProjectGitCommitInfo>
+}
+
+
+struct ProjectGitDiffReq {
+    FilePath:   string  // Relative path inside the repo; empty means all files.
+    CommitHash: string  // If empty, diff index vs working tree. If set, diff this commit vs working tree.
+    optional Repo: string
+}
+
+
+struct ProjectGitDiffResp {
+    Diff: array<string>
+}
+
+
+struct ProjectGitAddReq {
+    Paths: array<string>
+}
+
+
+struct ProjectGitCommitReq {
+    Message: string
+}
+
+
+struct ProjectGitCommitResp {
+    Hash:  string
+    Short: string
+}
+
+
+struct ProjectGitPushReq {
+    Remote: string
+}
+
+
+struct ProjectGitPullReq {
+    Remote: string
+}
+
+
+struct ProjectGitBranchReq {
+}
+
+
+struct ProjectGitBranchResp {
+    Branches: array<ProjectGitBranchInfo>
+}
+
+
+struct ProjectGitCheckoutReq {
+    Branch: string
+    Create: bool
+}
+
+
+struct ProjectGitResetReq {
+    optional Paths: array<string>
+}
+
+
+struct ProjectGitStashSaveReq {
+    optional Message: string
+    optional Repo: string
+}
+
+
+struct ProjectGitStashPopReq {
+    optional Index: int
+    optional Repo: string
+}
+
+
+struct ProjectGitStashListReq {
+    optional Repo: string
+}
+
+
+struct ProjectGitStashListResp {
+    Stashes: array<ProjectGitStashInfo>
+}
+
+
+struct ProjectGitStashDropReq {
+    optional Index: int
+}
+
+
+struct ProjectGitRemoteListReq {
+}

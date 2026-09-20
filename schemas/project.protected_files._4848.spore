@@ -1,0 +1,20 @@
+// project protected files — write-guard state for generated artifacts.
+// project.set_protected_files is called by appmanager.dev_generate after
+// codegen to declare the files that project.write/project.edit must refuse.
+// @ts-export
+
+struct SetProtectedFilesReq {
+    Files: array<string>  // relative paths from project root; empty clears all protections
+    // Forwarded by appmanager.dev_generate from its own turn-engine-injected
+    // CallerAgentId. When the caller agent is bound to an active worktree the
+    // list is stored in a worktree-scoped bucket (keyed by worktree ID) instead
+    // of the global list, so a worktree-side codegen cannot clobber the main
+    // tree's protections. Empty means a human/internal (unbound) caller: write
+    // the global list.
+    optional CallerAgentId: string
+}
+
+
+struct SetProtectedFilesResp {
+    Count: long  // number of protected files after the update
+}

@@ -1,0 +1,18 @@
+// appmanager sdk vendor — extract a self-contained copy of the plugin SDK into
+// the app directory (vendor-sdk/) and re-point go.mod at it, so the app builds
+// with zero host-machine dependencies. Template scaffolds vendor by default;
+// this callable applies the same treatment to existing apps and refreshes a
+// stale vendored copy.
+// @ts-export
+
+struct AppManagerSdkVendorReq {
+    optional ProjectId: string   // project ID; if empty, uses the caller's bound project
+    optional CallerAgentId: string  // injected by turn engine: calling agent's actor ID; used to route worktree-bound callers to their bound worktree
+    optional AppDir: string      // subdirectory holding the app, relative to the project root; "." or empty = project root; rejects "..", absolute paths and backslashes
+}
+
+struct AppManagerSdkVendorResp {
+    Vendored: bool               // true when the SDK copy was written
+    optional Path: string        // project-root-relative path of the vendored SDK directory (vendor-sdk, prefixed by AppDir)
+    optional Error: string       // error message when vendoring failed (project not found, invalid AppDir, ...)
+}

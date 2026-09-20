@@ -1,0 +1,76 @@
+/* Integrated knowledge-base mode ([[kb-mode-integration]]): two-column shell that
+   hosts the global left outline ([[kb-left-outline]]) plus the right column
+   (swimlane [[kb-swimlane]] or quick views [[kb-quick-views]]). */
+
+.kb-mode {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  min-height: 0;
+  width: 100%;
+  box-sizing: border-box;
+  color: var(--text-primary);
+}
+
+.kb-mode-outline {
+  flex: 0 0 280px;
+  min-width: 220px;
+  max-width: 360px;
+  min-height: 0;
+  border-right: 1px solid var(--border-subtle);
+  background: var(--bg-sidebar, transparent);
+  overflow: hidden;
+}
+
+.kb-mode-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.kb-mode-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 24px;
+  color: var(--text-muted, var(--text-tertiary));
+  font-size: 0.8125rem;
+  text-align: center;
+}
+
+.kb-mode-placeholder--error {
+  color: var(--danger, var(--accent-danger, #d9534f));
+}
+
+/* Narrow / mobile: stack the outline above the right column. */
+@media (max-width: 720px) {
+  .kb-mode,
+  .kb-mode--mobile {
+    flex-direction: column;
+  }
+
+  .kb-mode--mobile .kb-mode-outline,
+  .kb-mode .kb-mode-outline {
+    flex: 0 0 auto;
+    max-width: none;
+    max-height: 45%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    /* The outline column is content-sized (auto) up to the 45% cap, so a
+       child's height:100% resolves against an indefinite height and the tree
+       just clips. Make the column a flex box whose child shrinks within the
+       cap — then .kb-outline-projects gets a bounded height and scrolls. */
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .kb-mode--mobile .kb-outline,
+  .kb-mode .kb-outline {
+    height: auto;
+    flex: 0 1 auto;
+    min-height: 0;
+  }
+}

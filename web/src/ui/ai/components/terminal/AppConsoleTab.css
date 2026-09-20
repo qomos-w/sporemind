@@ -1,0 +1,282 @@
+/* AppConsoleTab — frontend console log viewer for the terminal panel.
+   Reuses CSS variables established by the terminal panel framework. */
+
+.app-console-tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ── Filter bar ── */
+.app-console-filterbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-base);
+}
+
+.app-console-filter-levels {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+}
+
+.app-console-filter-label {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  margin-right: 2px;
+}
+
+.app-console-level-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+  user-select: none;
+}
+
+.app-console-level-chip:hover {
+  background: var(--bg-hover);
+}
+
+.app-console-level-chip.active {
+  background: var(--bg-elevated);
+  border-color: var(--border-default);
+  color: var(--text-primary);
+}
+
+.app-console-level-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.app-console-level-dot.level-error {
+  background: var(--accent-danger, #ef4444);
+}
+
+.app-console-level-dot.level-warn {
+  background: var(--accent-warning, #f59e0b);
+}
+
+.app-console-level-dot.level-info {
+  background: var(--accent-info, #3b82f6);
+}
+
+.app-console-level-dot.level-debug {
+  background: var(--accent-tertiary, #8b949e);
+}
+
+.app-console-filter-clear {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: var(--bg-hover);
+  color: var(--text-tertiary);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0;
+  transition: background var(--transition-fast);
+}
+
+.app-console-filter-clear:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.app-console-filter-text {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-tertiary);
+}
+
+.app-console-filter-text:focus-within {
+  border-color: var(--accent-primary);
+}
+
+.app-console-filter-text input {
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-xs);
+  outline: none;
+  width: 140px;
+}
+
+.app-console-filter-text input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ── Scroll container ── */
+.app-console-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2px 0;
+}
+
+/* ── Load-older area ── */
+.app-console-load-older {
+  display: flex;
+  justify-content: center;
+  padding: 4px 8px;
+  min-height: 24px;
+}
+
+.app-console-load-hint {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.app-console-no-more {
+  opacity: 0.6;
+}
+
+.app-console-load-btn {
+  border: none;
+  background: transparent;
+  color: var(--accent-primary);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  padding: 2px 8px;
+  border-radius: var(--radius-md);
+  transition: background var(--transition-fast);
+}
+
+.app-console-load-btn:hover {
+  background: var(--bg-hover);
+}
+
+/* ── Log row ── */
+.app-console-row {
+  display: grid;
+  grid-template-columns: 80px auto 1fr;
+  gap: 6px;
+  padding: 2px 10px;
+  font-family: var(--font-mono, monospace);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+  color: var(--text-primary);
+  transition: background var(--transition-fast);
+}
+
+.app-console-row:hover {
+  background: var(--bg-hover);
+}
+
+.app-console-time {
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.app-console-level {
+  white-space: nowrap;
+  user-select: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.app-console-level.level-error {
+  color: var(--accent-danger, #ef4444);
+}
+
+.app-console-level.level-warn {
+  color: var(--accent-warning, #f59e0b);
+}
+
+.app-console-level.level-info {
+  color: var(--accent-info, #3b82f6);
+}
+
+.app-console-level.level-debug {
+  color: var(--accent-tertiary, #8b949e);
+}
+
+.app-console-msg {
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
+/* ── Meta badges (caller, fields) ── */
+.app-console-meta {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding-left: 0;
+  margin-top: -1px;
+}
+
+.app-console-caller,
+.app-console-fields {
+  font-size: var(--text-xs);
+  padding: 0 6px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  color: var(--text-tertiary);
+  font-family: var(--font-mono, monospace);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.app-console-fields {
+  word-break: break-all;
+  white-space: pre-wrap;
+  max-width: 100%;
+}
+
+/* ── Empty/degraded state ── */
+.app-console-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 100%;
+  padding: 24px;
+  color: var(--text-tertiary);
+}
+
+.app-console-retry {
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--accent-primary);
+  font-size: var(--text-xs);
+  padding: 4px 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.app-console-retry:hover {
+  background: var(--bg-hover);
+}

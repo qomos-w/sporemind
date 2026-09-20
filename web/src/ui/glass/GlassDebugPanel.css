@@ -1,0 +1,719 @@
+.glass-debug {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px calc(var(--composer-card-top, var(--composer-frame-h, 120px)) + 16px);
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  font-size: 12px;
+  color: var(--text-primary);
+}
+
+.glass-debug-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0;
+}
+
+.glass-debug-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  min-width: 0;
+}
+
+.glass-debug-subtitle {
+  color: var(--text-tertiary);
+  font-weight: 400;
+  font-size: 11px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.glass-debug-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.glass-debug-autorefresh {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.glass-debug-refresh {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+}
+
+.glass-debug-refresh:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.glass-debug-refresh:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.glass-debug-spin {
+  animation: glass-debug-rotate 0.8s linear infinite;
+}
+
+@keyframes glass-debug-rotate {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.glass-debug-updated {
+  color: var(--text-tertiary);
+  font-size: 10px;
+}
+
+.glass-debug-error {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 16px;
+  padding: 5px 9px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--status-failed) 12%, transparent);
+  color: var(--status-failed);
+  font-size: 11px;
+}
+
+.glass-debug-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+}
+
+.glass-debug-card {
+  background: var(--bg-subtle);
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.glass-debug-card-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.glass-debug-count {
+  margin-left: auto;
+  color: var(--text-tertiary);
+  font-weight: 400;
+  font-size: 11px;
+}
+
+.glass-debug-empty {
+  color: var(--text-tertiary);
+  font-size: 11px;
+}
+
+.glass-debug-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 1px 7px;
+  border-radius: 999px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.glass-debug-badge-online {
+  background: color-mix(in srgb, var(--status-success) 15%, transparent);
+  color: var(--status-success);
+}
+
+.glass-debug-badge-offline {
+  background: color-mix(in srgb, var(--status-failed) 15%, transparent);
+  color: var(--status-failed);
+}
+
+.glass-debug-badge-idle {
+  background: var(--bg-hover);
+  color: var(--text-tertiary);
+}
+
+.glass-debug-kv {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.glass-debug-kv-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.glass-debug-kv-key {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  width: 84px;
+}
+
+.glass-debug-kv-value {
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.glass-debug-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.glass-debug-frame-text {
+  font-size: 12px;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.glass-debug-frame-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.glass-debug-json {
+  margin-top: 6px;
+}
+
+.glass-debug-json summary {
+  cursor: pointer;
+  font-size: 10px;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.glass-debug-json pre {
+  margin: 4px 0 0;
+  font-size: 10px;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  background: var(--bg-hover);
+  border-radius: 4px;
+  padding: 6px;
+  overflow-x: auto;
+  max-height: 200px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+/* --- Simulation controls --- */
+
+.glass-debug-simulation {
+  grid-column: 1 / -1;
+}
+
+.glass-debug-sim-section {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border-primary);
+}
+
+.glass-debug-sim-section:first-of-type {
+  margin-top: 4px;
+  padding-top: 0;
+  border-top: none;
+}
+
+.glass-debug-sim-label {
+  display: block;
+  font-size: 10px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 6px;
+}
+
+.glass-debug-sim-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.glass-debug-sim-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 4px 10px;
+  border: 1px solid var(--border-primary);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.1s, border-color 0.1s, color 0.1s;
+}
+
+.glass-debug-sim-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.glass-debug-sim-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.glass-debug-sim-btn.small {
+  padding: 4px 6px;
+}
+
+.glass-debug-sim-hint {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  margin-right: 4px;
+}
+
+.glass-debug-sim-value {
+  font-size: 11px;
+  color: var(--text-primary);
+  min-width: 16px;
+  text-align: center;
+}
+
+.glass-debug-sim-msg {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 8px 0;
+  padding: 6px 10px;
+  border-radius: 4px;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.glass-debug-sim-msg-close {
+  margin-left: auto;
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+}
+
+.glass-debug-sim-msg-close:hover {
+  color: var(--text-primary);
+}
+
+/* --- Scene tree --- */
+
+.scene-tree {
+  margin-top: 4px;
+  font-size: 10px;
+  font-family: '"Cascadia Code", "Consolas", "Courier New", monospace', monospace;
+  color: var(--text-secondary);
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.scene-tree-empty {
+  padding: 8px;
+  color: var(--text-tertiary);
+  font-size: 10px;
+}
+
+.scene-tree-node {
+  user-select: none;
+}
+
+.scene-tree-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 1px 0;
+  cursor: default;
+  border-radius: 2px;
+}
+
+.scene-tree-row:hover {
+  background: var(--bg-hover);
+}
+
+.scene-tree-arrow {
+  display: inline-block;
+  width: 12px;
+  text-align: center;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 9px;
+  transition: transform 0.1s;
+}
+
+.scene-tree-arrow.open {
+  transform: rotate(0deg);
+}
+
+.scene-tree-arrow-spacer {
+  display: inline-block;
+  width: 12px;
+}
+
+.scene-tree-key {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.scene-tree-key.highlight {
+  color: #4ade80;
+}
+
+.scene-tree-value {
+  color: var(--text-tertiary);
+  margin-left: 4px;
+}
+
+@font-face {
+  font-family: 'GlassesMirror';
+  src: url('/fonts/glassesmirror.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* --- Preview toolbar --- */
+
+.glass-preview-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+}
+
+.glass-preview-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.glass-preview-scale {
+  font-size: 10px;
+  color: var(--text-tertiary, var(--text-secondary));
+  font-family: monospace;
+  margin-right: auto;
+}
+
+.glass-preview-zoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.glass-preview-zoom-btn,
+.glass-preview-toggle {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid var(--border-primary);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.1s;
+}
+
+.glass-preview-zoom-btn:hover,
+.glass-preview-toggle:hover {
+  background: var(--bg-hover);
+}
+
+.glass-preview-toggle.active {
+  background: var(--accent-bg, rgba(74, 222, 128, 0.15));
+  color: #4ade80;
+  border-color: #4ade80;
+}
+
+.glass-debug-chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.glass-debug-chip-wide {
+  max-width: 60%;
+}
+
+.glass-debug-caps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.glass-debug-cap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.glass-debug-cap-name {
+  font-weight: 500;
+  font-size: 11px;
+}
+
+.glass-debug-cap-features {
+  display: inline-flex;
+  gap: 4px;
+  flex-wrap: wrap;
+}
+
+.glass-debug-ack {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.glass-debug-ack-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.glass-debug-ack-label {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  width: 100px;
+}
+
+.glass-debug-ack-value {
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.glass-debug-ack-rejected {
+  color: var(--status-failed);
+}
+
+.glass-debug-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.glass-debug-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: var(--bg-hover);
+}
+
+.glass-debug-stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.glass-debug-stat-label {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+.glass-debug-conn-events {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 8px;
+}
+
+.glass-debug-conn-events-label {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.glass-debug-conn-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.glass-debug-conn-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.glass-debug-conn-kind {
+  font-size: 10px;
+  padding: 0 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.glass-debug-conn-kind-online,
+.glass-debug-conn-kind-reconnected {
+  background: color-mix(in srgb, var(--status-success) 15%, transparent);
+  color: var(--status-success);
+}
+
+.glass-debug-conn-kind-offline,
+.glass-debug-conn-kind-replaced {
+  background: color-mix(in srgb, var(--status-failed) 15%, transparent);
+  color: var(--status-failed);
+}
+
+.glass-debug-conn-time {
+  color: var(--text-tertiary);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.glass-debug-conn-reason {
+  color: var(--text-tertiary);
+  font-size: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.glass-debug-conn-note {
+  color: var(--text-tertiary);
+  font-size: 10px;
+}
+
+.glass-debug-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.glass-debug-timeline-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 11px;
+}
+
+.glass-debug-timeline-kind {
+  font-size: 10px;
+  padding: 0 6px;
+  border-radius: 3px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.glass-debug-timeline-kind-render,
+.glass-debug-timeline-kind-speak {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.glass-debug-timeline-kind-speak_deduped {
+  background: var(--bg-hover);
+  color: var(--text-tertiary);
+}
+
+.glass-debug-timeline-kind-transcript,
+.glass-debug-timeline-kind-utterance {
+  background: color-mix(in srgb, var(--status-success) 12%, transparent);
+  color: var(--status-success);
+}
+
+.glass-debug-timeline-kind-error {
+  background: color-mix(in srgb, var(--status-failed) 12%, transparent);
+  color: var(--status-failed);
+}
+
+.glass-debug-timeline-detail {
+  color: var(--text-secondary);
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+.glass-debug-timeline-time {
+  color: var(--text-tertiary);
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+/* --- Canvas preview --- */
+
+.glass-debug-canvas-card {
+  padding: 8px;
+}
+
+.glass-canvas-wrapper {
+  border-radius: 6px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border: 1px solid var(--border-primary);
+  background: #000;
+}
+
+.glass-scene {
+  display: block;
+}

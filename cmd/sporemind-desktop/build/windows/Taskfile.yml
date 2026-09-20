@@ -1,0 +1,55 @@
+version: '3'
+
+tasks:
+  build:
+    summary: Build sporemind for Windows
+    deps:
+      - task: generate:syso
+    cmds:
+      - |
+        if [ "${GARBLE:-}" = "true" ] && command -v garble >/dev/null 2>&1; then
+          garble ${GARBLE_FLAGS:-} build {{.BUILD_FLAGS}} -o {{.BIN_DIR}}/{{.APP_NAME}}.exe
+        else
+          go build {{.BUILD_FLAGS}} -o {{.BIN_DIR}}/{{.APP_NAME}}.exe
+        fi
+      - cmd: powershell Remove-item *.syso
+        platforms: [windows]
+      - cmd: rm -f *.syso
+        platforms: [linux, darwin]
+    vars:
+      VERSION: '{{.SPOREMIND_VERSION | default "0.0.0"}}'
+      BUILD_FLAGS: >-
+        {{if eq .PRODUCTION "true"}}
+        -tags desktop,release,production{{if .EXTRA_TAGS}},{{.EXTRA_TAGS}}{{end}} -trimpath -buildvcs=false
+        -ldflags="-H windowsgui -X github.com/qomos-w/sporemind/pkg/version.Version={{.VERSION}}{{if .LDFLAGS_EXTRA}} {{.LDFLAGS_EXTRA}}{{end}}"
+        {{else}}
+        -tags desktop{{if .EXTRA_TAGS}},{{.EXTRA_TAGS}}{{end}} -buildvcs=false -gcflags=all="-l"
+        -ldflags="-H windowsgui -X github.com/qomos-w/sporemind/pkg/version.Version={{.VERSION}}{{if .LDFLAGS_EXTRA}} {{.LDFLAGS_EXTRA}}{{end}}"
+        {{end}}
+    env:
+      GOOS: windows
+      CGO_ENABLED: 0
+
+  generate:syso:
+    summary: Generate Windows .syso file (prod variant when PRODUCTION=true, dev variant otherwise)
+    dir: build
+    cmds:
+      - |
+        if [ "${PRODUCTION:-false}" = "true" ]; then
+          ICON=windows/icon.ico; INFO=windows/info.json
+        else
+          ICON=windows/icon-dev.ico; INFO=windows/info-dev.json
+        fi
+        wails3 generate syso -arch {{.ARCH}} -icon "$ICON" -manifest windows/wails.exe.manifest -info "$INFO" -out ../wails_windows_{{.ARCH}}.syso
+    vars:
+      ARCH: '{{.ARCH | default ARCH}}'
+
+  run:
+    summary: Run the desktop binary
+    cmds:
+      - '{{.BIN_DIR}}/{{.APP_NAME}}.exe'
+
+  dev:
+    summary: Run sporemind in dev mode
+    cmds:
+      - wails3 dev -config ./build/config.yml -port 5558

@@ -1,0 +1,72 @@
+// shell namespace — process execution wire shapes.
+// @ts-export
+//
+// Sources of truth for:
+//   - shell.exec request / response
+//
+
+// preserving wire compatibility.
+
+// ShellExecReq / ShellBashReq.Timeout is in milliseconds.
+// Default 30000 (30s). Values below 1000 are clamped to default to guard
+// against callers that pass seconds (e.g. 30) by mistake — without the
+// clamp, a 30ms timeout fires immediately and the command is killed
+// before producing output. There is no maximum; callers may request
+// longer durations when they expect a command to take more than 30s.
+
+struct ShellExecReq {
+    Command:        string
+    optional Args:    array<string>
+    optional Dir:     string
+    optional Timeout: int
+    optional Confirm: bool   // required when Dir resolves outside allowed roots
+}
+
+
+struct ShellExecResp {
+    Stdout:   string
+    Stderr:   string
+    ExitCode: int
+}
+
+
+struct ShellBashReq {
+    Command:        string
+    optional Args:    array<string>
+    optional Dir:     string
+    optional Timeout: int
+}
+
+
+struct ShellBashResp {
+    Stdout:                  string
+    Stderr:                  string
+    ExitCode:                int
+    optional Truncated:      bool
+    optional Interrupted:    bool
+    optional ReturnCodeInterpretation: string
+}
+
+
+// ShellChunk is the streaming chunk emitted by shell.bash / shell.exec /
+// project.shell_exec. Kind discriminates:
+//   - "stdout" / "stderr": Text carries raw incremental bytes (untruncated,
+//     UI-bound). Emitted as output arrives.
+//   - "exit": carries the LLM-facing final result. Stdout/Stderr are
+//     head+tail truncated per the actor's byte budgets; ExitCode /
+//     Truncated / Interrupted / ReturnCodeInterpretation describe the
+//     termination. DirWarning is hoisted out of Stderr so the UI can
+//     banner it without re-parsing stderr text.
+// Exactly one exit chunk is emitted per invocation, and it is the last
+// chunk.
+struct ShellChunk {
+    Kind: string
+    optional Text:                     string
+    optional ExitCode:                 int
+    optional Stdout:                   string
+    optional Stderr:                   string
+    optional Truncated:                bool
+    optional Interrupted:              bool
+    optional ReturnCodeInterpretation: string
+    optional DirWarning:               string
+}

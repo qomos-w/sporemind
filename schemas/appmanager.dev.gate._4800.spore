@@ -1,0 +1,28 @@
+// appmanager dev gate — iterative self-check of the four registration gates.
+// Runs build, stub-filling, manifest-consistency, and coverage gates
+// server-side with no agent-side shell dependency.
+// @ts-export
+
+struct AppManagerDevGateReq {
+    optional ProjectId: string   // project ID; if empty, uses the caller's bound project
+    optional CallerAgentId: string  // injected by turn engine: calling agent's actor ID; used to route worktree-bound callers to their bound worktree
+    optional AppDir: string      // subdirectory holding the app, relative to the project root; "." or empty = project root; rejects "..", absolute paths and backslashes
+}
+
+struct AppManagerGateError {
+    Gate: string                 // "build" | "stub_filling" | "manifest_consistency" | "coverage"
+    Detail: string               // what difference was found
+    Fix: string                  // how to fix
+}
+
+struct AppManagerGateResult {
+    Gate: string                 // which gate was checked
+    Passed: bool                 // true if the gate passed
+    optional Error: AppManagerGateError  // populated when Passed is false
+}
+
+struct AppManagerDevGateResp {
+    Passed: bool                 // true only if all gates passed
+    Results: array<AppManagerGateResult>
+    optional Error: string       // overall error if gate execution itself failed (e.g. project not found)
+}

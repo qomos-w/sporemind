@@ -1,0 +1,26 @@
+app {{.Name}} {
+    id:          "{{.AppID}}"
+    name:        "{{.Name}}"
+    version:     "0.1.0"
+    namespace:   "{{.AppID}}"
+
+    struct PingRequest {
+        Message: string
+    }
+
+    struct PingResponse {
+        Pong: string
+    }
+
+    callable ping {
+        request:  PingRequest
+        response: PingResponse
+        effect:   "read"
+        toolName: "{{.Name}}-ping"
+    }
+
+    entrypoint view main {
+        title: "{{.Name}} App"
+        route: "/"
+    }
+}

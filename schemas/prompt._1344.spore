@@ -1,0 +1,174 @@
+// prompt namespace — prompt assets, fragments, and promptmanager.* request
+// shapes.
+//
+// Sources of truth for:
+//   - prompt asset CRUD (promptmanager.get / save)
+//   - fragment & artifact shapes used by prompt assembly
+//   - prompt profile (system / role per scope+role)
+//   - prompt list / fragment list responses
+//
+// @ts-export
+
+// mixed `fragmentId` / `systemPrompt`), preserving wire compatibility.
+
+struct PromptRef {
+    Kind: string
+    Key:  string
+    optional Placement: string
+}
+
+
+struct Prompt {
+    Id:      string
+    Content: string
+    Version: int
+    ForkOf:  string
+    Meta:    map<string, string>
+}
+
+
+struct PromptFragment {
+    optional Id:         string
+    optional Key:        string
+    optional BuiltinKey: string
+    Name:                string
+    Kind:                string
+    Priority:            int
+    optional Content:    string
+    optional Scope:      string
+    optional Role:       string
+    optional Source:     string
+    optional Path:       string
+    optional SourceRange: string
+    Editable:            bool
+    Deletable:           bool
+}
+
+
+struct PromptContextSegment {
+    Id:                  string
+    optional FragmentId: string
+    Chars:               int
+}
+
+
+struct PromptArtifact {
+    Sections:                 array<string>
+    Fragments:                array<PromptFragment>
+    optional ContextSegments: array<PromptContextSegment>
+    optional SummarySegments: array<SummarySegment>
+    optional ContextWindowSize: int32
+    optional TokenBudget:       int32
+}
+
+
+struct PromptProfile {
+    optional Key:          string
+    optional BuiltinKey:   string
+    optional Scope:        string
+    optional Role:         string
+    RolePrompt:            string
+    optional FragmentRefs: array<string>
+    optional Source:       string
+    Editable:              bool
+    Deletable:             bool
+    optional UpdatedAt:    string
+}
+
+
+struct PromptManagerGetReq {
+    Id: string
+}
+
+
+struct PromptManagerSaveReq {
+    Id:      string
+    Content: string
+    Meta:    map<string, string>
+}
+
+
+struct PromptManagerListFragmentsReq {
+    Scope: string
+    Role:  string
+}
+
+
+struct PromptManagerGetArtifactReq {
+    Intent: string
+    Scope:  string
+    Role:   string
+}
+
+
+struct PromptManagerGetProfileReq {
+    Scope: string
+    Role:  string
+}
+
+
+struct PromptManagerSaveProfileReq {
+    optional Key:          string
+    optional Scope:        string
+    optional Role:         string
+    optional BuiltinKey:   string
+    RolePrompt:            string
+}
+
+
+struct PromptManagerDeleteProfileReq {
+    Key: string
+}
+
+
+struct PromptManagerSaveFragmentReq {
+    optional Key:     string
+    Name:             string
+    Kind:             string
+    Priority:         int
+    optional Content: string
+    optional Scope:   string
+    optional Role:    string
+}
+
+
+struct PromptManagerDeleteFragmentReq {
+    Key: string
+}
+
+
+struct PromptManagerResolveRefReq {
+    Ref:  PromptRef
+    Slot: string
+}
+
+
+struct PromptResolvedRef {
+    Content: string
+    Source:  string
+}
+
+
+struct PromptManagerResolveFragmentsReq {
+    Refs: array<PromptRef>
+}
+
+
+struct PromptResolvedFragmentsResp {
+    Fragments: array<PromptFragment>
+}
+
+
+struct PromptListResp {
+    Items: array<Prompt>
+}
+
+
+struct PromptFragmentListResp {
+    Items: array<PromptFragment>
+}
+
+
+struct PromptProfileListResp {
+    Items: array<PromptProfile>
+}

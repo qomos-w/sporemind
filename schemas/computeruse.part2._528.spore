@@ -1,0 +1,167 @@
+// computeruse namespace — sandboxed mouse/keyboard/screen operations.
+//
+// Sources of truth for:
+//   - computeruse.screenshot         (Public, read-only)
+//   - computeruse.stream             (NOT Public — continuous capture)
+//   - computeruse.interact           (NOT Public — full mouse/keyboard control)
+//   - computeruse.clipboard_get      (NOT Public — may leak user secrets)
+//   - computeruse.clipboard_set      (NOT Public — writes user clipboard)
+//   - computeruse.list_displays      (Public, read-only)
+//   - computeruse.list_windows       (Public, read-only, filtered)
+//   - computeruse.list_processes     (Public, read-only)
+//   - computeruse.get_window_info    (Public, read-only)
+//   - computeruse.cursor_position    (Public, read-only)
+//
+
+// LLM tool input schemas (computer_screenshot / computer_interact).
+//
+// Coordinate system: all (x, y) values in this namespace are *physical
+// pixels* in the virtual desktop. On Windows the sporemind-desktop process
+// declares PerMonitorV2 DPI awareness in its manifest, so GDI / SendInput
+// see physical pixels regardless of system / per-monitor scale. Headless
+// builds inherit whatever the launching process declared.
+
+// Region is a sub-rectangle, in screen-pixel coordinates by default;
+// when nested under WindowTarget with mode="window_region", the rect
+// is interpreted in window-local coordinates (window top-left = 0,0).
+
+
+// =========================================================================
+// UI Automation — element tree enumeration & control.
+// =========================================================================
+
+// ElementNode is one UI Automation element snapshot. `id` is a
+// backend-stable handle (LRU cache) that can be passed back to
+// element_click / element_focus / element_set_value.
+struct ComputerUseElementNode {
+    Id:                            string
+    optional AutomationID:         string
+    optional Name:                 string
+    optional ClassName:            string
+    // High-level role: "button" / "edit" / "list" / "text" / "window" / ...
+    optional ControlType:          string
+    Bounds:                        ComputerUseRegion
+    optional IsEnabled:            bool
+    optional IsKeyboardFocusable:  bool
+    optional HasKeyboardFocus:     bool
+    // Current value for ValuePattern elements (edit boxes, combo boxes).
+    optional Value:                string
+}
+
+
+struct ComputerUseListElementsReq {
+    // Restrict search to this window's subtree. 0 = desktop root.
+    optional WindowID:     int
+    // Case-insensitive substring on Name or AutomationID.
+    optional NameContains: string
+    // Filter by control type ("button", "edit", ...).
+    optional ControlType:  string
+    // Max tree-walk depth (default 8, capped at 8).
+    optional MaxDepth:     int
+    // Cap on number of results (default 256).
+    optional MaxResults:   int
+}
+
+
+struct ComputerUseListElementsResp {
+    Items: array<ComputerUseElementNode>
+    Count: int
+}
+
+
+// =========================================================================
+// OCR — text extraction from a region of the screen.
+// =========================================================================
+
+// OcrReq runs OCR over a captured region. Defaults to full primary
+// display when target is unset.
+struct ComputerUseOcrReq {
+    optional Target:   ComputerUseWindowTarget
+    // Language hint (e.g. "eng", "chi_sim"); backend-specific.
+    optional Language: string
+}
+
+
+// OcrLine is one line of recognised text plus its bounding box.
+struct ComputerUseOcrLine {
+    Text:    string
+    Bounds:  ComputerUseRegion
+    // Confidence 0..1 when reported by the backend; 0 otherwise.
+    optional Confidence: float
+}
+
+
+struct ComputerUseOcrResp {
+    Text:           string
+    Lines:          array<ComputerUseOcrLine>
+    // "tesseract", "paddle", "winrt", "stub" — engine that produced the result.
+    Engine:         string
+    // Source rect captured (in screen coords).
+    CaptureBounds:  ComputerUseRegion
+}
+
+
+// =========================================================================
+// OCR setup — auto-download PaddleOCR model files + ONNX runtime.
+// =========================================================================
+
+// SetupOcrReq triggers download / verification of PaddleOCR model files
+// and the ONNX Runtime shared library from the go-ocr Hugging Face repo.
+// If the files already exist and Force=false, the call is a no-op.
+struct ComputerUseSetupOcrReq {
+    // Target directory for model files. Defaults to lib/ocr (search root #2).
+    optional Dir:       string
+    // Re-download even when files already exist.
+    optional Force:     bool
+}
+
+// SetupOcrResp reports the result of a setup_ocr call.
+struct ComputerUseSetupOcrResp {
+    // Directory where files were installed.
+    Dir:        string
+    // "ready" — engine is usable; "downloaded" — files were fetched this call;
+    // "skipped" — files already present and Force=false; "failed" — error.
+    Status:     string
+    // Per-file paths that were verified or downloaded.
+    Files:      array<string>
+    // Human-readable error message when Status="failed".
+    optional Error: string
+}
+
+
+// =========================================================================
+// Capabilities — platform feature/action support matrix.
+// =========================================================================
+
+// ComputerUseCapability is one entry of the platform capability matrix.
+// It describes support for a feature, an interact action, an OCR engine,
+// or a gated callable on the current backend.
+struct ComputerUseCapability {
+    // Stable machine key:
+    //   "feature.<name>"   — e.g. feature.element_tree, feature.rich_clipboard
+    //   "action.<name>"    — interact action, e.g. action.middle_click
+    //   "ocr.<engine>"     — e.g. ocr.paddle, ocr.tesseract
+    //   "callable.<name>"  — gated non-public callable, e.g. callable.computeruse.interact
+    Key:       string
+    Supported: bool
+    // Policy scope required to invoke (set only for gated callables).
+    optional Scope:  string
+    // Human-readable detail: why unsupported, or extra context.
+    optional Detail: string
+}
+
+
+// ComputerUseCapabilitiesReq queries the platform capability matrix.
+struct ComputerUseCapabilitiesReq {
+}
+
+
+// ComputerUseCapabilitiesResp reports what the current platform backend
+// supports so agents can avoid invoking actions that would fail.
+struct ComputerUseCapabilitiesResp {
+    // Host operating system: "windows" / "darwin" / "linux".
+    Platform: string
+    // Capture backend in use: "winx" / "cgmac" / "x11" / "unavailable".
+    Backend:  string
+    Items:    array<ComputerUseCapability>
+}

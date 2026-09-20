@@ -1,0 +1,13 @@
+.cm-md-editor {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.cm-md-editor .cm-editor {
+  height: 100%;
+}
+
+.cm-md-editor .cm-editor.cm-focused {
+  outline: none;
+}

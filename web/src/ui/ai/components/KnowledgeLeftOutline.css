@@ -1,0 +1,289 @@
+/* Global knowledge-base left outline ([[kb-left-outline]]). */
+
+.kb-outline {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 8px 0;
+  box-sizing: border-box;
+  color: var(--text-primary);
+}
+
+/* ── Top view entries (home / search / starred) ── */
+
+.kb-outline-views {
+  display: flex;
+  gap: 4px;
+  padding: 0 8px 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.kb-outline-view {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 6px 4px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-secondary, var(--text-tertiary));
+  font-size: 0.75rem;
+  cursor: pointer;
+  transition: color 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+}
+
+.kb-outline-view:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.kb-outline-view.active {
+  color: var(--accent-primary);
+  background: var(--accent-primary-dim);
+  border-color: var(--accent-primary-dim);
+}
+
+.kb-outline-view-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* ── Project + card tree ── */
+
+.kb-outline-projects {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  /* Reserve the floating composer's band so the last tree rows can scroll
+     clear of it (same convention as GitPanel / FileBrowser). */
+  padding: 6px 6px calc(var(--composer-card-top, var(--composer-frame-h, 120px)) + 16px);
+}
+
+.kb-outline-project {
+  display: flex;
+  flex-direction: column;
+}
+
+.kb-outline-node,
+.kb-outline-children {
+  display: flex;
+  flex-direction: column;
+}
+
+.kb-outline-row {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding-right: 4px;
+  border-radius: var(--radius-sm);
+  min-height: 26px;
+}
+
+.kb-outline-row:hover {
+  background: var(--bg-hover);
+}
+
+.kb-outline-row--active {
+  background: var(--accent-primary-dim);
+}
+
+.kb-outline-row--project .kb-outline-title {
+  font-weight: 600;
+}
+
+.kb-outline-caret {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+}
+
+.kb-outline-caret svg {
+  transition: transform 0.12s ease;
+}
+
+.kb-outline-caret svg.open {
+  transform: rotate(90deg);
+}
+
+.kb-outline-caret--spacer {
+  cursor: default;
+}
+
+.kb-outline-label {
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 2px;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.8125rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.kb-outline-icon {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  color: var(--text-tertiary);
+}
+
+.kb-outline-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kb-outline-starred {
+  flex-shrink: 0;
+  color: var(--warning, #f5a623);
+}
+
+.kb-outline-more {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text-tertiary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.1s ease, color 0.1s ease, background 0.1s ease;
+}
+
+.kb-outline-row:hover .kb-outline-more,
+.kb-outline-more:focus-visible {
+  opacity: 1;
+}
+
+.kb-outline-more:hover {
+  color: var(--text-primary);
+  background: var(--bg-overlay);
+}
+
+.kb-outline-note,
+.kb-outline-empty {
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.kb-outline-note--error {
+  color: var(--error);
+}
+
+/* ── Inline new-card draft input ── */
+
+.kb-outline-newcard {
+  padding: 4px 12px 4px 18px;
+}
+
+.kb-outline-newcard-input {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 0.75rem;
+  color: var(--text-primary);
+  background: var(--bg-overlay);
+  border: 1px solid var(--accent-primary);
+  border-radius: var(--radius-sm, 4px);
+  padding: 4px 8px;
+  outline: none;
+}
+
+.kb-outline-newcard-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+/* ── Shared context menu (right-click + ⋯) ── */
+
+.kb-outline-menu {
+  position: fixed;
+  z-index: 1100;
+  min-width: 180px;
+  font-family: var(--font-mono, ui-monospace, Menlo, Consolas, monospace);
+  font-size: 12px;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong, var(--border-default));
+  border-radius: 2px;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  outline: none;
+  overflow: hidden;
+}
+
+.kb-outline-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-base);
+  color: var(--text-secondary);
+}
+
+.kb-outline-menu-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kb-outline-menu-list {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+}
+
+.kb-outline-menu-item {
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: none;
+  background: none;
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.08s linear;
+}
+
+.kb-outline-menu-item:hover,
+.kb-outline-menu-item:focus-visible {
+  background: var(--bg-hover);
+  outline: none;
+}
+
+.kb-outline-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted, var(--text-tertiary));
+}
+
+.kb-outline-menu-label {
+  letter-spacing: 0.2px;
+}

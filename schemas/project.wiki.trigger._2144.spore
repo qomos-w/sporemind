@@ -1,0 +1,86 @@
+// project.wiki timer trigger callable types.
+// @ts-export
+
+struct WikiTriggerTimerCardReq {
+    Id: string
+}
+
+struct WikiTriggerTimerCardResp {
+    Id: string
+}
+
+struct WikiToggleTimerReq {
+    Id:      string
+    Enabled: bool
+}
+
+struct WikiToggleTimerResp {
+    Id:      string
+    Enabled: bool
+}
+
+struct WikiGetCardHierarchyReq {
+    Id:     string
+    optional Level: int32
+}
+
+struct WikiGetCardHierarchyResp {
+    Tree:      string
+}
+
+// Note: MonoCardListItem is defined in project.wiki._1361.spore.
+
+struct WikiOpenCardReq {
+    Id:     string
+}
+
+struct WikiCloseCardReq {
+    Id:     string
+}
+
+struct WikiSearchCardContentReq {
+    Query:                  string
+    optional Tags:          array<string>
+    optional Status:        string
+    optional Type:          string
+    optional Source:        string
+    optional List:          string
+    optional Parent:        string
+    optional Priority:      string
+    optional Due:           string
+    optional ModifiedAfter:  string
+    optional ModifiedBefore: string
+    optional CreatedAfter:   string
+    optional CreatedBefore:  string
+    optional DueAfter:       string
+    optional DueBefore:      string
+    optional OrderBy:        string
+    optional Limit:         int32
+}
+
+struct WikiCardContentMatch {
+    Card:           MonoCardListItem
+    optional Line:  int32
+    optional Snippet: string
+}
+
+struct WikiSearchCardContentResp {
+    Matches:   array<WikiCardContentMatch>
+    Total:     int32
+}
+
+struct WikiWorkflowFilter {
+    FoldedWorkflows:  array<string>  // map ids folded individually
+    FoldedCategories: array<string>  // category band ids folded (template/planned/in-progress/completed/to-start/archived)
+    ExpandedBuckets:  array<string>  // archived time bucket ids expanded
+    AgentIds:         array<string>  // live agent actor ids for scheduled-map classification
+}
+
+struct WikiCardTreeNode {
+    Id:       string
+    Title:    string
+    Type:     string              // task/wiki/map/workflow/agent — drives frontend icon
+    Status:   string
+    Modified: string
+    Children: array<WikiCardTreeNode>
+}

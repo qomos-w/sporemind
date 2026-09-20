@@ -1,0 +1,20 @@
+// appmanager cleanup namespace — idempotent unregister cleanup retry.
+// @ts-export
+
+// AppManagerRetryCleanupReq requests the appmanager to complete any pending
+// cleanup for an app that entered a cleanup_pending or protocol_cleanup_pending
+// state because protocol.UnregisterAppProtocol or Save failed during
+// unregister. The operation is idempotent: calling it on an app that is already
+// fully removed returns Status "not_found".
+struct AppManagerRetryCleanupReq {
+    Id: string
+}
+
+// AppManagerRetryCleanupResp reports the outcome of a cleanup retry.
+//   "completed"   — pending cleanup was finished (or was already done).
+//   "not_pending" — the app exists but is not in a pending-cleanup state.
+//   "not_found"   — no such app (already fully unregistered).
+struct AppManagerRetryCleanupResp {
+    Status: string              // "completed" | "not_pending" | "not_found"
+    optional Error: string      // populated when cleanup could not complete
+}

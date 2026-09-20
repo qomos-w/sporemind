@@ -1,0 +1,19 @@
+// appmanager.openview namespace — open an app's view entrypoint in the frontend.
+// @ts-export
+//
+// Split out of appmanager._1932.spore because that section is full
+// (adding structs there collides with project.wiki.trigger's ID range).
+
+struct AppManagerOpenViewReq {
+    // App id whose view entrypoint should open in the frontend.
+    Id: string
+    // View entrypoint id. Empty resolves to the app's first "view" entrypoint.
+    optional ViewId: string
+}
+
+struct AppManagerOpenViewResp {
+    Opened: bool
+    // Resolved view entrypoint id (useful when ViewId was omitted).
+    optional ViewId: string
+    optional Error: string
+}

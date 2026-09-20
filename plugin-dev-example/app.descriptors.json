@@ -1,0 +1,477 @@
+{
+  "AccountCode": {
+    "Kind": "struct",
+    "Name": "AccountCode",
+    "Fields": [
+      {
+        "Name": "AccountId",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Name",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Code",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "SecretBase32",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "SecondsRemaining",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "int"
+        }
+      },
+      {
+        "Name": "Period",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "int"
+        }
+      }
+    ],
+    "SchemaId": 1427323
+  },
+  "CodesRequest": {
+    "Kind": "struct",
+    "Name": "CodesRequest",
+    "Fields": [
+      {
+        "Name": "AccountId",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      }
+    ],
+    "SchemaId": 966388
+  },
+  "CodesResponse": {
+    "Kind": "struct",
+    "Name": "CodesResponse",
+    "Fields": [
+      {
+        "Name": "Accounts",
+        "Type": {
+          "Kind": "array",
+          "Element": {
+            "Kind": "struct",
+            "Name": "AccountCode",
+            "ClassName": "AccountCode"
+          }
+        }
+      },
+      {
+        "Name": "NowUnix",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "long"
+        }
+      }
+    ],
+    "SchemaId": 180856
+  },
+  "DiscoverMatch": {
+    "Kind": "struct",
+    "Name": "DiscoverMatch",
+    "Fields": [
+      {
+        "Name": "CallID",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Service",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Description",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Permission",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "EffectKind",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "ReqSchemaId",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "long"
+        }
+      },
+      {
+        "Name": "RespSchemaId",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "long"
+        }
+      }
+    ],
+    "SchemaId": 715729
+  },
+  "DiscoverRequest": {
+    "Kind": "struct",
+    "Name": "DiscoverRequest",
+    "Fields": [
+      {
+        "Name": "Service",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      },
+      {
+        "Name": "Callable",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      },
+      {
+        "Name": "Limit",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "int"
+        },
+        "Optional": true
+      },
+      {
+        "Name": "Cursor",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      }
+    ],
+    "SchemaId": 2053745
+  },
+  "DiscoverResponse": {
+    "Kind": "struct",
+    "Name": "DiscoverResponse",
+    "Fields": [
+      {
+        "Name": "Items",
+        "Type": {
+          "Kind": "array",
+          "Element": {
+            "Kind": "struct",
+            "Name": "DiscoverMatch",
+            "ClassName": "DiscoverMatch"
+          }
+        }
+      },
+      {
+        "Name": "NextCursor",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      }
+    ],
+    "SchemaId": 1603759
+  },
+  "ProvisionRequest": {
+    "Kind": "struct",
+    "Name": "ProvisionRequest",
+    "Fields": [
+      {
+        "Name": "Name",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Secret",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      },
+      {
+        "Name": "Digits",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "int"
+        },
+        "Optional": true
+      },
+      {
+        "Name": "Period",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "int"
+        },
+        "Optional": true
+      },
+      {
+        "Name": "Algorithm",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      }
+    ],
+    "SchemaId": 650631
+  },
+  "ProvisionResponse": {
+    "Kind": "struct",
+    "Name": "ProvisionResponse",
+    "Fields": [
+      {
+        "Name": "AccountId",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Name",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "SecretBase32",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "OtpAuthUrl",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Digits",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "int"
+        }
+      },
+      {
+        "Name": "Period",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "int"
+        }
+      },
+      {
+        "Name": "Algorithm",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      }
+    ],
+    "SchemaId": 575709
+  },
+  "RemoveRequest": {
+    "Kind": "struct",
+    "Name": "RemoveRequest",
+    "Fields": [
+      {
+        "Name": "AccountId",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      }
+    ],
+    "SchemaId": 1707984
+  },
+  "RemoveResponse": {
+    "Kind": "struct",
+    "Name": "RemoveResponse",
+    "Fields": [
+      {
+        "Name": "Removed",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "bool"
+        }
+      },
+      {
+        "Name": "AccountId",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      }
+    ],
+    "SchemaId": 763708
+  },
+  "UpdateRequest": {
+    "Kind": "struct",
+    "Name": "UpdateRequest",
+    "Fields": [
+      {
+        "Name": "AccountId",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Name",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      },
+      {
+        "Name": "Secret",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        },
+        "Optional": true
+      }
+    ],
+    "SchemaId": 1817967
+  },
+  "UpdateResponse": {
+    "Kind": "struct",
+    "Name": "UpdateResponse",
+    "Fields": [
+      {
+        "Name": "Updated",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "bool"
+        }
+      },
+      {
+        "Name": "AccountId",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Name",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "SecretBase32",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "OtpAuthUrl",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      }
+    ],
+    "SchemaId": 855157
+  },
+  "VerifyRequest": {
+    "Kind": "struct",
+    "Name": "VerifyRequest",
+    "Fields": [
+      {
+        "Name": "AccountId",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Code",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Window",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "int"
+        },
+        "Optional": true
+      }
+    ],
+    "SchemaId": 1265091
+  },
+  "VerifyResponse": {
+    "Kind": "struct",
+    "Name": "VerifyResponse",
+    "Fields": [
+      {
+        "Name": "Valid",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "bool"
+        }
+      },
+      {
+        "Name": "AccountId",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      },
+      {
+        "Name": "Error",
+        "Type": {
+          "Kind": "scalar",
+          "Name": "string"
+        }
+      }
+    ],
+    "SchemaId": 1146033
+  }
+}

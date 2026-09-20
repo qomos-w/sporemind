@@ -1,0 +1,91 @@
+// toast namespace — companion-window toast notifications.
+// @ts-export
+//
+// Sources of truth for:
+//   - the toast card model rendered by the desktop companion window (#toasts)
+//   - the generic toast API callable surface (toast.show / toast.dismiss /
+//     toast.state) exposed by the global toast actor
+//   - toast.card_added / toast.card_removed event payloads delivered over the
+//     gateway to every subscribed window (companion + main)
+//
+// All timestamps are RFC3339Nano strings in UTC.
+
+struct ToastCard {
+    Id:                string   // UUID v4
+    Title:             string
+    optional Body:     string
+    Kind:              string   // "info" | "success" | "warning" | "error"
+    optional Source:   string   // emitting component, e.g. "workflow.gate"
+    optional ActionLabel: string       // button text, e.g. gate approval "打开输入"
+    optional ActionCallable: string    // dotted callable ID dispatched on click, e.g. "workflow.gate.approve"
+    optional ActionArgs: map<string, any>  // pre-bound args forwarded with the action event (never executed by the toast actor)
+    optional ActionSchemaID: uint64     // schema ID describing the args shape for later form/modal rendering
+    optional DurationMs: long    // frontend auto-dismiss; 0 = persist until dismissed
+    CreatedAt:         string   // RFC3339Nano UTC
+}
+
+
+struct ToastShowReq {
+    Title: string
+    optional Body:       string
+    optional Kind:       string   // default "info"
+    optional Source:     string
+    optional ActionLabel: string
+    optional ActionCallable: string
+    optional ActionArgs: map<string, any>
+    optional ActionSchemaID: uint64
+    optional DurationMs: long     // 0 = persist until dismissed
+}
+
+
+struct ToastShowResp {
+    Id: string
+}
+
+
+struct ToastDismissReq {
+    Id: string
+}
+
+
+struct ToastDismissResp {
+}
+
+
+struct ToastCardRemovedEvent {
+    Id: string
+}
+
+
+struct ToastStateReq {
+}
+
+
+struct ToastStateResp {
+    Cards: array<ToastCard>   // oldest first
+}
+
+
+// toast.action — the companion window reports an action-button click on a
+// live card. The actor never executes the target callable: it looks up the
+// card's action payload and re-broadcasts it as toast.action_triggered so the
+// main window decides what happens next (modal rendering is a follow-up).
+struct ToastActionReq {
+    Id: string   // toast card id whose action button was clicked
+}
+
+
+struct ToastActionResp {
+}
+
+
+// Broadcast to every subscribed window when a card's action button is
+// clicked. The main window is the intended consumer; the payload mirrors the
+// card's action fields plus the card id.
+struct ToastActionTriggeredEvent {
+    Id:                string   // toast card id
+    ActionCallable:    string   // dotted callable ID from the card
+    ActionLabel:       string   // button text from the card
+    optional ActionArgs: map<string, any>
+    optional ActionSchemaID: uint64
+}

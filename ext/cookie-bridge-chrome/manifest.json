@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Sporemind Cookie Bridge",
+  "version": "1.0.0",
+  "description": "Moves Chrome cookies for one site into a Sporemind independent browser instance, after you confirm each request. Cookie values go straight to your local Sporemind process and nowhere else.",
+  "permissions": ["cookies", "storage"],
+  "host_permissions": ["http://127.0.0.1/*", "http://localhost/*"],
+  "action": {
+    "default_title": "Sporemind Cookie Bridge",
+    "default_popup": "popup.html"
+  },
+  "minimum_chrome_version": "116"
+}

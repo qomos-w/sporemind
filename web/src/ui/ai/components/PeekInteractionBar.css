@@ -1,0 +1,132 @@
+/* PeekInteractionBar — compact interaction surface inside the collapsed
+   drawer peek area. Replaces the single-line peek while an agent interaction
+   awaits the user; height grows as needed and ComposerFrame's ResizeObserver
+   reports the new frame height to the parent. */
+
+.peek-interaction-bar {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 12px 8px;
+  user-select: none;
+  /* Same opaque peek-top treatment as .message-drawer-peek: covers the
+     ai-composer-above card tucked behind the drawer top. */
+  background: var(--surface-tertiary, rgba(255, 255, 255, 0.06));
+  border-radius: 15px 15px 0 0;
+}
+
+.peek-interaction-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 24px;
+  cursor: pointer;
+}
+
+.peek-interaction-icon {
+  flex-shrink: 0;
+  color: var(--accent-primary, rgba(99, 102, 241, 0.9));
+}
+
+.peek-interaction-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary, rgba(255, 255, 255, 0.9));
+}
+
+.peek-interaction-chevron {
+  flex-shrink: 0;
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.3));
+}
+
+.peek-interaction-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.peek-interaction-controls::-webkit-scrollbar {
+  display: none;
+}
+
+.peek-interaction-meta {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.4));
+}
+
+.peek-interaction-chip {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 160px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 3px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border-secondary, rgba(255, 255, 255, 0.14));
+  background: var(--surface-secondary, rgba(255, 255, 255, 0.05));
+  color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+  cursor: pointer;
+}
+
+.peek-interaction-chip-star {
+  flex-shrink: 0;
+  color: var(--accent-primary, rgba(99, 102, 241, 0.9));
+}
+
+.peek-interaction-chip:hover {
+  background: var(--surface-hover, rgba(255, 255, 255, 0.1));
+}
+
+.peek-interaction-chip.selected {
+  border-color: var(--accent-primary, rgba(99, 102, 241, 0.8));
+  background: var(--accent-subtle, rgba(99, 102, 241, 0.16));
+  color: var(--text-primary, rgba(255, 255, 255, 0.9));
+}
+
+.peek-interaction-btn {
+  flex-shrink: 0;
+  padding: 3px 12px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--border-secondary, rgba(255, 255, 255, 0.14));
+  background: var(--surface-secondary, rgba(255, 255, 255, 0.05));
+  color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+  cursor: pointer;
+}
+
+.peek-interaction-btn:hover {
+  background: var(--surface-hover, rgba(255, 255, 255, 0.1));
+}
+
+.peek-interaction-btn.primary {
+  border-color: var(--accent-primary, rgba(99, 102, 241, 0.8));
+  background: var(--accent-primary, rgba(99, 102, 241, 0.9));
+  color: var(--text-on-accent, #fff);
+}
+
+/* Free-text answer input inside the compact bar; the shared AskCustomInput
+   renders the mobile readOnly variant with the same class. */
+.peek-interaction-input.ai-ask-input {
+  flex: 1;
+  min-width: 80px;
+  padding: 3px 8px;
+  font-size: 12px;
+}
+
+/* Pending-attention highlight: subtle accent glow on the drawer peek area */
+.message-drawer.collapsed .peek-interaction-bar {
+  border-top: 1px solid var(--accent-subtle, rgba(99, 102, 241, 0.25));
+  background: var(--accent-subtle, rgba(99, 102, 241, 0.08));
+}

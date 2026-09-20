@@ -1,0 +1,170 @@
+/* ── Modal (shared shell) ── */
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--keyboard-height, 0px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.modal-overlay--below-titlebar {
+  top: var(--titlebar-height, 0px);
+}
+
+.modal-dialog {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 32px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.modal-dialog--sm { width: 360px; max-width: 90vw; }
+.modal-dialog--md { width: 420px; max-width: 90vw; }
+.modal-dialog--lg { width: 600px; max-width: 90vw; }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.modal-header--drag-window {
+  --wails-draggable: drag;
+  cursor: move;
+  user-select: none;
+}
+
+.modal-close--no-drag {
+  --wails-draggable: no-drag;
+  cursor: pointer;
+}
+
+.modal-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.modal-header-extra {
+  flex-shrink: 0;
+}
+
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.modal-close:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.modal-close:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+/* Reusable action buttons (Cancel/Submit) inside modal-footer */
+.modal-action {
+  padding: 5px 14px;
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.modal-action--secondary {
+  border: 1px solid var(--border-default);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+.modal-action--secondary:hover {
+  background: var(--bg-hover);
+}
+
+.modal-action--primary {
+  border: none;
+  background: var(--accent-primary);
+  color: var(--text-on-accent);
+}
+
+.modal-action--primary:hover:not(:disabled) {
+  filter: brightness(1.1);
+}
+
+.modal-action:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* Reusable tab strip used inside modal-header-extra */
+.modal-tabs {
+  display: flex;
+  gap: 0;
+  padding: 0 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.modal-tab {
+  padding: 8px 12px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  margin-bottom: -1px;
+}
+
+.modal-tab:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.modal-tab--active {
+  color: var(--text-primary);
+  border-bottom-color: var(--accent-primary);
+  font-weight: 500;
+}

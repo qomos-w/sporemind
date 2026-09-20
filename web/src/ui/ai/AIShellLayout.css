@@ -1,0 +1,1081 @@
+.ai-shell-layout {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  background: var(--bg-surface);
+}
+
+.ai-shell-layout.standalone {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.ai-shell-layout.embedded {
+  min-height: 0;
+}
+
+/* Workbench takeover: the fullscreen board (WorkbenchSurface) sits above the
+   shell. The body — sidebar, main pane, right panel — is hidden by CSS only,
+   never collapsed in state, so exiting the board reveals exactly the layout the
+   user had (and the persisted layout stays clean). */
+.ai-shell-layout--workbench > .ai-shell-body {
+  display: none;
+}
+
+/* ── Standalone top bar ── */
+.ai-shell-topbar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: var(--titlebar-height);
+  flex-shrink: 0;
+  user-select: none;
+  background: var(--bg-surface);
+  --wails-draggable: drag;
+}
+
+.ai-shell-topbar-left,
+.ai-shell-topbar-right {
+  display: flex;
+  align-items: center;
+  min-width: 80px;
+  padding: 0 4px;
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-topbar-left {
+  gap: 1px;
+}
+
+/* Mobile-only omnibox search trigger: sits in the topbar center. Simpler
+   than the desktop pill — just an icon + placeholder, no ⌘K kbd hint. */
+.ai-shell-omnibox-trigger-mobile {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--bg-elevated);
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  --wails-draggable: no-drag;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-shell-omnibox-trigger-mobile:active {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.ai-shell-omnibox-trigger-mobile-label {
+  max-width: 36vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ai-shell-topbar-right {
+  justify-content: flex-end;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.ai-shell-mock-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-mock-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
+}
+
+.ai-shell-mock-icon-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.ai-shell-mock-icon-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ai-shell-preview-select {
+  height: 28px;
+  max-width: 132px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  padding: 0 10px;
+  outline: none;
+}
+
+.ai-shell-preview-select:hover:not(:disabled),
+.ai-shell-preview-select:focus:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.ai-shell-preview-select:disabled {
+  opacity: 0.5;
+}
+
+.ai-shell-topbar-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  /* The mobile view-mode dropdown lives inside this (transformed) stacking
+     context; at z-index 1 it ties with in-content cards (e.g. the timeline
+     edit card, also z-index 1) and loses by tree order, so content painted
+     over the open dropdown. Sit at the dropdown layer instead. */
+  z-index: var(--z-dropdown);
+}
+
+.ai-shell-topbar-center > * {
+  pointer-events: auto;
+}
+
+.ai-shell-topbar-center-mobile {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-shell-mode-cluster {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  --wails-draggable: no-drag;
+}
+
+/* ── Multiconsole grid selector in topbar right ── */
+
+.ai-shell-mc-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.ai-shell-mc-wrapper.mobile .ai-shell-mc-dropdown {
+  left: 50%;
+  right: auto;
+  top: calc(100% + 4px);
+  transform: translateX(-50%);
+  max-width: calc(100vw - 32px);
+}
+
+.ai-shell-mc-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-mc-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ai-shell-mc-btn.active {
+  color: var(--accent-primary);
+}
+
+/* ── Right panel toggle in topbar right ── */
+.ai-shell-right-panel-toggle {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-right-panel-toggle:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* ── Terminal panel toggle in topbar right ── */
+.ai-shell-terminal-toggle {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-terminal-toggle:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* ── Mobile panel toggles (right panel + terminal, co-visible) ── */
+.ai-shell-mobile-panel-toggle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-full);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  --wails-draggable: no-drag;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.ai-shell-mobile-panel-toggle:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+}
+
+.ai-shell-mobile-panel-toggle.active {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+}
+
+.ai-shell-mc-dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  min-width: 160px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 8px 0;
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+}
+
+.ai-shell-mc-selector {
+  padding: 0 12px 8px;
+}
+
+.ai-shell-mc-slider-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.ai-shell-mc-slider-label {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  min-width: 36px;
+  user-select: none;
+}
+
+.ai-shell-mc-slider-track {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+}
+
+.ai-shell-mc-slider-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  background: var(--border-default);
+  transition: background 0.15s ease, transform 0.15s ease;
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-mc-slider-dot:hover {
+  transform: scale(1.3);
+  background: var(--text-secondary);
+}
+
+.ai-shell-mc-slider-dot.active {
+  background: var(--accent-primary);
+}
+
+.ai-shell-mc-slider-value {
+  font-size: var(--text-xs);
+  color: var(--accent-primary);
+  font-weight: 600;
+  min-width: 16px;
+  text-align: center;
+  user-select: none;
+}
+
+.ai-shell-mc-sep {
+  height: 1px;
+  margin: 4px 8px;
+  background: var(--border-subtle);
+}
+
+.ai-shell-mc-dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 12px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-mc-dropdown-item.active {
+  color: var(--accent-primary);
+  background: var(--accent-primary-dim);
+}
+
+.ai-shell-mc-dropdown-item:hover {
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+}
+
+.ai-shell-mc-dropdown-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.ai-shell-mc-dropdown-item-label {
+  flex: 1;
+}
+
+.ai-shell-mc-dropdown-item-row {
+  display: flex;
+  align-items: center;
+}
+
+.ai-shell-mc-dropdown-item-row .ai-shell-mc-dropdown-item {
+  width: auto;
+  flex: 1;
+}
+
+.ai-shell-mc-dropdown-item-row.active .ai-shell-mc-dropdown-item {
+  color: var(--accent-primary);
+  background: var(--accent-primary-dim);
+}
+
+.ai-shell-mc-dropdown-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  margin-right: 4px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  opacity: 0;
+  transition: opacity var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-mc-dropdown-item-row:hover .ai-shell-mc-dropdown-pin,
+.ai-shell-mc-dropdown-pin.active {
+  opacity: 1;
+}
+
+.ai-shell-mc-dropdown-pin:hover {
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+}
+
+.ai-shell-mc-dropdown-pin.active {
+  color: var(--accent-primary);
+}
+
+/* ── Sidebar hover zone via topbar-left ── */
+.ai-shell-topbar-left {
+  position: relative;
+  z-index: var(--z-overlay);
+}
+
+
+.ai-shell-sidebar-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  cursor: pointer;
+  margin-left: 5px;
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-sidebar-toggle:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* PanelLeft's frame rect is rx=2 in lucide's stock node; SVG rx is a
+   styleable geometry property, so round the corners further without
+   swapping icons. Only the frame rect exists in the icon — the divider is
+   a path and the collapsed-state Circle is unaffected. */
+.ai-shell-sidebar-toggle svg rect {
+  rx: 5px;
+}
+
+/* Same corner-rounding for the terminal (PanelBottom*) and right-panel
+   (PanelRight*) toggles — each icon has a single frame rect. */
+.ai-shell-terminal-toggle svg rect,
+.ai-shell-right-panel-toggle svg rect {
+  rx: 5px;
+}
+
+/* Slight corner-rounding on the maximize (Square) and restore (Copy)
+   glyphs — stock rx=2, nudged up to match the panel toggles' feel. */
+.ai-shell-win-btn svg rect {
+  rx: 4px;
+}
+
+.ai-shell-mode-btn {
+  display: none;
+}
+
+.ai-shell-mock-switch {
+  display: flex;
+  align-items: center;
+  padding: 2px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-elevated) 84%, transparent);
+  border: 1px solid var(--border-subtle);
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-mock-switch-mobile {
+  display: none;
+}
+
+.ai-shell-mock-select-wrap {
+  position: relative;
+}
+
+.ai-shell-mock-dropdown-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-width: 82px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-shell-mock-dropdown-btn:hover,
+.ai-shell-mock-dropdown-btn[aria-expanded="true"] {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.ai-shell-mock-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 132px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 4px 0;
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+}
+
+.ai-shell-mock-dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px 12px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-shell-mock-dropdown-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  flex-shrink: 0;
+  margin-right: 4px;
+  color: currentColor;
+}
+
+.ai-shell-mock-dropdown-item:hover,
+.ai-shell-mock-dropdown-item.active {
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+}
+
+.ai-shell-mock-mode-btn {
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  font-family: var(--font-sans);
+}
+
+.ai-shell-mock-mode-btn:hover {
+  color: var(--text-primary);
+}
+
+.ai-shell-mock-mode-btn.active {
+  background: var(--bg-hover);
+  color: var(--accent-primary);
+}
+
+@media (max-width: 767px) {
+  .ai-shell-mode-cluster {
+    gap: 6px;
+  }
+
+  .ai-shell-mock-switch-desktop {
+    display: none;
+  }
+
+  .ai-shell-mock-switch-mobile {
+    display: inline-flex;
+  }
+
+  .ai-shell-mode-btn {
+    padding: 5px 9px;
+  }
+
+  .ai-shell-right-panel-toggle,
+  .ai-shell-terminal-toggle {
+    display: none;
+  }
+}
+
+/* ── Window controls (Wails only) ── */
+.ai-shell-win-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: 10px;
+  height: var(--titlebar-height);
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-win-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  /* Circular, matching the workbench corner buttons (`.wb-cbtn`). */
+  border-radius: 50%;
+  background: none;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+/* The Minus dash optically rides high in the button — nudge it down. */
+.ai-shell-win-controls .ai-shell-win-btn:first-child svg {
+  transform: translateY(1px);
+}
+
+.ai-shell-win-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ai-shell-win-btn.close:hover {
+  background: #e81123;
+  color: #fff;
+}
+
+/* ── Main body (sidebar + main card) ── */
+.ai-shell-body {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  padding: 0 0 0 6px;
+  gap: 4px;
+}
+
+/* ── Main work area card: conversation + right panel merged ── */
+.ai-shell-main-col {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  position: relative;
+}
+
+.ai-shell-main-card {
+  display: flex;
+  flex-direction: row;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  margin-top: 6px;
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-right: none;
+  border-bottom: none;
+  border-radius: var(--radius-xl) 0 0 0;
+  box-shadow: 0 2px 10px rgba(20, 22, 40, 0.05);
+}
+
+.ai-shell-main-card.app-mode {
+  flex-direction: row-reverse;
+}
+
+/* Bleed the main card over the Wails desktop resize gutter (5px) so it
+   visually reaches the window edge while the native drag border stays usable. */
+body.wails-desktop .ai-shell-layout.standalone .ai-shell-body {
+  overflow: visible;
+}
+
+body.wails-desktop .ai-shell-layout.standalone .ai-shell-main-card {
+  margin-right: -5px;
+  margin-bottom: -5px;
+}
+
+body.wails-desktop .ai-shell-layout.standalone .ai-shell-main-col.with-terminal .ai-shell-main-card {
+  margin-bottom: 0;
+}
+
+/* Right panel collapsed: the conversation scroll container reaches the card
+   edge, and its 6px scrollbar would cover the 5px native resize gutter the
+   card bleeds over. Pull the scrollbar clear so window-edge drag stays usable. */
+body.wails-desktop .ai-shell-layout.standalone .ai-shell-main-card.right-panel-closed .ai-message-stream {
+  margin-right: 8px;
+}
+
+/* Files and git modes fill the main card, leaving only a scrollbar gutter so
+   the native Wails resize border remains draggable. */
+body.wails-desktop .ai-shell-layout.standalone .ai-shell-main-card.right-panel-closed.files-mode .fb-content,
+body.wails-desktop .ai-shell-layout.standalone .ai-shell-main-card.right-panel-closed.git-mode .git-panel {
+  margin-right: 8px;
+}
+
+.ai-shell-main-card.embedded {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.ai-shell-main-card .ai-shell-content {
+  flex: 1;
+}
+
+/* Sidebar resize handle sits along the main column's left edge (spanning the
+   main card + the terminal panel below) so it visually merges with the rounded
+   card border while still allowing width adjustment. top matches the main
+   card's margin-top so the indicator starts at the card's top edge. */
+.ai-shell-sidebar-handle {
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 0;
+  width: 6px;
+  z-index: 10;
+}
+
+.ai-shell-sidebar-handle.resize-handle.horizontal::after {
+  left: 0;
+  transform: none;
+  width: 1px;
+  background-color: transparent;
+}
+
+.ai-shell-sidebar-handle.resize-handle.horizontal:hover::after,
+.ai-shell-sidebar-handle.resize-handle.horizontal:active::after {
+  width: 2px;
+  background-color: var(--accent-primary);
+}
+
+.ai-shell-main-card .ai-shell-content.collapsed {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .ai-shell-body {
+    padding: 0;
+    gap: 0;
+  }
+
+  .ai-shell-main-card {
+    margin-top: 0;
+    background: var(--bg-base);
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
+}
+
+/* ── Sidebar backdrop (mobile / unpinned overlay) ── */
+.ai-sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: calc(var(--z-overlay) - 1);
+}
+
+/* ── Sidebar container ── */
+.ai-sidebar-container {
+  height: 100%;
+  width: var(--sidebar-width, 280px);
+  flex-shrink: 0;
+  transition: transform var(--transition-normal);
+}
+
+/* Pinned: inline, takes layout space */
+.ai-sidebar-container.pinned {
+  position: relative;
+  z-index: auto;
+  transition: width 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Desktop pinned-open sidebar blends into the shell — no opaque surface.
+   Mobile overlay and desktop floating (unpinned) sidebars keep theirs. */
+.ai-sidebar-container.pinned.desktop .ai-sidebar {
+  background: transparent;
+}
+
+/* App-mode launcher paints its own gradient canvas (see SidebarLauncher.css);
+   clear it for the desktop pinned case as well. */
+.ai-sidebar-container.pinned.desktop .ai-sidebar-launcher {
+  background: transparent;
+}
+
+.ai-sidebar-container.pinned:not(.open) {
+  width: 0;
+  overflow: hidden;
+}
+
+/* Overlay: fixed, slides over content */
+.ai-sidebar-container.overlay {
+  position: fixed;
+  top: var(--titlebar-height);
+  left: 0;
+  height: calc(100dvh - var(--titlebar-height));
+  z-index: var(--z-overlay);
+  transform: translateX(-100%);
+  box-shadow: none;
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ai-sidebar-container.overlay.open {
+  transform: translateX(0);
+  box-shadow: var(--shadow-lg);
+}
+
+.ai-sidebar-container.overlay.mobile {
+  width: 280px;
+}
+
+.ai-sidebar-container.overlay.desktop {
+  width: 280px;
+}
+
+/* ── Content area (conversation + card) ── */
+.ai-shell-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.ai-shell-content.collapsed {
+  display: none;
+}
+
+.ai-shell-content-body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Mode pane cache: visited cacheable modes stay mounted but hidden ── */
+.ai-shell-mode-pane {
+  display: none;
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ai-shell-mode-pane--active {
+  display: flex;
+}
+
+/* ── Floating composer: absolutely positioned over the content body so
+   the message stream can scroll behind it. Applies in all modes where
+   the composer is a direct child of .ai-shell-content.
+   The frame itself is transparent to pointer events (ComposerFrame.css)
+   so the stream's scrollbar stays grabbable behind the composer. ── */
+.ai-shell-content > .composer-frame {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: transparent;
+}
+
+/* ── Topology mode: graph fills entire content area behind the floating composer ── */
+.ai-shell-content.topology-mode .ai-shell-content-body {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* ── Wiki tab two-pane layout ── */
+.ai-wiki-tab .mono-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+/* When sidebar is collapsed, shrink the second grid column to icon width */
+.ai-wiki-tab .mono-card:has(.mono-card-kb-sidebar.collapsed) {
+  grid-template-columns: minmax(0, 1fr) 40px;
+}
+
+/* Left sidebar: columns swap order */
+.ai-wiki-tab .mono-card.sidebar-left {
+  grid-template-columns: 240px minmax(0, 1fr);
+}
+
+.ai-wiki-tab .mono-card.sidebar-left:has(.mono-card-kb-sidebar.collapsed) {
+  grid-template-columns: 40px minmax(0, 1fr);
+}
+
+/* Grid item placement for left sidebar (DOM order is body→sidebar) */
+.ai-wiki-tab .mono-card.sidebar-left .mono-card-body {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.ai-wiki-tab .mono-card.sidebar-left .mono-card-kb-sidebar {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+@media (max-width: 768px) {
+  .ai-wiki-tab .mono-card {
+    display: flex;
+    flex-direction: column;
+    grid-template-columns: none;
+    grid-template-rows: none;
+    height: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+
+  .ai-wiki-tab .mono-card-kb-sidebar {
+    width: 100%;
+    height: auto;
+    max-height: none;
+    border-left: none;
+    border-bottom: 1px solid var(--border-subtle);
+    overflow-y: visible;
+    order: -1;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--bg-surface);
+  }
+
+  .ai-wiki-tab .mono-card-body {
+    width: 100%;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .ai-wiki-tab .mono-card-cards {
+    overflow-y: visible;
+    min-height: 0;
+    padding-bottom: var(--composer-frame-h, 80px);
+  }
+}
+
+.ai-wiki-tab-stack .mono-card {
+  display: flex;
+  flex-direction: column;
+  grid-template-columns: none;
+  grid-template-rows: none;
+  height: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.ai-wiki-tab-stack .mono-card-kb-sidebar {
+  width: 100%;
+  height: auto;
+  max-height: none;
+  border-left: none;
+  border-bottom: 1px solid var(--border-subtle);
+  overflow-y: visible;
+  order: -1;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-surface);
+}
+
+.ai-wiki-tab-stack .mono-card-body {
+  width: 100%;
+  min-height: 0;
+  overflow: visible;
+}
+
+.ai-wiki-tab-stack .mono-card-cards {
+  overflow-y: visible;
+  min-height: 0;
+  padding-bottom: var(--composer-frame-h, 80px);
+}
+
+.ai-wiki-tab .mono-card-header {
+  grid-column: 2;
+  grid-row: 1;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  overflow-y: auto;
+  border-left: 1px solid var(--border-default);
+  border-bottom: 0;
+}
+
+.ai-wiki-tab .mono-card-cards,
+.ai-wiki-tab .mono-card-graph {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+}
+
+/* ── Right panel tabs content wrappers ── */
+.ai-right-panel-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+
+.ai-right-panel-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 16px;
+}
+
+/* ── Right panel expanded ── */
+.rpt-container.rpt-expanded {
+  width: 100% !important;
+}
+
+/* ── Colored app/bundle glyph contrast ──
+   A bundle-declared color (AppStatus.Bundles[].Color → AppEntry.color →
+   resolveAppIcon / componentIcon) is a mid-tone hex tuned for light surfaces,
+   so it reads dim on dark grounds (launcher tile, right-panel tab, omnibox
+   entry). Lift only the glyphs carrying that tint — the .app-icon-colored
+   marker class is emitted exclusively by resolveAppIcon/componentIcon when an
+   explicit color is present, so currentColor icons, image icons and emoji are
+   never touched. */
+[data-theme='dark'] svg.app-icon-colored {
+  filter: brightness(1.5) saturate(1.12);
+}

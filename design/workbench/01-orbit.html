@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工作台 · 方案 A 引力轨道</title>
+<style>
+  :root {
+    --board: #0b0b0d;
+    --dot: rgba(255,255,255,.05);
+    --card: linear-gradient(180deg, #1d1d21 0%, #141416 100%);
+    --card-solid: #19191c;
+    --line: rgba(255,255,255,.09);
+    --text: #e9eaed;
+    --muted: #8a8c94;
+    --accent: #c6f24e;
+    --accent-ink: #1a2003;
+    --ring: rgba(198,242,78,.55);
+    --shadow: 0 24px 60px -24px rgba(0,0,0,.9);
+  }
+  .light {
+    --board: #f5f5f3;
+    --dot: rgba(0,0,0,.055);
+    --card: linear-gradient(180deg, #ffffff 0%, #fafaf8 100%);
+    --card-solid: #ffffff;
+    --line: rgba(0,0,0,.09);
+    --text: #16161a;
+    --muted: #6c6e77;
+    --accent: #6f9c1e;
+    --accent-ink: #ffffff;
+    --ring: rgba(111,156,30,.5);
+    --shadow: 0 24px 50px -26px rgba(20,24,10,.35);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0;
+    background: var(--board);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+  .board {
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(var(--dot) 1.1px, transparent 1.1px);
+    background-size: 26px 26px;
+    transition: background-color .35s ease;
+  }
+  .board::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(58% 52% at 50% 48%, transparent 40%, color-mix(in srgb, var(--board) 92%, transparent) 100%);
+    pointer-events: none;
+  }
+  .orbit-line {
+    position: absolute;
+    left: 50%; top: 48%;
+    width: min(72vw, 980px);
+    height: min(66vh, 620px);
+    transform: translate(-50%, -50%);
+    border: 1px dashed var(--line);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: .8;
+  }
+
+  /* ── floating chrome ── */
+  .chrome {
+    position: fixed;
+    top: 18px; left: 18px;
+    display: flex; align-items: center; gap: 12px;
+    z-index: 5000;
+  }
+  .mode-switch {
+    display: inline-flex; gap: 4px; padding: 3px;
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    border-radius: 999px;
+    backdrop-filter: blur(8px);
+  }
+  .mode-switch button {
+    display: inline-flex; align-items: center; gap: 6px;
+    border: 0; cursor: pointer; font: inherit; font-size: 13px;
+    padding: 6px 12px; border-radius: 999px;
+    background: transparent; color: var(--muted);
+    transition: background .18s ease, color .18s ease;
+  }
+  .mode-switch button:hover { color: var(--text); }
+  .mode-switch button.active { background: var(--card-solid); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+  .mode-switch svg { width: 14px; height: 14px; }
+
+  .board-tools { position: fixed; top: 18px; right: 18px; display: flex; align-items: center; gap: 10px; z-index: 5000; }
+  .agent-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--muted);
+    padding: 7px 12px; border-radius: 999px;
+    background: color-mix(in srgb, var(--text) 7%, transparent);
+    border: 1px solid var(--line);
+    backdrop-filter: blur(8px);
+  }
+  .agent-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 var(--ring); animation: pulse 2.4s ease-out infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 var(--ring) } 70% { box-shadow: 0 0 0 7px transparent } 100% { box-shadow: 0 0 0 0 transparent } }
+  .icon-btn {
+    width: 34px; height: 34px; border-radius: 999px; cursor: pointer;
+    display: grid; place-items: center;
+    background: color-mix(in srgb, var(--text) 7%, transparent);
+    border: 1px solid var(--line); color: var(--text);
+    backdrop-filter: blur(8px);
+    transition: background .18s ease;
+  }
+  .icon-btn:hover { background: color-mix(in srgb, var(--text) 14%, transparent); }
+  .icon-btn svg { width: 16px; height: 16px; }
+
+  /* ── cards ── */
+  .card {
+    position: absolute;
+    width: 250px; height: 170px;
+    transform-origin: center center;
+    border-radius: 22px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow);
+    padding: 18px 18px 16px;
+    display: flex; flex-direction: column;
+    cursor: pointer;
+    transition: left .8s cubic-bezier(.22,.8,.24,1),
+                top .8s cubic-bezier(.22,.8,.24,1),
+                transform .8s cubic-bezier(.22,.8,.24,1),
+                opacity .6s ease,
+                box-shadow .5s ease, border-color .5s ease;
+    will-change: left, top, transform;
+  }
+  .card.focus {
+    border-color: var(--ring);
+    box-shadow: 0 0 0 1px var(--ring), 0 40px 90px -30px color-mix(in srgb, var(--accent) 30%, transparent), var(--shadow);
+  }
+  .card-head { display: flex; align-items: center; gap: 10px; }
+  .glyph {
+    width: 34px; height: 34px; border-radius: 11px; flex: none;
+    display: grid; place-items: center;
+    background: color-mix(in srgb, var(--text) 8%, transparent);
+    color: var(--text);
+  }
+  .glyph svg { width: 17px; height: 17px; }
+  .card.focus .glyph { background: var(--accent); color: var(--accent-ink); }
+  .card-title { font-size: 14px; font-weight: 600; letter-spacing: -.01em; }
+  .card-sub { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
+  .card-status {
+    margin-top: auto;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: var(--muted);
+  }
+  .meter { position: relative; height: 3px; border-radius: 999px; background: color-mix(in srgb, var(--text) 12%, transparent); overflow: hidden; margin-top: 14px; }
+  .meter i { position: absolute; inset: 0 auto 0 0; background: var(--accent); border-radius: 999px; transition: width .8s ease; }
+  .att-num { margin-left: auto; font-variant-numeric: tabular-nums; font-size: 11px; color: var(--text); opacity: .75; }
+  .focus .card-sub { font-size: 13px; }
+  .focus .card-title { font-size: 20px; }
+
+  /* ── footer ── */
+  .footer {
+    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 14px; z-index: 5000;
+    font-size: 12px; color: var(--muted);
+  }
+  .legend { display: flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px; background: color-mix(in srgb, var(--text) 6%, transparent); border: 1px solid var(--line); backdrop-filter: blur(8px); }
+  .legend .sw { width: 46px; height: 4px; border-radius: 999px; background: linear-gradient(90deg, color-mix(in srgb, var(--text) 12%, transparent), var(--accent)); }
+  .reshuffle {
+    border: 1px solid var(--line); background: var(--card-solid); color: var(--text);
+    font: inherit; font-size: 12.5px; padding: 9px 16px; border-radius: 999px; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 8px;
+    transition: transform .15s ease, border-color .2s ease;
+  }
+  .reshuffle:hover { border-color: var(--ring); }
+  .reshuffle:active { transform: scale(.97); }
+  .reshuffle svg { width: 14px; height: 14px; }
+</style>
+</head>
+<body>
+  <div class="board" id="board">
+    <div class="orbit-line"></div>
+  </div>
+
+  <div class="chrome">
+    <div class="mode-switch" role="tablist" aria-label="启动模式">
+      <button role="tab" aria-selected="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>
+        构建
+      </button>
+      <button role="tab" aria-selected="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/><path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/></svg>
+        应用
+      </button>
+      <button role="tab" aria-selected="true" class="active">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
+        工作台
+      </button>
+    </div>
+  </div>
+
+  <div class="board-tools">
+    <span class="agent-pill"><span class="agent-dot"></span>agent 正在编排黑板</span>
+    <button class="icon-btn" id="theme" title="切换白板 / 黑板">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+    </button>
+  </div>
+
+  <div class="footer">
+    <div class="legend"><span class="sw"></span>注意力低 → 高</div>
+    <button class="reshuffle" id="reshuffle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>
+      agent 重新编排
+    </button>
+  </div>
+
+<script>
+const ICONS = {
+  chat: '<path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/>',
+  code: '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
+  term: '<path d="m4 17 6-6-6-6"/><path d="M12 19h8"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15 15 0 0 1 0 20 15 15 0 0 1 0-20z"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  chart: '<path d="M3 3v18h18"/><path d="m7 15 3-4 3 3 5-7"/>',
+  review: '<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>'
+};
+function svg(name) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' + ICONS[name] + '</svg>'; }
+
+const SEED = [
+  { id: 'review',  title: '审查', sub: 'PR #482', icon: 'review', att: .91, status: '等待你的确认' },
+  { id: 'editor',  title: '编辑器', sub: 'sporemind/web', icon: 'code', att: .74, status: '2 个文件未保存' },
+  { id: 'chart',   title: '构建面板', sub: 'CI 流水线', icon: 'chart', att: .58, status: '刚刚通过' },
+  { id: 'chat',    title: '对话', sub: '主 agent 会话', icon: 'chat', att: .46, status: '3 条新消息' },
+  { id: 'browser', title: '浏览器', sub: 'localhost:5173', icon: 'globe', att: .34, status: '已加载' },
+  { id: 'term',    title: '终端', sub: 'make dev', icon: 'term', att: .27, status: '已运行 12 分钟' },
+  { id: 'apps',    title: '应用', sub: '12 个已安装', icon: 'grid', att: .18, status: '空闲' }
+];
+
+let cards = SEED.map(c => ({ ...c }));
+
+const board = document.getElementById('board');
+let nodes = {};
+
+function build() {
+  cards.forEach(c => {
+    const el = document.createElement('article');
+    el.className = 'card';
+    el.innerHTML =
+      '<div class="card-head">' +
+        '<span class="glyph">' + svg(c.icon) + '</span>' +
+        '<span><span class="card-title">' + c.title + '</span><br><span class="card-sub">' + c.sub + '</span></span>' +
+      '</div>' +
+      '<div class="card-status"><span>' + c.status + '</span><span class="att-num"></span></div>' +
+      '<div class="meter"><i></i></div>';
+    el.addEventListener('click', () => { bump(c.id); layout(); });
+    board.appendChild(el);
+    nodes[c.id] = el;
+  });
+}
+
+function bump(id) {
+  cards.forEach(c => { if (c.id === id) c.att = Math.min(1, c.att + .35); else c.att *= .82; });
+  normalize();
+}
+
+function normalize() {
+  const min = Math.min(...cards.map(c => c.att));
+  const max = Math.max(...cards.map(c => c.att));
+  const span = max - min || 1;
+  cards.forEach(c => c.att = 0.15 + 0.85 * ((c.att - min) / span));
+}
+
+function layout() {
+  const W = window.innerWidth, H = window.innerHeight;
+  const cx = W / 2, cy = H * 0.48;
+  const sorted = [...cards].sort((a, b) => b.att - a.att);
+  const focus = sorted[0];
+  const rest = sorted.slice(1);
+
+  const rx = Math.min(W * 0.31, 470);
+  const ry = Math.min(H * 0.33, 360);
+
+  rest.forEach((c, i) => {
+    const theta = (-90 + (i + 0.5) * (360 / rest.length)) * Math.PI / 180;
+    const pull = 1 - c.att * 0.22;
+    let x = cx + Math.cos(theta) * rx * pull;
+    let y = cy + Math.sin(theta) * ry * pull;
+    const s = 0.6 + c.att * 0.5;
+    const half = (250 * s) / 2, halfH = (170 * s) / 2;
+    x = Math.max(half + 16, Math.min(W - half - 16, x));
+    y = Math.max(halfH + 70, Math.min(H - halfH - 90, y));
+    place(nodes[c.id], c, x, y, s, false);
+  });
+
+  place(nodes[focus.id], focus, cx, cy - 10, 1.62, true);
+}
+
+function place(el, c, x, y, s, isFocus) {
+  el.classList.toggle('focus', isFocus);
+  el.style.left = x + 'px';
+  el.style.top = y + 'px';
+  el.style.transform = 'translate(-50%, -50%) scale(' + s + ')';
+  el.style.opacity = isFocus ? 1 : (0.34 + c.att * 0.62);
+  el.style.zIndex = isFocus ? 900 : Math.round(10 + c.att * 100);
+  const m = el.querySelector('.meter i');
+  const n = el.querySelector('.att-num');
+  if (m) m.style.width = Math.round(c.att * 100) + '%';
+  if (n) n.textContent = Math.round(c.att * 100);
+}
+
+function reshuffle() {
+  const hot = cards[Math.floor(Math.random() * cards.length)];
+  cards.forEach(c => {
+    c.att = c.id === hot.id ? 0.95 : 0.12 + Math.random() * 0.5;
+  });
+  normalize();
+  layout();
+}
+
+document.getElementById('reshuffle').addEventListener('click', reshuffle);
+document.getElementById('theme').addEventListener('click', () => {
+  document.body.classList.toggle('light');
+  document.querySelector('.board').classList.toggle('light');
+});
+document.querySelectorAll('.mode-switch button').forEach(b => b.addEventListener('click', () => {
+  if (b.textContent.trim() === '工作台') return;
+  b.animate([{ opacity: .4 }, { opacity: 1 }], { duration: 260 });
+}));
+window.addEventListener('resize', layout);
+
+build();
+normalize();
+layout();
+</script>
+</body>
+</html>

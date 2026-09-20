@@ -1,0 +1,107 @@
+// coordinator.guidance namespace — per-account user capability profile and
+// guidance records (IDs 2800+).
+// @ts-export
+//
+// Sources of truth for the payloads of the coordinator.guidance callables:
+//   - coordinator.guidance.profile.query
+//   - coordinator.guidance.profile.update
+//   - coordinator.guidance.profile.clear
+//
+// The profile captures, per account, a set of capability entries (familiarity /
+// confidence / evidence / last-updated) plus free-form guidance records the
+// Coordinator uses to tailor its behavior. The .spore file declares payload
+// structs only; callables are registered at runtime on the Coordinator agent.
+
+// GuidanceCapabilityEntry — one capability in the profile. Familiarity is a
+// coarse level (0=none … 5=expert). Confidence is a 0..1 score. Evidence is a
+// list of human-readable strings supporting the assessment. UpdatedAt is an
+// RFC3339 timestamp. HintState is the one-shot guidance guard used by the
+// coordinator's proactive hints: empty/idle means the hint has never been
+// shown, "triggered" means it was already dispatched once, and "dismissed"
+// means the user explicitly closed it. Triggered and dismissed are terminal —
+// the hint must never auto-revive.
+struct GuidanceCapabilityEntry {
+    Capability:  string
+    Familiarity: int32
+    Confidence:  float
+    optional Evidence: array<string>
+    optional HintState: string
+    UpdatedAt:   string
+}
+
+// GuidanceCapabilityProfile — the capability profile scoped to a single account.
+// UpdatedAt reflects the most recent modification across the entries.
+struct GuidanceCapabilityProfile {
+    Account:      string
+    Capabilities: array<GuidanceCapabilityEntry>
+    optional UpdatedAt: string
+}
+
+// GuidanceRecord — a free-form advisory note tied to an account (e.g. preferred
+// style, constraints, reminders). Optional Account allows a record to be global.
+struct GuidanceRecord {
+    Id:    string
+    Topic: string
+    optional Account:   string
+    optional Detail:    string
+    optional CreatedAt: string
+    optional UpdatedAt: string
+}
+
+// GuidanceProfileQueryReq — fetch the profile (and optional guidance records)
+// for an account.
+struct GuidanceProfileQueryReq {
+    Account: string
+}
+
+// GuidanceProfileQueryResp — the stored profile and guidance records. Profile is
+// optional: an absent profile means no data has been recorded yet.
+struct GuidanceProfileQueryResp {
+    optional Profile: GuidanceCapabilityProfile
+    optional Records: array<GuidanceRecord>
+}
+
+// GuidanceProfileUpdateReq — upsert capability entries (and optionally guidance
+// records) for an account. Entries replace the full capability set for that
+// account.
+struct GuidanceProfileUpdateReq {
+    Account:      string
+    Capabilities: array<GuidanceCapabilityEntry>
+    optional Records: array<GuidanceRecord>
+}
+
+// GuidanceProfileUpdateResp — the resulting profile after the update.
+struct GuidanceProfileUpdateResp {
+    Profile: GuidanceCapabilityProfile
+}
+
+// GuidanceProfileClearReq — remove capability data for an account. A non-empty
+// Capability clears a single entry; an empty Capability clears the whole
+// profile.
+struct GuidanceProfileClearReq {
+    Account: string
+    optional Capability: string
+}
+
+// GuidanceProfileClearResp — outcome of a clear. Cleared is true when at least
+// one entry was removed.
+struct GuidanceProfileClearResp {
+    Account: string
+    Cleared: bool
+}
+
+// GuidanceProfileIncrementReq — record a feature-usage signal (e.g. guide
+// completed, action executed) and auto-increment the familiarity for that
+// capability with low behavioral confidence. Does not override user-declared
+// high-confidence entries.
+struct GuidanceProfileIncrementReq {
+    Account:    string
+    Capability: string
+    Signal:     string
+    optional Evidence: string
+}
+
+// GuidanceProfileIncrementResp — the capability entry after the increment.
+struct GuidanceProfileIncrementResp {
+    Entry: GuidanceCapabilityEntry
+}

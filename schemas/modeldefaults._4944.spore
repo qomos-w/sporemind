@@ -1,0 +1,50 @@
+// modeldefaults namespace — global editable model default parameters.
+//
+// Sources of truth for:
+//   - aimanager.model_defaults_get: returns the effective defaults table
+//     (built-in baseline + user overrides)
+//   - aimanager.model_defaults_set: replaces the user-edited entries
+//
+// The defaults are global (not per-provider). The built-in baseline is the
+// static MODEL_CONTEXT_DEFAULTS const; user-edited entries with the same
+// prefix override the baseline, and new prefixes augment it. Lookup against
+// this table uses longest-prefix matching on the model name.
+// @ts-export
+
+struct ModelDefault {
+    Prefix:            string  // model name prefix; non-empty, unique
+    MaxContextLength:  int     // context window in tokens
+    optional MaxTokens: int    // output token cap; 0 = unknown/unset
+    optional Modality:  string // "chat" (default) | "image"
+    optional CostInput: double // $ per 1M input tokens
+    optional CostOutput: double // $ per 1M output tokens
+}
+
+
+struct AIManagerModelDefaultsGetReq {
+}
+
+
+struct AIManagerModelDefaultsGetResp {
+    Items: array<ModelDefault>  // effective table: baseline + user overrides, sorted by prefix
+}
+
+
+struct AIManagerModelDefaultsSetReq {
+    Items: array<ModelDefault>  // full replacement of the user-edited entries
+}
+
+
+struct AIManagerModelDefaultsSetResp {
+    Ok:    bool
+    Error: string
+}
+
+
+struct AIManagerFetchOpenRouterModelsReq {
+}
+
+
+struct AIManagerFetchOpenRouterModelsResp {
+    Items: array<ModelDefault>  // model prefixes with context length, sorted and deduped
+}

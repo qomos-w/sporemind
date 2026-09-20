@@ -1,0 +1,122 @@
+.puppet-canvas {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+/* --- Toolbar ----------------------------------------------------------- */
+
+.puppet-canvas-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: var(--bg-surface, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border-subtle, rgba(128, 128, 128, 0.15));
+}
+
+.puppet-canvas-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid var(--border-subtle, rgba(128, 128, 128, 0.2));
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-secondary, #a0a0b0);
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s;
+}
+
+.puppet-canvas-btn:hover:not(:disabled) {
+  background: var(--bg-surface-hover, rgba(128, 128, 128, 0.12));
+  color: var(--text-primary, #e0e0e8);
+}
+
+.puppet-canvas-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.puppet-canvas-btn.active {
+  background: var(--accent-bg, rgba(80, 120, 200, 0.2));
+  color: var(--accent-primary, #80a0e0);
+  border-color: var(--accent-border, rgba(80, 120, 200, 0.4));
+}
+
+.puppet-canvas-zoom-value {
+  min-width: 42px;
+  text-align: center;
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary, #808090);
+}
+
+.puppet-canvas-part-count {
+  margin-left: auto;
+  font-size: 10px;
+  color: var(--text-tertiary, #606070);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* --- Viewport (transparent background + optional grid) ----------------- */
+
+.puppet-canvas-viewport {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  border-radius: 6px;
+  /* Checkerboard for transparency indication. */
+  background:
+    repeating-conic-gradient(
+      var(--bg-surface-inset, #1a1a24) 0% 25%,
+      var(--bg-surface, #15151e) 0% 50%
+    )
+    50% / 16px 16px;
+  border: 1px solid var(--border-subtle, rgba(128, 128, 128, 0.15));
+  min-height: 200px;
+  padding: 12px;
+}
+
+.puppet-canvas-viewport.with-grid::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(128, 128, 160, 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(128, 128, 160, 0.08) 1px, transparent 1px);
+  background-size: 32px 32px;
+  z-index: 1;
+}
+
+/* --- Stage (zoom transform wrapper) ------------------------------------ */
+
+.puppet-canvas-stage {
+  transform-origin: center center;
+  transition: transform 0.15s ease-out;
+  position: relative;
+  z-index: 2;
+}
+
+/* --- Mesh wireframe overlay -------------------------------------------- */
+
+.puppet-mesh-wireframe {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+  overflow: visible;
+}
+
+.puppet-mesh-wireframe line {
+  stroke: var(--accent-primary, #80a0e0);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}

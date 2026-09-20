@@ -1,0 +1,115 @@
+.cloud-login-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(2px);
+}
+
+.cloud-login-overlay {
+  position: relative;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  box-shadow: var(--shadow-xl);
+  padding: 20px 20px 16px;
+}
+
+.cloud-login-overlay-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.cloud-login-overlay-close:hover {
+  background: var(--bg-hover);
+}
+
+.cloud-login-overlay-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 6px;
+  padding: 10px 6px 14px;
+}
+
+.cloud-login-overlay-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+  margin-bottom: 6px;
+}
+
+.cloud-login-overlay-title {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.cloud-login-overlay-status {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  min-height: 18px;
+}
+.cloud-login-overlay-status.ok {
+  color: var(--status-success);
+}
+.cloud-login-overlay-status.err {
+  color: var(--text-danger);
+  align-items: flex-start;
+  text-align: left;
+}
+
+.cloud-login-overlay-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+}
+
+.cloud-login-overlay-btn {
+  padding: 7px 16px;
+  font-size: 13px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.cloud-login-overlay-btn:hover {
+  background: var(--bg-hover);
+}
+
+.cloud-login-overlay .spin {
+  animation: cloud-login-spin 0.9s linear infinite;
+}
+
+@keyframes cloud-login-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

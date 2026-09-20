@@ -1,0 +1,176 @@
+.agent-config-card {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  padding: 12px;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.agent-config-card:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-md);
+}
+
+.agent-config-card--active {
+  border-color: var(--accent-primary);
+  background: var(--accent-primary-dim);
+  box-shadow: var(--shadow-md);
+}
+
+.agent-config-card--disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.agent-config-card--clickable {
+  cursor: pointer;
+}
+
+.agent-config-card--expanded {
+  grid-column: 1 / -1;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  max-width: 100%;
+  border-color: var(--accent-primary);
+  background: var(--accent-primary-dim);
+  box-shadow: var(--shadow-md);
+}
+
+.agent-config-card--expanded .agent-config-card-description {
+  -webkit-line-clamp: unset;
+  max-height: none;
+}
+
+.agent-config-card--compact .agent-config-card-description {
+  -webkit-line-clamp: 1;
+}
+
+.agent-config-card-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.agent-config-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.agent-config-card-title {
+  flex: 1;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agent-config-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.agent-config-card-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.agent-config-card-action:hover {
+  background: var(--bg-overlay);
+  color: var(--text-primary);
+}
+
+.agent-config-card-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  background: var(--bg-base);
+  color: transparent;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.agent-config-card-toggle:hover:not(:disabled) {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.agent-config-card-toggle--active {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: #fff;
+}
+
+.agent-config-card-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.agent-config-card-description {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.agent-config-card-footer {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.agent-config-card-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.agent-config-card-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  color: var(--accent-primary);
+  background: var(--accent-primary-dim);
+  padding: 2px 8px;
+  border-radius: 4px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

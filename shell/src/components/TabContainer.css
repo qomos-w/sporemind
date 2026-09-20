@@ -1,0 +1,262 @@
+.tc-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── Tab bar ── */
+.tc-tabbar-wrapper {
+  display: flex;
+  height: var(--tab-bar-height);
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  user-select: none;
+  position: relative;
+}
+
+.tc-tabbar {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  flex: 1;
+  min-width: 0;
+}
+
+.tc-tabbar::-webkit-scrollbar {
+  height: 0;
+}
+
+.tc-tab {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 var(--space-3);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  white-space: nowrap;
+  border-right: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.tc-tab:hover {
+  color: var(--text-secondary);
+  background: var(--bg-hover);
+}
+
+.tc-tab.active {
+  color: var(--text-primary);
+  background: var(--bg-base);
+  border-bottom: 1px solid var(--bg-base);
+  margin-bottom: -1px;
+}
+
+.tc-tab-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.tc-tab-label {
+  pointer-events: none;
+}
+
+.tc-tab-dirty {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  flex-shrink: 0;
+  pointer-events: none;
+}
+
+.tc-tab-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  padding: 0;
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+}
+
+.tc-tab:hover .tc-tab-close {
+  opacity: 1;
+}
+
+.tc-tab-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* ── Content ── */
+.tc-content {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.tc-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+}
+
+/* ── Tab insert indicator (reorder drop position) ── */
+.tc-insert-indicator {
+  width: 2px;
+  height: var(--tab-bar-height);
+  background: var(--accent-primary);
+  flex-shrink: 0;
+  border-radius: 1px;
+}
+
+/* ── Drag-capture overlay ──
+   Rendered above all content while a tab drag is in progress.
+   Ensures Monaco editor, DAG canvas, and any other content cannot absorb
+   drag events before the TabContainer sees them. pointer-events: all so
+   it intercepts; invisible so the underlying view remains visible. */
+.tc-drag-capture {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  /* no background — completely transparent */
+}
+
+/* ── Drop zone overlays ── */
+.tc-drop-zone {
+  position: absolute;
+  background: var(--accent-primary);
+  opacity: 0.15;
+  pointer-events: none;
+  z-index: 20;
+}
+
+.tc-drop-zone.left {
+  left: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+}
+
+.tc-drop-zone.right {
+  right: 0;
+  top: 0;
+  width: 50%;
+  height: 100%;
+}
+
+.tc-drop-zone.top {
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 50%;
+}
+
+.tc-drop-zone.bottom {
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 50%;
+}
+
+.tc-drop-zone.center {
+  inset: 0;
+  border: 2px solid var(--accent-primary);
+  background: var(--accent-primary);
+  opacity: 0.08;
+}
+
+/* ── Context menu ── */
+.tc-context-menu {
+  position: fixed;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 10000;
+  min-width: 120px;
+  padding: 4px 0;
+}
+
+.tc-menu-item {
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.tc-menu-item:hover {
+  background: var(--bg-hover);
+}
+
+/* ── Overflow button & menu ── */
+.tc-overflow-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  background: var(--bg-elevated);
+  border: none;
+  border-left: 1px solid var(--border-subtle);
+  color: var(--text-tertiary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: color var(--transition-fast), background var(--transition-fast);
+  z-index: 5;
+}
+
+.tc-overflow-btn:hover {
+  color: var(--text-secondary);
+  background: var(--bg-hover);
+}
+
+.tc-overflow-menu {
+  position: fixed;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 10000;
+  min-width: 120px;
+  max-width: 240px;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.tc-overflow-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  font-size: 13px;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.tc-overflow-item:hover {
+  background: var(--bg-hover);
+}
+
+.tc-overflow-item-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}

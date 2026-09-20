@@ -1,0 +1,24 @@
+version: '3'
+
+includes:
+  windows: ./build/windows/Taskfile.yml
+
+vars:
+  APP_NAME: '{{if eq .PRODUCTION "true"}}sporemind{{else}}sporemind-dev{{end}}'
+  BIN_DIR: ./build/bin
+
+tasks:
+  build:
+    summary: Build the desktop app for the current OS
+    cmds:
+      - task: '{{OS}}:build'
+
+  run:
+    summary: Run the most recently built desktop binary
+    cmds:
+      - task: '{{OS}}:run'
+
+  dev:
+    summary: Run the desktop app in dev mode (vite + Go hot reload)
+    cmds:
+      - task: '{{OS}}:dev'

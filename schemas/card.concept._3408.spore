@@ -1,0 +1,40 @@
+// card.concept namespace — ConceptCard semantic graph and evidence contract.
+// @ts-export
+
+struct ConceptCardRelation {
+    From: string
+    To: string
+    Relation: string   // part_of | depends_on | enables | constrains
+}
+
+struct SourceAnchor {
+    Path: string
+    optional Symbol: string
+    optional StartLine: int
+    optional StartColumn: int
+    optional EndLine: int
+    optional EndColumn: int
+    optional FileHash: string
+    optional RegionHash: string
+}
+
+struct ConceptEvidence {
+    Id: string
+    Kind: string   // source | test | document | schema | prompt
+    Statement: string
+    Anchor: SourceAnchor
+    Confidence: double
+}
+
+struct ConceptCard {
+    Title: string
+    Desc: string
+    State: string   // real | planned | future
+    Relations: array<ConceptCardRelation>
+    Anchors: array<SourceAnchor>
+    Evidence: array<ConceptEvidence>
+    Confidence: double
+    Status: string   // proposed | verified
+    Stale: bool
+    Missing: bool
+}

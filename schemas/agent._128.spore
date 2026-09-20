@@ -1,0 +1,490 @@
+// agent namespace — agent-owned callable request/response types.
+// @ts-export
+//
+// Sources of truth for:
+//   - agent.status
+//   - agent.enter_plan_mode / agent.exit_plan_mode
+//   - agent.workflow_pause_all
+
+struct AgentStatusResp {
+    optional ActiveTurnRef: string
+    optional State:         string   // "running" | "" (idle)
+    optional PauseKind:     string   // "" | "user" | "task"; "user" = explicit user pause
+    optional Primary:       ModelSlot
+    optional Fast:          ModelSlot
+    optional Execution:     ModelSlot
+    optional Review:        ModelSlot
+    optional Summary:       ModelSlot
+    optional CurrentUnit:   ModelUnit
+    optional DisplayName:   string
+    optional Title:         string
+    optional LastActivity:        string
+    optional LastTurnCompletedAt: string
+    optional Goal:          GoalSummary
+    optional ActiveWorkflowMapCardId: string
+    optional ActiveWorkflowWorktreeID: string
+    optional PendingWorkflowStart: PendingWorkflowStart
+    optional ChildLastActivitySec: int // child-only atomic liveness timestamp (Unix seconds)
+}
+
+
+struct CompleteMessageReq {
+    UserText: string
+    optional System: string
+    optional Unit:   ModelUnit
+}
+
+
+struct PlanStartReq {
+    Task:        string
+    optional ModuleId: string   // skill id to mount; empty = default plan module
+}
+
+
+struct PlanSubmitReq {
+    Title:       string
+    Body:        string
+    optional Tasks: array<PlanTaskRef>
+    optional Policy: PlanPolicy
+}
+
+
+struct PlanTaskRef {
+    Id:          string
+    Subject:     string
+    optional Description: string
+    optional DependsOn: array<string>
+    optional ActiveForm: string
+    Status:      string   // pending | in_progress | completed
+}
+
+
+struct PlanPolicy {
+    Mode:        string   // default | auto | accept_edits
+    optional AllowedPrompts: array<AllowedPrompt>
+}
+
+
+struct AllowedPrompt {
+    Tool:   string
+    Prompt: string
+}
+
+
+struct AgentMessagesListReq {
+    optional SinceIdx:  int
+    optional BeforeIdx: int
+    optional Limit:     int
+}
+
+
+struct ForkResult {
+    Summary:                    string
+    SearchCount:                int
+    ReadCount:                  int
+    Iterations:                 int
+    InputTokens:                int
+    OutputTokens:               int
+    optional CacheCreationInputTokens: int
+    optional CacheReadInputTokens:     int
+    optional StepsJson:                string
+    optional EntriesJson:              string
+    optional FileChanges:              array<TurnFileChange>
+}
+
+
+struct WorkItem {
+    Type:   string
+    Target: string
+}
+
+
+struct ForkChildProgress {
+    Phase:                      string
+    SearchCount:                int
+    ReadCount:                  int
+    InputTokens:                int
+    OutputTokens:               int
+    optional CacheCreationInputTokens: int
+    optional CacheReadInputTokens:     int
+    ActiveWork:                 array<WorkItem>
+    optional SummaryText:       string
+    optional Action:            string   // single-action description for UI action list
+    optional ActionTarget:      string   // file path or search pattern for this action
+    optional StepId:            string   // parent fork step ID for precise UI routing
+}
+
+
+// ---- task list (actor-owned, no separate persistence) ----
+
+struct Task {
+    Id:         string
+    Subject:    string
+    Status:     string   // "pending" | "in_progress" | "completed" | "cancelled"
+    optional ActiveForm: string
+}
+
+
+struct AgentTaskCreateReq {
+    Subject:    string
+    optional ActiveForm: string
+}
+
+
+struct AgentTaskCreateResp {
+    Task: Task
+}
+
+
+struct AgentTaskUpdateReq {
+    Id:     string
+    Status: string   // "pending" | "in_progress" | "completed" | "cancelled"
+}
+
+
+struct AgentTaskCancelReq {
+    Id: string
+}
+
+
+struct AgentTaskCancelResp {
+    Task: Task
+}
+
+
+struct AgentTaskUpdateResp {
+    Task: Task
+}
+
+
+struct AgentTaskListReq {
+}
+
+
+struct AgentTaskListResp {
+    Tasks: array<Task>
+}
+
+
+struct AgentTaskDeleteReq {
+    Id: string
+}
+
+
+struct AgentTaskDeleteResp {
+}
+
+
+struct AgentStatusNotifyReq {
+}
+
+
+struct ImageGenerateReq {
+    Prompt:               string
+    optional Provider:    string
+    optional Model:       string
+    optional Quality:     string   // "fast" | "balanced" | "quality"
+    optional Size:        string   // "1K" | "2K" | "4K"
+    optional AspectRatio: string   // "1:1" | "16:9" | "9:16" | etc.
+    optional InputImage:  string   // file path, URL, or base64 data for image editing
+    optional ReferenceImages: array<string>  // reference images: asset paths, URLs, or base64
+}
+
+
+struct ImageRecognizeReq {
+    Image:              string   // file path, URL, or base64 data of the image to recognize
+    optional Prompt:    string   // question or instruction about the image; empty = full description
+    optional Provider:  string   // pin a specific vision model's provider
+    optional Model:     string   // pin a specific vision model
+    optional Aggregator: string  // aggregator config ID whose pool serves the recognition; empty = system
+}
+
+
+struct AgentOpenGlobalBrowserReq {
+    Url: string
+}
+
+
+struct AgentOpenGlobalBrowserResp {
+    Opened: bool
+    Url:    string
+    Error:  string
+}
+
+
+struct AgentShowPageThumbnailReq {
+    Url:            string
+    optional Title: string
+}
+
+
+struct AgentShowPageThumbnailResp {
+    Url:                string
+    Title:              string
+    optional FilePath:  string
+    Error:              string
+}
+
+
+struct AgentOpenSshSessionReq {
+    HostId: string
+}
+
+
+struct AgentOpenSshSessionResp {
+    SessionId: string
+    HostId:    string
+    HostName:  string
+    Connected: bool
+    Error:     string
+}
+
+
+// ---- introspection / debugging tools ----
+
+struct AgentListCallablesReq {
+    optional Query: string   // substring match against callable name or description
+    optional Limit: int
+}
+
+
+struct AgentListCallablesResp {
+    Items: array<CallableInterface>
+}
+
+
+struct AgentInvokeCallableReq {
+    Service:  string              // exposed service name (e.g. "workspace")
+    CallID:   string              // full callable id (e.g. "workspace.list_agents")
+    Payload:  map<string, any>    // request payload as JSON-compatible object
+    optional AppID: string        // App binding identity
+    optional AgentID: string      // bound agent identity
+    optional Role: string         // authorization role
+    optional ProjectID: string    // project scope
+    optional RequestID: string    // audit/correlation identity
+}
+
+
+struct AgentInvokeCallableResp {
+    Result: any
+    optional Error: string
+}
+
+
+struct AgentFrontendDebugReq {
+    optional Operation: string   // "eval" (default) | "info"
+    optional Script:     string   // JS to execute when Operation = "eval"
+}
+
+
+struct AgentFrontendDebugResp {
+    Result: any
+    optional Error: string
+}
+
+
+struct AgentInspectActorReq {
+    ActorPath: string   // canonical ULID, service name, or actor type (same resolution as gospore.cell.stats)
+}
+
+
+struct AgentInspectActorResp {
+    ActorID: string
+    optional ActorType: string         // actor type (e.g. "agent", "workspace")
+    optional CellState: string         // created/initialized/started/idle/stopped
+    optional BusinessState: string     // agent business state (empty for non-agent)
+    optional OwnerQueueDepth: int      // stateful (owner) lane current depth
+    optional OwnerQueueCapacity: int   // owner lane capacity (256)
+    optional SystemQueueDepth: int     // system-message lane current depth
+    optional SystemQueueCapacity: int  // system lane capacity (64)
+    optional ReplyQueueDepth: int      // reply lane current depth
+    optional ReplyQueueCapacity: int   // reply lane capacity (64)
+    optional PendingInvokes: int       // outbound calls awaiting response ("stuck" callables)
+    optional Invoke: InvokeDiagnostics // app-wide shared invoke table diagnostics (identical for every actor)
+    optional Health: string            // ok/backlogged/blocked summary label
+    optional Error: string
+}
+
+
+struct InvokeDiagnostics {
+    InFlight: int                        // currently registered invoke slots (process-wide)
+    InFlightByMode: map<string, int>     // in-flight invocations by call mode: tell/unary/stream
+    InFlightByCall: map<string, int>     // in-flight invocations by callable ID (e.g. "aiaggregator.chat")
+    Registered: int                      // lifetime: invocations registered
+    Completed: int                       // lifetime: terminated by a normal End frame
+    Errored: int                         // lifetime: terminated by an Error frame
+    SendFailed: int                      // lifetime: frame could not be sent to the target
+    ClosedEarly: int                     // lifetime: caller Closed/Cancelled before a terminal frame
+    EvictedStalled: int                  // lifetime: evicted after persistent full-buffer stalls
+    EvictedCapacity: int                 // lifetime: evicted by the pending-table size cap
+    DroppedFrames: int                   // lifetime: frames dropped on a full caller buffer
+    optional RecentEvictions: array<InvokeEvictionRecord> // newest-last ring (cap 8) of eviction attribution records
+}
+
+
+struct InvokeEvictionRecord {
+    optional CallID: string   // callable ID of the evicted invocation ("" when unknown)
+    optional Mode: string     // call mode: tell/unary/stream
+    optional CorID: string    // decimal correlation ID, matches the caller's stream logs
+    optional Reason: string   // "stalled" (caller stopped reading, buffer full) or "capacity" (table full, oldest evicted)
+    optional Drops: int       // consecutive dropped frames before a stalled eviction
+    optional At: string       // RFC3339 eviction timestamp (UTC)
+}
+
+
+struct AgentCaptureProfileReq {
+    Profile: string   // "cpu" | "heap" | "goroutine" | "mutex" | "block" | "threadcreate"
+    optional Seconds: int   // cpu: capture duration (default 30, max 120); diff: interval between snapshots (default 10, max 60); ignored otherwise
+    optional Debug: int     // text detail for named profiles: 1=aggregated summary with symbolization (default), 2=full stack traces; ignored for cpu and diff
+    optional Diff: bool     // named profiles only: capture two snapshots Seconds apart, return only entries that changed (new/growing/shrinking)
+    optional TopN: int      // limit output to top N entries by count (default 20, max 500); for cpu passed to go tool pprof as -nodecount
+}
+
+
+struct AgentCaptureProfileResp {
+    Profile: string
+    optional Text: string     // text-formatted profile output
+    optional Truncated: bool  // true if output exceeded size limit and was truncated
+    optional Error: string
+}
+
+
+struct AgentGoalSubmitReq {
+    InterpretedGoal: string
+}
+
+
+struct AgentGoalSubmitResp {
+    RequestId: string
+}
+
+
+struct AgentGoalCardSubmitReq {
+    CardId:          string
+    optional InterpretedGoal: string
+}
+
+
+struct AgentGoalCardSubmitResp {
+    RequestId: string
+}
+
+
+// ---- workflow orchestration ----
+
+struct GoalSummary {
+    optional Condition:       string
+    optional Status:          string   // active | ready_for_review
+    optional Confirmed:       bool
+    optional BoundTaskCardId: string
+    optional TurnCount:       int
+    optional MaxTurns:        int
+    // Typed JSON produced by the worker at ready_for_review. The review path
+    // validates this against the bound task card's data.outputs contract.
+    optional Outputs:         map<string, any>
+}
+
+
+struct AgentWorkflowStartReq {
+    MapCardId: string
+}
+
+
+struct AgentWorkflowStartResp {
+    MapCardId: string
+}
+
+
+struct AgentWorkflowStopReq {
+}
+
+
+struct AgentWorkflowStopResp {
+    MapCardId: string
+    optional ResiduePath: string  // 非空 = worktree 已合回主分支，但目录被进程占用暂时残留，后台自动清理
+}
+
+
+// AgentWorkflowPauseAllReq — aggregate pause for a workflow owner whose turn
+// is waiting. Pauses every live child agent (turn_pause) and transitions the
+// owner's own waiting turn to paused with PauseReason "user".
+struct AgentWorkflowPauseAllReq {
+}
+
+
+struct AgentWorkflowPauseAllResp {
+    PausedCount:  int   // child agents dispatched turn_pause
+    SkippedCount: int   // children skipped (not busy, deleting, or unresolvable ref)
+}
+
+
+struct AgentInternalAssignGoalReq {
+    Condition:              string   // goal condition text
+    optional InterpretedGoal: string
+    optional MaxTurns:      int      // default 200
+    optional BoundTaskCardId: string // task card this agent is bound to
+    optional PromptPrelude:  string  // injected before the first user message (e.g., worker task-card context)
+}
+
+
+struct AgentInternalAssignGoalResp {
+    Goal: GoalSummary
+}
+
+
+struct AgentInternalResumeFromReviewReq {
+    Feedback: string   // reviewer feedback injected as the next turn's user message
+}
+
+
+// workflow_plan_submit — workflow-specific plan submission.
+//
+// Distinct from plan_submit: it carries no Tasks and never creates
+// session-level tasks. It persists a plan card, creates a workflow map (Notes
+// linking the plan card), and enters the two-phase workflow confirmation
+// chain. On approval the map activates via the same activateWorkflow path as
+// workflow_start. Kept minimal (Title + Body) because the workflow map's task
+// cards are authored separately via project.wiki_create_task_card, not carried
+// inline as plan tasks.
+struct WorkflowPlanSubmitReq {
+    Title: string
+    Body:  string
+    optional NonCoding: bool   // explicit coding intent: true = non-coding workflow (no owner worktree); false/absent = auto-infer at activation
+}
+
+
+struct WorkflowPlanSubmitResp {
+    PlanCardId: string
+    MapCardId:  string
+}
+
+
+// VideoGenerateReq — generate a video clip from a prompt and optional
+// reference assets. Mirrors ImageGenerateReq but adds duration and multimodal
+// reference inputs. Uses the active media account of Kind "video" when
+// Provider/Model are empty.
+struct VideoGenerateReq {
+    Prompt:               string
+    optional Provider:    string
+    optional Model:       string
+    optional Duration:    string   // target clip length, e.g. "5s" (provider-dependent)
+    optional AspectRatio: string   // "1:1" | "16:9" | "9:16" | etc.
+    optional ReferenceImages: array<string>  // asset paths, URLs, or base64 for image-to-video
+    optional ReferenceVideos: array<string>  // reference videos: URLs or asset paths
+    optional ReferenceAudios: array<string>  // base64 data / asset refs for audio-driven video
+}
+
+
+// AppMediaGenResp - the pluginhost-local host service (image.generate /
+// video.generate) response. The artifact is written by the host into the
+// calling app media/ runtime directory; Path is app-relative (e.g.
+// "media/img-1693489201.png") and loads same-origin from the plugin own
+// HTTP listener. Provider/Model echo the unit that actually served the
+// request (resolved unit or active account), so callers can record provenance.
+struct AppMediaGenResp {
+    Path:        string   // app-relative artifact path, loadable as a same-origin URL by the panel
+    MimeType:    string   // artifact MIME type, e.g. "image/png" | "video/mp4"
+    SizeBytes:   long
+    Provider:    string   // provider name of the serving unit
+    Model:       string   // model name of the serving unit
+}

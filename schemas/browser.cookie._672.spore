@@ -1,0 +1,62 @@
+// browser.cookie namespace — cookie export/import for browser instances.
+// @ts-export
+//
+// Sources of truth for:
+//   - browsermanager.export_cookies / browsermanager.import_cookies
+//
+// Topology:
+//   /browsermanager            holds the export/import callables
+//   /browsermanager/inst-N     one WebviewWindow per child instance
+//
+// Schema IDs (897-901) are placed after brouse._876 (876-891) and
+// browseruse._892 (892-896) to avoid collisions.
+
+// BrowserCookieEntry represents one cookie, aligned with WebView2 cookie fields.
+struct BrowserCookieEntry {
+    // Cookie name.
+    Name:     string
+    // Cookie value.
+    Value:    string
+    // Domain (e.g. ".example.com").
+    Domain:   string
+    // Path scope.
+    Path:     string
+    // Expiration timestamp (Unix epoch seconds).
+    Expires:  long
+    // Whether the cookie is HTTP-only.
+    HttpOnly: bool
+    // Whether the cookie is secure (HTTPS-only).
+    Secure:   bool
+    // SameSite policy: "Strict", "Lax", "None", or empty.
+    SameSite: string
+}
+
+
+// BrowserManagerExportCookiesReq requests a cookie export by instance ID.
+struct BrowserManagerExportCookiesReq {
+    // Browser instance ID.
+    Id: string
+}
+
+
+// BrowserManagerExportCookiesResp carries cookies grouped by domain.
+struct BrowserManagerExportCookiesResp {
+    // Cookies keyed by domain (e.g. "example.com" -> cookies).
+    Cookies: map<string, array<BrowserCookieEntry>>
+}
+
+
+// BrowserManagerImportCookiesReq carries cookies to import into an instance.
+struct BrowserManagerImportCookiesReq {
+    // Browser instance ID.
+    Id:      string
+    // Cookies keyed by domain, matching the export format.
+    Cookies: map<string, array<BrowserCookieEntry>>
+}
+
+
+// BrowserManagerImportCookiesResp reports the number of cookies written.
+struct BrowserManagerImportCookiesResp {
+    // Number of cookies successfully imported.
+    Imported: long
+}

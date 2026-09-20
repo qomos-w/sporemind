@@ -1,0 +1,32 @@
+// media provider-model binding protocol (IDs 3700+).
+// @ts-export
+//
+// Extends the media.account.* protocol (media._2948.spore) with the
+// provider-model binding: a per-Kind selection of one (Provider, Model) pair
+// from the LLM providers' image/video-classified models. Each pair is a
+// distinct selectable entry on the media settings page — the same model on two
+// providers yields two independent rows. The binding routes aggregator
+// fallback generation (aiaggregator.image_resolve / video_resolve Provider and
+// Model filters) and is mutually exclusive with the Kind's active media
+// account.
+
+// MediaProviderModelSetReq activates/deactivates a provider-model binding for a
+// Kind. Activating a binding deactivates the Kind's media account (mutual
+// exclusion); empty Provider/Model clears the binding without touching
+// accounts. For Kind "vision" an Aggregator id may be bound instead of a
+// (Provider, Model) pair — recognition then routes through that aggregator's
+// pool; setting Aggregator clears the provider-model binding and vice versa.
+struct MediaProviderModelSetReq {
+    Kind:              string // "image" | "video" | "vision"
+    optional Provider: string
+    optional Model:    string
+    optional Aggregator: string // vision only: bind a named aggregator config
+}
+
+
+struct MediaProviderModelSetResp {
+    Kind:              string
+    optional Provider: string
+    optional Model:    string
+    optional Aggregator: string
+}

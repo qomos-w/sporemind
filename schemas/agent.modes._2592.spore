@@ -1,0 +1,19 @@
+// agent.modes namespace — agent-owned mode lifecycle protocol types.
+// @ts-export
+//
+// Sources of truth for:
+//   - agent.modes_unload_all (registered on the agent actor as the flat
+//     callable modes_unload_all)
+//
+// Design: after stopping the current turn (turn_cancel), the scheduler
+// execution path unmounts every user-scoped mounted mode and clears the
+// mode-derived session state before mounting builtin:mode:scheduler.
+
+struct AgentModesUnloadAllReq {
+}
+
+
+// AgentModesUnloadAllResp reports which mode cards were unmounted.
+struct AgentModesUnloadAllResp {
+    Unloaded: array<string>
+}

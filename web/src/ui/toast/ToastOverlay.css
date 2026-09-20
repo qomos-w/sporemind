@@ -1,0 +1,168 @@
+/* Toast overlay — notification cards floating over the main window content
+ * (no second native window). The overlay itself is fully hidden while there
+ * are no live cards; only the card stack re-enables pointer events so the
+ * gaps between cards stay clickable. */
+
+.toast-overlay {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  z-index: 1050; /* above panels, below context menus / blocking overlays */
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  max-width: calc(100vw - 32px);
+  pointer-events: none;
+  color: var(--fg-1, #e8e8ec);
+  font-size: 12px;
+}
+
+/* --- card stack --- */
+
+.toast-card-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: 540px; /* expanded stacks scroll inside */
+  padding-right: 2px;
+  scrollbar-width: thin;
+  pointer-events: auto;
+}
+
+.toast-fold-chip {
+  appearance: none;
+  align-self: flex-start;
+  border: 1px dashed rgba(255, 255, 255, 0.22);
+  background: rgba(24, 24, 30, 0.6);
+  color: inherit;
+  font-size: 11px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  cursor: pointer;
+  animation: toast-in 0.22s ease-out;
+}
+
+.toast-fold-chip:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.toast-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 10px 10px 8px 12px;
+  border-radius: 10px;
+  background: rgba(24, 24, 30, 0.82);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+  animation: toast-in 0.24s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  will-change: transform, opacity;
+}
+
+.toast-card.is-leaving {
+  animation: toast-out 0.26s ease-in forwards;
+}
+
+.toast-card-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.toast-card-title {
+  font-weight: 600;
+  margin-bottom: 2px;
+  word-break: break-word;
+}
+
+.toast-card-body {
+  opacity: 0.8;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.toast-card-meta {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 10.5px;
+  opacity: 0.55;
+}
+
+.toast-card-close {
+  appearance: none;
+  border: none;
+  background: transparent;
+  color: inherit;
+  opacity: 0.5;
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+}
+
+.toast-card-close:hover {
+  opacity: 1;
+}
+
+.toast-card-action-row {
+  margin-top: 8px;
+}
+
+.toast-card-action {
+  appearance: none;
+  border: 1px solid rgba(91, 156, 245, 0.55);
+  background: rgba(91, 156, 245, 0.16);
+  color: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.toast-card-action:hover {
+  background: rgba(91, 156, 245, 0.3);
+}
+
+/* kind accents */
+.toast-card-info {
+  border-left: 3px solid #5b9cf5;
+}
+
+.toast-card-success {
+  border-left: 3px solid #4cc38a;
+}
+
+.toast-card-warning {
+  border-left: 3px solid #e0b34c;
+}
+
+.toast-card-error {
+  border-left: 3px solid #e5655e;
+}
+
+/* --- animations --- */
+
+@keyframes toast-in {
+  from {
+    transform: translateX(36px);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toast-out {
+  to {
+    transform: translateX(28px);
+    opacity: 0;
+    max-height: 0;
+    margin-bottom: -8px;
+  }
+}

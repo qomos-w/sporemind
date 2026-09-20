@@ -1,0 +1,15 @@
+.delegated-tooltip {
+  position: fixed;
+  z-index: var(--ai-overlay-z-index);
+  max-width: 280px;
+  padding: 8px 12px;
+  border-radius: var(--radius-lg, 8px);
+  background: var(--bg-surface, rgba(30, 30, 30, 0.95));
+  color: var(--text-primary, #ffffff);
+  font-size: 13px;
+  line-height: 1.4;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  pointer-events: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

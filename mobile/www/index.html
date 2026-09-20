@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>sporemind</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --app-height: 100vh;
+            /* Default dark theme — aligned with theme/src/tokens.css Default Dark. */
+            --bg-base: #181a20;
+            --bg-surface: #1e2028;
+            --bg-hover: rgba(255,255,255,0.06);
+            --border-default: rgba(255,255,255,0.1);
+            --border-subtle: rgba(255,255,255,0.06);
+            --text-primary: #b8c0cc;
+            --text-secondary: #8a93a5;
+            --text-tertiary: #6a7385;
+            --accent-primary: #4a7de4;
+            --accent-primary-dim: rgba(74,125,228,0.12);
+            --accent-glow: rgba(74,125,228,0.25);
+            --status-failed: #e05c5c;
+            --status-success: #5cb17a;
+            --radius-sm: 4px;
+            --radius-lg: 10px;
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.45);
+            --font-sans: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+        }
+
+        /* Light theme — aligned with theme/src/tokens.css Default Light. */
+        [data-theme="light"] {
+            --bg-base: #f2f3f5;
+            --bg-surface: #eaebee;
+            --bg-hover: rgba(0,0,0,0.04);
+            --border-default: rgba(0,0,0,0.12);
+            --border-subtle: rgba(0,0,0,0.06);
+            --text-primary: #2a2f3d;
+            --text-secondary: #5f6a7e;
+            --text-tertiary: #8a94a6;
+            --accent-primary: #4a7de4;
+            --accent-primary-dim: rgba(74,125,228,0.10);
+            --accent-glow: rgba(74,125,228,0.18);
+            --status-failed: #e04040;
+            --status-success: #20b058;
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+        }
+
+        /* Vintage preset — warm paper tones. */
+        [data-preset="vintage"][data-theme="dark"] {
+            --bg-base: #2a2520;
+            --bg-surface: #332d26;
+            --bg-hover: rgba(255,255,255,0.05);
+            --border-default: rgba(255,255,255,0.1);
+            --border-subtle: rgba(255,255,255,0.06);
+            --text-primary: #d8cfc2;
+            --text-secondary: #a89b8a;
+            --text-tertiary: #7d7266;
+            --accent-primary: #b07d52;
+            --accent-primary-dim: rgba(176,125,82,0.12);
+            --accent-glow: rgba(176,125,82,0.25);
+            --status-failed: #e05c5c;
+            --status-success: #5cb17a;
+        }
+
+        [data-preset="vintage"][data-theme="light"] {
+            --bg-base: #f2ebe2;
+            --bg-surface: #eae2d7;
+            --bg-hover: rgba(0,0,0,0.04);
+            --border-default: rgba(74,61,50,0.16);
+            --border-subtle: rgba(74,61,50,0.08);
+            --text-primary: #4a3d32;
+            --text-secondary: #6e5b4c;
+            --text-tertiary: #96806e;
+            --accent-primary: #b07d52;
+            --accent-primary-dim: rgba(176,125,82,0.10);
+            --accent-glow: rgba(176,125,82,0.18);
+            --status-failed: #b7635d;
+            --status-success: #60876b;
+            --shadow-lg: 0 12px 40px rgba(60,45,30,0.14);
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-base);
+            height: 100vh;
+            height: var(--app-height);
+            color: var(--text-primary);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .login-page {
+            position: relative;
+            height: var(--app-height);
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-base);
+            z-index: 100;
+        }
+
+        .login-body {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+            overflow-y: auto;
+            transition: padding-bottom 0.2s ease;
+        }
+
+        .login-body.keyboard-open {
+            align-items: flex-start;
+            padding-top: 40px;
+            padding-bottom: calc(20px + var(--keyboard-height, 0px) + env(safe-area-inset-bottom));
+        }
+
+        .login-card {
+            width: 340px;
+            max-width: 100%;
+            padding: 28px;
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-lg);
+            background: var(--bg-surface);
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .login-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 4px;
+        }
+
+        .login-logo { font-size: 20px; font-weight: 700; color: var(--accent-primary); letter-spacing: -0.5px; }
+        .login-title { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
+
+        .login-error {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            background: rgba(224, 92, 92, 0.1);
+            border: 1px solid rgba(224, 92, 92, 0.25);
+            color: var(--status-failed);
+            font-size: 12px;
+        }
+
+        .login-notice {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border-radius: var(--radius-sm);
+            background: var(--accent-primary-dim, rgba(74,125,228,0.12));
+            border: 1px solid var(--accent-glow);
+            color: var(--accent-primary);
+            font-size: 12px;
+        }
+
+        .login-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .login-field label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .login-field input {
+            padding: 10px 12px;
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-sm);
+            background: var(--bg-base);
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.15s;
+        }
+
+        .login-field input:focus { border-color: var(--accent-primary); }
+
+        .addr-dropdown-wrap {
+            position: relative;
+            display: flex;
+            gap: 8px;
+        }
+
+        .addr-dropdown-wrap input { flex: 1; }
+
+        .addr-dropdown-list {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 80px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-sm);
+            z-index: 200;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .addr-dropdown-list.open { display: block; }
+
+        .addr-dropdown-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 12px;
+            cursor: pointer;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .addr-dropdown-item:last-child { border-bottom: none; }
+
+        .addr-dropdown-item:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .addr-dropdown-item .addr-url {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .addr-dropdown-item .addr-del {
+            padding: 2px 6px;
+            background: transparent;
+            border: none;
+            color: var(--status-failed);
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0.6;
+        }
+
+        .addr-dropdown-item .addr-del:hover { opacity: 1; }
+
+        .login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            border: none;
+            border-radius: var(--radius-sm);
+            background: var(--accent-primary);
+            color: #000;
+            font-size: 14px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: filter 0.15s;
+            margin-top: 4px;
+        }
+
+        .login-btn:hover { filter: brightness(1.1); }
+        .login-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .login-btn-secondary {
+            padding: 8px 14px;
+            border: 1px solid var(--border-default);
+            border-radius: var(--radius-sm);
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.15s;
+            flex-shrink: 0;
+        }
+
+        .login-btn-secondary:hover {
+            border-color: var(--accent-primary);
+            color: var(--text-primary);
+        }
+
+        .login-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .login-toggle input[type="checkbox"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--border-default);
+            border-radius: 3px;
+            background: var(--bg-base);
+            position: relative;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .login-toggle input[type="checkbox"]:checked {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+        }
+        .login-toggle input[type="checkbox"]:checked::after {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 1px;
+            width: 5px;
+            height: 9px;
+            border: solid #000;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+        .login-toggle-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .webview-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            /* Extend under the system navigation bar; the iframe content uses
+               env(safe-area-inset-bottom) to keep controls above it. */
+            height: calc(100vh - var(--keyboard-height, 0px));
+            height: calc(100dvh - var(--keyboard-height, 0px));
+            background: var(--bg-base);
+            z-index: 1000;
+        }
+
+        .webview-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* Boot splash: shown on app launch until we know whether to auto-login. */
+        .boot-splash,
+        .webview-splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: var(--app-height, 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-base);
+            z-index: 2000;
+            transition: opacity 0.25s ease, visibility 0.25s ease;
+        }
+        .boot-splash.hidden,
+        .webview-splash.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        .boot-splash-inner,
+        .webview-splash-inner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+        .boot-logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-primary);
+            letter-spacing: -0.5px;
+        }
+        .boot-spinner,
+        .login-loading-spinner {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border-default);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 0.9s linear infinite;
+        }
+
+        /* Loading overlay on the native login form during sign-in. */
+        .login-loading-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(24, 26, 32, 0.7);
+            backdrop-filter: blur(2px);
+            z-index: 150;
+        }
+
+        .hidden { display: none !important; }
+        .spin { animation: spin 1s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        /* Status bar (Capacitor only, visible only when webview is active). */
+        .status-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 28px;
+            display: none;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 12px;
+            padding-right: max(12px, env(safe-area-inset-right));
+            padding-left: max(12px, env(safe-area-inset-left));
+            gap: 8px;
+            z-index: 10000;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-primary);
+            pointer-events: none;
+            transition: color 0.3s;
+        }
+        .status-bar.capacitor-mode { display: flex; }
+        /* Hidden while the native login form / boot splash is visible. */
+        .status-bar.hidden { display: none !important; }
+        .status-bar .sb-icon {
+            width: 14px;
+            height: 14px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .status-bar .sb-battery {
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .status-bar .sb-battery-body {
+            width: 18px;
+            height: 10px;
+            border: 1px solid currentColor;
+            border-radius: 2px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 1px;
+        }
+        .status-bar .sb-battery-body::after {
+            content: '';
+            position: absolute;
+            right: -3px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 2px;
+            height: 4px;
+            background: currentColor;
+            border-radius: 0 1px 1px 0;
+        }
+        .status-bar .sb-battery-fill {
+            height: 100%;
+            background: currentColor;
+            border-radius: 1px;
+            transition: width 0.3s;
+        }
+        .status-bar .sb-time { min-width: 36px; text-align: right; }
+        .status-bar .sb-network { opacity: 1; }
+
+        /* Status bar overlays content; no extra padding needed */
+
+    </style>
+    <!-- MOBILE_DEFAULT_CONFIG -->
+<script>
+window.__defaultServerUrls = ["http://192.168.0.1:18080"];
+window.__defaultAccount = "admin";
+</script>
+<!-- /MOBILE_DEFAULT_CONFIG -->
+</head>
+<body>
+    <div class="status-bar" id="statusBar">
+        <span class="sb-network" id="sbNetwork"></span>
+        <span class="sb-battery" id="sbBattery">
+            <span class="sb-battery-body"><span class="sb-battery-fill" id="sbBatteryFill"></span></span>
+        </span>
+        <span class="sb-time" id="sbTime">--:--</span>
+    </div>
+
+    <!-- Boot splash: shown while we decide whether to auto-login or show the native form. -->
+    <div class="boot-splash" id="boot-splash">
+        <div class="boot-splash-inner">
+            <div class="boot-logo">sporemind</div>
+            <div class="boot-spinner"></div>
+        </div>
+    </div>
+
+    <div class="login-page hidden" id="login-page">
+        <div class="login-body">
+            <div class="login-card">
+                <div class="login-header">
+                    <span class="login-logo">sporemind</span>
+                    <span class="login-title">Sign In</span>
+                </div>
+
+                <div id="login-notice" class="login-notice hidden"></div>
+
+                <div id="login-error" class="login-error hidden"></div>
+
+                <div class="login-field">
+                    <label>Server Address</label>
+                    <div class="addr-dropdown-wrap">
+                        <input type="text" id="serverUrl" placeholder="http://192.168.1.100:18080" value="" autocomplete="off">
+                        <button class="login-btn-secondary" id="saveBtn">Save</button>
+                        <div class="addr-dropdown-list" id="addrDropdown"></div>
+                    </div>
+                </div>
+
+                <div class="login-field">
+                    <label>Username</label>
+                    <input type="text" id="username" placeholder="username" value="" autocomplete="off">
+                </div>
+
+                <div class="login-field">
+                    <label>Password</label>
+                    <input type="password" id="password" placeholder="password" value="" autocomplete="off">
+                </div>
+
+                <label class="login-toggle">
+                    <input type="checkbox" id="noCache">
+                    <span class="login-toggle-label">不缓存</span>
+                </label>
+
+                <button class="login-btn" id="connectBtn">Sign In</button>
+            </div>
+        </div>
+        <!-- Loading overlay shown during form login. -->
+        <div class="login-loading-overlay hidden" id="login-loading-overlay">
+            <div class="login-loading-spinner"></div>
+        </div>
+    </div>
+
+    <div class="webview-container" id="webview-container">
+        <iframe id="webview" src=""></iframe>
+        <!-- Splash inside webview container: shown until the remote app finishes loading. -->
+        <div class="webview-splash" id="webview-splash">
+            <div class="webview-splash-inner">
+                <div class="boot-logo">sporemind</div>
+                <div class="boot-spinner"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ----- Native keyboard height -----
+        // Single mechanism: shrink the webview iframe container by keyboard height.
+        // The iframe content reflows naturally — no CSS variable propagation needed.
+        window.__nativeKbHeight = 0;
+        window.__onNativeKeyboard = function(h) {
+            window.__nativeKbHeight = h;
+            document.documentElement.style.setProperty('--keyboard-height', h + 'px');
+            var loginBody = document.querySelector('.login-body');
+            if (loginBody) {
+                if (h > 0) {
+                    loginBody.classList.add('keyboard-open');
+                } else {
+                    loginBody.classList.remove('keyboard-open');
+                }
+            }
+        };
+
+        // ----- Logger -----
+        var _origLog = console.log.bind(console);
+        var _origErr = console.error.bind(console);
+
+        function dbg(msg, type) {
+            var line = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+            _origLog(line);
+        }
+        dbg('DBG: script start');
+
+        // ----- NativeStorage (inlined) -----
+        dbg('DBG: defining NativeStorage');
+        var NativeStorage = function() {
+            this.isNativeAvailable = false;
+        };
+        NativeStorage.prototype.init = function() {
+            var self = this;
+            return new Promise(function(resolve) {
+                if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Preferences) {
+                    self.isNativeAvailable = true;
+                    dbg('NativeStorage: Preferences OK');
+                } else {
+                    dbg('NativeStorage: Preferences missing, fallback to localStorage', 'warn');
+                }
+                resolve();
+            });
+        };
+        NativeStorage.prototype.set = function(key, value) {
+            var str = typeof value === 'string' ? value : JSON.stringify(value);
+            if (this.isNativeAvailable) {
+                return window.Capacitor.Plugins.Preferences.set({ key: key, value: str });
+            }
+            localStorage.setItem(key, str);
+            return Promise.resolve();
+        };
+        NativeStorage.prototype.get = function(key) {
+            if (this.isNativeAvailable) {
+                return window.Capacitor.Plugins.Preferences.get({ key: key }).then(function(r) {
+                    return r.value;
+                });
+            }
+            return Promise.resolve(localStorage.getItem(key));
+        };
+        NativeStorage.prototype.remove = function(key) {
+            if (this.isNativeAvailable) {
+                return window.Capacitor.Plugins.Preferences.remove({ key: key });
+            }
+            localStorage.removeItem(key);
+            return Promise.resolve();
+        };
+        dbg('DBG: NativeStorage defined');
+
+        // ----- Voice bridge (inlined) -----
+        dbg('DBG: defining voice bridge');
+        var VOICE_TOKEN_KEY = 'sporemind_jwt_token';
+        function getServerUrl() {
+            return currentServerUrl || '';
+        }
+        function getVoiceToken() {
+            return nativeStorage.get(VOICE_TOKEN_KEY);
+        }
+        function sendToIframe(type, data, transfer) {
+            var iframe = document.getElementById('webview');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({ _sporemind: true, type: type, data: data || {} }, '*', transfer || []);
+            }
+        }
+        // ----- Volume monitor for waveform (Web Audio API) -----
+        var _volCtx = null, _volAnalyser = null, _volStream = null, _volInterval = null;
+        var _recordingStart = 0, _recordingStopping = false;
+        var _maxDurationTimer = null;
+
+        function startVolumeMonitor() {
+            if (!navigator.mediaDevices) return;
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(function(stream) {
+                _volStream = stream;
+                _volCtx = new (window.AudioContext || window.webkitAudioContext)();
+                if (_volCtx.state === 'suspended') _volCtx.resume();
+                var src = _volCtx.createMediaStreamSource(stream);
+                _volAnalyser = _volCtx.createAnalyser();
+                _volAnalyser.fftSize = 512;
+                _volAnalyser.smoothingTimeConstant = 0.6;
+                src.connect(_volAnalyser);
+                var buf = new Uint8Array(_volAnalyser.frequencyBinCount);
+                _volInterval = setInterval(function() {
+                    if (!_volAnalyser) return;
+                    _volAnalyser.getByteFrequencyData(buf);
+                    var sum = 0;
+                    for (var i = 0; i < buf.length; i++) { sum += buf[i] * buf[i]; }
+                    var rms = Math.sqrt(sum / buf.length) / 255;
+                    var level = Math.min(1, rms * 4);
+                    var req = window._pendingAudioRequest;
+                    if (req) {
+                        sendToIframe('voice:volume', { requestId: req.requestId, level: level });
+                    }
+                    // Auto-stop on max duration
+                    if (_recordingStopping) return;
+                    var now = Date.now();
+                    if (_recordingStart > 0 && now - _recordingStart > 30000) {
+                        dbg('Volume: max duration (30s), auto-stopping');
+                        _recordingStopping = true;
+                        stopAudioRecording();
+                        return;
+                    }
+                }, 50);
+            }).catch(function(e) {
+                dbg('Volume monitor failed: ' + (e && e.message), 'warn');
+            });
+        }
+        function stopVolumeMonitor() {
+            if (_maxDurationTimer) { clearTimeout(_maxDurationTimer); _maxDurationTimer = null; }
+            if (_volInterval) { clearInterval(_volInterval); _volInterval = null; }
+            if (_volAnalyser) { _volAnalyser = null; }
+            if (_volCtx) { _volCtx.close().catch(function() {}); _volCtx = null; }
+            if (_volStream) { _volStream.getTracks().forEach(function(t) { t.stop(); }); _volStream = null; }
+        }
+        function startAudioRecording(requestId) {
+            var AudioRecorder = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorAudioRecorder;
+            if (!AudioRecorder) {
+                sendToIframe('voice:error', { requestId: requestId, error: 'AudioRecorder unavailable' });
+                return;
+            }
+
+            // Register pending request BEFORE any async work so fingerUp
+            // never races past it during the native startup window.
+            if (_maxDurationTimer) { clearTimeout(_maxDurationTimer); _maxDurationTimer = null; }
+            window._pendingAudioRequest = { requestId: requestId, starting: true };
+            _recordingStart = Date.now();
+            _recordingStopping = false;
+
+            AudioRecorder.getRecordingStatus().then(function(status) {
+                if (status.status === 'RECORDING') {
+                    return AudioRecorder.cancelRecording();
+                }
+            }).catch(function() {}).then(function() {
+                return AudioRecorder.requestPermissions();
+            }).then(function() {
+                return AudioRecorder.startRecording({ sampleRate: 16000, bitRate: 128000 });
+            }).then(function() {
+                // A stop request may have cleared the pending request during
+                // startup. If so, tear down the recording we just started.
+                var req = window._pendingAudioRequest;
+                if (!req || req.requestId !== requestId) {
+                    AudioRecorder.stopRecording().catch(function() {});
+                    return;
+                }
+                req.starting = false;
+                sendToIframe('voice:start', { requestId: requestId });
+                // Refresh start time — this is when audio is actually being captured.
+                _recordingStart = Date.now();
+                _recordingStopping = false;
+                if (_maxDurationTimer) { clearTimeout(_maxDurationTimer); }
+                _maxDurationTimer = setTimeout(function() {
+                    if (!_recordingStopping && window._pendingAudioRequest) {
+                        dbg('Max recording duration reached (30s), auto-stopping');
+                        _recordingStopping = true;
+                        stopAudioRecording();
+                    }
+                }, 30000);
+                startVolumeMonitor();
+            }).catch(function(e) {
+                var req = window._pendingAudioRequest;
+                if (req && req.requestId === requestId) {
+                    window._pendingAudioRequest = null;
+                    sendToIframe('voice:error', { requestId: requestId, error: (e && e.message) || 'Start failed' });
+                }
+            });
+        }
+        // ----- Audio format conversion -----
+        // CapacitorAudioRecorder outputs AAC in M4A on both platforms.
+        // GLM ASR (glm-asr-2512) only supports WAV, MP3, FLAC — AAC and WebM
+        // are both rejected. Convert to WAV (instant, universal, no codec dep).
+        function _cleanBase64(data) {
+            if (typeof data !== 'string') {
+                dbg('_cleanBase64: data is not string (type=' + typeof data + ')', 'warn');
+                return data;
+            }
+            var comma = data.indexOf(',');
+            if (data.indexOf('data:') === 0 && comma !== -1) {
+                return data.slice(comma + 1).replace(/\s/g, '');
+            }
+            return data.replace(/\s/g, '');
+        }
+        function _audioBase64ToArrayBuffer(b64) {
+            var bin = atob(b64);
+            var bytes = new Uint8Array(bin.length);
+            for (var i = 0; i < bin.length; i++) { bytes[i] = bin.charCodeAt(i); }
+            return bytes.buffer;
+        }
+        function _arrayBufferToBase64(buf) {
+            var bytes = new Uint8Array(buf);
+            var binary = '';
+            // Process in 8KB chunks to avoid string concatenation pressure on old engines.
+            // Do NOT split across btoa boundaries — encode the full string at once.
+            var CHUNK = 0x2000;
+            for (var off = 0; off < bytes.length; off += CHUNK) {
+                var end = Math.min(off + CHUNK, bytes.length);
+                for (var i = off; i < end; i++) { binary += String.fromCharCode(bytes[i]); }
+            }
+            return btoa(binary);
+        }
+        // Convert any supported audio (AAC/M4A, MP3, etc.) to 16kHz mono WAV ArrayBuffer.
+        // Input: ArrayBuffer (raw file bytes). Output: WAV ArrayBuffer.
+        function _convertToWAV(arrayBuf) {
+            return new Promise(function(resolve, reject) {
+                try {
+                    var ctx = new AudioContext();
+                    ctx.decodeAudioData(arrayBuf.slice(0), function(audioBuffer) {
+                        ctx.close();
+                        // GLM ASR requires 16000 Hz. Resample if necessary.
+                        var targetRate = 16000;
+                        if (audioBuffer.sampleRate === targetRate) {
+                            resolve(_encodeWAV(audioBuffer));
+                            return;
+                        }
+                        try {
+                            var offlineCtx = new OfflineAudioContext(1, Math.round(audioBuffer.length * targetRate / audioBuffer.sampleRate), targetRate);
+                            var source = offlineCtx.createBufferSource();
+                            source.buffer = audioBuffer;
+                            source.connect(offlineCtx.destination);
+                            source.start(0);
+                            offlineCtx.startRendering().then(function(renderedBuffer) {
+                                resolve(_encodeWAV(renderedBuffer));
+                            }).catch(function(e) { reject(e); });
+                        } catch (e) { reject(e); }
+                    }, function(err) { ctx.close(); reject(err || new Error('Audio decode failed')); });
+                } catch (e) { reject(e); }
+            });
+        }
+        function _encodeWAV(audioBuffer) {
+            var sampleRate = audioBuffer.sampleRate;
+            var pcm = audioBuffer.getChannelData(0);
+            var numSamples = pcm.length;
+            var wavBuf = new ArrayBuffer(44 + numSamples * 2);
+            var view = new DataView(wavBuf);
+            function ws(off, str) {
+                for (var i = 0; i < str.length; i++) view.setUint8(off + i, str.charCodeAt(i));
+            }
+            ws(0, 'RIFF');
+            view.setUint32(4, 36 + numSamples * 2, true);
+            ws(8, 'WAVE');
+            ws(12, 'fmt ');
+            view.setUint32(16, 16, true);
+            view.setUint16(20, 1, true);
+            view.setUint16(22, 1, true);
+            view.setUint32(24, sampleRate, true);
+            view.setUint32(28, sampleRate * 2, true);
+            view.setUint16(32, 2, true);
+            view.setUint16(34, 16, true);
+            ws(36, 'data');
+            view.setUint32(40, numSamples * 2, true);
+            var out = new Int16Array(wavBuf, 44, numSamples);
+            for (var i = 0; i < numSamples; i++) {
+                var s = Math.max(-1, Math.min(1, pcm[i]));
+                out[i] = s < 0 ? s * 0x8000 : s * 0x7FFF;
+            }
+            return wavBuf;
+        }
+
+        function stopAudioRecording() {
+            stopVolumeMonitor();
+            var AudioRecorder = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorAudioRecorder;
+            var CapacitorCore = window.Capacitor;
+            var req = window._pendingAudioRequest;
+            window._pendingAudioRequest = null;
+            if (!req || !AudioRecorder) return;
+            AudioRecorder.getRecordingStatus().then(function(status) {
+                if (status.status !== 'RECORDING') {
+                    sendToIframe('voice:end', { requestId: req.requestId });
+                    return;
+                }
+                return AudioRecorder.stopRecording().then(function(result) {
+                    if (result.uri && CapacitorCore && CapacitorCore.convertFileSrc) {
+                        var fileUrl = CapacitorCore.convertFileSrc(result.uri);
+                        dbg('voice: fetching file ' + fileUrl);
+                        return fetch(fileUrl).then(function(resp) { return resp.arrayBuffer(); }).then(function(arrayBuf) {
+                            dbg('voice: file loaded, len=' + arrayBuf.byteLength);
+                            return _convertToWAV(arrayBuf).then(function(wavBuf) {
+                                dbg('voice: WAV ready, len=' + wavBuf.byteLength);
+                                sendToIframe('voice:data', {
+                                    requestId: req.requestId,
+                                    audioType: 3,
+                                    data: wavBuf
+                                }, [wavBuf]);
+                                sendToIframe('voice:end', { requestId: req.requestId });
+                            });
+                        });
+                    }
+                    sendToIframe('voice:end', { requestId: req.requestId });
+                }).catch(function(e) {
+                    dbg('Voice stop error: ' + (e && e.message), 'err');
+                    sendToIframe('voice:error', { requestId: req.requestId, error: (e && e.message) || 'Stop failed' });
+                    sendToIframe('voice:end', { requestId: req.requestId });
+                });
+            });
+        }
+        function setupVoiceBridge() {
+            window.addEventListener('message', function(event) {
+                var msg = event.data || {};
+                if (!msg._sporemind) return;
+                var data = msg.data || {};
+                if (msg.type === 'voice:start') {
+                    startAudioRecording(data.requestId);
+                } else if (msg.type === 'voice:stop') {
+                    var req = window._pendingAudioRequest;
+                    if (req && req.requestId === data.requestId && !_recordingStopping) {
+                        _recordingStopping = true;
+                        stopAudioRecording();
+                    }
+                } else if (msg.type === 'ptt:arm') {
+                    var TM = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.TouchMonitor;
+                    if (TM && TM.armPushToTalk) {
+                        TM.armPushToTalk({ gestureId: data.gestureId, thresholdMs: data.thresholdMs || 420 });
+                    }
+                } else if (msg.type === 'debug:log') {
+                    _dbgAppend('[iframe] ' + (data.msg || ''), false);
+                }
+            });
+        }
+        var _touchMonitorGen = 0;
+        var _touchMonitorHandle = null;
+        function tmLog(msg) {
+            dbg('[VoiceTM] ' + msg);
+        }
+        function initTouchMonitor() {
+            var Cap = window.Capacitor;
+            if (!Cap || !Cap.Plugins) { tmLog('Capacitor.Plugins not available'); return; }
+            var TM = Cap.Plugins.TouchMonitor;
+            if (!TM) {
+                tmLog('TouchMonitor not in Plugins. Available: ' + Object.keys(Cap.Plugins).join(','));
+                return;
+            }
+            tmLog('plugin found, adding push-to-talk listeners');
+            _touchMonitorGen++;
+            var gen = _touchMonitorGen;
+            if (_touchMonitorHandle) {
+                _touchMonitorHandle.forEach(function(handle) { handle.remove(); });
+                _touchMonitorHandle = null;
+            }
+            var handles = [];
+            function addListener(eventName, handler) {
+                var ret = TM.addListener(eventName, handler);
+                if (ret && typeof ret.then === 'function') {
+                    return ret.then(function(handle) {
+                        if (gen !== _touchMonitorGen) { handle.remove(); return; }
+                        handles.push(handle);
+                        _touchMonitorHandle = handles;
+                    });
+                }
+                if (ret) handles.push(ret);
+                _touchMonitorHandle = handles;
+                return Promise.resolve();
+            }
+            Promise.all([
+                addListener('pushToTalkState', function(data) {
+                    sendToIframe('ptt:state', { gestureId: data.gestureId, active: !!data.active });
+                }),
+                addListener('pushToTalkTap', function(data) {
+                    sendToIframe('ptt:tap', { gestureId: data.gestureId });
+                })
+            ]).then(function() {
+                tmLog('push-to-talk listeners registered OK');
+            }).catch(function(e) {
+                tmLog('addListener err: ' + (e && e.message));
+            });
+        }
+        dbg('DBG: voice bridge + touch monitor defined');
+
+        // ----- Status bar (Capacitor only) -----
+        function initStatusBar() {
+            var sb = document.getElementById('statusBar');
+            if (!sb) return;
+            var isCapacitor = !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+            if (!isCapacitor) {
+                sb.style.display = 'none';
+                return;
+            }
+            // The status bar is only revealed once the webview is active.
+            sb.classList.add('capacitor-mode', 'hidden');
+
+            // Time
+            var timeEl = document.getElementById('sbTime');
+            function updateTime() {
+                var now = new Date();
+                var h = now.getHours();
+                var m = now.getMinutes();
+                timeEl.textContent = (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m;
+            }
+            updateTime();
+            setInterval(updateTime, 30000);
+
+            // Network
+            var netEl = document.getElementById('sbNetwork');
+            function updateNetwork() {
+                var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+                var type = conn ? conn.type : null;
+                var online = navigator.onLine;
+                if (!online) {
+                    netEl.textContent = '';
+                } else if (type === 'wifi' || type === 'wimax') {
+                    netEl.innerHTML = '&#xf1eb;'; // wifi icon placeholder, use text
+                    netEl.textContent = 'WiFi';
+                } else if (type === 'cellular' || type === '4g' || type === '3g' || type === '2g') {
+                    netEl.textContent = type === '4g' ? '4G' : type === '3g' ? '3G' : type === '2g' ? '2G' : 'LTE';
+                } else if (type === 'none') {
+                    netEl.textContent = '';
+                } else {
+                    netEl.textContent = online ? 'WiFi' : '';
+                }
+            }
+            updateNetwork();
+            if (navigator.connection) {
+                navigator.connection.addEventListener('change', updateNetwork);
+            }
+            window.addEventListener('online', updateNetwork);
+            window.addEventListener('offline', updateNetwork);
+
+            // Battery
+            var fillEl = document.getElementById('sbBatteryFill');
+            function updateBattery(battery) {
+                var level = Math.round(battery.level * 100);
+                fillEl.style.width = level + '%';
+                if (level <= 20) fillEl.style.background = '#e74c3c';
+                else if (level <= 50) fillEl.style.background = '#f39c12';
+                else fillEl.style.background = '#2ecc71';
+            }
+            if (navigator.getBattery) {
+                navigator.getBattery().then(function(battery) {
+                    updateBattery(battery);
+                    battery.addEventListener('levelchange', function() { updateBattery(battery); });
+                    battery.addEventListener('chargingchange', function() { updateBattery(battery); });
+                }).catch(function() {});
+            } else {
+                fillEl.style.width = '60%';
+            }
+        }
+
+        // ----- Main app logic -----
+        dbg('DBG: main app logic start');
+        var TOKEN_KEY = 'sporemind_jwt_token';
+        var REFRESH_TOKEN_KEY = 'sporemind_refresh_token';
+        var nativeStorage = null;
+        var savedAddressList = [];
+        var currentServerUrl = '';
+        var _initialWebViewLoaded = false;
+        var _handlingDeepLink = false;
+        var _appLifecycleListenerReady = false;
+
+        function showLoginAfterInvalid(reason) {
+            nativeStorage.remove(TOKEN_KEY).then(function() {
+                return nativeStorage.remove(REFRESH_TOKEN_KEY);
+            }).then(function() {
+                showConnectScreen(reason || 'Session expired. Please sign in again.', 'error');
+            }).catch(function() {
+                showConnectScreen(reason || 'Session expired. Please sign in again.', 'error');
+            });
+        }
+
+        function hideBootSplash() {
+            document.getElementById('boot-splash').classList.add('hidden');
+        }
+
+        function showLoginPage() {
+            hideBootSplash();
+            hideStatusBar();
+            document.getElementById('webview-container').classList.add('hidden');
+            document.getElementById('login-page').classList.remove('hidden');
+        }
+
+        function hideLoginPage() {
+            document.getElementById('login-page').classList.add('hidden');
+        }
+
+        function setLoginLoading(loading) {
+            var overlay = document.getElementById('login-loading-overlay');
+            if (loading) overlay.classList.remove('hidden');
+            else overlay.classList.add('hidden');
+        }
+
+        function applyThemeToShell(mode, preset) {
+            var root = document.documentElement;
+            if (mode === 'light' || mode === 'dark') root.setAttribute('data-theme', mode);
+            if (preset === 'classic' || preset === 'vintage') root.setAttribute('data-preset', preset);
+            else root.removeAttribute('data-preset');
+        }
+
+        function showStatusBar() {
+            var sb = document.getElementById('statusBar');
+            if (sb) {
+                sb.classList.add('capacitor-mode');
+                sb.classList.remove('hidden');
+            }
+        }
+
+        function hideStatusBar() {
+            var sb = document.getElementById('statusBar');
+            if (sb) sb.classList.add('hidden');
+        }
+
+        function initApp() {
+            dbg('initApp start');
+            nativeStorage = new NativeStorage();
+            nativeStorage.init().then(function() {
+                dbg('nativeStorage init done, native=' + nativeStorage.isNativeAvailable);
+                setupAppUrlOpenListener();
+                return loadSavedAddresses();
+            }).then(function() {
+                dbg('Loaded ' + savedAddressList.length + ' addresses');
+                // Populate defaults into dropdown when no saved addresses exist
+                var defaults = window.__defaultServerUrls || [];
+                if (savedAddressList.length === 0 && defaults.length > 0) {
+                    for (var i = 0; i < defaults.length; i++) {
+                        savedAddressList.push({ url: defaults[i], username: window.__defaultAccount || '', password: '' });
+                    }
+                    dbg('Populated ' + defaults.length + ' default addresses');
+                }
+                return requestAudioPermission();
+            }).then(function() {
+                return Promise.all([
+                    nativeStorage.get('sporemind_theme_mode'),
+                    nativeStorage.get('sporemind_theme_preset')
+                ]);
+            }).then(function(themeResults) {
+                applyThemeToShell(themeResults[0] || 'dark', themeResults[1] || undefined);
+                return nativeStorage.get('sporemind_no_cache');
+            }).then(function(val) {
+                document.getElementById('noCache').checked = val === 'true';
+                return Promise.all([
+                    nativeStorage.get('sporemind_server_url'),
+                    nativeStorage.get(TOKEN_KEY)
+                ]);
+            }).then(function(results) {
+                var savedUrl = results[0];
+                var savedToken = results[1];
+                dbg('savedUrl=' + (savedUrl || '(none)') + ' hasToken=' + (savedToken ? 'yes' : 'no'));
+                var urlEl = document.getElementById('serverUrl');
+                var userEl = document.getElementById('username');
+
+                // Always show the login form on startup; do not auto-login even when
+                // a token is already stored. Pre-fill the last-used server/account.
+                if (savedUrl) {
+                    currentServerUrl = savedUrl;
+                    urlEl.value = savedUrl;
+                    var item = null;
+                    for (var i = 0; i < savedAddressList.length; i++) {
+                        if (savedAddressList[i].url === savedUrl) { item = savedAddressList[i]; break; }
+                    }
+                    if (item) {
+                        userEl.value = item.username || '';
+                        document.getElementById('password').value = item.password || '';
+                    }
+                } else {
+                    // Apply defaults when nothing is saved locally
+                    var defaults = window.__defaultServerUrls || [];
+                    var defaultAccount = window.__defaultAccount || '';
+                    if (defaults.length > 0 && !urlEl.value) {
+                        urlEl.value = defaults[0];
+                    }
+                    if (defaultAccount && !userEl.value) {
+                        userEl.value = defaultAccount;
+                    }
+                }
+                // A deep link may still be processing in parallel; defer showing the
+                // login form until that handshake completes (it will call loadWebView).
+                if (!_handlingDeepLink) {
+                    dbg('initApp: showing login page');
+                    showLoginPage();
+                } else {
+                    dbg('initApp: deep link is being handled');
+                }
+            }).catch(function(e) {
+                dbg('initApp FAILED: ' + (e && e.message), 'err');
+                if (!_handlingDeepLink) showLoginPage();
+                showError('App init failed: ' + (e && e.message));
+            });
+        }
+
+        // Handle sporemind://login?server=...&token=... login protocol URLs.
+        function handleAppUrlOpen(url) {
+            dbg('handleAppUrlOpen: ' + url);
+            if (!url || !nativeStorage) return;
+            _handlingDeepLink = true;
+            try {
+                var u = new URL(url);
+                var host = u.hostname || '';
+                var path = u.pathname || '';
+                if (host !== 'login' && path !== '/login' && path !== '' && path !== '/') {
+                    dbg('handleAppUrlOpen: not a login URL');
+                    _handlingDeepLink = false;
+                    return;
+                }
+                var server = u.searchParams.get('server');
+                var token = u.searchParams.get('token');
+                if (!server || !token) {
+                    dbg('handleAppUrlOpen: missing server or token');
+                    _handlingDeepLink = false;
+                    return;
+                }
+                server = normalizeUrl(server);
+                dbg('handleAppUrlOpen: server=' + server);
+                currentServerUrl = server;
+                nativeStorage.set('sporemind_server_url', server).then(function() {
+                    return nativeStorage.set(TOKEN_KEY, token);
+                }).then(function() {
+                    loadWebView(server, token);
+                }).catch(function(e) {
+                    dbg('handleAppUrlOpen storage failed: ' + (e && e.message), 'err');
+                }).finally(function() {
+                    _handlingDeepLink = false;
+                });
+            } catch (e) {
+                _handlingDeepLink = false;
+                dbg('handleAppUrlOpen parse error: ' + (e && e.message), 'err');
+            }
+        }
+
+        function setupAppUrlOpenListener() {
+            var App = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
+            if (!App) {
+                dbg('App plugin not available for URL open');
+                return;
+            }
+            var appRet = App.addListener('appUrlOpen', function(event) {
+                if (event && event.url) handleAppUrlOpen(event.url);
+            });
+            // addListener may return a Promise (official plugins) or a synchronous
+            // value on custom/native-only plugins — guard the .catch accordingly.
+            if (appRet && typeof appRet.catch === 'function') {
+                appRet.catch(function(e) {
+                    dbg('appUrlOpen addListener failed: ' + (e && e.message), 'err');
+                });
+            }
+            App.getLaunchUrl().then(function(result) {
+                if (result && result.url) handleAppUrlOpen(result.url);
+            }).catch(function() {});
+        }
+
+        function requestAudioPermission() {
+            var AudioRecorder = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.CapacitorAudioRecorder;
+            if (AudioRecorder) {
+                return AudioRecorder.requestPermissions().catch(function() {});
+            }
+            return Promise.resolve();
+        }
+
+        function showError(msg) {
+            var el = document.getElementById('login-error');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function hideError() {
+            document.getElementById('login-error').classList.add('hidden');
+        }
+
+        function showNotice(msg) {
+            var el = document.getElementById('login-notice');
+            el.textContent = msg;
+            el.classList.remove('hidden');
+        }
+
+        function hideNotice() {
+            document.getElementById('login-notice').classList.add('hidden');
+        }
+
+        function normalizeUrl(url) {
+            url = (url || '').trim();
+            if (!url) return url;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'http://' + url;
+            }
+            return url.replace(/\/$/, '');
+        }
+
+        function loadSavedAddresses() {
+            return nativeStorage.get('sporemind_saved_addresses').then(function(saved) {
+                try {
+                    savedAddressList = saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                    savedAddressList = [];
+                }
+            }).catch(function(e) {
+                savedAddressList = [];
+            });
+        }
+
+        function renderAddrDropdown() {
+            var list = document.getElementById('addrDropdown');
+            if (!list) { dbg('renderAddrDropdown: element not found', 'err'); return; }
+            if (savedAddressList.length === 0) {
+                list.classList.remove('open');
+                list.innerHTML = '';
+                return;
+            }
+            var html = '';
+            for (var i = 0; i < savedAddressList.length; i++) {
+                var item = savedAddressList[i];
+                html += '<div class="addr-dropdown-item" data-idx="' + i + '">' +
+                    '<span class="addr-url">' + item.url + '</span>' +
+                    '<button class="addr-del" data-del="' + i + '">x</button>' +
+                    '</div>';
+            }
+            list.innerHTML = html;
+            list.classList.add('open');
+            dbg('Rendered ' + savedAddressList.length + ' dropdown items');
+
+            // Bind click handlers
+            var items = list.querySelectorAll('.addr-dropdown-item');
+            for (var j = 0; j < items.length; j++) {
+                items[j].addEventListener('click', function(e) {
+                    if (e.target.classList.contains('addr-del')) return;
+                    var idx = parseInt(this.getAttribute('data-idx'));
+                    selectAddress(idx);
+                });
+            }
+            var dels = list.querySelectorAll('.addr-del');
+            for (var k = 0; k < dels.length; k++) {
+                dels[k].addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var idx = parseInt(this.getAttribute('data-del'));
+                    deleteAddress(idx);
+                });
+            }
+        }
+
+        function refreshAddrDropdown() {
+            return loadSavedAddresses().then(function() {
+                var defaults = window.__defaultServerUrls || [];
+                if (savedAddressList.length === 0 && defaults.length > 0) {
+                    for (var i = 0; i < defaults.length; i++) {
+                        savedAddressList.push({ url: defaults[i], username: window.__defaultAccount || '', password: '' });
+                    }
+                }
+                renderAddrDropdown();
+            });
+        }
+
+        function hideAddrDropdown() {
+            document.getElementById('addrDropdown').classList.remove('open');
+        }
+
+        function saveAddress() {
+            dbg('SAVE CLICKED');
+            var url = normalizeUrl(document.getElementById('serverUrl').value);
+            var username = document.getElementById('username').value.trim();
+            var password = document.getElementById('password').value;
+            dbg('saveAddress url=' + url + ' user=' + username);
+
+            if (!url) { showError('Please enter a server address'); return; }
+            if (!nativeStorage) { showError('Storage not ready'); return; }
+
+            var idx = -1;
+            for (var i = 0; i < savedAddressList.length; i++) {
+                if (savedAddressList[i].url === url) { idx = i; break; }
+            }
+            if (idx >= 0) {
+                savedAddressList[idx] = { url: url, username: username, password: password };
+            } else {
+                savedAddressList.push({ url: url, username: username, password: password });
+            }
+            dbg('saveAddress list length=' + savedAddressList.length);
+
+            nativeStorage.set('sporemind_saved_addresses', JSON.stringify(savedAddressList)).then(function() {
+                dbg('saveAddress storage OK');
+                hideError();
+                renderAddrDropdown();
+                var btn = document.querySelector('.addr-dropdown-wrap .login-btn-secondary');
+                if (btn) {
+                    var original = btn.textContent;
+                    btn.textContent = 'Saved';
+                    setTimeout(function() { btn.textContent = original; }, 1500);
+                }
+            }).catch(function(e) {
+                dbg('saveAddress storage FAILED: ' + (e && e.message), 'err');
+                showError('Save failed: ' + ((e && e.message) || 'storage error'));
+            });
+        }
+
+        function selectAddress(index) {
+            var item = savedAddressList[index];
+            if (!item) return;
+            document.getElementById('serverUrl').value = item.url;
+            document.getElementById('username').value = item.username || '';
+            document.getElementById('password').value = item.password || '';
+            hideAddrDropdown();
+        }
+
+        function deleteAddress(index) {
+            savedAddressList.splice(index, 1);
+            nativeStorage.set('sporemind_saved_addresses', JSON.stringify(savedAddressList)).then(function() {
+                return refreshAddrDropdown();
+            }).then(function() {
+                if (savedAddressList.length === 0) hideAddrDropdown();
+            }).catch(function(e) {
+                showError('Delete failed: ' + ((e && e.message) || 'storage error'));
+            });
+        }
+
+        function fetchToken(url, username, password) {
+            return fetch(url + '/api/user.auth_login', {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Username: username, Password: password })
+            }).then(function(resp) {
+                if (!resp.ok) {
+                    return resp.text().then(function(text) {
+                        throw new Error(text || ('HTTP ' + resp.status));
+                    });
+                }
+                return resp.json();
+            }).then(function(data) {
+                if (!data.Token) throw new Error('Invalid response: no token');
+                return { token: data.Token, refreshToken: data.RefreshToken || '' };
+            });
+        }
+
+        function refreshTokenViaHttp(url, refreshToken) {
+            return fetch(url + '/api/user.auth_refresh', {
+                method: 'POST',
+                mode: 'cors',
+                cache: 'no-cache',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ RefreshToken: refreshToken })
+            }).then(function(resp) {
+                if (!resp.ok) throw new Error('refresh failed: HTTP ' + resp.status);
+                return resp.json();
+            }).then(function(data) {
+                if (!data.Token) throw new Error('refresh response: no token');
+                return { token: data.Token, refreshToken: data.RefreshToken || '' };
+            });
+        }
+
+        function clearWebViewCache() {
+            return new Promise(function(resolve, reject) {
+                var Cache = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.MyxosCache;
+                if (!Cache) {
+                    dbg('clearWebViewCache: MyxosCache plugin not available');
+                    resolve();
+                    return;
+                }
+                Cache.clearCache().then(function() {
+                    dbg('WebView cache cleared');
+                    resolve();
+                }).catch(function(e) {
+                    dbg('clearWebViewCache failed: ' + (e && e.message), 'err');
+                    reject(e);
+                });
+            });
+        }
+
+        function connect() {
+            hideError();
+            hideNotice();
+            var btn = document.getElementById('connectBtn');
+            btn.disabled = true;
+            btn.textContent = 'Signing in...';
+            setLoginLoading(true);
+
+            var url = normalizeUrl(document.getElementById('serverUrl').value);
+            var username = document.getElementById('username').value.trim();
+            var password = document.getElementById('password').value;
+            var noCache = document.getElementById('noCache').checked;
+
+            if (!url) { showError('Please enter a server address'); btn.disabled = false; btn.textContent = 'Sign In'; return; }
+            if (!username) { showError('Please enter a username'); btn.disabled = false; btn.textContent = 'Sign In'; return; }
+
+            dbg('connect: checking health ' + url + '/healthz');
+
+            // When "no cache" is enabled, clear the WebView HTTP cache before
+            // loading the iframe so the remote index.html is fetched fresh.
+            var preflight = noCache ? clearWebViewCache().catch(function(e) {
+                dbg('clearCache failed (continuing): ' + (e && e.message), 'warn');
+            }) : Promise.resolve();
+
+            preflight.then(function() {
+                return fetch(url + '/healthz', { method: 'GET', mode: 'cors', cache: 'no-cache' });
+            }).then(function(health) {
+                if (!health.ok) throw new Error('Server not reachable (HTTP ' + health.status + ')');
+                dbg('connect: health OK');
+                return fetchToken(url, username, password);
+            }).then(function(token) {
+                dbg('connect: token acquired');
+                currentServerUrl = url;
+
+                // Persist the address and password so the next launch can pre-fill.
+                var idx = -1;
+                for (var i = 0; i < savedAddressList.length; i++) {
+                    if (savedAddressList[i].url === url) { idx = i; break; }
+                }
+                if (idx >= 0) {
+                    savedAddressList[idx] = { url: url, username: username, password: password };
+                } else {
+                    savedAddressList.push({ url: url, username: username, password: password });
+                }
+                nativeStorage.set('sporemind_saved_addresses', JSON.stringify(savedAddressList)).then(function() {
+                    renderAddrDropdown();
+                }).catch(function(e) {
+                    dbg('connect: save address FAILED: ' + (e && e.message), 'err');
+                });
+
+                return nativeStorage.set('sporemind_server_url', url).then(function() {
+                    return nativeStorage.set(TOKEN_KEY, token.token);
+                }).then(function() {
+                    if (token.refreshToken) {
+                        return nativeStorage.set(REFRESH_TOKEN_KEY, token.refreshToken);
+                    }
+                }).then(function() {
+                    loadWebView(url, token.token);
+                });
+            }).catch(function(err) {
+                dbg('connect FAILED: ' + (err && err.message), 'err');
+                showError((err && err.message) || 'Connection failed');
+            }).finally(function() {
+                btn.disabled = false;
+                btn.textContent = 'Sign In';
+                setLoginLoading(false);
+            });
+        }
+
+        var _iframeListenerReady = false;
+        function ensureIframeMessageListener() {
+            if (_iframeListenerReady) return;
+            _iframeListenerReady = true;
+            window.addEventListener('message', function(event) {
+                var msg = event.data || {};
+                if (msg._sporemind) return;
+                if (msg.type === 'request-token') {
+                    var replyTo = event.source;
+                    if (!replyTo) {
+                        var iframe = document.getElementById('webview');
+                        replyTo = iframe && iframe.contentWindow;
+                    }
+                    if (!replyTo) {
+                        dbg('request-token: no reply target', 'err');
+                        return;
+                    }
+                    if (!nativeStorage) {
+                        dbg('request-token: nativeStorage not ready', 'err');
+                        replyTo.postMessage({ type: 'token-response', token: null }, '*');
+                        return;
+                    }
+                    nativeStorage.get(TOKEN_KEY).then(function(token) {
+                        dbg('request-token: replying hasToken=' + (token ? 'yes' : 'no'));
+                        nativeStorage.get(REFRESH_TOKEN_KEY).then(function(refreshToken) {
+                            replyTo.postMessage({ type: 'token-response', token: token || null, refreshToken: refreshToken || null }, '*');
+                        }).catch(function() {
+                            replyTo.postMessage({ type: 'token-response', token: token || null, refreshToken: null }, '*');
+                        });
+                    }).catch(function(e) {
+                        dbg('request-token: nativeStorage.get failed: ' + (e && e.message), 'err');
+                        replyTo.postMessage({ type: 'token-response', token: null }, '*');
+                    });
+                } else if (msg.type === 'token-invalid' || msg.type === 'auth-required') {
+                    // Try to refresh the token via HTTP before clearing and
+                    // bouncing to the login screen.
+                    var reason = (msg.data && msg.data.reason) || '';
+                    if (msg.type === 'token-invalid' && currentServerUrl) {
+                        nativeStorage.get(REFRESH_TOKEN_KEY).then(function(refreshToken) {
+                            if (!refreshToken) { showLoginAfterInvalid(reason); return; }
+                            dbg('token-invalid: attempting HTTP refresh');
+                            refreshTokenViaHttp(currentServerUrl, refreshToken).then(function(result) {
+                                dbg('token-invalid: refresh OK, updating tokens');
+                                nativeStorage.set(TOKEN_KEY, result.token).then(function() {
+                                    return nativeStorage.set(REFRESH_TOKEN_KEY, result.refreshToken);
+                                }).then(function() {
+                                    var iframe = document.getElementById('webview');
+                                    if (iframe && iframe.contentWindow) {
+                                        iframe.contentWindow.postMessage({ type: 'token-updated', token: result.token, refreshToken: result.refreshToken }, '*');
+                                    }
+                                });
+                            }).catch(function(e) {
+                                dbg('token-invalid: refresh failed: ' + (e && e.message) + ', showing login', 'err');
+                                showLoginAfterInvalid(reason);
+                            });
+                        }).catch(function() { showLoginAfterInvalid(reason); });
+                    } else {
+                        showLoginAfterInvalid(reason);
+                    }
+                } else if (msg.type === 'theme-change') {
+                    applyThemeToShell(msg.mode, msg.preset);
+                    if (nativeStorage) {
+                        nativeStorage.set('sporemind_theme_mode', msg.mode || 'dark');
+                        if (msg.preset) nativeStorage.set('sporemind_theme_preset', msg.preset);
+                        else nativeStorage.remove('sporemind_theme_preset');
+                    }
+                } else if (msg.type === 'request-server') {
+                    // Gateway URL handshake: iframe asks "where is the server?"
+                    // Reply with currentServerUrl so the iframe doesn't have to
+                    // rely on window.location.host matching the gateway origin.
+                    var replyTo = event.source;
+                    if (!replyTo) {
+                        var iframe = document.getElementById('webview');
+                        replyTo = iframe && iframe.contentWindow;
+                    }
+                    if (!replyTo) {
+                        dbg('request-server: no reply target', 'err');
+                        return;
+                    }
+                    if (!currentServerUrl) {
+                        dbg('request-server: currentServerUrl not set yet', 'err');
+                        replyTo.postMessage({ type: 'server-response', url: null }, '*');
+                        return;
+                    }
+                    dbg('request-server: replying url=' + currentServerUrl);
+                    replyTo.postMessage({ type: 'server-response', url: currentServerUrl }, '*');
+                }
+            });
+        }
+
+        function loadWebView(url, token) {
+            dbg('loadWebView: ' + url);
+            _initialWebViewLoaded = true;
+            currentServerUrl = url;
+            var iframe = document.getElementById('webview');
+            var noCache = document.getElementById('noCache').checked;
+            // Always add a cache-busting timestamp so the iframe reloads even when
+            // the URL is otherwise identical (some Android WebViews skip reload).
+            var src = url + (url.indexOf('?') === -1 ? '?' : '&') + '_t=' + Date.now();
+            // Pass the server URL explicitly so the web app derives the WebSocket
+            // URL from a known value instead of relying on window.location.host quirks.
+            src += '&server=' + encodeURIComponent(url);
+            if (noCache) src += '&_nocache=1';
+            dbg('loadWebView src=' + src);
+            ensureIframeMessageListener();
+
+            // Switch from boot/login UI to the webview container with an inner splash.
+            hideBootSplash();
+            hideLoginPage();
+            showStatusBar();
+            var container = document.getElementById('webview-container');
+            container.classList.remove('hidden');
+            document.getElementById('webview-splash').classList.remove('hidden');
+
+            iframe.src = src;
+            iframe.onload = function() {
+                dbg('iframe loaded');
+                setupVoiceBridge();
+                initTouchMonitor();
+                // Fade out the inner splash once the remote app has loaded.
+                document.getElementById('webview-splash').classList.add('hidden');
+            };
+        }
+
+        function setupAppLifecycleListener() {
+            if (_appLifecycleListenerReady) return;
+            _appLifecycleListenerReady = true;
+
+            var notifyResumed = function() {
+                if (!currentServerUrl || !_initialWebViewLoaded) return;
+                if (window._pendingAudioRequest) {
+                    dbg('app resumed during voice session: preserving iframe WebSocket');
+                    return;
+                }
+                dbg('app resumed: forcing iframe WebSocket reconnect');
+                // The remote page runs in this iframe, so visibilitychange is
+                // not guaranteed to fire there. Notify it without reloading the
+                // iframe (which would also reset its in-memory auth state).
+                var iframe = document.getElementById('webview');
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.postMessage({ type: 'app-resumed' }, '*');
+                }
+            };
+
+            var App = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.App;
+            if (App) {
+                App.addListener('appStateChange', function(state) {
+                    if (!state || !state.isActive) return;
+                    notifyResumed();
+                });
+                dbg('App lifecycle listener registered');
+            } else {
+                // Fallback for web previews or when the App plugin is not yet synced.
+                document.addEventListener('visibilitychange', function() {
+                    if (!document.hidden) notifyResumed();
+                });
+                dbg('App plugin not available; visibilitychange fallback registered');
+            }
+        }
+
+        function showConnectScreen(reason, kind) {
+            document.getElementById('webview-splash').classList.add('hidden');
+            document.getElementById('webview').src = '';
+            document.getElementById('webview-container').classList.add('hidden');
+            hideBootSplash();
+            hideStatusBar();
+            hideError();
+            hideNotice();
+            document.getElementById('login-page').classList.remove('hidden');
+            if (!reason) return;
+            if (kind === 'notice') showNotice(reason);
+            else showError(reason);
+        }
+
+        var _lastViewportH = window.innerHeight;
+        function updateAppHeight() {
+            var vv = window.visualViewport;
+            var h = vv ? vv.height : window.innerHeight;
+            var fullH = window.innerHeight;
+            document.documentElement.style.setProperty('--app-height', h + 'px');
+            var iframe = document.getElementById('webview');
+            if (iframe && iframe.contentWindow) {
+                iframe.contentWindow.postMessage({ type: 'viewport-resize', viewportHeight: h, fullHeight: fullH }, '*');
+            }
+            _lastViewportH = h;
+        }
+        if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', updateAppHeight);
+            window.visualViewport.addEventListener('scroll', updateAppHeight);
+        }
+
+        window.onerror = function(msg, url, line, col, err) {
+            dbg('JS ERROR: ' + msg + ' at ' + (url || '') + ':' + line, 'err');
+            showError('JS Error: ' + msg);
+            return false;
+        };
+        window.onunhandledrejection = function(e) {
+            var reason = (e && e.reason && e.reason.message) ? e.reason.message : (e && e.reason) ? String(e.reason) : 'unknown';
+            dbg('UNHANDLED REJECTION: ' + reason, 'err');
+            showError('Async Error: ' + reason);
+        };
+
+        dbg('DBG: binding event listeners');
+        document.getElementById('saveBtn').addEventListener('click', saveAddress);
+        document.getElementById('connectBtn').addEventListener('click', connect);
+
+        var serverUrlInput = document.getElementById('serverUrl');
+        serverUrlInput.addEventListener('focus', refreshAddrDropdown);
+        serverUrlInput.addEventListener('input', hideAddrDropdown);
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.addr-dropdown-wrap')) hideAddrDropdown();
+        });
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') connect();
+        });
+        document.getElementById('noCache').addEventListener('change', function() {
+            if (nativeStorage) nativeStorage.set('sporemind_no_cache', this.checked ? 'true' : 'false');
+        });
+
+        window.addEventListener('load', function() {
+            dbg('window.load fired');
+            initStatusBar();
+            setupAppLifecycleListener();
+            initApp();
+        });
+
+        // Push login content below status bar when in Capacitor mode
+        if (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform()) {
+            document.body.classList.add('capacitor-mode');
+        }
+
+        // Keyboard detection via Capacitor Keyboard plugin (primary)
+        function setupCapacitorKeyboard() {
+            var Keyboard = window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Keyboard;
+            if (!Keyboard) {
+                dbg('Keyboard plugin not available');
+                return;
+            }
+            Keyboard.addListener('keyboardWillShow', function(info) {
+                var h = info && info.keyboardHeight ? info.keyboardHeight : 0;
+                window.__onNativeKeyboard(h);
+            });
+            Keyboard.addListener('keyboardWillHide', function() {
+                window.__onNativeKeyboard(0);
+            });
+            dbg('Keyboard plugin listeners attached');
+        }
+
+        // Fallback: custom event from native code
+        window.addEventListener('keyboard-height-change', function(e) {
+            var h = e.detail && e.detail.height ? e.detail.height : 0;
+            window.__onNativeKeyboard(h);
+        });
+
+        setupCapacitorKeyboard();
+        dbg('DBG: all setup complete, waiting for load');
+    </script>
+</body>
+</html>

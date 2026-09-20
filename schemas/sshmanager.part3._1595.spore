@@ -1,0 +1,77 @@
+// sshmanager namespace — remote SSH host management, shell sessions, and SFTP file operations.
+// @ts-export
+//
+// Sources of truth for:
+//   - sshmanager.exec one-shot command execution
+//
+// This part was split from part2 because part2's fixed 32-ID block
+// (1644–1675) is saturated; the immediately following block (1676+) is
+// owned by the user namespace. This part's 10-ID block (2920–2929) is
+// now also saturated; new sshmanager value types land in part4 at
+// base 3021.
+
+// ---------------------------------------------------------------------------
+// One-shot remote command execution (non-interactive). Runs Command on the
+// host identified by HostId, captures stdout/stderr, and returns the exit
+// status. SshExecReq.Timeout is in milliseconds (same convention as
+// shell.exec); when omitted the actor applies its default. Stdout / Stderr
+// are head+tail truncated to the actor's byte budget and Truncated flags
+// that trimming. DurationMs reports the wall-clock execution time.
+// ---------------------------------------------------------------------------
+
+struct SshExecReq {
+    HostId: string
+    Command: string
+    optional Timeout: int  // milliseconds; falls back to actor default when unset
+}
+
+
+struct SshExecResp {
+    Stdout:     string
+    Stderr:     string
+    ExitCode:   int
+    Truncated:  bool
+    DurationMs: int
+}
+
+
+// ---------------------------------------------------------------------------
+// Host folders — named groups that exist independently of hosts (an empty
+// folder persists). Folder order is user-defined via folder_reorder.
+// ---------------------------------------------------------------------------
+
+struct SshFolderCreateReq {
+    Name: string
+}
+
+
+struct SshFolderCreateResp {
+}
+
+
+struct SshFolderRenameReq {
+    From: string
+    To:   string
+}
+
+
+struct SshFolderRenameResp {
+}
+
+
+struct SshFolderReorderReq {
+    Names: array<string>
+}
+
+
+struct SshFolderReorderResp {
+}
+
+
+struct SshFolderRemoveReq {
+    Name: string
+}
+
+
+struct SshFolderRemoveResp {
+}

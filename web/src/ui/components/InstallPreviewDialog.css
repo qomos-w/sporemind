@@ -1,0 +1,261 @@
+.install-preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  animation: install-preview-fade-in 0.15s ease-out;
+}
+
+@keyframes install-preview-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.install-preview-dialog {
+  width: 480px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 32px);
+  overflow-y: auto;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: 20px 24px 24px;
+  animation: install-preview-slide-in 0.2s ease-out;
+}
+
+@keyframes install-preview-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.install-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.install-preview-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--accent-primary) 12%, var(--bg-muted));
+  color: var(--accent-primary);
+}
+
+.install-preview-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.install-preview-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.install-preview-body {
+  margin-bottom: 20px;
+}
+
+.install-preview-title {
+  margin: 0 0 12px;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.install-preview-meta {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin-bottom: 20px;
+  padding: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-muted);
+}
+
+.install-preview-meta-row {
+  display: contents;
+}
+
+.install-preview-meta-label {
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.install-preview-meta-value {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  font-weight: 500;
+  word-break: break-word;
+}
+
+.install-preview-section-title {
+  margin: 0 0 10px;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.install-preview-empty {
+  margin: 0 0 12px;
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.install-preview-list {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.install-preview-item {
+  padding: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-muted);
+}
+
+.install-preview-item-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.install-preview-item-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.install-preview-item-desc {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.install-preview-risk {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+.install-preview-risk.risk-low {
+  background: color-mix(in srgb, var(--success) 12%, var(--bg-muted));
+  color: var(--success);
+}
+
+.install-preview-risk.risk-medium {
+  background: color-mix(in srgb, var(--warning) 12%, var(--bg-muted));
+  color: var(--warning);
+}
+
+.install-preview-risk.risk-high {
+  background: color-mix(in srgb, var(--error) 12%, var(--bg-muted));
+  color: var(--error);
+}
+
+.install-preview-error {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--error) 12%, var(--bg-muted));
+  color: var(--error);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.install-preview-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.install-preview-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.install-preview-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.install-preview-btn.cancel {
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  border-color: var(--border-subtle);
+}
+
+.install-preview-btn.cancel:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.install-preview-btn.confirm {
+  background: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
+}
+
+.install-preview-btn.confirm:hover:not(:disabled) {
+  background: var(--accent-primary-hover);
+  border-color: var(--accent-primary-hover);
+}
+
+.install-preview-spinner {
+  animation: install-preview-spin 1s linear infinite;
+}
+
+@keyframes install-preview-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

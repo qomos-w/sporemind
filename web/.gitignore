@@ -1,0 +1,13 @@
+node_modules/
+dist/
+vitest-report.json
+vitest-report.xml
+
+# Transpilation artifacts — never commit .js alongside .ts/.tsx sources.
+# tsc is configured with noEmit:true; these would only exist from a stray
+# run without that flag. Vite resolves .js before .tsx, so stale .js files
+# silently shadow source changes.
+src/**/*.js
+!src/**/*.cjs
+!src/**/*.config.js
+.deps/

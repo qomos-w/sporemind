@@ -1,0 +1,183 @@
+// lsp namespace — LSP server callables backed by gopls.
+// @ts-export
+//
+// Sources of truth for:
+//   - lsp.initialize / didOpen / didChange / didClose / shutdown / warm_up
+//   - lsp.definition / hover / completion / references / implementation
+//   - lsp.typeDefinition / documentSymbol / signatureHelp / formatting
+//   - lsp.rename / prepareRename / codeAction
+//   - lsp.status / lsp.install (one-click managed install, multi-language)
+//   - lsp.diagnostics event (emitted via actor event system)
+//   - lsp.install_progress event (managed-install progress stream)
+//
+// All query responses use LspJsonResp (raw JSON passthrough); the frontend
+// already has LSP type definitions to deserialize the Json field.
+// RootUri on requests routes to the per-workspace gopls server (P1).
+//
+
+struct LspPositionParams {
+    Uri:       string
+    Line:      uint
+    Character: uint
+    RootUri:   string
+    Language:  string
+}
+
+
+struct LspRangeParams {
+    Uri:       string
+    StartLine: uint
+    StartChar: uint
+    EndLine:   uint
+    EndChar:   uint
+    RootUri:   string
+    Language:  string
+}
+
+
+struct LspDidOpenReq {
+    Uri:        string
+    LanguageId: string
+    Text:       string
+    Version:    int
+    RootUri:    string
+    Language:   string
+}
+
+
+struct LspDidChangeReq {
+    Uri:      string
+    Version:  int
+    Changes:  string
+    RootUri:  string
+    Language: string
+}
+
+
+struct LspDidCloseReq {
+    Uri:      string
+    RootUri:  string
+    Language: string
+}
+
+
+struct LspUriReq {
+    Uri:      string
+    RootUri:  string
+    Language: string
+}
+
+
+struct LspInitializeReq {
+    RootUri: string
+    Language: string
+}
+
+
+struct LspRenameReq {
+    Uri:       string
+    Line:      uint
+    Character: uint
+    NewName:   string
+    RootUri:   string
+    Language:  string
+}
+
+
+struct LspReferencesReq {
+    Uri:                string
+    Line:               uint
+    Character:          uint
+    IncludeDeclaration: bool
+    RootUri:            string
+    Language:           string
+}
+
+
+struct LspShutdownReq {
+    RootUri: string
+    Language: string
+}
+
+
+struct LspClearCacheReq {
+    Evicted: int
+}
+
+
+struct LspJsonResp {
+    Json: string
+}
+
+
+struct LspDiagnosticsEvent {
+    Uri:         string
+    Version:     int
+    Diagnostics: string
+}
+
+
+struct LspLanguageState {
+    Language: string
+    Enabled:  bool
+}
+
+struct LspStateResp {
+    Languages: array<LspLanguageState>
+}
+
+
+struct LspStateSaveReq {
+    Language: string
+    Enabled:  bool
+}
+
+
+// ---- one-click managed install (lsp.status / lsp.install) ----
+
+// LspStatusReq asks for managed install state. Language selects one language;
+// empty means every supported language.
+struct LspStatusReq {
+    Language: string
+}
+
+
+// LspLanguageInstallState is the install projection for one language.
+// DownloadSource records where the binary came from (e.g. "path" when found
+// on PATH, "managed" when installed into the managed data dir).
+struct LspLanguageInstallState {
+    Language:                string
+    Installed:               bool
+    optional Version:        string   // detected/installed version; empty when unknown
+    optional BinaryPath:     string   // resolved server binary; empty when not installed
+    optional DownloadSource: string   // provenance of the binary
+}
+
+
+struct LspStatusResp {
+    Languages: array<LspLanguageInstallState>
+}
+
+
+// LspInstallReq triggers an async managed download of the language server.
+// The callable returns immediately; progress arrives via the
+// lsp.install_progress event stream and final state via lsp.status polling.
+struct LspInstallReq {
+    Language: string
+}
+
+
+// LspInstallResp acknowledges an accepted install trigger.
+struct LspInstallResp {
+    Started: bool
+}
+
+
+// LspInstallProgressEvent streams managed-install progress per language.
+// State is "running" while Percent advances, then "done" or "failed".
+struct LspInstallProgressEvent {
+    Language:         string
+    State:            string
+    Percent:          int      // 0-100 while running
+    optional Error:   string   // set when State == "failed"
+}

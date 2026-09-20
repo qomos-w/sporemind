@@ -1,0 +1,107 @@
+/* ── Floating Panel Container ── */
+.floating-panel {
+  position: absolute;
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  min-width: 200px;
+  min-height: 120px;
+  transition: box-shadow var(--transition-fast);
+}
+
+.floating-panel.dragging {
+  opacity: 0.92;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+}
+
+.floating-panel.mode-pinned {
+  border-color: var(--accent-primary);
+}
+
+/* ── Title Bar ── */
+.fp-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  padding: 0 var(--space-2);
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: grab;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.floating-panel.dragging .fp-titlebar {
+  cursor: grabbing;
+}
+
+.fp-titlebar-label {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  pointer-events: none;  /* let titlebar handle pointer, not the label */
+}
+
+.fp-titlebar-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.fp-titlebar-btn {
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+  padding: 0;
+  line-height: 1;
+  pointer-events: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.fp-titlebar-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.fp-titlebar-btn.pinned {
+  color: var(--accent-primary);
+}
+
+/* ── Body ── */
+.fp-body {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* ── Edge resize zones are handled by pointer detection in JS ──
+   No separate resize handle element needed — all 8 edges detected via 6px margin */
+
+/* ── Dock Zone Preview ── */
+.fp-dock-preview {
+  position: fixed;
+  pointer-events: none;
+  background: var(--accent-primary);
+  opacity: 0.12;
+  border: 2px dashed var(--accent-primary);
+  border-radius: var(--radius-md);
+  z-index: 9999;
+  transition: all 120ms ease;
+}

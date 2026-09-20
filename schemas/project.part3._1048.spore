@@ -1,0 +1,232 @@
+// project part3 — worktree binding introspection for cross-actor callers.
+// Part2's ID range is exhausted; this part starts after project.review's
+// 1220..1231 block.
+// @ts-export
+
+struct ProjectWorktreeBoundCheckReq {
+    AgentActorID: string  // the agent whose worktree binding is being probed
+}
+
+
+struct ProjectWorktreeBoundCheckResp {
+    Bound:        bool    // true when the agent has an active worktree binding
+    WorktreePath: string  // bound worktree path, empty when Bound is false
+}
+
+
+// ── Workflow / worktree 层级集成（Phase 2 实现）──
+// 以下 5 组 Req/Resp 对应 project actor 内部 callable：
+//   - project.workflow_create_worktree     （activateWorkflow 时创建 owner worktree）
+//   - project.worktree_merge_to_parent      （review approve 时合并 child→parent）
+//   - project.worktree_rebase_to_parent      （review reject 时强制 rebase child onto parent）
+//   - project.workflow_stop_merge_worktree   （clearWorkflow 时合并 owner→main）
+//   - project.worktree_discard_by_id         （spawn 失败/terminate 时按 ID discard 孤儿 worktree）
+// 全部为 Internal 路由（仅由 agent/workspace actor 在 workflow 编排中调用），不暴露给
+// anonymous role。
+
+// ProjectWorkflowCreateWorktreeReq 供 agent actor 在 activateWorkflow 时调用，
+// 由 project actor 创建 owner worktree 并将 owner agent 绑定到该 worktree。
+struct ProjectWorkflowCreateWorktreeReq {
+    WorkflowMapID: string  // 所属 workflow map card ID
+    AgentActorID:  string  // owner agent 的 actor ID（用于 bindWorktree）
+    optional BaseRef: string  // commit-ish 起始点；空 = 主仓库当前 HEAD
+}
+
+
+struct ProjectWorkflowCreateWorktreeResp {
+    WorktreeID: string  // 新创建的 owner worktree ID
+}
+
+
+// ProjectWorktreeMergeToParentReq 合并子 worktree 的 branch 到父 worktree 的
+// branch HEAD。预检查 child 必须 clean；失败（冲突）时 abort 回滚 parent 并保留 child。
+struct ProjectWorktreeMergeToParentReq {
+    ChildWorktreeID:  string  // 被合并的子 worktree ID
+    ParentWorktreeID: string  // 合并目标父 worktree ID
+}
+
+
+struct ProjectWorktreeMergeToParentResp {
+    Status: string  // "merged" | "conflict" | "gone"（gone：child 已被先前的完成流程移除，无需再合并）
+    ConflictFiles: array<string>  // 冲突文件列表；Status="merged" 时为空
+}
+
+
+// ProjectWorktreeRebaseToParentReq 将子 worktree 的 branch rebase 到父 worktree 的
+// branch HEAD。用于 review reject 路径，强制子 worktree 追上父 worktree 最新进度。
+struct ProjectWorktreeRebaseToParentReq {
+    ChildWorktreeID:  string  // 被 rebase 的子 worktree ID
+    ParentWorktreeID: string  // rebase 基准父 worktree ID
+}
+
+
+struct ProjectWorktreeRebaseToParentResp {
+    Status: string  // "rebased" | "conflict"
+    ConflictFiles: array<string>  // 冲突文件列表；Status="rebased" 时为空
+}
+
+
+// ProjectWorkflowStopMergeWorktreeReq 供 agent actor 在 clearWorkflow 时调用，
+// 将 owner worktree 合并到主仓库分支并删除 owner worktree。RequireSynced=false
+// （goal 完成自动合并路径）时先自动 rebase 到最新 main；RequireSynced=true
+// （workflow_stop 路径）时不自动 rebase，改为校验 worktree 分支已包含最新 base
+// HEAD，未同步时返回 Status="outdated" 并指引 owner 自行 rebase。
+struct ProjectWorkflowStopMergeWorktreeReq {
+    WorktreeID: string  // owner worktree ID
+    optional BaseBranch: string  // 合并目标主仓库分支；空 = 仓库默认分支
+    optional RequireSynced: bool  // true = 不自动 rebase，仅校验已同步；未同步返回 outdated
+}
+
+
+struct ProjectWorkflowStopMergeWorktreeResp {
+    Status: string  // "merged" | "conflict" | "outdated"（RequireSynced=true 且 worktree 未包含最新 base HEAD）
+    ConflictFiles: array<string>  // 冲突文件列表；Status="merged" 时为空
+    optional ResiduePath: string  // 非空 = merge 已落地但 worktree 目录因进程占用未能删除；残留目录由后台 reconcile 重试清理
+}
+
+
+// ProjectWorktreeDiscardByIDReq 按 ID 丢弃（强制删除）worktree，用于 spawn 失败时
+// 清理孤儿 worktree 或 terminate 路径的兜底清理。与 AdminOnly 的 worktree.discard
+// 不同，此 callable 走 Internal 路由，供 workspace actor 在编排流程中调用。
+struct ProjectWorktreeDiscardByIDReq {
+    WorktreeID: string
+    optional Force: bool  // worktree 存在未提交变更时需要 Force=true
+}
+
+
+struct ProjectWorktreeDiscardByIDResp {
+    Status: string  // "discarded"
+}
+
+
+// ProjectWatchFileReq adds (Remove=false) or drops (Remove=true) an on-demand
+// watch for a single file. The project file watcher only watches the
+// .sporecode subtree by default; UI surfaces that need file_changed events for
+// other files (e.g. an open file viewer) request them through this callable.
+// The backend watches the file's parent directory and shares it between
+// viewers, so add/remove calls must be paired.
+struct ProjectWatchFileReq {
+    Path:          string
+    optional Remove: bool
+}
+
+
+// ProjectWorktreeCopyReq copies files from the main repository root into a
+// bound worktree. Sources are relative to the main repo root; DestDir is
+// relative to the worktree root and defaults to the worktree root itself.
+// A destination file that differs from the merge-base (worker-modified or
+// untracked) is skipped unless Force=true.
+struct ProjectWorktreeCopyReq {
+    WorktreeID: string              // target worktree ID
+    Sources:    array<string>        // relative paths under the main repo root
+    optional DestDir: string         // destination directory relative to the worktree root; empty = worktree root
+    optional Force:    bool         // overwrite existing destination files; default false
+}
+
+
+struct ProjectWorktreeCopyResult {
+    Source: string
+    Dest:   string
+    Overwritten: bool
+}
+
+
+struct ProjectWorktreeCopySkipped {
+    Source: string
+    Reason: string
+}
+
+
+struct ProjectWorktreeCopyResp {
+    Copied:  array<ProjectWorktreeCopyResult>
+    Skipped: array<ProjectWorktreeCopySkipped>
+}
+
+
+// ProjectWorktreeVerifyMergedReq requests a lineage check between a child
+// worktree and its parent. It does NOT perform a merge; it only reports whether
+// the child branch has already been merged into the parent and triggers the
+// same cleanup as a successful merge when it has.
+struct ProjectWorktreeVerifyMergedReq {
+    ChildWorktreeID:  string
+    ParentWorktreeID: string
+}
+
+
+struct ProjectWorktreeVerifyMergedResp {
+    Status:     string  // "merged" | "not_merged" | "gone"
+    Branch:     string  // child branch name (always populated when child exists)
+    ChildHead:  string  // child branch HEAD (empty when gone)
+    ParentHead: string  // parent branch HEAD
+}
+
+
+// ProjectWorktreeCleanCheckReq asks whether the worktree bound to the given
+// agent has uncommitted changes. No binding is reported as clean.
+struct ProjectWorktreeCleanCheckReq {
+    AgentActorID: string
+}
+
+
+struct ProjectWorktreeCleanCheckResp {
+    Clean:      bool
+    DirtyFiles: array<string>  // up to 10 file paths when Clean=false
+}
+
+
+// ── No-git mode ──
+// project.no_git_mode_get / project.no_git_mode_set：无 git 模式开关。启用后
+// workflow 激活（project.workflow_create_worktree）跳过 owner worktree 创建，
+// ActiveWorkflow.WorktreeID 保持为空，下游所有 git 操作走已有的空 ID 分支直接跳过。
+// 两个 callable 均为 Public（供 UI 读取/切换）。
+
+// ProjectNoGitModeGetReq 查询项目当前的无 git 模式状态，以及项目根目录是否
+// 实际是一个 git 仓库（用于前端自动感知：根目录没有 git 的项目默认按无 git
+// 模式呈现）。
+struct ProjectNoGitModeGetReq {}
+
+
+struct ProjectNoGitModeGetResp {
+    NoGitMode:  bool  // 持久化的无 git 模式开关
+    HasGitRepo: bool  // 项目根目录是否实际有 git
+}
+
+
+// ProjectNoGitModeSetReq 切换项目的无 git 模式开关。启用后 workflow 不再创建
+// owner worktree（直接在项目根目录运行）；关闭时恢复原有 worktree 隔离行为。
+struct ProjectNoGitModeSetReq {
+    NoGitMode: bool
+}
+
+
+struct ProjectNoGitModeSetResp {
+    NoGitMode: bool  // 持久化后的开关状态
+}
+
+
+// ── Project default extra bundles ──
+// project.default_bundles_get / project.default_bundles_set：项目级默认额外挂载
+// 的 bundle 列表。project.spawn_agent 在构造 agent props 前把该列表并入
+// req.ExtraBundleIDs（defaults 在前、调用方 extras 在后、去重），使本项目下
+// 新建的 agent 与子 agent 默认额外获得这些工具面；只读 kind 的过滤由 agent
+// 侧 builtinCardsToSeed 统一执行。两个 callable 均为 Public（供 UI 读取/编辑）。
+
+// ProjectDefaultBundlesGetReq 查询项目当前默认额外挂载的 bundle card ID 列表。
+struct ProjectDefaultBundlesGetReq {}
+
+
+struct ProjectDefaultBundlesGetResp {
+    BundleIDs: array<string>  // 默认额外挂载的 bundle card IDs（builtin:bundle:* / app-bundle:* / 项目卡）
+}
+
+
+// ProjectDefaultBundlesSetReq 整体替换项目默认额外挂载列表；空数组清空。仅对
+// 之后新建的 agent / 子 agent 生效，不追溯已存在的 agent。
+struct ProjectDefaultBundlesSetReq {
+    BundleIDs: array<string>
+}
+
+
+struct ProjectDefaultBundlesSetResp {
+    BundleIDs: array<string>  // 持久化后的列表
+}

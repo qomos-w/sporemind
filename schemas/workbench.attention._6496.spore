@@ -1,0 +1,37 @@
+// workbench.attention namespace — global awareness report for the workbench
+// controller bundle (builtin:bundle:workbench-attention, mounted on the
+// coordinator kind).
+//
+// The workbench actor sits on the global event bus and ingests every agent
+// step/turn event and every app lifecycle event in the process, so this report
+// gives the controller both halves of "全局 awareness": the current
+// attention/layout table (which card holds which slot, why) and a bounded
+// recent-activity ring covering all agents, apps and user board operations.
+
+// WorkbenchAttentionEvent is one entry of the in-memory recent-activity ring.
+// ActorId is the emitting actor ("" for app/user-originated entries); Kind is
+// one of app_lifecycle | step | turn | user. Summary is a short human-readable
+// one-liner, already truncated by the producer.
+struct WorkbenchAttentionEvent {
+    ActorId: string
+    Kind:    string
+    Summary: string
+    Time:    long
+}
+
+// WorkbenchAttentionReportReq requests the awareness report. LimitEvents caps
+// the returned recent-activity entries (most recent first); 0 = default 32.
+struct WorkbenchAttentionReportReq {
+    optional LimitEvents: long
+}
+
+// WorkbenchAttentionReportResp is the full board state (hidden cards included)
+// plus the recent-activity ring. Frozen / Maximized mirror the current layout
+// MODE so the controller knows whether the board is frozen or a card holds a
+// full capture before switching modes.
+struct WorkbenchAttentionReportResp {
+    Cards:  array<WorkbenchCardState>
+    Recent: array<WorkbenchAttentionEvent>
+    optional Frozen:    bool
+    optional Maximized: string
+}

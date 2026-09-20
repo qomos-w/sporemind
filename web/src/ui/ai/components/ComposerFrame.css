@@ -1,0 +1,399 @@
+/* ── ComposerFrame ── */
+/* Universal base frame: hosts AIComposer + optional MessageDrawer.
+   The drawer card CONTAINS the composer. Three edges (left/right/bottom)
+   overlap. Composer z=2 > drawer z=1. */
+
+.composer-frame {
+  position: relative;
+  flex-shrink: 0;
+  padding: 6px 12px;
+  max-width: var(--ai-conversation-max-width, 900px);
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+  /* The frame floats over the message stream (see .ai-shell-content >
+     .composer-frame / .rpt-floating-mode .rpt-bottom-slot). Its transparent
+     box must not hit-test, otherwise the stream scrollbar behind the composer
+     cannot be grabbed. Interactive cards below re-enable pointer events. */
+  pointer-events: none;
+}
+
+.composer-frame > * {
+  pointer-events: auto;
+}
+
+/* ── No-drawer mode: simple wrapper ── */
+.composer-frame.no-drawer {
+  /* Children render normally */
+}
+
+/* ── Above bar — rounded card layered BEHIND the drawer card, peeking out
+   above the peek bar; its bottom edge (one radius deep) hides behind the
+   drawer top, mirroring how the composer card overlaps the drawer content.
+   Paints below the drawer card via DOM order (both position: relative,
+   z auto) — keep no z-index: a z-index here would create a stacking context
+   that traps the slot's dropdowns (QuickSwitchMenu / GitQuickbar) and shadow
+   the composer's own upward-popping menus. position: relative is kept solely
+   as the positioning context for those absolutely-positioned dropdowns. */
+.composer-frame-above-bar {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 2px 12px 22px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  background: color-mix(in srgb, var(--surface-tertiary, rgba(255, 255, 255, 0.06)) 97%, black);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22), 0 4px 12px rgba(0, 0, 0, 0.14);
+  max-width: var(--ai-conversation-max-width, 900px);
+  /* Negative bottom margin tucks the bar's lower portion (bottom padding +
+     radius) behind the drawer card top, so the row hugs the visible top edge
+     and the rect sits low behind the peek. */
+  margin: 0 auto -22px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .composer-frame-above-bar {
+  border-color: #151515;
+  /* One subtle palette half-step deeper than the peek's surface-tertiary
+     (#3e3e42 → ≈#36363a); the strong shadow carries the layer separation. */
+  background: color-mix(in srgb, var(--surface-tertiary, #3e3e42) 88%, black);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.30);
+}
+
+/* ── Drawer card — the background layer behind the composer.
+   Uses a different color and a softer shadow than the composer card. */
+.composer-frame-drawer-card {
+  position: relative;
+  border-radius: 16px;
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  background: var(--surface-tertiary, rgba(255, 255, 255, 0.06));
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.10), 0 2px 6px rgba(0, 0, 0, 0.06);
+  /* padding-bottom creates space for the composer card */
+  padding-bottom: var(--composer-h, 0px);
+  transition: box-shadow 0.2s ease;
+}
+
+/* Collapsed composer: only the drawer content (peek bar) remains */
+.composer-frame-drawer-card.composer-collapsed {
+  padding-bottom: 0;
+}
+
+.composer-frame-drawer-card.composer-collapsed .composer-frame-composer-card {
+  display: none;
+}
+
+[data-theme="dark"] .composer-frame-drawer-card {
+  border-color: #151515;
+  /* Opaque and identical to the peek bar's --surface-tertiary (#3e3e42): the
+     peek must stay opaque (it masks the above-bar tucked behind the drawer
+     top), so a translucent black card reads as a hard black band below it
+     wherever the card shows through (pending-submit strip, collapsed card). */
+  background: var(--surface-tertiary, #3e3e42);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.30), 0 2px 6px rgba(0, 0, 0, 0.20);
+}
+
+/* In topology mode, use opaque backgrounds so the graph is blocked behind the drawer/composer */
+.ai-shell-content.topology-mode .composer-frame-drawer-card,
+.ai-shell-content.topology-mode .composer-frame-above-bar {
+  background: var(--bg-base);
+}
+
+.ai-shell-content.topology-mode .ai-composer {
+  background: var(--bg-elevated);
+}
+
+/* ── Drawer content — peek/stream, z=1 ── */
+.composer-frame-drawer-content {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Composer card — absolute bottom, z=2, covers drawer bottom.
+   It is a separate rounded rectangle on top of the drawer. */
+.composer-frame-composer-card {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+}
+
+/* ── Collapse handle — floats at the composer card's top-right corner.
+   With the drawer expanded it collapses the drawer first; otherwise it
+   hides the composer card (leaving only the drawer). ── */
+.composer-frame-composer-card .composer-frame-collapse-btn {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.4));
+  cursor: pointer;
+  transition: background var(--transition-fast, 0.15s ease), color var(--transition-fast, 0.15s ease);
+}
+
+.composer-frame-composer-card .composer-frame-collapse-btn:hover {
+  background: var(--surface-hover, rgba(255, 255, 255, 0.08));
+  color: var(--text-primary);
+}
+
+/* Inside the drawer, AIComposer keeps its own border-radius/background/shadow
+   so it appears as a distinct card on top of the drawer background. */
+.composer-frame-drawer-card .ai-composer {
+  /* Tighten padding uniformly in the drawer context */
+  padding: 6px 8px;
+}
+
+.composer-frame-drawer-card .ai-composer.multiline .ai-composer-textarea {
+  min-height: 32px;
+  max-height: 80px;
+  padding: 2px 8px 2px;
+}
+
+/* ── Peek bar styling (drawer content) ──
+   Opaque so the peek visually covers the ai-composer-above card tucked
+   behind the drawer top (z order: composer > peek > above bar).
+   Top corners follow the drawer card's 16px radius (15px inner). */
+.composer-frame-drawer-content .message-drawer-peek {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 12px;
+  min-height: 32px;
+  cursor: pointer;
+  user-select: none;
+  background: var(--surface-tertiary, rgba(255, 255, 255, 0.06));
+  border-radius: 15px 15px 0 0;
+  transition: background var(--transition-fast, 0.15s ease);
+}
+
+.composer-frame-drawer-content .message-drawer-peek:hover {
+  background: color-mix(in srgb, var(--surface-tertiary, rgba(255, 255, 255, 0.06)) 92%, white);
+}
+
+.composer-frame-drawer-content .message-drawer-peek-content {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  /* Safety net: if the (unclipped) title alone overflows, clip the tail
+     (subtitle) at the container edge instead of pushing the chevron out. */
+  overflow: hidden;
+  /* Reserve space for the absolutely-positioned corner chevron (right: 6px). */
+  padding-right: 20px;
+}
+
+.composer-frame-drawer-content .message-drawer-peek-icon {
+  flex-shrink: 0;
+  opacity: 0.6;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.6));
+}
+
+.composer-frame-drawer-content .message-drawer-peek-spinner {
+  flex-shrink: 0;
+  color: var(--accent-primary, rgba(99, 102, 241, 0.8));
+  animation: composer-frame-spin 1s linear infinite;
+}
+
+@keyframes composer-frame-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Title is never truncated — only the subtitle absorbs shrinking. */
+.composer-frame-drawer-content .message-drawer-peek-title {
+  color: var(--text-secondary, rgba(255, 255, 255, 0.6));
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.composer-frame-drawer-content .message-drawer-peek-subtitle {
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.3));
+  font-size: 11px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.composer-frame-drawer-content .message-drawer-peek-chevron {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  transform: translateY(-50%);
+  flex-shrink: 0;
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.3));
+  display: flex;
+  align-items: center;
+}
+
+/* Pending messages follow the collapsed peek content and remain above the composer. */
+.composer-frame-drawer-content .message-drawer-pending-submits {
+  margin: 0 12px 8px;
+  max-width: none;
+}
+
+.composer-frame-drawer-content .message-drawer-collapse {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.4));
+  cursor: pointer;
+  transition: background var(--transition-fast, 0.15s ease), color var(--transition-fast, 0.15s ease);
+}
+
+.composer-frame-drawer-content .message-drawer-collapse:hover {
+  color: var(--text-primary);
+  background: var(--surface-hover, rgba(255, 255, 255, 0.08));
+}
+
+/* Expanded stream inside drawer */
+.composer-frame-drawer-content .compact-message-stream {
+  max-height: 50vh;
+}
+
+/* ── Resizable drawer (desktop): the wrapper carries the height cap so the
+   persisted px value can replace the default 50vh. ── */
+.composer-frame-drawer-content .message-drawer-stream-wrap {
+  padding-top: 28px;
+}
+
+.composer-frame-drawer-content .message-drawer-stream-wrap.resizable {
+  display: flex;
+  flex-direction: column;
+  max-height: 50vh;
+  /* The 6px resize handle sits above this wrapper in flow; the corner chevron
+     ends at 24px from the drawer-content top, so 14px here (plus the stream's
+     own 8px padding) keeps a tight 4px clearance under it. */
+  padding-top: 14px;
+}
+
+.composer-frame-drawer-content .message-drawer-stream-wrap.resizable > .compact-message-stream {
+  max-height: none;
+  min-height: 0;
+}
+
+.composer-frame-drawer-content .message-drawer-resize-handle {
+  width: 100%;
+  height: 6px;
+  flex-shrink: 0;
+}
+
+.composer-frame-drawer-content .message-drawer-resize-handle::after {
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 36px;
+  height: 3px;
+  border-radius: 2px;
+  background-color: var(--text-tertiary, rgba(255, 255, 255, 0.25));
+}
+
+.composer-frame-drawer-content .message-drawer-resize-handle:hover::after,
+.composer-frame-drawer-content .message-drawer-resize-handle:active::after {
+  height: 3px;
+  background-color: var(--accent-primary, #3b82f6);
+}
+
+.composer-frame-drawer-content .message-drawer-status {
+  padding: 4px 12px 6px;
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.4));
+  font-size: 11px;
+  text-align: center;
+}
+
+.composer-frame-drawer-content .message-drawer-status.error {
+  color: var(--error);
+}
+
+/* Streaming "thinking" state: five dots fading in sequence, no text */
+.composer-frame-drawer-content .message-drawer-thinking-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.composer-frame-drawer-content .message-drawer-thinking-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent-primary, #3b82f6);
+  opacity: 0.25;
+  animation: message-drawer-thinking-fade 1.2s ease-in-out infinite;
+}
+
+.composer-frame-drawer-content .message-drawer-thinking-dot:nth-child(1) { animation-delay: 0s; }
+.composer-frame-drawer-content .message-drawer-thinking-dot:nth-child(2) { animation-delay: 0.15s; }
+.composer-frame-drawer-content .message-drawer-thinking-dot:nth-child(3) { animation-delay: 0.3s; }
+.composer-frame-drawer-content .message-drawer-thinking-dot:nth-child(4) { animation-delay: 0.45s; }
+.composer-frame-drawer-content .message-drawer-thinking-dot:nth-child(5) { animation-delay: 0.6s; }
+
+@keyframes message-drawer-thinking-fade {
+  0%, 100% {
+    opacity: 0.25;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* Streaming state */
+.composer-frame-drawer-content .message-drawer.streaming .message-drawer-peek-title {
+  color: var(--text-primary, rgba(255, 255, 255, 0.9));
+}
+
+/* Streaming state: highlight title and add a small pulsing dot instead of a full-width shimmer */
+.composer-frame-drawer-content .message-drawer.streaming .message-drawer-peek-title {
+  color: var(--text-primary, rgba(255, 255, 255, 0.9));
+}
+
+/* Leading running indicator — first element of the peek bar; spacing comes
+   from the peek-content flex gap. */
+.message-drawer-peek-running-dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-primary, rgba(59, 130, 246, 0.8));
+  animation: message-drawer-running-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes message-drawer-running-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+/* Dark theme overrides */
+[data-theme="dark"] .composer-frame-drawer-content .message-drawer-peek-icon,
+[data-theme="dark"] .composer-frame-drawer-content .message-drawer-peek-title {
+  color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+}
+
+[data-theme="dark"] .composer-frame-drawer-content .message-drawer-peek-subtitle,
+[data-theme="dark"] .composer-frame-drawer-content .message-drawer-peek-chevron {
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.4));
+}

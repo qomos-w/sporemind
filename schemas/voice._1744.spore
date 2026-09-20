@@ -1,0 +1,240 @@
+// voice namespace — speech-to-text (STT) and text-to-speech (TTS) protocol.
+//
+// Sources of truth for:
+//   - voice.account.* list / CRUD request/response types
+//   - voice.recognize (STT) request/response types
+//   - voice.synthesize (TTS) request/response types
+
+// VoiceAccount — a single stored STT/TTS credential set. ApiKey is persisted
+// in plaintext server-side; it is never returned in list/view projections.
+// Kind separates the two independent services: "stt" (speech-to-text) and
+// "tts" (text-to-speech); each maintains its own active account.
+// Provider values: "glm" | "openai" | "openai_custom" | "openai_chat_audio"
+// | "baidu" (stt) | "web_speech" (client-side) | "minimax" | "xiaomi_mimo"
+// | "qwen" (Alibaba Cloud Model Studio / DashScope). For tts, "openai_chat_audio"
+// uses the OpenAI Chat Completions audio-modality standard (with Instruction
+// style prompts) instead of the legacy /audio/speech endpoint. "qwen" drives the
+// native DashScope TTS routes (Qwen-Audio-3.0-TTS / Qwen3-TTS); BaseUrl may carry
+// a workspace host for the Qwen-Audio-TTS route.
+struct VoiceAccount {
+    Id:       string
+    Kind:     string
+    Name:     string
+    Provider: string
+    ApiKey:   string
+    optional Model:    string
+    optional Voice:    string
+    optional Language: string
+    optional BaseUrl:  string
+    optional Proxy:    string // HTTP(S)/SOCKS5 proxy URL for all requests through this account; empty = direct connection
+}
+
+
+// VoiceAccountView — redacted projection; ApiKey replaced by HasApiKey.
+struct VoiceAccountView {
+    Id:        string
+    Kind:      string
+    Name:      string
+    Provider:  string
+    HasApiKey: bool
+    optional Model:    string
+    optional Voice:    string
+    optional Language: string
+    optional BaseUrl:  string
+    optional Proxy:    string // HTTP(S)/SOCKS5 proxy URL; empty = direct connection
+}
+
+
+struct VoiceAccountListReq {
+    optional Kind: string
+}
+
+
+struct VoiceAccountListResp {
+    Items:         array<VoiceAccountView>
+    optional ActiveId: string
+}
+
+
+struct VoiceAccountCreateReq {
+    Kind:     string
+    Name:     string
+    Provider: string
+    optional ApiKey:    string
+    optional Model:     string
+    optional Voice:     string
+    optional Language:  string
+    optional BaseUrl:   string
+    optional Proxy:     string // HTTP(S)/SOCKS5 proxy URL; empty = direct connection
+}
+
+
+struct VoiceAccountCreateResp {
+    Account: VoiceAccountView
+}
+
+
+struct VoiceAccountUpdateReq {
+    Id:       string
+    optional Name:     string
+    optional Provider: string
+    optional ApiKey:    string
+    optional Model:     string
+    optional Voice:     string
+    optional Language:  string
+    optional BaseUrl:   string
+    optional Proxy:     string // HTTP(S)/SOCKS5 proxy URL; empty = direct connection
+}
+
+
+struct VoiceAccountUpdateResp {
+    Account: VoiceAccountView
+}
+
+
+struct VoiceAccountDeleteReq {
+    Id: string
+}
+
+
+struct VoiceAccountDeleteResp {}
+
+
+struct VoiceAccountActivateReq {
+    Kind: string
+    Id:   string
+}
+
+
+struct VoiceAccountActivateResp {
+    ActiveId: string
+}
+
+
+struct VoiceAudio {
+    AudioType: int
+    Data:      bytes
+}
+
+
+struct VoiceRecognizeReq {
+    Audio: VoiceAudio
+    optional Hotwords: array<string>  // STT hotwords for domain-specific terms; provider-dependent (e.g. GLM hotwords field)
+    optional AccountId: string  // account override; empty = active "stt" account; non-empty must resolve to an existing stt-kind account
+}
+
+
+struct VoiceRecognizeResp {
+    Text: string
+}
+
+
+// --- Text-to-speech (TTS) -------------------------------------------------
+// Uses the active "tts" account unless AccountId overrides it. Upstream keys
+// are often reusable across services (a Zhipu key serves both glm-asr and
+// glm-tts), but accounts are stored and activated independently per kind.
+
+struct VoiceSynthesizeReq {
+    Input: string
+    optional Model:       string   // TTS model; defaults per provider (e.g. "glm-tts")
+    optional Voice:       string   // speaker timbre, e.g. "tongtong"; provider default when empty
+    optional Format:      string   // output container: "mp3" (default) | "wav"
+    optional Instruction: string   // prosody/style prompt (tone, emotion, pace) for chat-audio providers; ignored by /audio/speech providers
+    optional AccountId:   string   // account override; empty = active "tts" account; non-empty must resolve to an existing tts-kind account
+}
+
+
+struct VoiceSynthesizeResp {
+    Audio: VoiceAudio
+}
+
+
+struct VoiceConfigExportReq {}
+
+
+struct VoiceConfigExportResp {
+    Data: string
+}
+
+
+struct VoiceConfigImportReq {
+    Data: string
+}
+
+
+struct VoiceConfigImportResp {}
+
+
+// VoiceNotifyConfig — agent task-completion notification sound preferences.
+// Persisted in the voice actor (actor-owned backend state, not localStorage).
+struct VoiceNotifyConfig {
+    Enabled:       bool
+    Volume:        int
+    Sound:         string
+    OnComplete:    bool
+    OnError:       bool
+    OnInteraction: bool
+    // OnAllComplete plays a distinct cue when the last active agent finishes and
+    // no active workflow remains.
+    OnAllComplete: bool
+    // Per-event sound preset id (e.g. "chime", "bell", "ding", "pop", "soft").
+    // Sound applies to the per-agent completion event. The per-event fields below
+    // allow independently choosing a preset for each event type.
+    optional SoundError:       string
+    optional SoundInteraction: string
+    optional SoundAllComplete: string
+    // Per-event volume override (0–100). When 0 or absent, falls back to the
+    // global Volume field.
+    optional VolumeComplete:    int
+    optional VolumeError:       int
+    optional VolumeInteraction: int
+    optional VolumeAllComplete: int
+    // Per-event custom audio file path. When non-empty, the custom audio file is
+    // played instead of the synthesized preset for that event type. Empty string
+    // means "use the built-in preset / Sound selection".
+    optional CustomSoundComplete:    string
+    optional CustomSoundError:       string
+    optional CustomSoundInteraction: string
+    optional CustomSoundAllComplete: string
+}
+
+
+struct VoiceNotifyConfigResp {
+    Config: VoiceNotifyConfig
+}
+
+
+// VoiceCloneReq clones a MiniMax voice from an uploaded audio sample. The
+// optional prompt audio (<= 8s) + transcript steers prosody for clones that
+// support it; PreviewText asks the API to synthesize a demo clip.
+struct VoiceCloneReq {
+    AccountId: string
+    AudioData:  bytes
+    AudioName:  string
+    optional VoiceID:                   string
+    optional PromptAudioData:          bytes
+    optional PromptAudioName:          string
+    optional PromptText:               string
+    optional PreviewText:              string
+    optional NeedNoiseReduction:       bool
+    optional NeedVolumeNormalization:  bool
+}
+
+struct VoiceCloneResp {
+    VoiceId: string
+    optional DemoAudioUrl: string
+}
+
+// VoiceDesignReq designs a new voice from a free-text description; MiniMax
+// returns the voice id plus a trial audio clip of PreviewText.
+struct VoiceDesignReq {
+    AccountId:   string
+    Prompt:      string
+    PreviewText: string
+    optional VoiceID: string
+}
+
+struct VoiceDesignResp {
+    VoiceId:    string
+    TrialAudio: bytes
+}

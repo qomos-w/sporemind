@@ -1,0 +1,169 @@
+.mono-card-compact {
+  position: relative;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+  padding: 12px;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+}
+
+.mono-card-compact:hover {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-md);
+}
+
+.mono-card-compact--compact {
+  padding: 10px 12px;
+}
+
+.mono-card-compact-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.mono-card-compact-type-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.mono-card-compact-leading-icon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--accent, var(--accent-primary));
+}
+
+.mono-card-compact-title {
+  flex: 1;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--text-primary);
+  word-break: break-word;
+}
+
+.mono-card-compact-tags-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.mono-card-compact-tags-row--compact {
+  margin-top: 8px;
+}
+
+.mono-card-compact-tag {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  color: var(--accent-primary);
+  background: var(--accent-primary-dim);
+  padding: 2px 8px;
+  border-radius: 4px;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mono-card-compact-tag--builtin {
+  color: var(--text-tertiary);
+  background: var(--bg-overlay);
+}
+
+.mono-card-compact-status {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  color: var(--wiki-status-color, var(--text-tertiary));
+  background: color-mix(in srgb, var(--wiki-status-color, var(--text-tertiary)) 10%, transparent);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.mono-card-compact-status-bar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  pointer-events: none;
+}
+
+.mono-card-compact-category-bar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+  pointer-events: none;
+}
+
+.mono-card-compact-status--compact {
+  gap: 3px;
+  padding: 1px 5px;
+  font-size: 0.625rem;
+  max-width: 100%;
+}
+
+.mono-card-compact-status--compact svg {
+  flex-shrink: 0;
+}
+
+.mono-card-compact-status-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mono-card-compact-priority {
+  font-size: 0.6875rem;
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--bg-overlay);
+}
+
+.mono-card-compact-due {
+  font-size: 0.6875rem;
+  color: var(--text-tertiary);
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: var(--bg-overlay);
+}
+
+.mono-card-compact-due.overdue {
+  color: var(--error);
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+}
+
+/* Type-specific accents */
+.mono-card-compact--task {
+  border-left: 3px solid var(--accent-primary);
+}
+
+/* Agent avatar in bottom-right corner (workflow variant only).
+   Positioned to avoid overlap with the corner status badge (top-right),
+   the status color strip (left/top edge), and long titles. */
+.mono-card-compact-agent-corner {
+  position: absolute;
+  bottom: 6px;
+  right: 8px;
+  z-index: 2;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.mono-card-compact-agent-corner .card-agent-avatar {
+  margin-left: 0;
+}
+
+.mono-card-compact--concept {
+  border-left: 3px solid var(--info);
+}

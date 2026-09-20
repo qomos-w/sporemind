@@ -1,0 +1,326 @@
+.plugin-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 36px;
+  padding: 0 8px;
+  /* Transparent like .rpt-tabbar: both sit on .ai-shell-main-card's bg-base,
+     no divider between the tab strip and the plugin toolbar. */
+  background: transparent;
+  flex-shrink: 0;
+}
+
+/* In the mobile fullscreen overlay (.rpt-mobile-container.fullscreen in
+   RightPanelTabs.css) the plugin iframe gets the whole screen; the toolbar
+   is hidden but stays mounted so its state survives toggling. */
+.rpt-mobile-container.fullscreen .plugin-toolbar {
+  display: none;
+}
+
+.plugin-toolbar-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 0;
+}
+
+.plugin-toolbar-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.plugin-toolbar-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  font-size: 12px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.plugin-toolbar-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.plugin-toolbar-dot.ok { background: var(--status-success); }
+.plugin-toolbar-dot.warn { background: var(--status-waiting); }
+.plugin-toolbar-dot.err { background: var(--status-failed); }
+.plugin-toolbar-dot.idle { background: var(--text-tertiary); }
+
+.plugin-toolbar-dot.pending {
+  background: var(--accent-primary);
+  animation: plugin-toolbar-pulse 1s ease-in-out infinite;
+}
+
+.plugin-toolbar-label {
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+}
+
+.plugin-toolbar-badge {
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent-primary) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 40%, transparent);
+  color: var(--accent-primary);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.plugin-toolbar-version {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.plugin-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.plugin-toolbar-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.plugin-toolbar-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.plugin-toolbar-btn.plugin-toolbar-btn-active {
+  background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+  color: var(--accent-primary);
+}
+
+.plugin-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.plugin-toolbar-toggle[aria-expanded="true"] {
+  color: var(--text-primary);
+}
+
+.plugin-toolbar-spin {
+  animation: plugin-toolbar-spin 1s linear infinite;
+}
+
+/* Expandable protocol inspector between the toolbar and the frame. The rows
+   themselves use the same Tailwind utilities as PluginSettingsSection's
+   plugin detail panel; only the container and interactive bits live here. */
+.plugin-details {
+  flex-shrink: 0;
+  max-height: 40%;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-base);
+  padding: 12px 16px;
+}
+
+.plugin-detail-row {
+  padding: 2px 6px;
+  margin: 0 -6px;
+  border-radius: var(--radius-sm);
+}
+
+.plugin-detail-row.flash {
+  animation: plugin-detail-flash 1.6s ease-out;
+}
+
+.plugin-schema-name.has-schema {
+  cursor: help;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
+
+.plugin-callable-id.has-desc {
+  cursor: help;
+  text-decoration: underline dotted;
+  text-underline-offset: 2px;
+}
+
+/* Callable description shown in a HoverTip: prose, may contain newlines
+   (description KV keeps \n\n markdown paragraphing). */
+.plugin-schema-tip-desc {
+  color: var(--text-secondary);
+  font-family: inherit;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.plugin-schema-tip {
+  position: fixed;
+  z-index: 1000;
+  width: 300px;
+  max-height: 320px;
+  overflow-y: auto;
+  background: var(--bg-elevated, var(--bg-surface));
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: 8px 10px;
+  font-size: 11px;
+  font-family: var(--font-mono, monospace);
+  color: var(--text-primary);
+  pointer-events: none;
+}
+
+.plugin-schema-tip-title {
+  font-weight: 600;
+  color: var(--accent-primary);
+  margin-bottom: 6px;
+}
+
+.plugin-schema-tip-empty {
+  color: var(--text-tertiary);
+  font-style: italic;
+}
+
+.plugin-schema-tip-field {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 1px 0;
+  min-width: 0;
+}
+
+.plugin-schema-tip-field-name {
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.plugin-schema-tip-field-type {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.plugin-schema-tip-field-desc {
+  color: var(--text-tertiary);
+  font-family: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1 1 0;
+}
+
+.plugin-detail-tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-left: 14px;
+}
+
+.plugin-tool-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent-primary) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent-primary) 40%, transparent);
+  color: var(--accent-primary);
+  font-size: 11px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.plugin-tool-badge:hover {
+  background: color-mix(in srgb, var(--accent-primary) 22%, transparent);
+  border-color: color-mix(in srgb, var(--accent-primary) 60%, transparent);
+}
+
+.plugin-tool-badge-name {
+  font-family: var(--font-mono, monospace);
+}
+
+.plugin-tool-badge-tag {
+  padding: 0 5px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  color: var(--accent-primary);
+  font-size: 10px;
+  line-height: 15px;
+}
+
+/* Fill the space the toolbar leaves in .ai-right-panel-content. The iframe
+   and the loading/error states are direct children, so flex them to fill. */
+.plugin-tab-frame {
+  position: relative;
+  flex: 1 1 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.plugin-tab-frame > * {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+/* Covers the iframe while an in-app file drag is live so the host document
+   (not the iframe document) receives the dragover/drop. */
+.plugin-tab-dnd-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: color-mix(in srgb, var(--accent-primary) 8%, transparent);
+  outline: 1.5px dashed var(--accent-primary);
+  outline-offset: -3px;
+  pointer-events: auto;
+}
+
+.plugin-tab-dnd-hint {
+  padding: 6px 12px;
+  border-radius: var(--radius-md);
+  background: var(--bg-raised);
+  color: var(--accent-primary);
+  font-size: var(--text-sm);
+  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.25));
+}
+
+@keyframes plugin-toolbar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes plugin-toolbar-pulse {
+  50% { opacity: 0.35; }
+}
+
+@keyframes plugin-detail-flash {
+  0% { background: color-mix(in srgb, var(--accent-primary) 30%, transparent); }
+  100% { background: transparent; }
+}

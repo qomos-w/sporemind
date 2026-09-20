@@ -1,0 +1,183 @@
+// project namespace — project-scoped file / shell / git operations.
+// @ts-export
+//
+// Sources of truth for:
+//   - project.* file request / response shapes (read/write/edit/glob/grep/list/rm)
+//   - project.git_* request / response shapes (all of them)
+//   - project.info response shape
+//
+// File and shell operation wire shapes are intentionally reused from the
+// filesystem and shell namespaces; this schema only owns project-specific
+// wrappers and legacy project.* request types.
+
+
+struct ProjectFileChangedEvent {
+    Path: string
+    Kind: string
+}
+
+
+struct ProjectGitRemoteListResp {
+    Remotes: array<ProjectGitRemoteInfo>
+}
+
+
+struct ProjectGitRemoteAddReq {
+    Name: string
+    Url:  string
+}
+
+
+struct ProjectGitRemoteRemoveReq {
+    Name: string
+}
+
+
+struct ProjectGitBlameReq {
+    FilePath: string
+}
+
+
+struct ProjectGitBlameResp {
+    Lines: array<ProjectGitBlameLine>
+}
+
+
+struct ProjectGitConfigGetReq {
+    Key: string
+}
+
+
+struct ProjectGitConfigGetResp {
+    Value: string
+}
+
+
+struct ProjectGitConfigSetReq {
+    Key:    string
+    Value:  string
+    Global: bool
+}
+
+struct ProjectExecuteTimerCardReq {
+    CardID:    string
+    ProjectID: string
+}
+
+
+// ---- project worktree sandbox (方案 B: project 拦截器 + 只读 caller 映射) ----
+// 多 agent 在同一 project 下各自绑定独立 git worktree，并发编辑/commit 不再互相覆盖。
+// worktree 不是独立 actor，而是 project 内的一张只读映射 agentActorID → worktree。
+// project 的 file/git handler 通过 caller id 反查映射，命中则把 rootPath 重写为
+// worktree 路径。worktree 生命周期绑定 agent 生命周期（agent 销毁 → worktree 回收）。
+// 详见 .sporecode/wiki/project-worktree-sandbox.md。
+
+struct ProjectWorktree {
+    ID:         string
+    Name:       string
+    Path:       string
+    Branch:     string
+    BaseRef:    string
+    Status:     string  // active | stale | discarded | merging
+    CreatedAt:  string
+    LastUsedAt: string
+    optional ParentWorktreeID: string  // 父 worktree ID；空 = 根 worktree（合并目标为主分支）
+    optional WorkflowMapID:    string  // 所属 workflow map card ID；空 = 非 workflow worktree
+}
+
+
+struct ProjectWorktreeCreateReq {
+    Name:    string
+    BaseRef: string  // commit-ish the new worktree+branch starts from (e.g. "main", "HEAD"); empty = HEAD
+    optional ParentWorktreeID: string  // 从指定父 worktree 的 branch HEAD 派生；空 = 从主仓库创建
+    optional WorkflowMapID:    string  // 关联的 workflow map card ID；空 = 非 workflow worktree
+}
+
+
+struct ProjectWorktreeListReq {
+}
+
+
+struct ProjectWorktreeListResp {
+    Worktrees: array<ProjectWorktree>
+}
+
+
+struct ProjectWorktreeGetReq {
+    WorktreeID: string
+}
+
+
+struct ProjectWorktreeDiscardReq {
+    WorktreeID: string
+    optional Force: bool  // required when the worktree has uncommitted changes
+}
+
+
+// ProjectWorktreeAgentBinding describes one agent→worktree binding. A worktree
+// may host multiple agents; an agent binds at most one worktree. Surfaced via
+// project.worktree.agent_bindings for topology visibility, discard safety
+// checks, restart recovery, and audit.
+struct ProjectWorktreeAgentBinding {
+    AgentActorID: string
+    WorktreeID:   string
+    WorktreePath: string
+    Branch:       string
+    optional Status: string  // mirror of the worktree's Status (active | merging | ...)
+    optional Name:   string  // mirror of the worktree's Name
+}
+
+
+struct ProjectWorktreeAgentBindingsReq {
+}
+
+
+struct ProjectWorktreeAgentBindingsResp {
+    Bindings: array<ProjectWorktreeAgentBinding>
+}
+
+
+// ProjectWorktreeReleaseBindingReq is invoked by workspace.delete_agent when an
+// agent is destroyed, so project can drop the binding and (if no other agent
+// remains bound) remove the worktree. Internal-only.
+// ForceDelete=true overrides the workflow owner worktree stale protection:
+// the worktree is physically removed (git worktree remove --force) and the
+// map card's data.ownerWorktreeId is cleared, instead of being marked stale.
+struct ProjectWorktreeReleaseBindingReq {
+    AgentActorID: string
+    ForceDelete: bool
+}
+
+
+// ── Worktree enter / exit (agent self-service lifecycle) ──
+// project.worktree.enter lets an agent self-bind to a worktree (creating one
+// when none exists for the name), and project.worktree.exit returns it to the
+// main repo via one of two paths: discard (delete) or merge (land on main).
+// These are the public, agent-facing lifecycle callables; create/discard
+// remain AdminOnly orchestrator entry points.
+
+struct ProjectWorktreeEnterReq {
+    optional Name:    string  // deprecated, ignored; name/branch is always <callerID>-<random> (per-agent exclusive)
+    optional BaseRef: string  // commit-ish to start the branch from; empty = HEAD
+}
+
+
+struct ProjectWorktreeEnterResp {
+    Worktree: ProjectWorktree  // the worktree the caller is now bound to
+    Created:  bool             // true if a new worktree was created, false if reusing the existing binding
+}
+
+
+struct ProjectWorktreeExitReq {
+    Mode:              string  // "discard" | "merge"
+    optional Force:    bool    // discard only: required when the worktree has uncommitted changes
+    optional BaseBranch: string       // merge only: target branch in main repo; empty = repo default branch
+    optional ParentWorktreeID: string // merge 到父 worktree 时使用（优先于 BaseBranch）；空 = 合并到主仓库
+}
+
+
+struct ProjectWorktreeExitResp {
+    WorktreeID: string
+    Mode:       string  // the mode that was applied ("discard" | "merge")
+    Status:     string  // "completed"
+}

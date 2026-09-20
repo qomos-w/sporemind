@@ -1,0 +1,57 @@
+:root {
+  /*
+   * Z-index contract for AI overlay layers (guide ring, guide card, tooltips).
+   * The guide is NON-BLOCKING by design: real interactive surfaces the user
+   * may need must always paint above guide chrome, so this layer sits
+   * - above ordinary app content (≤ 110),
+   * - below the omnibox overlay (200), menus/dropdowns/context menus
+   *   (1000–1200), system overlays (9000) and the crash overlay (99999).
+   * A dropdown that opens over the guide card must remain clickable.
+   */
+  --ai-overlay-z-index: 150;
+}
+
+/* Spotlight --------------------------------------------------------------- */
+
+.spotlight-ring {
+  z-index: var(--ai-overlay-z-index);
+  box-sizing: border-box;
+  border: 2px solid var(--ai-overlay-spotlight-ring, #f5a623);
+  /* Subtle dark edge so the ring reads on light backgrounds; soft amber
+   * halo draws the eye without dimming or blocking the surrounding UI. */
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.35),
+    0 0 10px 1px rgba(245, 166, 35, 0.45);
+  pointer-events: none;
+  transition:
+    left var(--ai-overlay-spotlight-transition, 200ms) ease-out,
+    top var(--ai-overlay-spotlight-transition, 200ms) ease-out,
+    width var(--ai-overlay-spotlight-transition, 200ms) ease-out,
+    height var(--ai-overlay-spotlight-transition, 200ms) ease-out,
+    border-radius var(--ai-overlay-spotlight-transition, 200ms) ease-out;
+  animation: spotlight-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes spotlight-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.35),
+      0 0 6px 1px rgba(245, 166, 35, 0.3);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1px rgba(0, 0, 0, 0.35),
+      0 0 16px 4px rgba(245, 166, 35, 0.6);
+  }
+}
+
+/* AnchoredOverlay --------------------------------------------------------- */
+
+.anchored-overlay {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: var(--ai-overlay-z-index);
+  pointer-events: auto;
+}

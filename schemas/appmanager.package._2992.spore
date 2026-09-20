@@ -1,0 +1,19 @@
+// appmanager namespace — package loading from a project actor.
+// @ts-export
+
+struct AppManagerProjectPackageReq {
+    ProjectId: string
+    optional AppId: string
+    optional EntryModule: string
+    optional AppDir: string         // subdirectory holding the app, relative to the project root; "." or empty = project root; rejects "..", absolute paths and backslashes
+    optional CallerAgentId: string  // injected by turn engine: calling agent's actor ID; when the agent is worktree-bound, package reads resolve against the worktree path instead of the main-tree root
+}
+
+struct AppManagerProjectPackageResp {
+    Manifest: AppManifest
+    EntryModule: string
+    Modules: map<string, string>
+    optional Assets: map<string, bytes>
+    optional SchemaDescriptors: map<string, AppObjectDescriptor>
+    PackageHash: string
+}

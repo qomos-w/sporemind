@@ -1,0 +1,17 @@
+// project.component namespace — MonoCard component catalog.
+// @ts-export
+
+struct ProjectComponentListReq {
+}
+
+struct ProjectComponentListResp {
+    Items: array<ComponentDescriptor>
+}
+
+struct ProjectComponentGetReq {
+    CardId: string
+}
+
+struct ProjectComponentGetResp {
+    Component: ComponentDescriptor
+}

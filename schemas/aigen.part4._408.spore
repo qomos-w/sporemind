@@ -1,0 +1,115 @@
+// aigen namespace — AI execution surface wire shapes.
+// @ts-export
+
+struct AgentModeState {
+    optional BoundTaskCardId:              string
+    optional ActiveWorkflowMapCardId:      string
+    optional ActiveWorkflowWorktreeID:     string
+    optional MemoryMounted:                bool
+}
+
+struct ActiveWorkflow {
+    MapCardId:  string
+    optional WorktreeID: string
+}
+
+struct PendingWorkflowStart {
+    MapCardId: string
+    Destination: string
+    InterpretedGoal: string
+    FrontierSummary: string
+    RequestId: string
+    optional NonCoding: bool   // explicit coding intent propagated from workflow_plan_submit: true = non-coding (skip owner worktree), false/absent = auto-infer from map scope task cards at activation time
+}
+
+
+struct TurnAssessment {
+    Decision: string
+    optional Reason: string
+    optional Evidence: array<string>
+    // Typed JSON the worker produces when declaring ready_for_review. Each key
+    // must satisfy the bound task card's data.outputs contract; the review path
+    // validates this map before allowing approve. Empty when the worker has no
+    // declared outputs contract.
+    optional Outputs: map<string, any>
+}
+
+
+// Canonical turn lifecycle event payload.
+//
+// Emitted on the turn topic for every state transition of an assistant turn.
+// The Kind field is one of: "turn.started", "turn.paused", "turn.resumed",
+// "turn.completed", "turn.failed", "turn.cancelled", "turn.abandoned". The State field is the
+// canonical state after the transition ("running" | "paused" | "completed" |
+// "failed" | "cancelled" | "abandoned"). Revision is monotonically increasing
+// per turn; subscribers ignore events whose revision is older than the current
+// record. All events carry TurnOrder and StartedAt. Terminal events also carry
+// CompletedAt; failed events carry Error; paused events carry PauseReason.
+// The optional Payload map preserves extension data without destabilizing the
+// canonical fields.
+struct TurnLifecycleEvent {
+    Kind:          string
+    TurnId:        string
+    State:         string
+    Revision:      int64
+    TurnOrder:     int64
+    StartedAt:     string
+    optional CompletedAt: string
+    optional Error:       string
+    optional PauseReason: string
+    optional Payload:     map<string, any>
+}
+
+
+// SessionRequestRecord is one entry in the session-level request ledger.
+// Ordinary LLM requests (Kind "llm", sourced from TurnRequestStat) and
+// compaction requests (Kind "compaction", sourced from CompactionEvent) share
+// a single monotonic Seq so a trajectory-style review can replay the whole
+// session's request sequence in order without stitching timestamps.
+struct SessionRequestRecord {
+    Id:                    string
+    Kind:                  string   // "llm" | "compaction"
+    Seq:                   int64
+    optional StartedAt:    string
+    optional CompletedAt:  string
+    optional TurnId:       string
+    optional Usage:        UsageData
+}
+
+
+// ActiveSchedulerEntry records one bound-mode scheduler card bound to this
+// agent. While any entry is present the agent keeps builtin:mode:scheduler
+// mounted; entries are added on scheduler bind and removed on unbind or when
+// the scheduler card is deleted. Kept in RawSession so the scheduler binding
+// survives actor restarts and shows up in the agent_status surface.
+struct ActiveSchedulerEntry {
+    SchedulerCardID: string
+    SchedulerName:   string
+}
+
+
+// CompactionLockState is the durable bracket around one compaction attempt:
+// written (and persisted) when compaction starts, cleared when it ends —
+// success or failure. A lock present after load means the process died
+// mid-compaction; the orphan is reported and cleared.
+struct CompactionLockState {
+    TurnID:    string
+    Trigger:   string
+    StartedAt: string
+    Seq:       int64
+}
+
+// AgentBindAppReq binds this agent to its provisioning plugin/app (manifest
+// plugin_agent block). Sent by the workspace right after spawn (and again
+// after reload when the app's bundle set changed) so the agent can overlay
+// the per-app system prompt and reconcile its bound bundle mounts. Persisted
+// on the agent actor; idempotent.
+struct AgentBindAppReq {
+    AppId:        string
+    optional SystemPrompt: string
+    // Full desired bound bundle card list (app-bundle:{appID}:{slug} cards
+    // plus extra builtin bundles). The agent mounts missing entries and
+    // unmounts bundle mounts that are no longer in the list.
+    optional BundleCardIds: array<string>
+}
+

@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@qomos/sporemind-shell": ["../shell/src/index.ts"],
+      "@qomos/sporemind-theme": ["../theme/src/index.ts"],
+      "@qomos/sporemind-theme/tokens.css": ["../theme/src/tokens.css"]
+    }
+  },
+  "include": ["src", "src/**/*.d.ts"],
+  "exclude": ["src/test-smoke.ts"]
+}

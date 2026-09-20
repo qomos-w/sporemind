@@ -1,0 +1,87 @@
+// sshmanager namespace — remote SSH host management, shell sessions, and SFTP file operations.
+// @ts-export
+//
+// Sources of truth for:
+//   - sshmanager.file_write_base64 binary upload
+//   - sshmanager.shell_run synchronous PTY command execution
+//
+// This part was split from part3 because part3's 10-ID block (2920–2929)
+// is saturated; the next free IDs (2930+) are owned by the websearch /
+// media / puppet namespaces. New sshmanager value types land here at
+// base 3021.
+
+// ---------------------------------------------------------------------------
+// Binary file write (browser → remote). Accepts base64-encoded content so
+// binary files (images, archives, ...) survive the JSON transport; the decoded
+// bytes overwrite the remote file. Companion to filesystem.write_base64 on the
+// local/project side; Path is an absolute remote path scoped to the connected
+// session identified by SessionId.
+// ---------------------------------------------------------------------------
+
+struct SshFileWriteBase64Req {
+    SessionId: string
+    Path:      string
+    Content:   string  // base64-encoded file bytes
+}
+
+
+struct SshFileWriteBase64Resp {
+}
+
+
+// ---------------------------------------------------------------------------
+// Chmod — change permission bits of a remote file or directory. Mode is an
+// octal string ("755", "0644"); the handler validates it before touching the
+// remote session. Companion to the context-menu "Permissions" action.
+// ---------------------------------------------------------------------------
+
+struct SshFileChmodReq {
+    SessionId: string
+    Path:      string
+    Mode:      string  // octal permission bits, e.g. "755"
+}
+
+
+struct SshFileChmodResp {
+}
+
+
+// ---------------------------------------------------------------------------
+// SSH manager event — emitted to the frontend event bus when an interactive
+// shell session is opened (e.g. by an agent via agent.open_ssh_session). The
+// desktop right-panel listens for kind "open_session" and opens an ssh-session
+// tab bound to SessionId. Mirrors browsermanager's BrowserManagerEvent pattern.
+// ---------------------------------------------------------------------------
+
+struct SshManagerEvent {
+    Kind:      string  // "open_session"
+    SessionId: string
+    HostId:    string
+    HostName:  string
+    optional Error: string
+}
+
+
+// ---------------------------------------------------------------------------
+// Synchronous command execution on an existing interactive PTY session.
+// shell_run writes Command to the session's stdin (appended with a sentinel
+// marker that captures the exit code), drains PTY output until the sentinel
+// arrives or the timeout expires, strips ANSI escapes and the echoed command
+// line, and returns the plain-text output + exit code. The session must be
+// opened first via shell_open; environment state (cwd, env vars, venv) is
+// preserved across calls. Not suitable for non-terminating commands (tail -f,
+// top, …) — use sshmanager.exec for one-shot commands without session state.
+// ---------------------------------------------------------------------------
+
+struct SshShellRunReq {
+    SessionId:   string
+    Command:     string
+    optional TimeoutMs: int  // milliseconds; default 30000 (30s); values below 1000 are clamped to default
+}
+
+struct SshShellRunResp {
+    Output:   string  // plain-text PTY output for this command (ANSI stripped, echo removed)
+    ExitCode: int      // exit code from the sentinel; -1 if timed out or not found
+    Truncated: bool    // true if output exceeded the byte budget and was head+tail truncated
+    TimedOut:  bool    // true if the timeout expired before the sentinel arrived
+}

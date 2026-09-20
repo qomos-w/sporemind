@@ -1,0 +1,8 @@
+export { LspClient, pathToUri, uriToPath } from './lspClient'
+export { lspGotoDefinition } from './lspGotoDefinition'
+export { ReferencesPopup } from './ReferencesPopup'
+export type { LspGotoDefinitionOptions, RefsPopupAnchor, RefsPopupQueryPos, ShowReferencesPayload } from './lspGotoDefinition'
+export type { ReferencesPopupProps, RefsScope, LineRange } from './ReferencesPopup'
+export { highlightGoLine } from './highlightGo'
+export type { SyntaxSpan } from './highlightGo'
+export type { LspClientOptions, Location, Position, Range } from './lspClient'

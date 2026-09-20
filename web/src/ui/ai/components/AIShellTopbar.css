@@ -1,0 +1,223 @@
+/* ── Navigation history buttons (desktop only) ── */
+.ai-shell-history-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  --wails-draggable: no-drag;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-shell-history-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ai-shell-history-btn:disabled,
+.ai-shell-history-btn.disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+/* ── Launcher-mode switch (构建/应用) parked in the desktop topbar, left of
+   the back button. Compact height to fit the 28px nav row; the track's
+   own align-self: flex-start is overridden so the pill centers vertically. ── */
+.ai-shell-topbar .ai-sidebar-mode-switch {
+  align-self: center;
+  padding: 3px;
+  gap: 2px;
+  margin: 0 6px 0 2px;
+  transform: translateY(2px);
+  background: color-mix(in srgb, var(--bg-hover) 95%, black);
+}
+
+.ai-shell-topbar .ai-sidebar-mode-switch-segment {
+  min-height: 18px;
+  padding: 0 6px;
+  gap: 4px;
+  font-size: var(--text-sm);
+}
+
+/* Active pill matches the topbar's own background color, so the selected
+   segment reads as an inset press. */
+.ai-shell-topbar .ai-sidebar-mode-switch-segment.active {
+  background: var(--bg-surface);
+}
+
+/* Sidebar collapsed (desktop): the mode switch collapses in sync with the
+   pinned sidebar's 200ms width animation — max-width squeezes the segments
+   shut while opacity fades, same easing as .ai-sidebar-container.pinned. */
+.ai-shell-topbar .ai-sidebar-mode-switch {
+  max-width: 210px;
+  opacity: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  transition:
+    max-width 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 160ms ease,
+    padding 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    margin 200ms cubic-bezier(0.22, 1, 0.36, 1),
+    background var(--transition-fast),
+    color var(--transition-fast);
+}
+
+.ai-shell-topbar.sidebar-collapsed .ai-sidebar-mode-switch {
+  max-width: 0;
+  padding: 0;
+  margin: 0;
+  gap: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ── Menu bar (desktop only) ── */
+.ai-shell-menu-bar {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  height: 100%;
+  margin-left: 8px;
+  --wails-draggable: no-drag;
+}
+
+/* The sidebar toggle now leads the topbar-left row; drop its extra left
+   margin and add right margin to separate it from the nav buttons. */
+.ai-shell-sidebar-toggle {
+  margin-left: 0;
+  margin-right: 8px;
+}
+
+.ai-shell-menu-bar-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+.ai-shell-menu-bar-trigger {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  user-select: none;
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-menu-bar-trigger:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ai-shell-menu-bar-trigger.active {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* ── Dropdown menu ── */
+.ai-shell-menu-bar-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 180px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 4px 0;
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-menu-bar-dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px 12px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  gap: 16px;
+  --wails-draggable: no-drag;
+}
+
+.ai-shell-menu-bar-dropdown-item:hover:not(:disabled) {
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+}
+
+.ai-shell-menu-bar-dropdown-item:disabled,
+.ai-shell-menu-bar-dropdown-item.disabled {
+  opacity: 0.35;
+  cursor: default;
+  pointer-events: none;
+}
+
+.ai-shell-menu-bar-dropdown-label {
+  flex: 1;
+  white-space: nowrap;
+}
+
+.ai-shell-menu-bar-dropdown-shortcut {
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.ai-shell-menu-bar-dropdown-badge {
+  margin-left: 8px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: var(--accent, rgba(99, 102, 241, 0.15));
+  color: var(--accent-fg, var(--text-secondary));
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.ai-shell-menu-bar-sep {
+  height: 1px;
+  margin: 4px 8px;
+  background: var(--border-subtle);
+}
+
+/* Pin row inside menu-bar dropdown: item yields width to the pin button,
+   reusing the mc-dropdown pin styles for reveal/hover behavior. */
+.ai-shell-mc-dropdown-item-row .ai-shell-menu-bar-dropdown-item {
+  width: auto;
+  flex: 1;
+}
+
+/* ── Mobile: no menu bar or nav buttons ── */
+@media (max-width: 767px) {
+  .ai-shell-history-btn {
+    display: none;
+  }
+  .ai-shell-menu-bar {
+    display: none;
+  }
+}

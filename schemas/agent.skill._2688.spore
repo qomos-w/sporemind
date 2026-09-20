@@ -1,0 +1,16 @@
+// agent.skill namespace — explicit skill use after component availability mount.
+// @ts-export
+
+struct AgentSkillUseReq {
+    SkillId: string
+    optional Args: string
+    optional Context: string
+    optional TurnId: string
+}
+
+struct AgentSkillUseResp {
+    MountId: string
+    optional Body: string
+    optional SkillId: string
+    optional Warning: string
+}

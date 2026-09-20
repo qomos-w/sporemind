@@ -1,0 +1,127 @@
+.mono-card-inline {
+  border: 1px solid var(--border-tertiary, rgba(128, 128, 128, 0.2));
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: var(--bg-secondary, rgba(128, 128, 128, 0.05));
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.mono-card-inline--clickable {
+  cursor: pointer;
+}
+
+.mono-card-inline--clickable:hover {
+  border-color: var(--accent-primary);
+  background: var(--bg-secondary-hover, rgba(128, 128, 128, 0.08));
+}
+
+/* ── Header ── */
+
+.mono-card-inline-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.mono-card-inline-type-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.mono-card-inline-title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.mono-card-inline-priority {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.mono-card-inline-status {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--wiki-status-color, var(--text-tertiary));
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--wiki-status-color, var(--text-tertiary)) 15%, transparent);
+  flex-shrink: 0;
+}
+
+/* ── Tags ── */
+
+.mono-card-inline-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.mono-card-inline-tag {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  background: var(--bg-tertiary, rgba(128, 128, 128, 0.1));
+  padding: 1px 6px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+.mono-card-inline-due {
+  font-size: 10px;
+  color: var(--text-tertiary);
+}
+
+.mono-card-inline-due.overdue {
+  color: var(--error, #e74c3c);
+  font-weight: 600;
+}
+
+/* ── Body preview ── */
+
+.mono-card-inline-body {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  max-height: 160px;
+  overflow: hidden;
+  position: relative;
+}
+
+.mono-card-inline-body p {
+  margin: 0 0 4px;
+}
+
+.mono-card-inline-body p:last-child {
+  margin-bottom: 0;
+}
+
+.mono-card-inline-body ul,
+.mono-card-inline-body ol {
+  margin: 0 0 4px;
+  padding-left: 18px;
+}
+
+.mono-card-inline-body code {
+  font-size: 11px;
+}
+
+.mono-card-inline-body pre {
+  font-size: 11px;
+  margin: 4px 0;
+}

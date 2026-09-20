@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Authenticator</title>
+<style>
+:root {
+  --bg: #101418; --text: #e8eaed; --surface: #1b1f23; --border: #2e3338;
+  --input-bg: #1f2326; --input-border: #3c4043; --muted: #9aa0a6;
+  --accent: #8ab4f8; --accent-fg: #101418; --accent-hover: #aecbfa;
+  --ghost-bg: #2b2f33; --danger: #f28b82; --ok: #81c995;
+}
+:root[data-theme="light"] {
+  --bg: #f8f9fa; --text: #1a1a1a; --surface: #fff; --border: #dadce0;
+  --input-bg: #fff; --input-border: #dadce0; --muted: #5f6368;
+  --accent: #1a73e8; --accent-fg: #fff; --accent-hover: #1765cc;
+  --ghost-bg: #e8eaed; --danger: #d93025; --ok: #188038;
+}
+/* Standalone browser open (no host → no data-theme): follow the OS setting. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --bg: #f8f9fa; --text: #1a1a1a; --surface: #fff; --border: #dadce0;
+    --input-bg: #fff; --input-border: #dadce0; --muted: #5f6368;
+    --accent: #1a73e8; --accent-fg: #fff; --accent-hover: #1765cc;
+    --ghost-bg: #e8eaed; --danger: #d93025; --ok: #188038;
+  }
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; padding: 32px 16px; min-height: 100vh; }
+.panel { width: 420px; max-width: 100%; }
+h1 { font-size: 20px; margin-bottom: 4px; }
+.subtitle { font-size: 12px; color: var(--muted); margin-bottom: 24px; }
+.addform { display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px; }
+.addform .row { display: flex; gap: 8px; }
+input { flex: 1; padding: 10px 14px; border: 1px solid var(--input-border); border-radius: 8px; background: var(--input-bg); color: var(--text); font-size: 14px; outline: none; }
+input:focus { border-color: var(--accent); }
+button { padding: 10px 16px; border: none; border-radius: 8px; background: var(--accent); color: var(--accent-fg); font-size: 14px; font-weight: 600; cursor: pointer; }
+button:hover { background: var(--accent-hover); }
+button.ghost { background: var(--ghost-bg); color: var(--text); }
+button.sm { padding: 6px 10px; font-size: 12px; }
+button.danger:hover { background: var(--danger); color: var(--accent-fg); }
+.acc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 12px; }
+.acc .head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; gap: 8px; }
+.acc .name { font-size: 14px; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.acc .code { font-family: 'SF Mono', Consolas, monospace; font-size: 26px; letter-spacing: 3px; color: var(--accent); margin-bottom: 6px; }
+.acc .foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.acc .ttl { font-size: 12px; color: var(--muted); }
+.bar { width: 84px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+.bar > div { height: 100%; background: var(--accent); transition: width 1s linear; }
+.acc .secret { font-size: 11px; color: var(--muted); font-family: monospace; word-break: break-all; margin-top: 8px; }
+.acc .actions { display: flex; gap: 6px; }
+.editfields { display: flex; flex-direction: column; gap: 8px; margin: 8px 0; }
+.editfields .erow { display: flex; gap: 8px; }
+.editfields input { flex: 1; }
+.empty { color: var(--muted); font-size: 14px; text-align: center; padding: 40px 0; }
+.err { color: var(--danger); font-size: 13px; margin-bottom: 12px; display: none; }
+.ok { color: var(--ok); font-size: 13px; margin-bottom: 12px; display: none; }
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 8px 8px 8px 14px; margin-bottom: 20px; }
+.toolbar .status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); min-width: 0; }
+.toolbar .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex: none; }
+.toolbar .dot.ok { background: var(--ok); }
+.toolbar .dot.err { background: var(--danger); }
+.toolbar .dot.sync { background: var(--accent); animation: pulse 1s ease-in-out infinite; }
+.toolbar .status .info { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.toolbar .iconbtn { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; padding: 0; border-radius: 8px; background: var(--ghost-bg); color: var(--text); flex: none; }
+.toolbar .iconbtn:hover { background: var(--accent-hover); color: var(--accent-fg); }
+.toolbar .iconbtn:disabled { opacity: 0.6; cursor: default; }
+.toolbar .iconbtn svg { width: 16px; height: 16px; }
+.toolbar .iconbtn.spinning svg { animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse { 50% { opacity: 0.35; } }
+</style>
+</head>
+<body>
+<div class="panel">
+  <h1>Authenticator</h1>
+  <div class="subtitle">TOTP · plugin dev example · persistent state</div>
+  <div class="toolbar">
+    <div class="status">
+      <span class="dot" id="statusDot"></span>
+      <span class="info" id="statusText">connecting…</span>
+    </div>
+    <button class="iconbtn" id="refreshBtn" title="Refresh now" aria-label="Refresh">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><polyline points="21 3 21 9 15 9"/></svg>
+    </button>
+  </div>
+  <div class="err" id="err"></div>
+  <div class="ok" id="ok"></div>
+  <form class="addform" id="add">
+    <input id="name" placeholder="Account name (e.g. github:alice)" autocomplete="off" required>
+    <div class="row">
+      <input id="secret" placeholder="Secret (base32, optional — generated if blank)" autocomplete="off" spellcheck="false" style="font-family:'SF Mono',Consolas,monospace">
+      <button type="submit">Add</button>
+    </div>
+  </form>
+  <div id="list"></div>
+</div>
+<script>
+// The panel is served at /plugin/app.authenticator/index.html (static asset)
+// and calls the app's own callables through the gateway's generic
+// /api/{callID} proxy → pluginhost.invoke (Public).
+function b64(s) {
+  const bytes = new TextEncoder().encode(s);
+  let bin = '';
+  for (const b of bytes) bin += String.fromCharCode(b);
+  return btoa(bin);
+}
+function unb64(s) {
+  const bin = atob(s);
+  const bytes = Uint8Array.from(bin, c => c.charCodeAt(0));
+  return new TextDecoder().decode(bytes);
+}
+async function call(name, payload) {
+  // Prefer the session-scoped plugin bridge injected by the host shell
+  // (window.sporemind, established via the sporemind:handshake MessagePort);
+  // fall back to the generic /api proxy when the page is opened standalone
+  // (e.g. directly in a browser).
+  if (window.sporemind) {
+    return await window.sporemind.invoke(name, payload || {});
+  }
+  const res = await fetch('/api/pluginhost.invoke', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    // Payload is a []byte on the wire → base64 string (JSON []byte semantics).
+    body: JSON.stringify({ Id: 'app.authenticator', Callable: name, Payload: b64(JSON.stringify(payload || {})) })
+  });
+  if (!res.ok) throw new Error(name + ' failed: ' + (await res.text()).slice(0, 200));
+  const body = await res.json();
+  return body.Payload ? JSON.parse(unb64(body.Payload)) : {};
+}
+function showError(msg) {
+  const el = document.getElementById('err');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+  if (msg) { const ok = document.getElementById('ok'); ok.style.display = 'none'; }
+}
+function showOk(msg) {
+  const el = document.getElementById('ok');
+  el.textContent = msg;
+  el.style.display = msg ? 'block' : 'none';
+  setTimeout(() => { el.style.display = 'none'; }, 2500);
+}
+
+function escapeHtml(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+const state = { codes: null };
+const connMode = window.sporemind ? 'bridge' : 'http';
+
+function setStatus(kind, text) {
+  const dot = document.getElementById('statusDot');
+  dot.className = 'dot ' + kind;
+  document.getElementById('statusText').textContent = text;
+}
+
+let refreshing = false;
+async function refresh() {
+  if (refreshing) return;
+  refreshing = true;
+  const btn = document.getElementById('refreshBtn');
+  btn.disabled = true;
+  btn.classList.add('spinning');
+  setStatus('sync', connMode + ' · syncing…');
+  try {
+    showError('');
+    const codes = await call('codes', {});
+    render(codes);
+    const n = (codes.Accounts || []).length;
+    const t = new Date().toLocaleTimeString();
+    setStatus('ok', connMode + ' · ' + n + (n === 1 ? ' account' : ' accounts') + ' · ' + t);
+  } catch (e) {
+    setStatus('err', connMode + ' · sync failed');
+    showError(e.message);
+  } finally {
+    refreshing = false;
+    btn.disabled = false;
+    btn.classList.remove('spinning');
+  }
+}
+document.getElementById('refreshBtn').onclick = refresh;
+
+function viewRow(a) {
+  const pct = Math.max(2, Math.round(100 * a.SecondsRemaining / a.Period));
+  const row = document.createElement('div');
+  row.className = 'acc';
+  row.innerHTML =
+    '<div class="head"><div class="name"></div>' +
+    '<div class="actions"><button class="ghost sm edit">edit</button><button class="ghost sm danger remove">remove</button></div></div>' +
+    '<div class="code"></div>' +
+    '<div class="foot"><div class="ttl"></div><div class="bar"><div style="width:' + pct + '%"></div></div></div>' +
+    '<div class="secret"></div>';
+  row.querySelector('.name').textContent = a.Name;
+  row.querySelector('.code').textContent = a.Code;
+  row.querySelector('.ttl').textContent = a.SecondsRemaining + 's';
+  row.querySelector('.secret').textContent = 'secret: ' + (a.SecretBase32 || '');
+  row.querySelector('.edit').onclick = () => editRow(a.AccountId);
+  row.querySelector('.remove').onclick = async () => {
+    try { await call('remove', { AccountId: a.AccountId }); refresh(); }
+    catch (e) { showError(e.message); }
+  };
+  return row;
+}
+
+function editRow(accountId) {
+  const a = (state.codes && state.codes.Accounts || []).find(x => x.AccountId === accountId);
+  if (!a) return;
+  const row = document.createElement('div');
+  row.className = 'acc';
+  row.innerHTML =
+    '<div class="editfields">' +
+      '<div class="erow"><input class="ename" placeholder="Account name" autocomplete="off"></div>' +
+      '<div class="erow"><input class="esecret" placeholder="Secret (base32)" autocomplete="off" spellcheck="false" style="font-family:\'SF Mono\',Consolas,monospace"></div>' +
+      '<div class="erow"><button class="save">Save</button><button class="ghost cancel">Cancel</button></div>' +
+    '</div>';
+  const nameIn = row.querySelector('.ename');
+  const secIn = row.querySelector('.esecret');
+  nameIn.value = a.Name || '';
+  secIn.value = a.SecretBase32 || '';
+  row.querySelector('.cancel').onclick = () => render(state.codes);
+  row.querySelector('.save').onclick = async () => {
+    const name = nameIn.value.trim();
+    const secret = secIn.value.trim();
+    if (!name && !secret) { showError('Enter a new name or secret to save.'); return; }
+    try {
+      showError('');
+      const r = await call('update', { AccountId: accountId, Name: name, Secret: secret });
+      if (!r.Updated) { showError('Account not found.'); return; }
+      showOk('Updated ' + (r.Name || name || 'account'));
+      refresh();
+    } catch (e) { showError(e.message); }
+  };
+  nameIn.addEventListener('keydown', e => { if (e.key === 'Enter') row.querySelector('.save').click(); });
+  secIn.addEventListener('keydown', e => { if (e.key === 'Enter') row.querySelector('.save').click(); });
+
+  const list = document.getElementById('list');
+  const existing = Array.from(list.children).find(n => n.dataset.id === accountId);
+  if (existing) list.replaceChild(row, existing); else list.appendChild(row);
+  row.dataset.id = accountId;
+}
+
+function render(codes) {
+  state.codes = codes;
+  const list = document.getElementById('list');
+  list.innerHTML = '';
+  if (!codes.Accounts || !codes.Accounts.length) {
+    list.innerHTML = '<div class="empty">No accounts yet — add one above.</div>';
+    return;
+  }
+  for (const a of codes.Accounts) {
+    const row = viewRow(a);
+    row.dataset.id = a.AccountId;
+    list.appendChild(row);
+  }
+}
+document.getElementById('add').onsubmit = async (ev) => {
+  ev.preventDefault();
+  const name = document.getElementById('name').value.trim();
+  if (!name) return;
+  const secret = document.getElementById('secret').value.trim();
+  try {
+    showError('');
+    const r = await call('provision', { Name: name, Secret: secret || undefined });
+    showOk('Added ' + r.Name + (secret ? '' : ' — new secret shown below'));
+    if (!secret) {
+      alert('Secret for ' + r.Name + ' (store in Google Authenticator now, shown once):\n\n' + r.SecretBase32 + '\n\n' + r.OtpAuthUrl);
+    }
+    document.getElementById('name').value = '';
+    document.getElementById('secret').value = '';
+    refresh();
+  } catch (e) { showError(e.message); }
+};
+refresh();
+setInterval(refresh, 5000);
+</script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+/*
+ * Marquee (rubber-band) selection rectangle — visual companion to
+ * useMarqueeSelection. The hook appends `.mq-marquee-rect` inside the
+ * container (the scrolling element) and toggles `.mq-selecting` on it while
+ * a gesture is active. This is a plain in-flow-container element, never a
+ * window-level overlay, so browserOverlay does not apply.
+ */
+
+.mq-marquee-rect {
+  position: absolute;
+  z-index: 5;
+  pointer-events: none;
+  box-sizing: border-box;
+  border: 1px solid var(--accent-primary, #4f8cff);
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--accent-primary, #4f8cff) 18%, transparent);
+}
+
+.mq-selecting {
+  cursor: crosshair;
+  user-select: none;
+  -webkit-user-select: none;
+}

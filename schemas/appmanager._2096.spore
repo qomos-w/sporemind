@@ -1,0 +1,123 @@
+// appmanager namespace — AppManager lifecycle and runtime registry.
+// @ts-export
+
+struct AppManagerRegisterReq {
+    Manifest: AppManifest
+    EntryModule: string
+    Modules: map<string, string>
+    optional Assets: map<string, bytes>
+    optional SchemaDescriptors: map<string, AppObjectDescriptor>
+    optional PackageHash: string
+    optional PackagePath: string
+    optional ArtifactPath: string
+    optional ArtifactHash: string
+    optional Abi: PluginAbi
+    optional Origin: string       // "builtin" | "user" | "project" (default "user")
+}
+
+struct AppManagerUnregisterReq {
+    Id: string
+}
+
+struct AppManagerGetReq {
+    Id: string
+}
+
+struct AppManagerGetResp {
+    Status: AppStatus
+}
+
+struct AppManagerListReq {
+}
+
+struct AppManagerListResp {
+    Items: array<AppStatus>
+}
+
+struct AppManagerInvokeReq {
+    Id: string
+    Callable: string
+    Payload: bytes
+    optional AgentId: string
+    optional Role: string
+    optional ProjectId: string
+    optional WorkspaceId: string        // workspace ACTOR id, host-stamped by the turn engine for aistats attribution; NOT an authorization basis
+    optional RequestId: string
+    optional SessionId: string         // audit/correlation metadata only; NOT an authorization basis
+    optional SessionToken: string      // sole authorization credential; HMAC-signed session token, validated as invoke pre-auth when present
+    optional CallSeq: long
+    optional ExpectedPackageHash: string
+    optional RouteDepth: int
+    optional RouteToken: string
+}
+
+struct AppManagerInvokeResp {
+    Payload: bytes
+}
+
+struct AppManagerCastReq {
+    Id: string
+    Event: string
+    Payload: bytes
+    optional AgentId: string
+    optional Role: string
+    optional ProjectId: string
+    // SessionToken is the signed app-session credential. When present it
+    // authorizes cast/emit on behalf of the app view the session was issued
+    // for. It is the preferred trust boundary; AgentId/ProjectId are only
+    // used as fallbacks for internal or legacy callers.
+    optional SessionToken: string
+}
+
+struct AppManagerCastResp {
+    Delivered: int
+}
+
+struct AppManagerEmitReq {
+    Id: string
+    Event: string
+    Payload: bytes
+    optional AgentId: string
+    optional Role: string
+    optional ProjectId: string
+    // SessionToken is the signed app-session credential. When present it
+    // authorizes cast/emit on behalf of the app view the session was issued
+    // for. It is the preferred trust boundary; AgentId/ProjectId are only
+    // used as fallbacks for internal or legacy callers.
+    optional SessionToken: string
+}
+
+struct AppManagerEmitResp {
+    Accepted: bool
+}
+
+struct AppEventMessage {
+    Id: string
+    Event: string
+    Payload: bytes
+    optional Sender: string
+}
+
+struct AppManagerAuditReq {
+    optional AppId: string
+    optional Limit: int
+}
+
+struct AppManagerAuditResp {
+    Records: array<AppAuditRecord>
+}
+
+struct AppAuditRecord {
+    Time: string
+    RequestId: string
+    AppId: string
+    Runtime: string
+    AgentId: string
+    Role: string
+    ProjectId: string
+    Callable: string
+    Allowed: bool
+    Reason: string
+    optional SessionId: string
+    optional CallSeq: long
+}

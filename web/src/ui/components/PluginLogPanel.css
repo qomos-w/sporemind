@@ -1,0 +1,178 @@
+.plugin-log-panel {
+  flex-shrink: 0;
+  height: 180px;
+  max-height: 75%;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  display: flex;
+  flex-direction: column;
+}
+
+.plugin-log-resize {
+  height: 6px;
+  flex-shrink: 0;
+  cursor: ns-resize;
+  touch-action: none;
+  position: relative;
+}
+
+.plugin-log-resize::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 2px;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--border-strong, var(--text-tertiary));
+  opacity: 0.6;
+  transition: background var(--transition-fast), opacity var(--transition-fast);
+}
+
+.plugin-log-resize:hover::after,
+.plugin-log-resize:active::after {
+  background: var(--accent-primary);
+  opacity: 1;
+}
+
+.plugin-log-header {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.plugin-log-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  flex-shrink: 0;
+}
+
+.plugin-log-filters {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.plugin-log-count {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  margin-left: auto;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.plugin-log-crash-banner,
+.plugin-log-dropped-banner,
+.plugin-log-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 8px;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.plugin-log-crash-banner {
+  background: color-mix(in srgb, var(--status-failed) 12%, transparent);
+  color: var(--status-failed);
+}
+
+.plugin-log-dropped-banner {
+  background: color-mix(in srgb, var(--status-waiting) 12%, transparent);
+  color: var(--status-waiting);
+}
+
+.plugin-log-error-banner {
+  background: color-mix(in srgb, var(--status-failed) 8%, transparent);
+  color: var(--text-secondary);
+}
+
+.plugin-log-crash-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.plugin-log-list {
+  flex: 1;
+  overflow-y: auto;
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  line-height: 1.5;
+  min-height: 0;
+}
+
+.plugin-log-row {
+  display: flex;
+  gap: 8px;
+  padding: 1px 8px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.plugin-log-time {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.plugin-log-level {
+  flex-shrink: 0;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.03em;
+  min-width: 36px;
+  text-align: center;
+}
+
+.plugin-log-level-debug {
+  color: var(--text-tertiary);
+}
+
+.plugin-log-level-info {
+  color: var(--accent-primary);
+}
+
+.plugin-log-level-warn {
+  color: var(--status-waiting);
+}
+
+.plugin-log-level-error {
+  color: var(--status-failed);
+}
+
+.plugin-log-source {
+  flex-shrink: 0;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.plugin-log-source-frontend {
+  color: color-mix(in srgb, var(--accent-primary) 70%, transparent);
+}
+
+.plugin-log-source-backend {
+  color: var(--text-secondary);
+}
+
+.plugin-log-message {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-primary);
+}
+
+.plugin-log-empty {
+  padding: 8px;
+  color: var(--text-tertiary);
+  font-size: 11px;
+  text-align: center;
+}

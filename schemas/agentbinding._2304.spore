@@ -1,0 +1,41 @@
+// agentbinding namespace — explicit App to Agent capability and surface policy.
+// @ts-export
+
+struct AgentCapabilityBindingReq {
+    AppId: string
+    AgentId: string
+    Callable: string
+    Role: string
+    ProjectId: string
+}
+
+struct AgentCapabilityBindingResp {
+    Allowed: bool
+    optional Reason: string
+}
+
+struct AgentSurfaceBindingReq {
+    AppId: string
+    AgentId: string
+    Entrypoint: string
+    Projections: array<string>
+    Events: array<string>
+}
+
+struct AgentSurfaceBindingResp {
+    Bound: bool
+}
+
+struct FreeAgentPolicy {
+    AllowCreate: bool
+    AllowSwitch: bool
+    AllowMessage: bool
+    optional AgentKinds: array<string>
+}
+
+struct AgentBindingStatus {
+    AppId: string
+    AgentId: string
+    State: string
+    optional Error: string
+}

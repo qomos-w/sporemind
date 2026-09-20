@@ -1,0 +1,154 @@
+// browser namespace — browser instances wire shapes (right-panel tabs +
+// crawl-engine automation windows).
+// @ts-export
+//
+// Sources of truth for:
+//   - browsermanager.list / get / create / remove / update / navigate
+//   - browserinstance.update_state / navigate
+//   - persisted BrowserInstanceConfig (one per child)
+//
+// Topology:
+//   /browsermanager                holds []BrowserInstanceConfig
+//   /browsermanager/inst-N         one instance per child (tab session or
+//                                  crawl-driven WebView2 window)
+//
+
+struct BrowserPageState {
+    ScrollX: int
+    ScrollY: int
+    Zoom:    double
+    Data:    string
+}
+
+
+// BrowserHistoryEntry is one visit recorded in an independent browser
+// instance's address history. VisitedAt is an RFC3339 UTC timestamp; storage
+// is UTC, display converts to local time.
+struct BrowserHistoryEntry {
+    Url:       string
+    Title:     string
+    VisitedAt: string
+}
+
+
+struct BrowserWindowState {
+    X:         int
+    Y:         int
+    Width:     int
+    Height:    int
+    Maximised: bool
+    Url:       string
+    Title:     string
+    PageState: BrowserPageState
+    // History is the per-instance visit history (oldest first) recorded by the
+    // desktop NavigationCompleted commit path. Only independent instances
+    // populate it; the global browser is shared workspace state and is not
+    // persisted as an instance.
+    History: array<BrowserHistoryEntry>
+}
+
+
+struct BrowserInstanceConfig {
+    Id:    string
+    Name:  string
+    Url:   string
+    Open:  bool
+    Proxy: string
+    // ProxyMode selects how the WebView2 instance connects: "system" (empty
+    // legacy value; use OS proxy settings), "none" (direct, no proxy) or
+    // "custom" (Proxy holds the HTTP(S)/SOCKS5 URL). Legacy configs with an
+    // empty ProxyMode map to custom when Proxy is set, system otherwise.
+    ProxyMode: string
+    // Mode is an internal flag, not a user choice. User-managed instances are
+    // always "tab" (rendered in the right-panel browser tabs). Only the crawl
+    // engine sets "window" — via browsermanager.internal_create — to get a real
+    // WebView2 window it can drive (hidden headless automation or the visible
+    // login-handoff window). An empty legacy value is treated as "window".
+    Mode:  string
+    // Hidden creates the WebView2 window off-screen and hides it from the
+    // taskbar. Used by the crawl engine so browsermanager.use can drive a page
+    // without a visible window while still sharing the same operator and profile
+    // isolation as normal windows.
+    Hidden: bool
+    State: BrowserWindowState
+}
+
+
+struct BrowserInstanceStatus {
+    Id:              string
+    Open:            bool
+    Url:             string
+    Title:           string
+    optional Error:  string
+}
+
+
+struct BrowserInstance {
+    Config: BrowserInstanceConfig
+    Status: BrowserInstanceStatus
+}
+
+
+struct BrowserManagerListResp {
+    Items: array<BrowserInstance>
+}
+
+
+struct BrowserManagerCreateReq {
+    Name:      string
+    Url:       string
+    Proxy:     string
+    ProxyMode: string
+    Hidden:    bool
+}
+
+
+struct BrowserManagerRemoveReq {
+    Id: string
+}
+
+
+struct BrowserManagerGetReq {
+    Id: string
+}
+
+
+struct BrowserManagerUpdateReq {
+    Id:     string
+    Config: BrowserInstanceConfig
+}
+
+
+struct BrowserManagerAsyncResult {
+    Accepted: bool
+    Instance: BrowserInstance
+}
+
+struct BrowserManagerEvent {
+    Kind:     string
+    Id:       string
+    Instance: BrowserInstance
+    optional Error: string
+}
+
+struct BrowserManagerNavigateReq {
+    Id:  string
+    Url: string
+}
+
+
+struct BrowserManagerOpenReq {
+    Id: string
+}
+
+
+struct BrowserManagerOpenGlobalReq {
+    Url: string
+}
+
+
+struct BrowserManagerOpenGlobalResp {
+    Opened: bool
+    Url:    string
+    Error:  string
+}

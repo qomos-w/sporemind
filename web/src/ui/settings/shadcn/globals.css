@@ -1,0 +1,261 @@
+/* =========================================================================
+   shadcn runtime — isolated Tailwind v4 entry（仅服务设置区 UI）
+
+   隔离原则：
+   1. 不引入全局 preflight：reset 以 `:where(.shadcn-scope)` 前缀 + `@layer base`
+      限定在设置容器子树内，其余 104 个既有 CSS 文件及其元素不受影响。
+   2. 主题 token 直接别名 app 语义 token（--bg-base、--text-primary 等），
+      明暗切换复用 `<html data-theme>` 体系，作用域限定 .shadcn-scope，
+      不向 :root 泄漏 --accent / --primary 等冲突变量名。
+   3. Tailwind source 扫描限定在设置相关目录，避免从全仓库 tsx/css 中的偶发
+      token（如 'hidden'、'grid'）误生成全局 utility。
+   ========================================================================= */
+
+@layer theme, base, components, utilities;
+
+@import "tailwindcss/theme" layer(theme);
+@import "tailwindcss/utilities" layer(utilities) source(none);
+@import "shadcn/tailwind.css";
+@import "tw-animate-css";
+
+/* ---- source 扫描范围（相对本文件） ---- */
+@source "../";                 /* web/src/ui/settings/**（原语 + 组合件） */
+@source "../../ai/components"; /* 设置面板（T4 迁移范围） */
+@source "../../panels";        /* web/src/ui/panels/**（UserPanel 等共享面板） */
+@source "../../editor/lsp";    /* ReferencesPopup（shadcn 构建的 LSP 引用搜索框） */
+
+/* ---- data-theme 桥接：dark: variant 跟随 <html data-theme="dark"> ---- */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* =========================================================================
+   Design tokens —— 直接别名到 theme/src/tokens.css 的语义 token。
+
+   app 的语义 token（--bg-base、--text-primary、--accent-primary 等）已经
+   通过 `<html data-theme="dark|light">` 完成明暗双主题切换，这里只做一层
+   shadcn 语义名 → app 语义名的映射，不再复制色值，也不需要单独的 dark 块。
+
+   作用域限定在 .shadcn-scope，避免向 :root 泄漏 --accent、--primary 等
+   与 app 既有 CSS（var(--accent, blue-fallback) 用法）冲突的变量名。
+   ========================================================================= */
+
+.shadcn-scope {
+  --radius: 0.625rem;
+
+  --shadcn-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans SC", sans-serif;
+  --shadcn-font-mono: "Fira Code", "Cascadia Code", "Consolas", monospace;
+
+  --background: var(--bg-elevated);
+  --foreground: var(--text-primary);
+  --card: var(--bg-elevated);
+  --card-foreground: var(--text-primary);
+  --popover: var(--bg-elevated);
+  --popover-foreground: var(--text-primary);
+  --primary: var(--accent-primary);
+  --primary-foreground: var(--text-inverse);
+  --secondary: var(--bg-hover);
+  --secondary-foreground: var(--text-primary);
+  --muted: var(--bg-subtle);
+  --muted-foreground: var(--text-secondary);
+  --accent: var(--surface-hover);
+  --accent-foreground: var(--text-primary);
+  --destructive: var(--status-failed);
+  --destructive-foreground: var(--text-inverse);
+  --border: var(--border-default);
+  --input: var(--border-default);
+  --ring: var(--accent-primary);
+  --chart-1: var(--accent-primary);
+  --chart-2: var(--status-success);
+  --chart-3: var(--status-waiting);
+  --chart-4: var(--status-failed);
+  --chart-5: var(--status-drifted);
+  --sidebar: var(--bg-surface);
+  --sidebar-foreground: var(--text-primary);
+  --sidebar-primary: var(--accent-primary);
+  --sidebar-primary-foreground: var(--text-inverse);
+  --sidebar-accent: var(--bg-hover);
+  --sidebar-accent-foreground: var(--text-primary);
+  --sidebar-border: var(--border-default);
+  --sidebar-ring: var(--accent-primary);
+}
+
+/* ---- 语义 token → Tailwind 颜色/字号/圆角 utility 映射 ---- */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --font-sans: var(--shadcn-font-sans);
+  --font-mono: var(--shadcn-font-mono);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+/* =========================================================================
+   Scoped preflight —— 仅作用于 `.shadcn-scope` 子树
+   以 tailwindcss/preflight.css 为蓝本精简，选择器统一加 :where(.shadcn-scope)
+   前缀，克制为 (0,0,1) 特异性：app 既有 unlayered 样式与 utility 均能覆盖。
+   注意：Base UI 弹层（Select/Dialog）默认 portal 到 body，样式依赖组件的
+   utility class，不受本 reset 影响，属预期行为。
+   ========================================================================= */
+
+@layer base {
+  :where(.shadcn-scope) *,
+  :where(.shadcn-scope) ::before,
+  :where(.shadcn-scope) ::after,
+  :where(.shadcn-scope) ::backdrop,
+  :where(.shadcn-scope) ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+
+  :where(.shadcn-scope) h1,
+  :where(.shadcn-scope) h2,
+  :where(.shadcn-scope) h3,
+  :where(.shadcn-scope) h4,
+  :where(.shadcn-scope) h5,
+  :where(.shadcn-scope) h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  :where(.shadcn-scope) a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+
+  :where(.shadcn-scope) b,
+  :where(.shadcn-scope) strong {
+    font-weight: bolder;
+  }
+
+  :where(.shadcn-scope) code,
+  :where(.shadcn-scope) kbd,
+  :where(.shadcn-scope) samp,
+  :where(.shadcn-scope) pre {
+    font-family: var(--shadcn-font-mono);
+    font-size: 1em;
+  }
+
+  :where(.shadcn-scope) small {
+    font-size: 80%;
+  }
+
+  :where(.shadcn-scope) sub,
+  :where(.shadcn-scope) sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+
+  :where(.shadcn-scope) sub {
+    bottom: -0.25em;
+  }
+
+  :where(.shadcn-scope) sup {
+    top: -0.5em;
+  }
+
+  :where(.shadcn-scope) table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+
+  :where(.shadcn-scope) hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+
+  :where(.shadcn-scope) ol,
+  :where(.shadcn-scope) ul,
+  :where(.shadcn-scope) menu {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  :where(.shadcn-scope) img,
+  :where(.shadcn-scope) svg,
+  :where(.shadcn-scope) video,
+  :where(.shadcn-scope) canvas,
+  :where(.shadcn-scope) audio,
+  :where(.shadcn-scope) iframe,
+  :where(.shadcn-scope) embed,
+  :where(.shadcn-scope) object {
+    display: block;
+    vertical-align: middle;
+  }
+
+  :where(.shadcn-scope) img,
+  :where(.shadcn-scope) video {
+    max-width: 100%;
+    height: auto;
+  }
+
+  :where(.shadcn-scope) button,
+  :where(.shadcn-scope) input,
+  :where(.shadcn-scope) select,
+  :where(.shadcn-scope) optgroup,
+  :where(.shadcn-scope) textarea,
+  :where(.shadcn-scope) ::file-selector-button {
+    margin: 0;
+    padding: 0;
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+
+  :where(.shadcn-scope) button,
+  :where(.shadcn-scope) input:where([type="button"], [type="reset"], [type="submit"]),
+  :where(.shadcn-scope) ::file-selector-button {
+    appearance: button;
+  }
+
+  :where(.shadcn-scope) ::placeholder {
+    opacity: 1;
+  }
+
+  :where(.shadcn-scope) textarea {
+    resize: vertical;
+  }
+}

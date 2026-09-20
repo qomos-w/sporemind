@@ -1,0 +1,536 @@
+/* ============================================
+   Timeline — framework layer (structure + animations)
+   ============================================ */
+
+/* ── Timeline root ── */
+.ai-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+/* ── Timeline step root ── */
+.ai-step {
+  position: relative;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* ── Vertical timeline line ── */
+.ai-step-line {
+  position: absolute;
+  left: 7px;
+  top: 18px;
+  bottom: -8px;
+  width: 1px;
+  background: color-mix(in srgb, var(--border-default) 50%, transparent);
+}
+
+/* ── Main row: icon + label ── */
+.ai-step-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  margin: 0 -4px;
+  border-radius: var(--radius-md);
+  position: relative;
+  min-width: 0;
+  transition: background var(--transition-fast);
+}
+
+.ai-step-header-extras {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.ai-step-row.expandable {
+  cursor: pointer;
+}
+
+.ai-step[data-status="running"] .ai-step-row.expandable,
+.ai-step[data-status="pending"] .ai-step-row.expandable {
+  cursor: default;
+}
+
+/* ── Icon slot (sits on the timeline line) ── */
+.ai-step-icon-slot {
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: var(--bg-base);
+  position: relative;
+  top: 1px;
+  z-index: 1;
+}
+
+.ai-step-icon {
+  color: color-mix(in srgb, var(--text-tertiary) 84%, var(--text-secondary) 16%);
+  flex-shrink: 0;
+  transition: opacity var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-step-icon svg {
+  stroke-width: 1.5;
+}
+
+.ai-step-icon-spin {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid color-mix(in srgb, var(--text-tertiary) 72%, var(--text-secondary) 28%);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: ai-step-spin 0.8s linear infinite;
+}
+
+.ai-step-icon-spin-pending {
+  border-color: color-mix(in srgb, var(--text-tertiary) 48%, var(--text-secondary) 52%);
+  border-top-color: transparent;
+  opacity: 0.82;
+}
+
+.ai-step-icon-petal {
+  display: block;
+  width: 16px;
+  height: 16px;
+  line-height: 0;
+}
+
+.ai-step-icon-petal-pending {
+  opacity: 0.82;
+}
+
+.ai-step-icon-accent,
+.ai-step-icon-error,
+.ai-step-icon-success,
+.ai-step-icon-warning {
+  color: color-mix(in srgb, var(--text-tertiary) 84%, var(--text-secondary) 16%);
+}
+
+.ai-step-icon-spinning {
+  animation: ai-step-spin 1s linear infinite;
+}
+
+@keyframes ai-step-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Icon entrance after running ends ── */
+@keyframes ai-icon-enter {
+  from { opacity: 0; transform: scale(0.45); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ai-icon-exit {
+  from { opacity: 1; transform: scale(1); }
+  to   { opacity: 0; transform: scale(0.25); }
+}
+
+.ai-step-icon-enter {
+  animation: ai-icon-enter 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ai-step-icon-exit {
+  position: absolute;
+  animation: ai-icon-exit 170ms cubic-bezier(0.4, 0, 1, 1) forwards;
+}
+
+/* ── Expandable icon layering + chevron transitions ── */
+.ai-step-icon-current,
+.ai-step-icon-arrow {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.ai-step-icon-current {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 170ms ease, transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.ai-step-icon-arrow {
+  opacity: 0;
+  transform: scale(0.28);
+}
+
+.ai-step-icon-arrow-shape {
+  width: 5px;
+  height: 5px;
+  border-right: 1px solid color-mix(in srgb, var(--text-secondary) 82%, var(--text-tertiary) 18%);
+  border-bottom: 1px solid color-mix(in srgb, var(--text-secondary) 82%, var(--text-tertiary) 18%);
+}
+
+.ai-step-icon-arrow-right .ai-step-icon-arrow-shape {
+  transform: rotate(-45deg);
+}
+
+.ai-step-icon-arrow-down .ai-step-icon-arrow-shape {
+  transform: rotate(45deg);
+}
+
+.ai-step-icon-slot[data-arrow-state='icon'] .ai-step-icon-current {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.ai-step-icon-slot[data-arrow-state='icon'] .ai-step-icon-arrow-right,
+.ai-step-icon-slot[data-arrow-state='icon'] .ai-step-icon-arrow-down {
+  opacity: 0;
+  transform: scale(0.35);
+}
+
+.ai-step-icon-slot[data-arrow-state='right'] .ai-step-icon-current,
+.ai-step-icon-slot[data-arrow-state='down'] .ai-step-icon-current {
+  opacity: 0;
+  transform: scale(0.35);
+}
+
+.ai-step-icon-slot[data-arrow-state='right'] .ai-step-icon-arrow-right,
+.ai-step-icon-slot[data-arrow-state='down'] .ai-step-icon-arrow-down {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 220ms ease 40ms, transform 300ms cubic-bezier(0.22, 1, 0.36, 1) 40ms;
+}
+
+.ai-step-icon-slot[data-arrow-state='right'] .ai-step-icon-arrow-down,
+.ai-step-icon-slot[data-arrow-state='down'] .ai-step-icon-arrow-right {
+  opacity: 0;
+  transform: scale(0.35);
+}
+
+.ai-step-icon-slot[data-arrow-state='to-down'] .ai-step-icon-current {
+  animation: ai-step-icon-current-out 420ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+.ai-step-icon-slot[data-arrow-state='to-down'] .ai-step-icon-arrow-right {
+  animation: ai-step-arrow-out-first 420ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+.ai-step-icon-slot[data-arrow-state='to-down'] .ai-step-icon-arrow-down {
+  animation: ai-step-arrow-in-delayed 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.ai-step-icon-slot[data-arrow-state='to-right'] .ai-step-icon-current {
+  opacity: 0;
+  transform: scale(0.28);
+}
+
+.ai-step-icon-slot[data-arrow-state='to-right'] .ai-step-icon-arrow-down {
+  animation: ai-step-arrow-out-first 420ms cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+.ai-step-icon-slot[data-arrow-state='to-right'] .ai-step-icon-arrow-right {
+  animation: ai-step-arrow-in-delayed 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes ai-step-icon-current-out {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  62%, 100% {
+    opacity: 0;
+    transform: scale(0.28);
+  }
+}
+
+@keyframes ai-step-arrow-out-first {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  58%, 100% {
+    opacity: 0;
+    transform: scale(0.18);
+  }
+}
+
+@keyframes ai-step-arrow-in-delayed {
+  0%, 58% {
+    opacity: 0;
+    transform: scale(0.12);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.ai-step-icon-arrow-forced {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+  transition: opacity 220ms ease 40ms, transform 300ms cubic-bezier(0.22, 1, 0.36, 1) 40ms;
+}
+
+.ai-step-icon-arrow-forced .ai-step-icon-arrow-shape {
+  transform: rotate(45deg);
+}
+
+/* Spinner phase only: always show spinner, suppress chevron */
+.ai-step[data-status="running"][data-icon-phase="spinning"] .ai-step-icon-slot[data-expandable] .ai-step-icon-arrow,
+.ai-step[data-status="pending"][data-icon-phase="spinning"] .ai-step-icon-slot[data-expandable] .ai-step-icon-arrow {
+  opacity: 0 !important;
+  animation: none !important;
+}
+
+.ai-step[data-status="running"][data-icon-phase="spinning"] .ai-step-icon-slot[data-expandable] .ai-step-icon-current,
+.ai-step[data-status="pending"][data-icon-phase="spinning"] .ai-step-icon-slot[data-expandable] .ai-step-icon-current {
+  opacity: 1 !important;
+  transform: scale(1) !important;
+  animation: none !important;
+}
+
+/* Card variant: icon slot is directly in .ai-step-card-row, not inside .ai-step-row */
+.ai-card-step {
+  --ai-card-icon-title-offset: 9px;
+}
+
+.ai-edit-step + .ai-edit-step {
+  margin-top: 6px;
+}
+
+.ai-step-card-row .ai-step-icon-slot {
+  margin-top: var(--ai-card-icon-title-offset);
+  background: transparent;
+}
+
+.ai-step-card-row .ai-step-icon-slot[data-expandable] {
+  cursor: pointer;
+}
+
+.ai-card-step .ai-step-line {
+  top: calc(18px + var(--ai-card-icon-title-offset));
+}
+
+/* ── Collapsible (smooth expand/collapse) ── */
+.ai-collapsible {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows var(--ai-expand-ms, 1000ms) ease-in-out, opacity 260ms ease-in-out;
+}
+
+.ai-collapsible.open {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.ai-collapsible.title-first {
+  transition-delay: 0ms;
+}
+
+.ai-collapsible.title-first.open {
+  transition-delay: var(--ai-title-delay);
+}
+
+.ai-collapsible-inner {
+  overflow: hidden;
+  margin-left: 16px;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: padding-top var(--ai-expand-ms, 1000ms) ease-in-out, padding-bottom var(--ai-expand-ms, 1000ms) ease-in-out;
+}
+
+.ai-collapsible.open .ai-collapsible-inner {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+/* ── Content offset (for always-visible content below step row) ── */
+.ai-step-content-offset {
+  margin-left: 16px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+}
+
+/* ── Card step (icon + card frame wrapping header + content) ── */
+.ai-step-card-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px;
+  margin: 0 -4px;
+  min-width: 0;
+}
+
+.ai-step-card {
+  flex: 0 1 56.25%;
+  width: 56.25%;
+  max-width: 800px;
+  min-width: 0;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  overflow: hidden;
+  padding: 8px 8px 0;
+}
+
+.ai-step-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -8px -8px 0;
+  padding: 6px 8px 0;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+}
+
+.ai-step-card-header::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  bottom: -8px;
+  border-radius: inherit;
+  background: var(--bg-hover);
+  opacity: 0;
+  transition: opacity var(--transition-fast);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.ai-step-card-header:hover::after {
+  opacity: 1;
+}
+
+/* Card collapsible inner — padding goes on children, not on the inner wrapper
+   (padding on collapsible-inner prevents 0fr from collapsing to 0) */
+.ai-step-card .ai-collapsible-inner {
+  margin-left: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition: padding-top var(--ai-expand-ms, 1000ms) ease-in-out, padding-bottom var(--ai-expand-ms, 1000ms) ease-in-out;
+}
+
+.ai-step-card .ai-collapsible.open .ai-collapsible-inner {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+.ai-shell-mobile .ai-step-card {
+  flex: 1 1 auto;
+  width: auto;
+  max-width: 100%;
+}
+
+/* ── Step label ── */
+.ai-step-label {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: color-mix(in srgb, var(--text-secondary) 88%, var(--text-tertiary) 12%);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.ai-step-label.error {
+  color: inherit;
+}
+
+/* ── Transition host (in-place slot replacement animation) ── */
+.ai-transition-host {
+  position: relative;
+}
+
+/* Default: fade */
+.ai-transition-fade .ai-transition-enter {
+  animation: ai-fade-in 300ms ease-out;
+}
+
+.ai-transition-fade .ai-transition-exit {
+  animation: ai-fade-out 200ms ease-in;
+  position: absolute;
+  inset: 0;
+}
+
+/* Slide variant */
+.ai-transition-slide .ai-transition-enter {
+  animation: ai-slide-in 300ms ease-out;
+}
+
+.ai-transition-slide .ai-transition-exit {
+  animation: ai-fade-out 200ms ease-in;
+  position: absolute;
+  inset: 0;
+}
+
+@keyframes ai-slide-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Scale variant */
+.ai-transition-scale .ai-transition-enter {
+  animation: ai-scale-in 300ms ease-out;
+}
+
+.ai-transition-scale .ai-transition-exit {
+  animation: ai-fade-out 200ms ease-in;
+  position: absolute;
+  inset: 0;
+}
+
+@keyframes ai-scale-in {
+  from { opacity: 0; transform: scale(0.95); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+@keyframes ai-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes ai-fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+/* ── TypeWriter ── */
+.ai-typewriter-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--text-primary);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: ai-cursor-blink 1s step-end infinite;
+}
+
+@keyframes ai-cursor-blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+
+/* ── Label shimmer animation (running state) ── */
+/* Staggered animation-delay creates a sequential shimmer sweep */
+@keyframes ai-char-shimmer {
+  0%, 100% {
+    color: color-mix(in srgb, var(--text-secondary) 88%, var(--text-tertiary) 12%);
+  }
+  50% {
+    color: color-mix(in srgb, var(--text-primary) 80%, var(--text-secondary) 20%);
+  }
+}
+
+.ai-step-label-wave .ai-step-label-char {
+  display: inline-block;
+  animation:
+    ai-char-shimmer var(--ai-shimmer-duration, 1.6s) ease-in-out infinite;
+}
+
+.ai-wave-paused .ai-step-label-char {
+  animation-play-state: paused;
+}

@@ -1,0 +1,166 @@
+// app.appdef — TOTP authenticator (Google Authenticator style), with per-app
+// persistent state (state.get/state.set). Dev-flow breakpoint validation example.
+app Authenticator {
+    id:        "app.authenticator"
+    name:      "Authenticator"
+    version:   "0.1.0"
+    namespace: "authenticator"
+    permissions: ["state.get", "state.set", "registry.query"]
+
+    // Host event subscriptions: the pluginhost forwards matching gospore bus
+    // events into OnXxx handlers in handlers.go (typed payloads live in
+    // hostproto.gen.go). app_lifecycle covers this app's own runtime state
+    // transitions (reloaded / restart_pending / ...); app_event is the
+    // envelope other apps cast messages into.
+    listen app_lifecycle { }
+    listen app_event { }
+
+    struct ProvisionRequest {
+        Name: string                  // account label, e.g. "github:alice"
+        optional Secret: string       // base32 secret to import; generated when omitted
+        optional Digits: int          // 6 (default) or 8
+        optional Period: int          // seconds per step, default 30
+        optional Algorithm: string    // SHA1 (default) | SHA256 | SHA512
+    }
+    struct ProvisionResponse {
+        AccountId:    string
+        Name:         string
+        SecretBase32: string
+        OtpAuthUrl:   string
+        Digits:       int
+        Period:       int
+        Algorithm:    string
+    }
+    struct AccountCode {
+        AccountId:       string
+        Name:            string
+        Code:            string
+        SecretBase32:    string
+        SecondsRemaining: int
+        Period:          int
+    }
+    struct CodesRequest {
+        optional AccountId: string   // single account when set, all accounts when omitted
+    }
+    struct CodesResponse {
+        Accounts: array<AccountCode>
+        NowUnix:  long
+    }
+    struct VerifyRequest {
+        AccountId:    string
+        Code:         string
+        optional Window: int        // allowed drift in steps, default 1 (±30s)
+    }
+    struct VerifyResponse {
+        Valid:     bool
+        AccountId: string
+        Error:     string
+    }
+    struct RemoveRequest {
+        AccountId: string
+    }
+    struct RemoveResponse {
+        Removed:   bool
+        AccountId: string
+    }
+    struct UpdateRequest {
+        AccountId:       string
+        optional Name:   string   // rename when set
+        optional Secret: string   // replace base32 secret when set
+    }
+    struct UpdateResponse {
+        Updated:      bool
+        AccountId:    string
+        Name:         string
+        SecretBase32: string
+        OtpAuthUrl:   string
+    }
+    // DiscoverRequest queries the host callable registry (sdk.ListCallables →
+    // registry.query host call, capability registry.read). Filters are
+    // case-insensitive substrings; both empty returns the whole surface.
+    struct DiscoverRequest {
+        optional Service: string    // substring on service name
+        optional Callable: string   // substring on dotted callID + description
+        optional Limit: int         // page size (host default when omitted)
+        optional Cursor: string     // continuation cursor from a previous page
+    }
+    struct DiscoverMatch {
+        CallID:       string
+        Service:      string
+        Description:  string
+        Permission:   string
+        EffectKind:   string
+        ReqSchemaId:  long
+        RespSchemaId: long
+    }
+    struct DiscoverResponse {
+        Items:      array<DiscoverMatch>
+        NextCursor: string
+    }
+
+    callable provision {
+        request:  ProvisionRequest
+        response: ProvisionResponse
+        effect:   "mutate"
+        toolName: "authenticator-provision"
+    }
+    callable codes {
+        request:  CodesRequest
+        response: CodesResponse
+        effect:   "read"
+        toolName: "authenticator-codes"
+    }
+    callable verify {
+        request:  VerifyRequest
+        response: VerifyResponse
+        effect:   "read"
+        toolName: "authenticator-verify"
+    }
+    callable remove {
+        request:  RemoveRequest
+        response: RemoveResponse
+        effect:   "mutate"
+        toolName: "authenticator-remove"
+    }
+    callable update {
+        request:  UpdateRequest
+        response: UpdateResponse
+        effect:   "mutate"
+        toolName: "authenticator-update"
+    }
+    // discover is programmatic (not agent-facing): it exercises the
+    // registry.read capability through sdk.ListCallables.
+    callable discover {
+        request:  DiscoverRequest
+        response: DiscoverResponse
+        effect:   "read"
+        toolName: "authenticator-discover"
+    }
+
+    // The bundle exposes the agent-facing tool surface. After register_project
+    // appmanager projects a VIRTUAL component per bundle
+    // (id app-bundle:{appID}:{slug}); agents that mount that card get these
+    // four callables as app tools. The description below is the mounted
+    // bundle's usage prompt (tool_guidance section) — operational guidance in
+    // the system bundle-card format, with \n escapes for markdown paragraphing.
+    // update is intentionally left out of the bundle: it is invoked
+    // programmatically, not surfaced to agents.
+    bundle authenticator_tools {
+        title:       "Authenticator Tools"
+        description: "TOTP account management (Google Authenticator style) with per-app persistent state.\n\n- **authenticator-provision** — add a TOTP account; omit Secret to generate one, set Digits/Period/Algorithm for non-default token shape.\n- **authenticator-codes** — list current codes with seconds remaining; pass AccountId for one account, omit for all.\n- **authenticator-verify** — check a code against an account; Window widens allowed drift in steps (default 1).\n- **authenticator-remove** — delete an account by id.\n\nupdate is not agent-facing (programmatic only)."
+        icon:        "shield-check"
+        color:       "#9333ea"
+        tools:       [provision, codes, verify, remove]
+    }
+
+    entrypoint view main {
+        title: "Authenticator"
+        route: "/"
+    }
+
+    free_agent {
+        allow_create: true
+        allow_message: true
+        agent_kinds: [coder]
+    }
+}

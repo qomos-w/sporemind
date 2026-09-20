@@ -1,0 +1,20 @@
+// shell.session.teardown namespace — path-scoped session teardown.
+// @ts-export
+//
+// Source of truth for:
+//   - shell.sessions_close_by_path (internal)
+//
+// shell.sessions_close_by_path closes every interactive session whose working
+// directory is at or under Path. Internal-only: used by the project actor to
+// release process handles (terminal shells whose cwd is inside a worktree)
+// before deleting a merged/discarded worktree directory on Windows, where a
+// live process cwd otherwise keeps the dir locked.
+
+struct ShellSessionsCloseByPathReq {
+    Path: string  // absolute directory; sessions with cwd at or under it are closed
+}
+
+
+struct ShellSessionsCloseByPathResp {
+    Closed: array<string>  // session ids that were closed
+}

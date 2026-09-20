@@ -1,0 +1,36 @@
+/* ── Keyboard-aware utilities ──
+ *
+ *  useKeyboardHeight() (in App.tsx) sets --keyboard-height on :root whenever
+ *  the soft keyboard opens.  These utility classes let any component / page
+ *  adapt without duplicating logic.
+ *
+ *  Usage:
+ *    <div class="kb-pad-bottom">…</div>          – add keyboard-height padding
+ *    <div class="kb-safe-bottom">…</div>         – safe-area + keyboard padding
+ *    <div class="kb-aware-fixed">…</div>         – fixed bottom, offset by keyboard
+ */
+
+/* Padding equal to keyboard height */
+.kb-pad-bottom {
+  padding-bottom: var(--keyboard-height, 0px) !important;
+}
+
+/* Padding = safe-area inset + keyboard height */
+.kb-safe-bottom {
+  padding-bottom: calc(env(safe-area-inset-bottom) + var(--keyboard-height, 0px)) !important;
+}
+
+/* Margin equal to keyboard height */
+.kb-margin-bottom {
+  margin-bottom: var(--keyboard-height, 0px) !important;
+}
+
+/* For fixed / sticky elements that sit at the bottom of the viewport */
+.kb-aware-fixed {
+  bottom: var(--keyboard-height, 0px) !important;
+}
+
+/* For fixed / sticky elements that also need safe-area */
+.kb-aware-fixed-safe {
+  bottom: calc(env(safe-area-inset-bottom) + var(--keyboard-height, 0px)) !important;
+}

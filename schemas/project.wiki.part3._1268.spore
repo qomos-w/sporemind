@@ -1,0 +1,73 @@
+// project.wiki namespace — workflow orchestration primitives (part3, IDs 2470+).
+// @ts-export
+//
+// Sources of truth for:
+//   - project.wiki.set_status
+//   - project.wiki.frontier
+//   - project.wiki.claim_task_card
+//
+// Authoritative workflow card status enum. Spore DSL has no enum keyword, so
+// this canonical set is maintained as a documented contract across backend,
+// schema, and frontend. Values are stored as lowercase strings.
+//   backlog | todo | doing | pending_review | done | blocked | cancelled | failed
+
+struct WikiSetStatusReq {
+    Id:      string
+    Status:  string   // canonical task status: backlog | todo | doing | pending_review | done | blocked | cancelled | failed
+    optional ExpectedStatus: string  // CAS guard: if set, only apply when current status matches; else error
+    optional Evidence: array<string>  // file paths / references written to card data.review_evidence when status transitions to pending_review
+}
+
+struct WikiSetStatusResp {
+    Card:          MonoCardListItem
+    PreviousStatus: string  // status before this update (empty if card had none)
+}
+
+struct FrontierTaskCard {
+    Id:      string
+    Title:   string
+    Status:  string
+    Tags:    array<string>
+}
+
+struct WikiFrontierReq {
+    MapId:   string   // root card id (type=workflow) whose Data.scope defines the task-card set
+}
+
+struct WikiFrontierResp {
+    TaskCards:  array<FrontierTaskCard>
+}
+
+struct WikiSetMapOwnerReq {
+    MapId:              string   // root card id (type=workflow) to bind
+    OwnerActorId:       string   // agent actor id to stamp as owner
+}
+
+struct WikiSetMapOwnerResp {
+    Card:               MonoCardListItem
+    PreviousOwnerActorId: string  // previous ownerAgentId (empty if unbound)
+}
+
+// WikiClaimTaskCard fuses the spawn_assign/agent_assign claim sequence
+// (CAS status + read body) into a single project-side round trip, so the
+// workspace ownerLoop waits once instead of up to three serial invokes.
+struct WikiClaimTaskCardReq {
+    Id:               string
+    Status:           string         // target status (typically "doing")
+    ExpectedStatuses: array<string>  // CAS guard: claim only when current status ∈ ExpectedStatuses
+}
+
+struct WikiClaimTaskCardResp {
+    Card:           MonoCardListItem
+    PreviousStatus: string  // status before the claim (for rollback)
+    Raw:            string  // full card raw after the status update (goal body)
+    // Resolved upstream outputs keyed by this task's declared input field names.
+    // Derived from the workflow_topo graph bindings: for each binding
+    // (this_node.input ← upstream_node.output), the upstream task card's
+    // persisted data.task_outputs[output] is resolved into this map. The
+    // workspace spawn_assign path injects these into the worker's goal
+    // condition so downstream tasks receive typed data from completed upstream
+    // tasks. Empty when the task declares no bindings or no upstream has
+    // produced outputs yet.
+    optional Inputs: map<string, any>
+}

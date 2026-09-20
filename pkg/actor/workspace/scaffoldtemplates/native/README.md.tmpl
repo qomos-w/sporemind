@@ -1,0 +1,48 @@
+# {{.Name}}
+
+Native sporemind plugin — three-layer unified scaffold.
+
+## Three-Layer Model
+
+This project uses the three-layer unified model:
+
+1. **Definition** (`app.appdef`) — declarative app definition: callables,
+   entrypoints, schemas. This is the single source of truth.
+2. **Generation** (`main.gen.go`, `schemas_gen.go`, `app.manifest.json`,
+   `client.gen.ts`, `handlers.go`) — produced by `codegen.Generate` from the
+   `.appdef`. **Do not edit generated files** (except `handlers.go`).
+3. **Implementation** (`handlers.go`) — the sole agent-owned file. Fill in
+   callable handler bodies (replace `sdk.ErrNotImplemented` returns with real
+   logic). Re-run generate after editing `app.appdef` to create new stubs.
+
+## Build
+
+	GOWORK=off go build -buildmode=c-shared -o app-{{.Name}}.dll .
+
+## Structure
+
+- `app.appdef` — declarative app definition (source of truth)
+- `main.gen.go` — generated: plugin registration + C ABI exports
+- `handlers.go` — generated stubs, then agent-owned (implement callables here)
+- `schemas_gen.go` — generated: Go struct types from appdef
+- `app.manifest.json` — generated: host manifest
+- `client.gen.ts` — generated: TypeScript client types + invoke wrappers
+- `go.mod` — module definition (replace points to vendored SDK)
+- `vendor-sdk/` — minimal ABI layer (zero external dependencies)
+
+## Workflow
+
+1. Edit `app.appdef` to declare callables, entrypoints, and schemas.
+2. Run `codegen.Generate` (or `appmanager.dev_generate`) to produce all
+   generated files.
+3. Fill in handler stubs in `handlers.go` (replace `sdk.ErrNotImplemented`).
+4. Build with `GOWORK=off go build -buildmode=c-shared`.
+
+## Upgrading to full SDK
+
+To use host capabilities (LLM, project I/O, notifications), replace the
+vendored SDK with the full SDK. Update `go.mod`:
+
+	replace github.com/qomos-w/sporemind-plugin-sdk => ../../sporemind-plugin-sdk
+
+Then use `ctx.Host()` in your OnLoad handler.

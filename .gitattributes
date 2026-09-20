@@ -1,0 +1,17 @@
+# Generated code and schemas are produced with LF line endings; keep them
+# normalized so that codegen consistency checks pass on Windows too.
+pkg/domain/gen/** text eol=lf
+web/src/gen-types/** text eol=lf
+gen/static_schema_fragment.json text eol=lf
+gen/gmanifest.json text eol=lf
+web/src/gen-clients/** text eol=lf
+sporemind-plugin-sdk/gen/** text eol=lf
+
+# Workflow worktree 集成：merge=ours 让 worktree 间合并时运行时状态文件不被覆盖。
+# `.sporecode/` 下的 wiki/graphs/wiki-state 是 actor 持有的运行时状态（经 persist 落地），
+# 不应随 child→parent 或 owner→main 的 git merge 流入目标分支。git 内置 "ours" merge
+# driver 在三方合并时直接保留当前分支（目标侧）的版本，不产生冲突、不引入 theirs 变更。
+# 注意：.gitattributes 中尾随斜杠只匹配目录路径本身，必须用 `dir/**` 才能匹配其下所有文件。
+.sporecode/wiki/** merge=ours
+.sporecode/graphs.json merge=ours
+.sporecode/wiki-state.json merge=ours

@@ -1,0 +1,136 @@
+.markdown-content {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-body);
+  word-break: break-word;
+  padding: 4px 0;
+}
+
+.markdown-content > :first-child {
+  margin-top: 0;
+}
+
+.markdown-content > :last-child {
+  margin-bottom: 0;
+}
+
+.markdown-content p {
+  margin: 0.5em 0;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3,
+.markdown-content h4 {
+  margin: 1em 0 0.4em;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.markdown-content h1 { font-size: 1.4em; }
+.markdown-content h2 { font-size: 1.25em; }
+.markdown-content h3 { font-size: 1.1em; }
+.markdown-content h4 { font-size: 1em; }
+
+.markdown-content ul,
+.markdown-content ol {
+  margin: 0.5em 0;
+  padding-left: 1.5em;
+}
+
+.markdown-content li {
+  margin: 0.2em 0;
+}
+
+.markdown-content li > p {
+  margin: 0.3em 0;
+}
+
+.markdown-content blockquote {
+  margin: 0.5em 0;
+  padding: 0.3em 1em;
+  border-left: 3px solid var(--border-default);
+  color: var(--text-secondary);
+}
+
+.markdown-content code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  background: var(--bg-overlay);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-sm);
+}
+
+.markdown-content pre {
+  margin: 0.5em 0;
+  padding: 0;
+  background: none;
+}
+
+.markdown-content pre code {
+  display: block;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  overflow-x: auto;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.markdown-content a {
+  color: var(--accent-primary);
+  text-decoration: none;
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
+}
+
+.markdown-content strong {
+  font-weight: 500;
+}
+
+.markdown-content hr {
+  border: none;
+  border-top: 1px solid var(--border-default);
+  margin: 1em 0;
+}
+
+.markdown-content table {
+  border-collapse: collapse;
+  margin: 0.5em 0;
+  font-size: var(--text-sm);
+}
+
+.markdown-content th,
+.markdown-content td {
+  border: 1px solid var(--border-default);
+  padding: 4px 8px;
+}
+
+.markdown-content th {
+  font-weight: 600;
+  background: var(--bg-surface);
+}
+
+/* Clickable file references (file.go:123) in markdown */
+.markdown-content a.ai-file-ref {
+  color: inherit;
+  text-decoration: none;
+}
+
+.markdown-content a.ai-file-ref code {
+  color: var(--accent-primary);
+  cursor: pointer;
+}
+
+.markdown-content a.ai-file-ref:hover {
+  text-decoration: none;
+}
+
+.markdown-content a.ai-file-ref:hover code {
+  text-decoration: underline;
+  text-decoration-color: var(--accent-primary);
+}

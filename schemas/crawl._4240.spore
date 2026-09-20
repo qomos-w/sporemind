@@ -1,0 +1,91 @@
+// crawl namespace — stable crawl.* callables and result contract.
+// @ts-export
+//
+// Sources of truth for:
+//   - crawl.start / status / results (exposed by the crawl actor under
+//     the "crawl" domain as crawl.*)
+//   - BrowserCrawlPageResult, the v1 result schema referenced by type: crawl
+//     definition cards via extract.schema.
+//
+// v1 only supports the BrowserCrawlPageResult result schema. The card validator
+// ensures extract.schema names a known codegen struct; the runtime enforces that
+// the declared schema is BrowserCrawlPageResult for the hidden-window execution
+// path.
+//
+// Schema IDs are assigned sequentially from the filename base (2700) in
+// declaration order. BrowserCrawlConfig is declared last so it takes the
+// freshly allocated 2709 without renumbering the pre-existing 2700-2708.
+
+struct BrowserCrawlStartReq {
+    // Raw markdown of the type: crawl definition card (frontmatter + body).
+    // Optional when Config is provided; at least one of Card/Config must be set.
+    optional Card: string
+    // Inline crawl configuration for quick toolcall without a definition card.
+    // Non-zero fields override values from Card; Overrides map has highest priority.
+    optional Config: BrowserCrawlConfig
+    // Optional top-level overrides merged over the card data before snapshotting.
+    optional Overrides: map<string, any>
+}
+
+struct BrowserCrawlStartResp {
+    TaskId: string
+}
+
+struct BrowserCrawlStatusReq {
+    TaskId: string
+}
+
+struct BrowserCrawlStatusResp {
+    State:    string // running|awaiting_login|done|failed|cancelled
+    Crawled:  int
+    Frontier: int
+    MaxPages: int
+    optional Error: string
+}
+
+struct BrowserCrawlResultsReq {
+    TaskId: string
+    optional Cursor: int
+    optional Limit:  int
+}
+
+struct BrowserCrawlResultsResp {
+    Results:    array<BrowserCrawlPageResult>
+    NextCursor: int
+    Done:       bool
+}
+
+struct BrowserCrawlPageResult {
+    Url:   string
+    Title: string
+    Links: array<string>
+    Text:  string
+}
+
+struct BrowserCrawlHandoffReq {
+    TaskId: string
+}
+
+struct BrowserCrawlHandoffResp {
+    Accepted:   bool
+    InstanceId: string
+    Url:        string
+}
+
+// BrowserCrawlConfig mirrors the type: crawl definition card data block so
+// callers can start a crawl directly without creating a card.
+struct BrowserCrawlConfig {
+    optional Seeds:          array<string>
+    optional MaxDepth:       int
+    optional MaxPages:       int
+    optional SameDomain:     bool
+    optional RateLimit:      string    // duration string e.g. "500ms"
+    optional Mode:           string    // hidden_window | performance
+    optional Profile:        string
+    optional ExtractSchema:  string
+    optional ExtractSelectors: map<string, any>
+    // Independent browser instance to drive; non-empty reuses the mounted
+    // browser window (browser-chat:<instanceId> mount), empty keeps the
+    // current behavior of creating a fresh hidden window per crawl task.
+    optional InstanceID: string
+}

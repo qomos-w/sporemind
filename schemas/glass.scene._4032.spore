@@ -1,0 +1,101 @@
+// glass.scene namespace — component-assembled scene system (IDs 2554+).
+// @ts-export
+//
+// The scene system models glass UI as a component tree (game-engine style):
+//   - GlassSceneElement is the base UI node (text, image, rect, list, button).
+//   - GlassScene is the root container with a monotonic Tick for front-back sync.
+//   - Interactive elements (list, button) are rendered and managed by the
+//     MentraOS client for local responsiveness; user confirmation is sent back
+//     via glass_interact.interaction.report and surfaced as a glass.interaction
+//     event for the Coordinator.
+
+// GlassSceneBox — absolute pixel position on the glass canvas.
+// G2 canvas is 576×288; Mentra Display is 500×220. Coordinates are always
+// in the device's virtual canvas space; the host scene pipeline clamps them.
+struct GlassSceneBox {
+    X: int
+    Y: int
+    W: int
+    H: int
+}
+
+
+// GlassSceneOption — one selectable option in a list element.
+struct GlassSceneOption {
+    Id: string
+    Text: string
+}
+
+
+// GlassSceneElement — base UI component node.
+//
+// Static types (text, image, rect) render once and stay until the next frame.
+// Interactive types (list, button) get local device-side state:
+//   - list:   swipe up/down scrolls options; TAP confirms the highlighted one.
+//   - button: TAP triggers the action; the client may highlight on focus.
+//
+// The client renders a '>' marker or border on the Selected option. Server
+// sets the initial Selected/Visible state; the client may override locally
+// during interaction but never sends intermediate highlight state back — only
+// the final confirmed result (glass_interact.interaction.report).
+struct GlassSceneElement {
+    Id: string                                // stable id for diffing + interaction routing
+    Type: string                              // "text" | "image" | "rect" | "list" | "button"
+    Box: GlassSceneBox
+    optional Text: string                     // text content / list prompt
+    optional ImageData: string                // image: base64 data URI or URL
+    optional Border: int                      // border width px (0=none)
+    optional Radius: int                      // corner radius px
+    optional Overflow: string                 // text: "clip" (default) | "ellipsis"
+    optional BreakMode: string                // text: "character" (default) | "word"
+    optional Visible: bool                    // visibility toggle (default true)
+    optional Z: int                           // z-order; lower = further back, higher = front (default 0)
+    optional Role: string                     // semantic: "static" | "selectable" | "action"
+    optional Selected: bool                   // initial selection (for option highlight)
+    optional Options: array<GlassSceneOption> // list: selectable options
+    optional Label: string                    // button: action label
+}
+
+
+// GlassScene — root container for a component-assembled scene.
+// Tick is the server-authoritative monotonic render step; the client echoes
+// it back in interaction reports so the server can correlate which frame the
+// user was looking at. A new render always increments Tick.
+struct GlassScene {
+    Tick: long
+    Elements: array<GlassSceneElement>
+    optional FocusId: string                  // initially focused element id
+}
+
+
+// GlassInteractionEvent — emitted by GlassInteract (and surfaced to the
+// Coordinator) when MentraOS reports a confirmed user interaction on an
+// interactive scene element.
+struct GlassInteractionEvent {
+    SessionId: string
+    Generation: long
+    Tick: long                                // scene tick the user interacted on
+    ElementId: string                         // which element was interacted with
+    Action: string                            // "select" | "confirm" | "cancel"
+    optional Value: string                    // selected option id or button label
+    optional Timestamp: string
+}
+
+
+// GlassInteractionReportReq — MentraOS reports a confirmed user interaction.
+// Called when the user TAPs to confirm a list selection or button press.
+struct GlassInteractionReportReq {
+    SessionId: string
+    Generation: long
+    Tick: long
+    ElementId: string
+    Action: string                            // "select" | "confirm" | "cancel"
+    optional Value: string
+}
+
+
+struct GlassInteractionReportResp {
+    SessionId: string
+    Generation: long
+    Acknowledged: bool
+}

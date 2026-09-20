@@ -1,0 +1,237 @@
+.shell-cloud-account {
+  width: 100%;
+}
+
+.cloud-account-head-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.cloud-account-head-desc {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: var(--text-tertiary);
+  line-height: 1.5;
+}
+
+.cloud-account-loading,
+.cloud-account-error {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+.cloud-account-error {
+  color: var(--text-danger);
+}
+
+.cloud-account-linked {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cloud-account-id {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.cloud-account-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+}
+.cloud-account-avatar.placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-tertiary);
+}
+
+.cloud-account-id-text {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.cloud-account-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cloud-account-tier {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.cloud-account-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-tertiary);
+}
+.cloud-account-badge.degraded {
+  color: var(--status-waiting);
+  border-color: color-mix(in srgb, var(--status-waiting) 40%, transparent);
+  background: color-mix(in srgb, var(--status-waiting) 10%, transparent);
+}
+
+.cloud-account-badge-resync {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1px;
+  margin-left: 2px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+.cloud-account-badge-resync:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--status-waiting) 20%, transparent);
+}
+.cloud-account-badge-resync:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.cloud-account-redeem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cloud-account-redeem-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.cloud-account-redeem-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cloud-account-redeem-msg {
+  font-size: 12px;
+}
+.cloud-account-redeem-msg.success {
+  color: var(--status-success);
+}
+.cloud-account-redeem-msg.error {
+  color: var(--text-danger);
+}
+
+.cloud-account-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cloud-account-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-primary);
+  text-decoration: none;
+  background: transparent;
+}
+.cloud-account-link:hover {
+  background: var(--bg-hover);
+}
+.cloud-account-link.ghost {
+  color: var(--text-tertiary);
+}
+
+.cloud-account-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+}
+.cloud-account-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.cloud-account-btn.primary {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: var(--text-inverse);
+  font-weight: 600;
+}
+.cloud-account-btn.primary:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+.cloud-account-btn.danger {
+  color: var(--text-danger);
+  border-color: color-mix(in srgb, var(--text-danger) 40%, transparent);
+  margin-left: auto;
+}
+.cloud-account-btn.danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--text-danger) 10%, transparent);
+}
+
+.cloud-account-unlinked {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.cloud-account-unlinked-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+.cloud-account-unlinked-text {
+  flex: 1;
+  min-width: 0;
+}
+.cloud-account-unlinked-text .cloud-account-head-desc {
+  margin-top: 2px;
+}
+
+.spin {
+  animation: cloud-account-spin 0.9s linear infinite;
+}
+@keyframes cloud-account-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

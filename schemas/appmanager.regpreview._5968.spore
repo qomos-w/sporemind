@@ -1,0 +1,24 @@
+// appmanager namespace — registration permission preview.
+// Read-only manifest resolution for the app-registration permission panel:
+// given the source of a pending registration callable, resolve the SAME
+// manifest that registration would install so the panel can show the host
+// capabilities (manifest Permissions) before the user approves. Nothing is
+// built, hashed, loaded, or persisted. Exactly one source field should be
+// set (Manifest for appmanager.register; ProjectId/CallerAgentId for
+// appmanager.register_project; Path for appmanager.install_local; Slug for
+// cloudaccount.content_install).
+// @ts-export
+
+struct AppManagerRegistrationPreviewReq {
+    optional Manifest: AppManifest     // appmanager.register source: inline manifest from the tool input
+    optional ProjectId: string         // register_project source; empty = CallerAgentId's bound project
+    optional AppId: string
+    optional AppDir: string
+    optional CallerAgentId: string     // calling agent's actor ID; resolves an omitted ProjectId to the agent's bound project
+    optional Path: string              // install_local source: package directory or .zip file
+    optional Slug: string              // content_install source: cloud content slug
+}
+
+struct AppManagerRegistrationPreviewResp {
+    Manifest: AppManifest              // resolved manifest; Permissions drive the permission panel
+}

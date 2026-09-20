@@ -1,0 +1,14 @@
+.shell-ssh-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.shell-ssh-content.manager {
+  padding: 12px;
+}

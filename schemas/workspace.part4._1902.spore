@@ -1,0 +1,227 @@
+// Extended git surface for workspace actor.
+// These types are generated into the system namespace because they are
+// referenced by workspace.* callables.
+
+struct GitTagInfo {
+    Name:    string
+    Hash:    string
+    Message: string
+    When:    string
+}
+
+
+struct GitShowFile {
+    Path:    string  // File path in the new/added/modified/deleted state.
+    Status:  string  // "added" | "modified" | "deleted" | "renamed" | "copied" | "typechange" | "unknown"
+    optional OldPath: string  // For renamed/copied files, the original path.
+}
+
+
+struct WorkspaceGitShowReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Ref:       string  // Commit/branch/tag to show; empty = HEAD.
+}
+
+
+struct WorkspaceGitShowResp {
+    Commit:  GitCommitInfo
+    Files:   array<GitShowFile>
+    optional Output: string  // Raw git show output for debugging; clients should prefer Commit/Files.
+}
+
+
+struct WorkspaceGitFetchReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    optional Remote: string  // Remote to fetch; empty = origin.
+}
+
+
+struct WorkspaceGitDiscardReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    optional Paths: array<string>  // Files to discard; empty = discard all unstaged working-tree changes.
+}
+
+
+struct WorkspaceGitAmendReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    optional Message: string
+    optional NoEdit: bool  // Amend without changing the message (takes precedence over Message).
+}
+
+
+struct WorkspaceGitTagListReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+}
+
+
+struct WorkspaceGitTagListResp {
+    Tags: array<GitTagInfo>
+}
+
+
+struct WorkspaceGitTagCreateReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Name:      string
+    optional CommitHash: string  // Target commit; empty = HEAD.
+    optional Message: string    // If set, creates an annotated tag with this message.
+    optional Force: bool
+}
+
+
+struct WorkspaceGitTagDeleteReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Name:      string
+}
+
+
+struct WorkspaceGitMergeReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Branch:    string
+    optional NoFastForward: bool
+    optional Squash: bool
+}
+
+
+struct WorkspaceGitMergeResp {
+    Status:        string  // "merged" | "conflict" | "up_to_date"
+    ConflictFiles: array<string>
+}
+
+
+// WorkspaceAgentSpawnSchedulerReq creates a scheduler-run (ephemeral) agent in
+// the project's agent registry. It mirrors workspace.create_agent but is
+// callable by the project execution engine (internal zero-identity caller) at
+// timer fire time, since ephemeral runs must create a fresh agent per trigger
+// while a human can only act at card-creation time. The spawned agent carries
+// LifecycleScope="scheduler" so the registry can distinguish it from workflow
+// workers and normal agents.
+struct WorkspaceAgentSpawnSchedulerReq {
+    ProjectID:   string
+    // Any valid agent kind (see workspace.list_agent_kinds), including
+    // non-functional kinds such as dreamer. Empty defaults to coder.
+    AgentKind:   string
+    DisplayName: string  // optional; generated when empty
+    // Model slots mirror workspace.create_agent; unset slots fall back to the
+    // agent-kind / project defaults.
+    optional Primary:   ModelSlot
+    optional Fast:      ModelSlot
+    optional Execution: ModelSlot
+    optional Review:    ModelSlot
+    optional Summary:   ModelSlot
+}
+
+// WorkspaceAgentSpawnSchedulerResp returns the created AgentRef so the project
+// can stub the card with last_run_agent and drive the run via agent callables.
+struct WorkspaceAgentSpawnSchedulerResp {
+    // Agent serialized as the registry row (same shape as workspace.create_agent).
+    AgentID:     string
+    ActorID:     string
+    DisplayName: string
+    AgentKind:   string
+}
+
+// WorkspaceCreateAppAgentReq idempotently provisions the dedicated
+// workspace-global agent for one plugin_agent binding of a registered
+// plugin/app. Called by appmanager once per manifest AgentBinding.PluginAgents
+// entry on register/reload/restore; the agent is created in the same registry
+// as the Coordinator (ProjectId empty) with AgentKind "plugin". Slot is the
+// binding slot ("default" for the unnamed appdef block); when an agent is
+// already bound to the app at that slot the request updates its display name,
+// prompt, and bound bundle set instead of creating a second one.
+struct WorkspaceCreateAppAgentReq {
+    AppId:       string
+    Slot:        string  // binding slot: [a-z][a-z0-9-]*, "default" for the unnamed block
+    DisplayName: string  // fallback display name (app or plugin_agent display_name)
+    optional SystemPrompt: string
+    // Full desired bound bundle card list: app-bundle:{appID}:{slug} cards
+    // for the app's own bundles plus extra builtin bundle card IDs. Computed
+    // by the caller (appmanager) so the slug rule stays single-sourced.
+    optional BundleCardIds: array<string>
+    // Optional "Provider|Model" unit string that pins the slot agent's
+    // primary model slot at registration. Empty (default) leaves the host
+    // default in place. Workspace validates the format and builds a hard-
+    // pinned ModelSlot ([unit] only) when non-empty.
+    optional Model: string
+}
+
+// WorkspaceEnsureAppAgentResp mirrors workspace.create_agent's registry row
+// (response of workspace.create_app_agent, one call per binding slot).
+struct WorkspaceEnsureAppAgentResp {
+    AgentID:     string
+    ActorID:     string
+    DisplayName: string
+    Created:     bool  // false when an agent was already bound to the app
+}
+
+// WorkspaceRemoveAppAgentReq removes the agents bound to an app (every
+// binding slot). Called by appmanager on unregister: stops the agent actors,
+// removes the registry rows, and cascades their persisted state — same
+// semantics as workspace.delete_agent, keyed by the app binding instead of
+// an agent ID.
+struct WorkspaceRemoveAppAgentReq {
+    AppId: string
+}
+
+
+// WorkspaceDeleteAgentKindReq removes a user-defined agent kind. Built-in
+// kinds and kinds with live agent instances are rejected.
+struct WorkspaceDeleteAgentKindReq {
+    Kind: string
+}
+
+
+struct WorkspaceDeleteAgentKindResp {
+    Kind:    string
+    Removed: bool
+}
+
+
+// WorkspaceCreateAgentKindReq creates a user-defined agent kind (template) by
+// cloning an existing base kind's config. The new kind is forced
+// UserCreatable=true, SystemManaged=false. The slug must be lowercase
+// letters/digits/hyphens and must not collide with a built-in kind or an
+// existing custom template.
+struct WorkspaceCreateAgentKindReq {
+    Kind:        string  // slug: lowercase letters, digits, single hyphens
+    DisplayName: string  // optional; falls back to Kind
+    optional BaseKind: string  // source config to clone; empty = "coder"
+}
+
+
+struct WorkspaceCreateAgentKindResp {
+    Kind:          string
+    DisplayName:   string
+    UserCreatable: bool
+    SystemManaged: bool
+    Builtin:       bool
+}
+
+
+// ---- knowledge-base starred aggregation (workspace.wiki_list_starred) ----
+//
+// One row per starred card across every mounted project. The workspace actor
+// fans out project.wiki_get_starred to each mount and tags each starred card
+// id with its owning project, so the global starred quick-view renders the
+// full cross-project list in a single round trip (no per-project fan-out on
+// the client).
+
+struct WikiStarredEntry {
+    ProjectID:   string  // project actor id (usable as an Invoke target)
+    ProjectName: string  // mount / display name of the owning project
+    CardID:      string  // card id within that project
+}
+
+struct WikiListStarredReq {
+}
+
+struct WikiListStarredResp {
+    Items: array<WikiStarredEntry>  // projects in mount order, cards newest-first
+}

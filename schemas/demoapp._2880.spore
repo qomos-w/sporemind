@@ -1,0 +1,13 @@
+// demoapp namespace — builtin demo app callable payload types.
+// @ts-export
+//
+// DemoEchoReq is the wire contract for the demo app's `echo` callable. The
+// script returns the request struct unchanged, so the same type serves as
+// both request and response schema — giving the AppManager ↔ SporeApp chain
+// a full BinaryCodec round trip without requiring script-side struct
+// construction.
+
+struct DemoEchoReq {
+    Text: string
+    N: long
+}

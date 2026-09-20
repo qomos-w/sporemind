@@ -1,0 +1,271 @@
+// workspace namespace — wire-shape types for workspace.* callables and
+// workspace-owned durable UI state.
+//
+// Authoring source of truth for:
+//   - workspace mount / unmount / create / list (incl. ProjectRef tree)
+//   - workspace mounts event broadcast
+//   - workspace account / session / preferences snapshots
+//   - workspace durable UI state (dock, panels, layout, ai shell, explorer)
+//
+//
+// @ts-export
+
+// ---- project handles (shared with future project.* phase via Go alias) ----
+
+
+struct SessionSnapshot {
+    SessionId:     string
+    ConnectionId:  string
+    AccountId:     string
+    ClientKind:    string
+    DisplayName:   string
+    TrustLevel:    string
+    ActorType: string
+    Online:        bool
+}
+
+
+struct AccountPreferencesSnapshot {
+    AccountId:   string
+    Version:     int
+    Preferences: map<string, string>
+}
+
+
+struct SaveAccountPreferencesCommand {
+    RequestId:   string
+    AccountId:   string
+    Version:     int
+    Preferences: map<string, string>
+}
+
+
+// ---- workspace UI state (durable, persisted via workspace actor) ----
+
+struct XY {
+    X: int
+    Y: int
+}
+
+
+struct WH {
+    W: int
+    H: int
+}
+
+
+struct WorkspacePanelState {
+    Mode:     string
+    Visible:  bool
+    Pos:      XY
+    Size:     WH
+    ZIndex:   int
+    DockZone: string
+}
+
+
+struct WorkspacePanelsState {
+    Version:               int
+    Panels:                map<string, WorkspacePanelState>
+    optional ZoneTabOrder: map<string, array<string>>
+}
+
+
+struct WorkspaceDockState {
+    LeftWidth:     int
+    RightWidth:    int
+    BottomHeight:  int
+    LeftTopPct:    double
+    RightTopPct:   double
+    BottomLeftPct: double
+    WindowW:       int
+    WindowH:       int
+}
+
+
+struct WorkspaceShellLayout {
+    Version:               int
+    LayoutJson:            string
+    optional ActiveViewId: string
+}
+
+
+struct WorkspaceAIShellState {
+    optional SidebarOrder:       array<string>
+    optional SidebarPinned:      array<string>
+    optional AgentOrder:         array<string>
+    optional LayoutJson:         string
+    optional SelectedAgentId:    string
+    optional PreviousAgentId:    string
+}
+
+
+struct WorkspaceProjectBrowserState {
+    optional SortMode: string
+}
+
+
+struct WorkspaceExplorerState {
+    optional ActiveProjectId: string
+    optional SelectedPath:    string
+    optional ExpandedPaths:   array<string>
+}
+
+
+struct WorkspaceUIModel {
+    WorkspaceId:        string
+    Version:            int
+    SchemaVersion:      int
+    Layout:             WorkspaceShellLayout
+    Panels:             WorkspacePanelsState
+    Dock:               WorkspaceDockState
+    AiShell:            WorkspaceAIShellState
+    ProjectCardBrowser: WorkspaceProjectBrowserState
+    Explorer:           WorkspaceExplorerState
+}
+
+
+struct SaveWorkspaceLayoutCommand {
+    RequestId:   string
+    WorkspaceId: string
+    Version:     int
+    Layout:      WorkspaceShellLayout
+}
+
+
+struct SaveWorkspacePanelsCommand {
+    RequestId:   string
+    WorkspaceId: string
+    Version:     int
+    Panels:      WorkspacePanelsState
+}
+
+
+struct SaveWorkspaceDockCommand {
+    RequestId:   string
+    WorkspaceId: string
+    Version:     int
+    Dock:        WorkspaceDockState
+}
+
+
+struct SaveWorkspaceAIShellCommand {
+    RequestId:   string
+    WorkspaceId: string
+    Version:     int
+    AiShell:     WorkspaceAIShellState
+}
+
+
+struct SaveWorkspaceProjectCardBrowserCommand {
+    RequestId:          string
+    WorkspaceId:        string
+    Version:            int
+    ProjectCardBrowser: WorkspaceProjectBrowserState
+}
+
+
+struct SaveWorkspaceExplorerCommand {
+    RequestId:   string
+    WorkspaceId: string
+    Version:     int
+    Explorer:    WorkspaceExplorerState
+}
+
+
+// ---- git surface (workspace proxies to project shell) ----
+
+struct GitFileStatus {
+    Path:     string
+    Staging:  string
+    Worktree: string
+}
+
+
+struct GitCommitInfo {
+    Hash:    string
+    Short:   string
+    Message: string
+    Author:  string
+    Email:   string
+    When:    string
+    optional Parents: array<string>
+}
+
+
+struct GitBranchInfo {
+    Name:     string
+    Current:  bool
+    Hash:     string
+    IsRemote: bool     // true when the branch lives under refs/remotes
+    Remote:   string   // remote name (e.g. "origin"); empty for local branches
+}
+
+
+struct WorkspaceGitStatusReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+}
+
+
+struct WorkspaceGitStatusResp {
+    Branch:   string
+    Files:    array<GitFileStatus>
+    IsClean:  bool
+    IsGit:    bool
+}
+
+
+struct WorkspaceGitLogReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Limit:     int
+    optional Branch: string  // If empty, log from the current HEAD; if set, log only commits reachable from this branch.
+    optional All: bool       // true = log from all refs (git log --all); Branch is ignored when set.
+}
+
+
+struct WorkspaceGitLogResp {
+    Commits: array<GitCommitInfo>
+}
+
+
+struct WorkspaceGitDiffReq {
+    ProjectId:  string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    FilePath:   string  // Relative path inside the repo; empty means all files.
+    CommitHash: string  // If empty, diff index vs working tree. If set and BaseCommitHash is empty, diff this commit vs working tree.
+    optional BaseCommitHash: string  // If set together with CommitHash, diff BaseCommitHash..CommitHash.
+}
+
+
+struct WorkspaceGitDiffResp {
+    Diff: array<string>
+}
+
+
+struct WorkspaceGitAddReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Paths:     array<string>
+}
+
+
+struct WorkspaceGitCommitReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Message:   string
+}
+
+
+struct WorkspaceGitCommitResp {
+    Hash:  string
+    Short: string
+}
+
+
+struct WorkspaceGitPushReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Remote:    string
+}

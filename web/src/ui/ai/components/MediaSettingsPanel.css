@@ -1,0 +1,18 @@
+/* Panel layout + spinner only — the account dialog reuses the shared
+   shell-provider-dialog-* styles from ShellProviderSettings.css */
+
+.media-settings-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.media-spinner { animation: media-spin 1s linear infinite; vertical-align: middle; }
+
+.media-dialog-error {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--status-error, #e5484d);
+}
+
+@keyframes media-spin { to { transform: rotate(360deg); } }

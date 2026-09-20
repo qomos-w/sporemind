@@ -1,0 +1,52 @@
+/* ── Launcher-mode switch (构建 / 应用) ──
+   Styled after the theme-switch control (AIShellSidebar.css .theme-switch):
+   a soft pill track with two options; the active option gets an elevated
+   pill background. Sits atop the sidebar mode group (above the new-chat
+   button) in code mode and in the launcher header in app mode. */
+
+.ai-sidebar-mode-switch {
+  display: inline-flex;
+  gap: 4px;
+  padding: 3px;
+  background: var(--bg-hover);
+  border-radius: 9999px;
+  /* keep the pill at intrinsic width — flex-column parents (sidebar mode
+     group) would otherwise stretch the track to full row width */
+  align-self: flex-start;
+}
+
+.ai-sidebar-mode-switch-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  flex: none;
+  min-height: 30px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 9999px;
+  background: transparent;
+  color: var(--text-tertiary);
+  font: inherit;
+  font-size: var(--text-base);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-sidebar-mode-switch-segment:hover {
+  color: var(--text-primary);
+}
+
+.ai-sidebar-mode-switch-segment.active {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.ai-sidebar-mode-switch-segment:focus-visible {
+  outline: 2px solid var(--accent-primary);
+  outline-offset: -2px;
+}
+
+.ai-sidebar-mode-switch-segment-label {
+  pointer-events: none;
+}

@@ -1,0 +1,66 @@
+/*
+ * Voice settings panel — only dialog shell styles remain.
+ * Sections/rows use shadcn FeatureCard/SettingRow + Tailwind utilities.
+ */
+
+/* Dialog styles */
+.voice-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 100;
+}
+
+.voice-dialog {
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  border-radius: var(--radius-lg, var(--radius-md));
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.voice-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.voice-dialog-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.voice-dialog-close:hover {
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+
+.voice-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.voice-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}

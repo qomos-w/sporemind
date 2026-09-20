@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Icon Preview</title>
+    <style>
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 80px;
+        background: #2a2a2a;
+        font-family: system-ui, -apple-system, sans-serif;
+      }
+      .col {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+      .col img {
+        width: 256px;
+        height: 256px;
+        display: block;
+        filter: drop-shadow(0 8px 24px rgba(0,0,0,0.4));
+      }
+      .label {
+        color: #ddd;
+        font-size: 16px;
+        font-weight: 600;
+      }
+      .sizes {
+        display: flex;
+        align-items: flex-end;
+        gap: 16px;
+      }
+      .sizes img { width: auto; height: auto; filter: drop-shadow(0 2px 6px rgba(0,0,0,0.3)); }
+    </style>
+  </head>
+  <body>
+    <div class="col">
+      <img src="icon.svg" alt="current" />
+      <span class="label">Current (rounded square)</span>
+    </div>
+    <div class="col">
+      <img src="icon-hex.svg" alt="hex" />
+      <span class="label">Hexagon</span>
+    </div>
+  </body>
+</html>

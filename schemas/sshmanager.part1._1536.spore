@@ -1,0 +1,203 @@
+// sshmanager namespace — remote SSH host management, shell sessions, and SFTP file operations.
+// @ts-export
+//
+// Sources of truth for:
+//   - sshmanager.host.* CRUD
+//   - sshmanager.session.* shell / file / status
+//
+
+// ---------------------------------------------------------------------------
+// Host configuration
+// ---------------------------------------------------------------------------
+
+struct SshHost {
+    Id:         string
+    Name:       string
+    Host:       string
+    Port:       int
+    User:       string
+    AuthMethod: string  // "password" | "key"
+    AgentInvisible: bool  // hide this host from agent callers entirely
+    optional Group:     string
+    optional Password:   string
+    optional KeyPath:    string
+    optional KeyData:    string
+}
+
+
+struct SshHostListReq {
+}
+
+
+struct SshHostListResp {
+    Items: array<SshHostView>
+    // Ordered folder names (including empty folders). Host-derived groups not
+    // listed here are appended after these by the frontend.
+    Groups: array<string>
+}
+
+
+struct SshHostCreateReq {
+    Name:       string
+    Host:       string
+    Port:       int
+    User:       string
+    AuthMethod: string
+    AgentInvisible: bool
+    optional Group:     string
+    optional Password: string
+    optional KeyPath:  string
+    optional KeyData:  string
+}
+
+
+struct SshHostCreateResp {
+    Host: SshHostView
+}
+
+
+struct SshHostUpdateReq {
+    Id:         string
+    Name:       string
+    Host:       string
+    Port:       int
+    User:       string
+    AuthMethod: string
+    AgentInvisible: bool
+    optional Group:     string
+    optional Password: string
+    optional KeyPath:  string
+    optional KeyData:  string
+}
+
+
+struct SshHostUpdateResp {
+}
+
+
+struct SshHostRemoveReq {
+    Id: string
+}
+
+
+struct SshHostRemoveResp {
+}
+
+
+// ---------------------------------------------------------------------------
+// Session
+// ---------------------------------------------------------------------------
+
+struct SshSessionInfo {
+    SessionId:  string
+    HostId:     string
+    HostName:   string
+    HostAddr:   string
+    User:       string
+    Connected:  bool
+    optional Cwd:       string
+    optional Error:     string
+}
+
+
+struct SshSessionListReq {
+}
+
+
+struct SshSessionListResp {
+    Items: array<SshSessionInfo>
+}
+
+
+struct SshShellOpenReq {
+    HostId: string
+    optional InitialCols: int
+    optional InitialRows: int
+}
+
+
+struct SshShellOpenResp {
+    SessionId: string
+    Connected: bool
+    optional Error: string
+}
+
+
+struct SshShellCloseReq {
+    SessionId: string
+}
+
+
+struct SshShellCloseResp {
+}
+
+
+struct SshShellInputReq {
+    SessionId: string
+    Data:       string
+}
+
+
+struct SshShellInputResp {
+}
+
+
+struct SshShellResizeReq {
+    SessionId: string
+    Cols:      int
+    Rows:      int
+}
+
+
+struct SshShellResizeResp {
+}
+
+
+// ---------------------------------------------------------------------------
+// File manager
+// ---------------------------------------------------------------------------
+
+struct SshFileEntry {
+    Name:      string
+    FullPath:  string
+    IsDir:     bool
+    Size:      int64
+    optional Mode:     string
+    optional Modified: string
+}
+
+
+struct SshFileListReq {
+    SessionId: string
+    Path:      string
+}
+
+
+struct SshFileListResp {
+    Path:    string
+    Entries: array<SshFileEntry>
+}
+
+
+struct SshFileReadReq {
+    SessionId: string
+    Path:      string
+}
+
+
+struct SshFileReadResp {
+    Path:    string
+    Content: string
+    IsBinary: bool
+}
+
+
+struct SshFileWriteReq {
+    SessionId: string
+    Path:      string
+    Content:   string
+}
+
+
+struct SshFileWriteResp {
+}

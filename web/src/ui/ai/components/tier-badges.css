@@ -1,0 +1,36 @@
+/* Tier badge styling — plain CSS so it works both inside the shadcn settings
+   scope and in the legacy AI-shell sidebar (PluginPanel). Colors come from the
+   theme tokens: gold for EXP/Insider, paid-purple for paid/Ultimate. The
+   10% bg / 40% border color-mix pattern mirrors the existing badge styles. */
+
+.tier-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.4;
+  padding: 1px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--border-subtle);
+  color: var(--text-tertiary);
+  background: transparent;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.tier-badge.exp {
+  color: var(--tier-gold);
+  border-color: color-mix(in srgb, var(--tier-gold) 40%, transparent);
+  background: color-mix(in srgb, var(--tier-gold) 10%, transparent);
+}
+
+.tier-badge.paid {
+  color: var(--tier-paid);
+  border-color: color-mix(in srgb, var(--tier-paid) 40%, transparent);
+  background: color-mix(in srgb, var(--tier-paid) 10%, transparent);
+}
+
+.tier-badge.free {
+  color: var(--text-tertiary);
+}

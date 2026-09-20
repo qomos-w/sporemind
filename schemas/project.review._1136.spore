@@ -1,0 +1,147 @@
+// project.review namespace — frozen review changeset for workflow children.
+// @ts-export
+//
+// When a workflow child enters pending_review, the project actor generates a
+// complete read-only changeset snapshot from the child's worktree. The parent
+// orchestrator inspects this BEFORE calling workspace.agent_review. The
+// changeset includes baseline/HEAD, commit list, tracked file status with
+// diff metadata, untracked file summaries, rename/deletion detection,
+// binary/generated markers, and optionally test results.
+
+struct ProjectReviewChangesetReq {
+    AgentActorID:         string  // child agent whose changeset to read/freeze; MUST be the canonical hex actor id (the "actor:" value from the workflow notification or workspace.list_agents) — display names are NOT accepted here
+    optional ForceRefresh: bool   // re-generate even if a cached snapshot exists
+    optional CallerAgentId: string  // injected by turn engine: calling agent's actor ID
+    optional TestCommand:  string  // shell command to run for tests during freeze; empty = skip auto-test
+    optional TestTimeoutMs: int    // test timeout in ms; default 60000, max 300000
+    optional TaskCardID:   string  // bound task card ID for custom-data projection
+}
+
+
+struct ProjectReviewChangesetSummaryResp {
+    AgentActorID:   string
+    WorktreeID:     string
+    GeneratedAt:    string  // RFC3339 timestamp of snapshot generation
+    Status:         string  // preparing | ready | failed
+    ErrorMsg:       string  // non-empty when Status=failed
+    Baseline:       string  // merge-base of worktree branch and default branch
+    Head:           string  // worktree branch HEAD commit hash
+    Branch:         string  // worktree branch name
+    IsDirty:        bool    // worktree has uncommitted changes
+    Commits:        array<ProjectReviewCommitInfo>
+    Files:          array<ProjectReviewFileEntry>      // tracked changed files (summary)
+    UntrackedFiles: array<ProjectReviewUntrackedFile>
+    TestResult:     ProjectReviewTestResult            // nullable; Skipped=true when no test command
+    Stats:          ProjectReviewChangesetStats
+}
+
+
+struct ProjectReviewCommitInfo {
+    Hash:    string
+    Short:   string
+    Message: string
+    Author:  string
+    When:    string
+}
+
+
+struct ProjectReviewFileEntry {
+    Path:        string
+    Status:      string   // modified | added | deleted | renamed | type-changed
+    OldPath:     string   // previous path for renames; empty otherwise
+    IsBinary:    bool
+    IsGenerated: bool     // matches common generated-file patterns (*.gen.go, *.pb.go, etc.)
+    DiffLines:   int      // total diff lines for this file (0 for binary)
+}
+
+
+struct ProjectReviewUntrackedFile {
+    Path:     string
+    Size:     int      // bytes
+    IsBinary: bool
+    IsText:   bool     // true when content is displayable text
+    Preview:  string   // first N lines for small text files; empty for binary/large
+}
+
+
+struct ProjectReviewTestResult {
+    Command:  string
+    ExitCode: int
+    Output:   string   // truncated output (tail N lines)
+    Duration: string   // human-readable duration
+    Success:  bool
+    Skipped:  bool     // true when no test command is configured
+    ErrorMsg: string   // error message when test execution failed (timeout, etc.)
+}
+
+
+struct ProjectReviewChangesetStats {
+    TrackedChanged: int
+    Untracked:      int
+    AddedLines:     int
+    DeletedLines:   int
+    TotalDiffLines: int
+}
+
+
+// Paginated file content reading from the frozen changeset. For tracked
+// modified files, returns the unified diff; for untracked files, returns the
+// full file content. Large outputs are paginated via Offset/Limit.
+struct ProjectReviewFileContentReq {
+    AgentActorID:  string  // child agent whose changeset to read
+    FilePath:      string  // file path within the worktree
+    optional Offset: int   // line offset (1-based); omit for start of file
+    optional Limit:  int   // max lines to return (default 200)
+    optional CallerAgentId: string  // injected by turn engine
+}
+
+
+struct ProjectReviewFileContentResp {
+    FilePath:    string
+    Status:      string   // file status from the changeset
+    Content:     string   // paginated content (diff for tracked, full for untracked)
+    IsBinary:    bool
+    IsGenerated: bool
+    StartLine:   int      // 1-based line number of the first returned line
+    NumLines:    int      // number of lines returned
+    TotalLines:  int      // total lines available
+    Truncated:   bool
+}
+
+
+// Internal finalize payload: the async goroutine calls this via self-invoke
+// so the result is applied on the project actor's owner loop. The goroutine
+// must not write the reviewChangesets map or the card store directly.
+//
+// Generation is a per-freeze token assigned at freeze time. The finalize
+// handler only applies the result if the current map entry's generation
+// matches — this prevents stale goroutines (from a prior freeze that was
+// cleared or superseded) from resurrecting snapshots or writing stale card
+// data.
+struct ProjectReviewChangesetFinalizeReq {
+    AgentActorID:   string
+    optional TaskCardID: string
+    optional WorktreeID: string
+    optional Generation: int   // per-freeze token; 0 = legacy (always accepted)
+    optional Summary:    ProjectReviewChangesetSummaryResp  // populated when Status=ready
+    optional FileContents: map<string, string>                  // path → diff/full content (not in Summary)
+    optional ErrMsg:     string                              // populated when generation failed
+}
+
+
+// project.task_validate_outputs — runtime validation of a worker's produced
+// outputs against the task card's declared data.outputs contract. The review
+// path (workspace.agent.review) calls this before approving: a card with no
+// data.outputs declares no contract and is always valid. Each declared field
+// must be present in Outputs and match its type spec (scalar / codegen struct /
+// array / map / untyped object). Returns structured errors so the reviewer can
+// route them back to the worker as reject feedback.
+struct ProjectTaskValidateOutputsReq {
+    CardID:  string                          // task card whose data.outputs contract to validate against
+    Outputs: map<string, any>               // worker-produced typed JSON (from the ready_for_review assessment)
+}
+
+struct ProjectTaskValidateOutputsResp {
+    Valid:  bool                            // true when no data.outputs contract, or all fields satisfy it
+    Errors: array<CardValidationError>      // empty when Valid
+}

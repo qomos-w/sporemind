@@ -1,0 +1,264 @@
+// filesystem namespace — file / directory operations.
+// @ts-export
+//
+// Sources of truth for:
+//   - filesystem.list / read / read_base64 / read_chunk / write / edit
+//   - filesystem.glob / grep (+ match / count result rows)
+//   - file entry list response
+//
+// FileEntry.modTime is a string (ISO-8601). The hand-written legacy type
+// used Go `time.Time`, but the JSON wire shape was already a string;
+// callers now format the timestamp explicitly when assigning.
+//
+// Field naming follows legacy JSON tags byte-for-byte:
+
+//   - filesystem.edit / filesystem.grep use snake_case
+//     (`old_string`, `replace_all`, `output_mode`, `case_insensitive`)
+
+struct FileEntry {
+    Name:    string
+    IsDir:   bool
+    Size:    long
+    ModTime: string
+}
+
+
+struct FileEntryListResp {
+    Items: array<FileEntry>
+    NumEntries: int
+    optional Truncated: bool
+}
+
+
+struct FileSystemListReq {
+    Path: string
+    optional Depth: int     // -1=recursive all, 0=current dir only (default), 1=one level, 2=two levels
+    optional Exclude: string
+    optional No_ignore: bool
+    optional All: bool      // if true, include hidden entries whose names start with "."; default false
+    optional Detail: bool   // if true, each line carries mtime ("YYYY-MM-DD HH:MM:SS ±HH:MM") and "Size:N" for files
+}
+
+
+struct FileSystemReadReq {
+    Path:             string
+    optional Offset:  int
+    optional Limit:   int
+    optional Tail:    int
+    optional Filter:  string
+}
+
+
+struct FileSystemReadResp {
+    Content:    string
+    TotalLines: int
+    StartLine:  int
+    NumLines:   int
+    Truncated:  bool
+    optional Note: string  // set when the read resolved outside the caller's bound worktree; advisory for the agent
+}
+
+
+struct FileSystemReadBase64Req {
+    Path: string
+}
+
+
+struct FileSystemReadChunkReq {
+    Path:   string
+    Offset: long
+    Length: int
+}
+
+
+struct FileSystemReadChunkResp {
+    Offset: long
+    Length: int
+    Total:  long
+    Data:   string
+    optional Note: string  // set when the read resolved outside the caller's bound worktree; advisory for the agent
+}
+
+
+struct FileSystemWriteReq {
+    Path:    string
+    Content: string
+    optional Confirm: bool   // required when Path resolves outside allowed roots
+}
+
+
+struct FileSystemWriteResp {
+    optional Warning: string
+}
+
+
+struct FileSystemEditReq {
+    Path:                 string
+    Old_string:           string
+    New_string:           string
+    optional Replace_all: bool
+    optional Overwrite:   bool
+    optional Confirm:     bool   // required when Path resolves outside allowed roots
+}
+
+
+struct FileSystemEditHunk {
+    Old_start:  int
+    Old_lines:  int
+    New_start:  int
+    New_lines:  int
+    Lines:      array<string>
+}
+
+
+struct FileSystemEditResp {
+    Replacements: int
+    Additions:    int
+    Deletions:    int
+    Hunks:        array<FileSystemEditHunk>
+}
+
+
+struct FileSystemGlobReq {
+    Pattern:       string
+    optional Path: string
+    optional Maxdepth: int
+    optional No_ignore: bool
+    optional Exclude: string  // comma-separated dir names to additionally skip; bypassed when No_ignore=true
+    optional Order_by: string // "-modified": sort matches by mtime descending (ties alphabetical); unset = lexicographic
+}
+
+
+struct FileSystemGlobResp {
+    Files:      array<string>
+    NumFiles:   int
+    Truncated:  bool
+    optional Note: string  // set when the walk root resolved outside the caller's bound worktree; advisory for the agent
+}
+
+
+struct FileSystemGrepReq {
+    Pattern:                     string
+    optional Path:               string
+    optional Depth:              int    // 0=recursive/unlimited (default), 1=one level, 2=two levels, -1=recursive all
+    optional Ignore_case:        bool
+    optional Output_mode:        string
+    optional Glob:               string
+    optional Head_limit:         int
+    optional Context:            int
+    optional Before_context:     int
+    optional After_context:      int
+    optional Multiline:          bool
+    optional Invert_match:       bool
+    optional Word_regexp:        bool
+    optional No_ignore:          bool
+    optional Recursive:          bool
+    optional Exclude:            string  // comma-separated dir names to additionally skip; bypassed when No_ignore=true
+}
+
+
+struct FileSystemGrepMatch {
+    File:    string
+    Line:    int
+    Content: string
+}
+
+
+struct FileSystemGrepCount {
+    File:  string
+    Count: int
+}
+
+
+struct FileSystemGrepResp {
+    optional Files:       array<string>
+    optional Counts:      array<FileSystemGrepCount>
+    optional Matches:     array<FileSystemGrepMatch>
+    optional NumMatches:  int
+    optional Truncated:   bool
+    optional Output_mode: string
+    optional Note:        string  // set when the search root resolved outside the caller's bound worktree; advisory for the agent
+}
+
+
+struct FileSystemRmReq {
+    Path:               string
+    optional Recursive: bool
+    optional Confirm:   bool
+    optional Force:     bool
+}
+
+
+struct FileSystemRmResp {
+    Removed:   array<string>
+    Count:     int
+    Preview:   bool
+}
+
+
+struct FileSystemSyncRootsReq {
+    Roots: array<string>
+}
+
+
+// ---------------------------------------------------------------------------
+// Directory tar.gz export/import protocol — shared by project.archive_export/
+// archive_import (local root scope) and sshmanager.archive_export/
+// archive_import (remote session scope). The SSH session-scoped request
+// variants live in sshmanager.part2._1644.spore; both reuse the response types
+// below.
+//
+// A source path is packed into a tar.gz archive and returned as base64 content.
+// project.archive_export accepts a regular file (archived as a single
+// path.Base entry) or a directory (recursively packed); sshmanager.archive_export
+// accepts a remote directory. The inverse import safely extracts a base64
+// archive into a target directory. Only regular files and directories are
+// carried; symlinks, absolute paths and ".." traversal entries are rejected at
+// extraction time.
+// ---------------------------------------------------------------------------
+
+struct ArchiveExportReq {
+    Path: string  // source regular file or directory to archive, resolved within the actor's root scope
+}
+
+
+struct ArchiveExportResp {
+    Content:    string  // base64-encoded tar.gz archive bytes
+    Size:       int64   // compressed archive size in bytes
+    NumEntries: int     // number of archived entries (files + directories)
+}
+
+
+struct ArchiveImportReq {
+    Path:    string  // target directory to extract into, resolved within the actor's root scope
+    Content: string  // base64-encoded tar.gz archive bytes
+}
+
+
+struct ArchiveImportResp {
+    NumEntries:   int   // number of entries extracted
+    BytesWritten: int64 // total uncompressed bytes written
+}
+
+
+struct FileSystemReadBase64Resp {
+    Content: string  // base64-encoded file content
+    optional Note: string  // set when the read resolved outside the caller's bound worktree; advisory for the agent
+}
+
+
+struct FileSystemWriteBase64Req {
+    Path:    string
+    Content: string  // base64-encoded file content
+    optional Confirm: bool   // required when Path resolves outside allowed roots
+}
+
+
+// Browsable filesystem top level. The web/mobile file picker has no native
+// folder dialog, so it needs the server to enumerate where full-filesystem
+// navigation starts from: the user's home directory and every volume root
+// (drive letters on Windows, "/" on Unix).
+struct FileSystemRootsResp {
+    Home:  string         // user home directory (empty when undetectable)
+    Roots: array<string>  // volume roots, e.g. ["C:\\", "D:\\"] or ["/"]
+}

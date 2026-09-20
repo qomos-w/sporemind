@@ -1,0 +1,48 @@
+// websearch namespace — web page fetching (companion to web search).
+// @ts-export
+//
+// This part was split because the original file's 18-ID block (2930–2947)
+// is saturated; new websearch value types land here at base 3038.
+
+// WebFetchReq — fetch a web page and extract text content.
+struct WebFetchReq {
+    Url:            string
+    optional MaxChars: int  // truncate extracted text to this many characters
+}
+
+// WebFetchMeta — metadata extracted from a fetched web page.
+struct WebFetchMeta {
+    Description: string
+    SiteName:    string
+    Lang:        string
+}
+
+// WebFetchResp — result of fetching a web page.
+struct WebFetchResp {
+    Url:       string
+    Title:     string
+    Text:      string
+    Meta:      WebFetchMeta
+    Truncated: bool  // true if Text was truncated by MaxChars
+}
+
+// WebDownloadReq — download a remote file to disk.
+// Explicit schema IDs are required because the sequential IDs starting from
+// this file's base (3038) would collide with im._3042.spore, which already
+// occupies 3042. IDs 3514/3515 are the first contiguous free slots after the
+// current global maximum.
+@schema(4453)
+struct WebDownloadReq {
+    Url:            string
+    SavePath:       string
+    optional MaxBytes: int  // maximum bytes to download
+}
+
+// WebDownloadResp — result of downloading a file.
+@schema(4454)
+struct WebDownloadResp {
+    SavedPath:       string
+    BytesDownloaded: int
+    ContentType:     string
+    Truncated:       bool  // true if download was capped by MaxBytes
+}

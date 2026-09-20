@@ -1,0 +1,451 @@
+// aigen namespace — AI execution surface wire shapes (non-discriminated).
+// @ts-export
+//
+// Sources of truth for:
+//   - aggregator chat dispatch request (SendSessionMessageReq + ChatMessage
+//     + ContentBlock + ToolSpec)
+//   - turn streaming payload bodies (TurnStartedPayload, TurnTextDelta...,
+//     each individual event payload) and the discriminated TurnEvent
+//     container that carries 12 optional pointer payloads.
+//   - aggregator chunk protocol (AggregatorChunk) and agent session history
+//     (Turn, Session, AgentTurnCompleteReq)
+//   - aggregator status / capability descriptors (AICallableUnitView,
+//     AIAggregatorStatusResp, AggregatorDescriptor)
+//   - agent reference (AgentRef + list resp)
+//   - agent config (AgentConfig)
+//   - turn status snapshot
+//
+
+
+//
+// TurnEventKind / AggregatorChunkKind enum constants remain in pkg/domain
+// as Go-side string aliases; the wire tags on the kind field are plain
+// `string` since Spore DSL does not model enums.
+
+struct ModelUnit {
+    model:    string
+    provider: string
+    // optional thinkLevel: default reasoning effort to apply when this unit is
+    // selected but the caller supplied no explicit level. Free-text effort value
+    // ("none" | "low" | "medium" | "high" | "xhigh" | "max" | "ultra" | ""). Transparently passed to
+    // the provider's reasoning_effort. Not an enum (see file header note).
+    optional thinkLevel: string
+}
+
+
+struct UsageData {
+    optional InputTokens:              long
+    optional OutputTokens:             long
+    optional TotalTokens:              long
+    optional CacheCreationInputTokens: long
+    optional CacheReadInputTokens:     long
+    optional EstimatedPromptTokens:    long
+    optional MaxContextLength:         int
+
+    // Extended telemetry/cost fields (all optional for backward compatibility).
+    optional ReasoningTokens:          long
+    optional CostInput:                double   // input tokens cost in USD
+    optional CostOutput:               double   // output tokens cost in USD
+    optional CostCacheRead:            double   // cache read cost in USD
+    optional CostCacheWrite:           double   // cache write cost in USD
+    optional CostTotal:                double   // total cost in USD
+}
+
+
+struct ContextSegment {
+    kind:       string
+    tokens:     int
+    stepIndex:  int
+}
+
+
+struct CompactedRange {
+    segmentIndex: int
+    tokens:       int
+}
+
+
+struct CompactionRoundRecord {
+    Round:                 int
+    BeforeLayout:          array<ContextSegment>
+    AfterLayout:           array<ContextSegment>
+    CompactedRanges:       array<CompactedRange>
+    SourceStartIndex:      int32
+    SourceEndIndex:        int32
+    Level:                 int32
+    CompactedMessageCount: int
+}
+
+
+struct CompactionRoundData {
+    compactedRanges:       array<CompactedRange>
+    afterLayout:           array<ContextSegment>
+    sourceStartIndex:      int
+    sourceEndIndex:        int
+    level:                 int
+    round:                 int
+    compactedMessageCount: int
+}
+
+
+struct CompactionFrameData {
+    type:              string
+    id:                string
+    status:            string
+    trigger:           string
+    beforeTokens:      int
+    afterTokens:       int
+    contextWindowSize: int
+    beforeLayout:      array<ContextSegment>
+    afterLayout:       array<ContextSegment>
+    rounds:            array<CompactionRoundData>
+    optional unit:     ModelUnit
+    optional error:    string
+}
+
+
+struct CompactionEvent {
+    TurnId:       string
+    Trigger:      string
+    BeforeTokens: int
+    AfterTokens:  int
+    Unit:         ModelUnit
+    Level:        int32
+    Rounds:       array<CompactionRoundRecord>
+    CreatedAt:    string
+    optional Seq: int64
+    optional ContextWindowSize: int32
+}
+
+
+struct ContentBlock {
+    Type:               string
+    optional Id:        string   // hotctx mount point id
+    optional Text:      string
+    optional ToolUseId: string
+    optional ToolName:  string
+    optional Input:     string
+    optional IsError:   bool
+    optional CacheControl: string
+    optional ImageUrl:  string
+    optional MimeType:  string
+    // Image observation state: Recognized marks that a recognition attempt
+    // has been made (do not retry); RecognitionText holds the result text.
+    // Vision primaries never read these fields.
+    optional Recognized:      bool
+    optional RecognitionText: string
+}
+
+
+struct ChatMessage {
+    Id:                      string
+    Role:                    string
+    Content:                 array<ContentBlock>
+    optional ReasoningContent: string
+    optional Idx:            int32
+    optional Timestamp:      string
+    optional Usage:          UsageData
+    optional StartedAt:      string
+    optional CompletedAt:    string
+}
+
+
+struct ToolSpec {
+    Name:                    string
+    optional Description:    string
+    InputSchema:             string
+    optional Type:           string
+    optional EffectKind:     string
+    optional CallableId:     string
+    optional ServiceName:    string
+    optional Stream:         bool
+    optional NativeConfig:   map<string,any>
+}
+
+
+struct CompiledInstructions {
+    optional Base:     array<string>
+    optional Resolved: array<string>
+}
+
+
+struct CompiledCapabilities {
+    optional PrimitiveTools: array<ToolSpec>
+}
+
+
+struct MiddlewareEntry {
+    Hook:       string
+    Middleware: string
+    optional Params: map<string, any>
+}
+
+
+struct CompiledContext {
+    optional Instructions:         CompiledInstructions
+    optional Environment:          string
+    optional HotContext:           array<ContentBlock>
+    optional Messages:             array<ChatMessage>
+    optional Capabilities:         CompiledCapabilities
+    optional Middleware:            array<MiddlewareEntry>
+    optional PermissionPolicy:      PermissionPolicy
+    NextIdx:                       int32
+    optional CompactionPolicy:     CompactionPolicy
+    optional SummaryUnit:          ModelUnit
+    optional ContextWindowSize:    int
+    optional TokenBudget:          int
+    optional SummarySegments:      array<SummarySegment>
+    optional ProjectRoot:          string
+    optional MaxIterations:        int
+}
+
+
+struct TurnInput {
+    Text:                       string
+    optional Unit:              ModelUnit
+    optional Title:             string
+    optional ThinkingBudget:    int
+    optional ReasoningEffort:   string
+    optional Attachments:       array<AttachmentEntry>
+    optional Images:            array<ImageEntry>
+    optional Meta:              string   // author attribution for user messages
+}
+
+
+struct TurnStartReq {
+    TurnId:          string
+    Input:           TurnInput
+    CompiledContext: CompiledContext
+}
+
+
+struct TurnAnswerReq {
+    AnswersJson: string
+    optional RequestId: string
+}
+
+
+struct TurnAction {
+    Id:                  string
+    Kind:                string
+    optional Title:      string
+    optional Text:       string
+    optional State:      string
+    optional Error:      string
+    optional StartedAt:  string
+    optional CompletedAt: string
+    optional ParentStepId: string
+    optional Input:      string
+    optional Output:     string
+    optional Usage:      UsageData
+    optional Meta:       string
+    optional CallableId: string
+    optional TargetService: string
+    optional ToolUseId:  string
+    optional Seq:        int64   // display order within a turn
+}
+
+
+// ── Step (UI message unit) ──
+
+struct Step {
+    Id:          string
+    Role:        string
+    Type:        string
+    Content:     array<ContentBlock>
+    Closed:      bool
+    optional Error:       string
+    optional Timestamp:   string
+    optional StartedAt:   string
+    optional CompletedAt: string
+    optional TurnId:      string
+    optional ReasoningContent: string
+    optional Usage:       UsageData
+    optional ContentStatus:    string   // "appending" | "stable"
+    optional ExecutionStatus:  string   // "idle" | "in_progress" | "completed"
+    optional InteractionStatus: string // "none" | "pending" | "resolved"
+    optional Progress:    string   // execution_progress payload JSON
+    optional Seq:         int64
+    optional RequestId:   string   // canonical resume ID for interactions (permission/plan_approval)
+    optional Meta:        string   // author attribution: "user", "system", "agent:<id>", etc.
+    optional Discarded:   bool     // step has been discarded to free storage/memory; index retained
+    optional Model:       string   // resolved model that produced this assistant step
+    optional Provider:    string   // provider of the resolved model
+}
+
+
+struct StepEvent {
+    Kind:       string
+    StepId:     string
+    TurnId:     string
+    optional StepType:    string
+    optional Role:        string
+    optional Time:        string
+    optional Block:       ContentBlock
+    optional BlockIndex:  int
+    optional Delta:       string
+    optional Error:       string
+    optional Usage:       UsageData
+    optional InteractionType: string   // "permission" | "ask_user" | "plan_approval"
+    optional TaskId:          string
+    optional Task:            map<string, any>
+    optional FileChanges:     array<TurnFileChange>
+    optional Progress:        string   // execution_progress payload fragment
+    optional RequestId:       string
+    optional EventSeq:       int     // monotonic per-step event sequence, used for dedup & replay
+    optional Seq:            int64   // display order; reasoning < text < tool_call within a turn
+    optional OriginMessageId: string // client-side message id from agent.chat.submit, carried on user step.opened
+    optional Meta:            string   // author attribution, mirrors Step.Meta
+    optional Discarded:       bool     // step has been discarded (content cleared)
+    optional Model:           string   // resolved model that produced this step (step.opened)
+    optional Provider:        string   // provider of the resolved model
+}
+
+
+struct TurnBlock {
+    Id:                  string
+    Kind:                string
+    optional Text:       string
+    optional DataJson:   string
+    optional State:      string
+    optional Error:      string
+    optional Name:       string
+    optional Path:       string
+    optional MimeType:   string
+    optional ToolUseId:  string
+    optional CallableId: string
+    optional TargetService: string
+    optional Usage:      UsageData
+}
+
+
+struct TurnEntry {
+    Id:                   string
+    Kind:                 string
+    optional Title:       string
+    optional State:       string
+    optional StartedAt:   string
+    optional CompletedAt: string
+    optional ParentEntryId: string
+    optional CallableId:  string
+    optional TargetService:  string
+    optional Blocks:      array<TurnBlock>
+    optional Meta:        string
+}
+
+
+struct TurnContextBudgetPayload {
+    EstimatedTokens:     int32
+    ContextWindowSize: int32
+    TokenBudget:         int32
+}
+
+
+struct TurnStatus {
+    Turn:                 Turn
+    optional Unit:        ModelUnit
+    optional StartedAt:   string
+    optional UpdatedAt:   string
+    optional EventSeq:    int
+    optional PlanMode:    bool
+    optional PlanTask:    string
+    optional PlanApproval: TurnPlanApprovalRequestedPayload
+}
+
+
+struct TurnRecordEventsReq {
+    Events: array<TurnEvent>
+}
+
+
+struct SystemContentBlock {
+    Type:                 string
+    Text:                 string
+    optional CacheControl: string
+}
+
+
+struct SendSessionMessageReq {
+    SessionId:                  string
+    optional WorkspaceId:        string   // context for aistats telemetry
+    optional ProjectId:          string   // context for aistats telemetry
+    optional AgentId:            string   // context for aistats telemetry
+    optional TurnId:             string   // context for aistats telemetry
+    optional Unit:              ModelUnit
+    optional Title:             string
+    optional System:            string
+    optional SystemBlocks:      array<SystemContentBlock>
+    optional Messages:          array<ChatMessage>
+    optional Tools:             array<ToolSpec>
+    optional ThinkingBudget:    int
+    optional ReasoningEffort:   string
+    optional Temperature:       double
+    optional TopP:              double
+    optional FrequencyPenalty:  double
+    optional PresencePenalty:   double
+    optional Seed:              int
+    optional ToolChoice:        string
+    optional SlotKind:          string   // agent slot origin: "primary" | "fast" | "summary" | "" — enables per-agent pin / standard strategy keying
+    optional UnitPinned:        bool     // Unit is a hard user selection (unit-locked slot): the aggregator must surface stream-open failures instead of rotating to another pool unit
+}
+
+
+struct SummarizeResp {
+    Text: string
+}
+
+
+struct ProbeTokensResp {
+    Usage: UsageData
+}
+
+
+struct AggregatorDescriptor {
+    Id:       string
+    Name:     string
+    ActorId:  string
+    optional Strategy: string   // round_robin | fallback | smart | standard
+    optional Disabled:   bool     // manual operator override; disabled aggregators are skipped
+}
+
+
+struct AggregatorDescriptorListResp {
+    Items: array<AggregatorDescriptor>
+}
+
+
+struct AICallableUnitView {
+    Id:                       string
+    Model:                    string
+    Endpoint:                 string
+    ProviderName:             string
+    Protocol:                 string
+    // When set, this pool entry is a reference to a sub-aggregator; the concrete
+    // Model, ProviderName, Endpoint, and Protocol fields are ignored.
+    optional aggregatorID:   string
+    optional UserAgent:       string
+    optional MaxContextLength: int
+    optional Modality:        string   // "chat" (default) | "image"
+    optional CooldownUntil:   long     // Unix seconds when unit cooldown ends; 0 = healthy
+    optional DisableUntil:   long     // Unix seconds when the active daily disable window ends; 0 = none. Takes precedence over CooldownUntil.
+    // Disabled is a manual operator override projected from aimanager. When true
+    // the unit is hard-skipped during selection regardless of health state.
+    optional Disabled:        bool     // true = hard-skip during selection.
+    optional CooldownReason:  string   // why the unit is in cooldown: "rate_limit" | "availability" | "config" | "disable_window" | "" (healthy)
+    optional ConsecutiveFailures: int  // consecutive provider failures since last success; 0 = healthy
+    optional OnDemand:        bool     // true for an on-demand-resolved unit surfaced while in short-term cooldown
+
+    // Health projection (mirror of authoritative provider-level health).
+    // The aggregator populates these from the provider health state it received
+    // from aimanager so selectors and UI can show unit-level health without a
+    // cross-actor round-trip on every dispatch.
+    optional HealthState:     string   // "healthy" (default) | "cooling_down" | "disabled"
+    optional HealthReason:    string   // "rate_limit" | "availability" | "quota_exhausted" | "authentication_failed" | "authorization_failed" | "configuration_error" | "" (healthy)
+    optional LastFailureAt:   long     // Unix seconds of last failure; 0 = never
+    optional RecoveryMode:    string   // "cooldown" | "manual_or_balance_refresh" | "probe" | "" (healthy)
+
+    // In-flight dispatch state for this unit (or, for a nested-aggregator ref
+    // entry, the child's inflight projected by the parent). Transient and
+    // aggregator-local; absent when the unit is idle. See DispatchActivity.
+    optional DispatchActivity: DispatchActivity
+}

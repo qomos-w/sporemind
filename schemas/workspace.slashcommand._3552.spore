@@ -1,0 +1,23 @@
+// workspace.slashcommand namespace — slash command discovery callable types.
+//
+// Exposes the global slash command registry (pkg/slashcmd) to the frontend so
+// the conversation composer can render a command menu when the user types '/'.
+// Command execution still flows through agent.chat.submit -> slashcmd.Dispatch;
+// this callable is read-only discovery only.
+//
+//
+// @ts-export
+
+struct SlashCommand {
+    Name:      string
+    ShortHelp: string
+}
+
+
+struct WorkspaceSlashCommandsListReq {
+}
+
+
+struct WorkspaceSlashCommandsListResp {
+    Commands: array<SlashCommand>
+}

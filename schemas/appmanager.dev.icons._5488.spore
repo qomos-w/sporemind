@@ -1,0 +1,21 @@
+// appmanager dev icons — the card/bundle icon catalog served to agents.
+// Icons render through the frontend card icon library (lucide); this catalog
+// is generated from web/src/ui/ai/components/cardIconCatalog.ts by
+// web/scripts/gen-icon-catalog.mjs into icon_catalog.gen.json. Read-only.
+// @ts-export
+
+struct AppManagerIconNamesReq {
+    optional Query: string    // substring filter against name, label, keywords, or category
+    optional Category: string // exact category filter: task | content | development | collaboration | status | media | system
+}
+
+struct AppManagerIconEntry {
+    Name: string              // kebab-case icon name, valid for data.icon / data.visual.icon on cards and bundles
+    Label: string             // human-readable label
+    Keywords: array<string>   // search hints
+    Category: string          // task | content | development | collaboration | status | media | system
+}
+
+struct AppManagerIconNamesResp {
+    Items: array<AppManagerIconEntry>
+}

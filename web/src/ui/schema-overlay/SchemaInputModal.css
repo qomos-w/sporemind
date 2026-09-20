@@ -1,0 +1,249 @@
+/* ── Schema overlay input modal ────────────────────────────────────────
+ *
+ * Form fields rendered by SchemaForm driven by a JSONSchema (object/string/
+ * number/integer/boolean/array/map/enum). The Modal shell handles browser
+ * overlay push/pop (right-panel native browser windows hide while a modal
+ * is open); the schema overlay reuses that — do not bypass it with z-index.
+ */
+
+.schema-overlay-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.schema-overlay-modal__title {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.schema-overlay-modal__title-label {
+  font-weight: 600;
+  font-size: var(--text-md, 14px);
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.schema-overlay-modal__title-sublabel {
+  font-size: var(--text-xs, 11px);
+  color: var(--text-tertiary, #6b7280);
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  word-break: break-all;
+  margin-top: 2px;
+}
+
+.schema-overlay-modal__description {
+  margin: 0;
+  font-size: var(--text-sm, 12px);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.schema-overlay-modal__error {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm, 4px);
+  background: color-mix(in srgb, var(--status-failed, #ef4444) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--status-failed, #ef4444) 40%, transparent);
+  color: var(--status-failed, #ef4444);
+  font-size: var(--text-sm, 12px);
+}
+
+.schema-overlay-modal__error-icon {
+  flex-shrink: 0;
+}
+
+.schema-overlay-modal__error-dismiss {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  border-radius: var(--radius-sm, 4px);
+  padding: 2px;
+  opacity: 0.7;
+}
+
+.schema-overlay-modal__error-dismiss:hover {
+  opacity: 1;
+  background: color-mix(in srgb, currentColor 12%, transparent);
+}
+
+.schema-overlay-modal__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 4px;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 4px;
+  padding-top: 12px;
+}
+
+.schema-overlay-modal__spinner {
+  animation: schema-overlay-spin 0.8s linear infinite;
+  margin-right: 4px;
+}
+
+@keyframes schema-overlay-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── SchemaForm (reused by root and nested fields) ─────────────────── */
+
+.schema-overlay-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.schema-overlay-form__header {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.schema-overlay-form__label {
+  font-weight: 600;
+  font-size: var(--text-sm, 12px);
+  color: var(--text-primary);
+}
+
+.schema-overlay-form__required {
+  color: var(--status-failed, #ef4444);
+  margin-left: 2px;
+}
+
+.schema-overlay-form__fields {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.schema-overlay-form__empty {
+  font-size: var(--text-xs, 11px);
+  color: var(--text-tertiary, #6b7280);
+  font-style: italic;
+  padding: 4px 0;
+}
+
+.schema-overlay-form__items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.schema-overlay-form__item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md, 6px);
+  background: var(--bg-surface, transparent);
+}
+
+.schema-overlay-form__item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: var(--text-xs, 11px);
+  color: var(--text-tertiary, #6b7280);
+  font-weight: 500;
+}
+
+.schema-overlay-form__add {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: flex-start;
+  background: transparent;
+  border: 1px dashed var(--border-default);
+  color: var(--text-secondary);
+  border-radius: var(--radius-sm, 4px);
+  padding: 4px 8px;
+  font-size: var(--text-xs, 11px);
+  cursor: pointer;
+  transition: background 0.12s ease;
+}
+
+.schema-overlay-form__add:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.schema-overlay-form__remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary, #6b7280);
+  cursor: pointer;
+  border-radius: var(--radius-sm, 4px);
+  padding: 4px;
+  opacity: 0.7;
+}
+
+.schema-overlay-form__remove:hover {
+  background: color-mix(in srgb, var(--status-failed, #ef4444) 15%, transparent);
+  color: var(--status-failed, #ef4444);
+  opacity: 1;
+}
+
+.schema-overlay-form--freeform {
+  width: 100%;
+}
+
+.schema-overlay-form__json {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: var(--text-xs, 11px);
+  resize: vertical;
+  min-height: 96px;
+}
+
+.schema-overlay-form__checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.schema-overlay-form__checkbox-label {
+  margin: 0;
+  cursor: pointer;
+}
+
+.schema-overlay-form--map {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.schema-overlay-form__map-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.schema-overlay-form__map-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 200px) 1fr auto;
+  align-items: start;
+  gap: 8px;
+}
+
+.schema-overlay-form__map-key {
+  margin-top: 24px; /* align with sibling Field input (FieldLabel height) */
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+}
+
+.schema-overlay-form__placeholder {
+  color: var(--text-tertiary, #6b7280);
+}

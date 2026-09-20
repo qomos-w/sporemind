@@ -1,0 +1,28 @@
+.suggestion-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.suggestion-chip {
+  padding: 6px 14px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+  /* Favorited prompts are arbitrary-length raw text; clamp to one line. */
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.suggestion-chip:hover {
+  color: var(--text-primary);
+  border-color: var(--accent-primary);
+}

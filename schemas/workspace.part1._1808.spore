@@ -1,0 +1,422 @@
+// workspace namespace — wire-shape types for workspace.* callables and
+// workspace-owned durable UI state.
+//
+// Authoring source of truth for:
+//   - workspace mount / unmount / create / list (incl. ProjectRef tree)
+//   - workspace mounts event broadcast
+//   - workspace account / session / preferences snapshots
+//   - workspace durable UI state (dock, panels, layout, ai shell, explorer)
+//
+//
+// @ts-export
+
+// ---- project handles (shared with future project.* phase via Go alias) ----
+
+struct ProjectMount {
+    Name: string
+    Path: string
+}
+
+
+struct ProjectRef {
+    Name:            string
+    Path:            string
+    Root:            bool
+    optional ActorId:   string
+    optional Mounts: array<ProjectMount>
+    optional LastOpenedAt: string
+    optional PermissionMode: string
+    // True when this mount is the system meta project (the special project
+    // under config.DataDir()/data that hosts system wiki, agents, and apps).
+    optional System: bool
+    optional AppKind: string   // "" | "dev-app" | "sporeapp" — distinguishes app dev projects from regular projects
+}
+
+
+// ---- workspace request / event surface ----
+
+struct WorkspaceMountReq {
+    Path: string
+    Name: string
+    optional AppKind: string   // "" | "dev-app" | "sporeapp" — auto-inferred from path if omitted
+}
+
+
+struct WorkspaceUnmountReq {
+    ProjectId: string
+}
+
+
+struct WorkspaceCreateReq {
+    Path:    string
+    Name:    string
+    InitGit: bool
+    optional AppKind: string   // "" | "dev-app" | "sporeapp" — determines scaffolding and icon
+}
+
+
+struct WorkspaceMountsEvent {
+    Mounts: array<ProjectRef>
+}
+
+
+struct WorkspaceAgentsChangedEvent {
+}
+
+
+// ---- agent list source of truth ----
+
+struct AgentRuntimeState {
+    optional State:                 string   // "running" | "completed" | "failed" | "cancelled" | ""
+    optional ActiveTurnRef:         string
+    optional Error:                 string
+    optional ApprovalPending:       bool
+    optional PlanApprovalPending:   bool
+    optional AskUserPending:        bool
+    optional GoalSubmitPending:     bool
+    optional CurrentTaskSummary:    string
+    optional BoundTaskCardId:       string   // workflow task card this agent is bound to (Goal.BoundTaskCardID; empty when unbound)
+    optional ActiveWorkflowMapCardId: string // active workflow map card this agent is orchestrating (empty when none)
+    optional ActiveWorkflowWorktreeID: string // workflow owner worktree ID this agent is bound to (empty when none)
+    optional LastActivity:          string
+    optional LastTurnCompletedAt:   string
+    // RFC3339 UTC timestamp of the last time the user opened/viewed this
+    // agent's conversation. Workspace-owned: set via workspace.agent_access,
+    // preserved across agent status pushes.
+    optional LastAccessedAt:        string
+    optional ThinkLevel:            string   // simplified think level for this agent
+    optional WorktreeID:            string   // bound worktree ID (empty when WorktreeStatus is none)
+    optional WorktreeStatus:        string   // "none" | "active" | "merging"
+    optional WorktreeName:           string   // bound worktree name (empty when WorktreeStatus is none)
+    optional MemoryMounted:         bool     // true when the agent has the memory mode mounted (memory graph active)
+    optional PermissionMode:         string   // live permission mode: "yolo" | "auto" | "bypass" | "autopilot" | "permission" | ""
+}
+
+
+struct ComposerHistoryItem {
+    Id:        string
+    Text:      string
+    Timestamp: string
+    Starred:   bool
+}
+
+
+struct AgentListItem {
+    Id:                string
+    ActorId:           string
+    DisplayName:       string
+    AgentKind:         string
+    ProjectId:         string
+    optional LoadState: string   // "unloaded" | "loading" | "loaded" | "error"
+    optional Mode:      AgentModeState
+    optional Primary:   ModelSlot
+    optional Fast:      ModelSlot
+    optional Execution: ModelSlot
+    optional Review:    ModelSlot
+    optional Summary:   ModelSlot
+    optional ThinkLevel:     string   // preserved; simplified enum "none" | "low" | "medium" | "high" | ""
+    optional Title:         string
+    optional LastActivity:  string
+    optional CompactionPolicy: CompactionPolicy
+    optional Degraded:       bool
+    optional DegradedReason: string
+    optional Runtime:        AgentRuntimeState
+    optional ComposerHistory: array<ComposerHistoryItem>
+    // Logical parent agent actor ID. Single persisted source of truth for the
+    // agent tree; the frontend builds the tree from this field and must not
+    // persist a second writable copy of the parent/child relationship.
+    optional ParentAgentId:     string
+    // "workflow" (persistent workspace agent) | "turn" (fork child projection);
+    // empty for root agents. Read-only derived state.
+    optional LifecycleScope:    string
+    // App binding for dedicated plugin agents: the app (plugin) id and
+    // binding slot (plugin_agent <name> block; "default" for unnamed).
+    // Workspace-global agents (ProjectId == "") with BoundAppId set belong to
+    // a plugin; the frontend groups them under a virtual per-app directory in
+    // the sidebar. Empty for all other agents.
+    optional BoundAppId:        string
+    optional BoundAppSlot:      string
+    // Opaque conversation routing target for this node. "actor:<actorId>"
+    // routes to the node's own session. Callers must not assume the target
+    // actor is alive.
+    optional ConversationTarget: string
+    // "" | "deleting" — in-flight cascade delete tombstone. Deleting nodes are
+    // hidden from interactive sidebar/topology projections.
+    optional DeletionStatus:    string
+    // Read-only derived child projection (workflow + fork children), unified
+    // node shape shared by sidebar and topology. Never persisted as a writable
+    // second source; derived from each child's ParentAgentId.
+    optional Children:          array<AgentChildRef>
+    optional PermissionMode:   string   // live permission mode surfaced from runtime state
+    CanDelete:             bool
+}
+
+
+struct WorkspaceAgentListState {
+    Version: int
+    Full:    bool
+    Items:   array<AgentListItem>
+}
+
+
+struct WorkspaceAgentListStateEvent {
+    State: WorkspaceAgentListState
+}
+
+
+struct WorkspaceAgentStatusUpdateReq {
+    AgentActorId:                 string
+    optional State:                 string
+    optional ActiveTurnRef:         string
+    optional Error:                 string
+    optional ApprovalPending:       bool
+    optional PlanApprovalPending:   bool
+    optional AskUserPending:        bool
+    optional GoalSubmitPending:     bool
+    optional CurrentTaskSummary:    string
+    optional BoundTaskCardId:       string  // workflow task card this agent is bound to (empty when unbound)
+    optional ActiveWorkflowMapCardId: string // active workflow map card this agent is orchestrating (empty when none)
+    optional ActiveWorkflowWorktreeID: string // workflow owner worktree ID this agent is bound to (empty when none)
+    optional LastActivity:          string
+    optional LastTurnCompletedAt:   string
+    optional ThinkLevel:            string
+    optional Title:                string
+    optional WorktreeID:            string  // bound worktree ID (empty when WorktreeStatus is none)
+    optional WorktreeStatus:        string  // "none" | "active" | "merging"
+    optional WorktreeName:          string  // bound worktree name (empty when WorktreeStatus is none)
+    optional MemoryMounted:         bool    // true when the agent has the memory mode mounted (memory graph active)
+    optional PermissionMode:        string  // live permission mode the agent should report to the workspace
+    // Primary route chain: when the agent's primary slot records (promote) or
+    // demotes a unit from its soft pin chain it reports the resulting slot back
+    // so the workspace persists the chain and re-pushes it after restart.
+    // nil (omitted) means "no chain change this tick".
+    optional Primary: ModelSlot
+}
+
+
+struct WorkspaceAddMountReq {
+    ProjectId: string
+    MountName: string
+    MountPath: string
+}
+
+
+struct WorkspaceRemoveMountReq {
+    ProjectId: string
+    MountName: string
+}
+
+
+struct WorkspaceListAgentsReq {
+    optional ProjectId: string
+    optional Query:     string
+    optional CallerAgentId: string  // injected by turn engine: calling agent's actor ID; used to mark the caller's own entry "(self)"
+    optional ParentAgentId: string  // explicit parent actor ID; when set, only that parent's direct children are returned (overrides ChildrenOnly)
+    optional ChildrenOnly: bool     // when true and ParentAgentId is empty, use the injected CallerAgentId as the parent filter
+}
+
+
+struct WorkspaceCreateAgentReq {
+    optional ProjectId:     string
+    optional DisplayName:   string
+    optional AgentKind:     string
+    optional Primary:   ModelSlot
+    optional Fast:      ModelSlot
+    optional Execution: ModelSlot
+    optional Review:    ModelSlot
+    optional Summary:   ModelSlot
+    optional CompactionPolicy: CompactionPolicy
+    optional WorktreeID: string  // when set, the spawned agent is bound to this worktree via caller-id interception
+}
+
+
+struct WorkspaceUpdateAgentReq {
+    AgentId:                string
+    optional DisplayName:   string
+    // Title edits the agent's inferred title. Forwarded to the running agent
+    // via agent.configure, where it overwrites the set-once inferred title.
+    optional Title:         string
+    optional Primary:   ModelSlot
+    optional Fast:      ModelSlot
+    optional Execution: ModelSlot
+    optional Review:    ModelSlot
+    optional Summary:   ModelSlot
+    optional CompactionPolicy: CompactionPolicy
+    optional ComposerHistory: array<ComposerHistoryItem>
+}
+
+
+struct WorkspaceDeleteAgentReq {
+    AgentId: string
+}
+
+
+struct WorkspaceCloneAgentReq {
+    SourceAgentId: string
+    DisplayName:   string
+    optional Primary:   ModelSlot
+    optional Fast:      ModelSlot
+    optional Execution: ModelSlot
+    optional Review:    ModelSlot
+    optional Summary:   ModelSlot
+    optional CompactionPolicy: CompactionPolicy
+    optional ForkAtTurnId: string
+}
+
+
+struct ProjectSpawnAgentReq {
+    SpawnName:         string
+    ProjectId:         string
+    AgentKind:         string
+    optional WorkspaceId: string
+    optional ActorId:  string
+    optional DisplayName: string
+    optional Primary:   ModelSlot
+    optional Fast:      ModelSlot
+    optional Execution: ModelSlot
+    optional Review:    ModelSlot
+    optional Summary:   ModelSlot
+    optional WorktreeID: string  // when set, the agent's file/git calls are routed to this project worktree via caller-id interception; empty = main project root (backward compatible)
+    optional CloneSourceActorID: string  // internal clone path: inherit the source agent's current worktree binding
+    optional ParentAgentID: string  // the spawning orchestrator's actor ID; stored alongside the worktree binding so review changeset access can be authorized
+    // Spawn-time goal: when set, the agent self-assigns this goal at the end
+    // of OnStart instead of receiving a cross-actor assign_goal invoke. This
+    // avoids the race where the invoke arrives before the handler is registered.
+    optional GoalCondition:   string
+    optional InterpretedGoal: string
+    optional BoundTaskCardID: string
+    optional GoalMaxTurns:    int
+    optional PromptPrelude:   string
+    // Permission mode inherited by the spawned agent (yolo | auto | bypass | autopilot);
+    // empty = default confirm-per-call behavior.
+    optional PermissionMode:  string
+    // Fork-child configuration: when set, the agent is spawned as a fork child
+    // (child.Mode = true) with the provided parent context, seed steps, and
+    // child state. This routes through NewChildActor instead of NewActor so the
+    // agent auto-starts a single exploration turn and reports results back via
+    // explore_progress / explore_complete.
+    optional ChildConfig: ChildSpawnConfig
+    // Spawn-time extra bundle card IDs auto-mounted on the agent in addition to
+    // its kind's DefaultBundleIDs. The workspace attaches the plugin-dev
+    // bundle when the target project is a dev-app (plugin) project so the
+    // agent and its sub-agents get the appmanager dev callables automatically.
+    optional ExtraBundleIDs: array<string>
+}
+
+
+struct ProjectSpawnAgentResp {
+    ActorId: string
+}
+
+
+struct AgentKindInfo {
+    Kind:          string
+    DisplayName:   string
+    UserCreatable: bool
+    SystemManaged: bool
+    // Builtin marks a kind from the hardcoded domain.ValidAgentKinds() table.
+    // False for user-defined templates (SystemManaged cannot be used as the
+    // builtin marker: coder is a builtin with SystemManaged=false).
+    Builtin:       bool
+    optional NamePool: array<string>
+    optional RandomName: RandomNameConfig
+}
+
+
+struct RandomNameConfig {
+    Enabled: bool
+    optional Prefixes: array<string>
+    optional Suffixes: array<string>
+}
+
+
+struct AgentKindConfig {
+    Kind:            string
+    DisplayName:     string
+    UserCreatable:   bool
+    SystemManaged:   bool
+    RolePromptRef:   PromptRef
+    optional SystemFragmentRefs: array<PromptRef>
+    optional DefaultBundleIDs: array<string>
+    optional RemovedBundleIDs: array<string>
+    optional AutoAllowTools: array<string>
+    optional AutoAllowCandidates: array<string>
+    optional EnvironmentContext: map<string, string>
+    optional NamePool: array<string>
+    optional RandomName: RandomNameConfig
+    optional SkillIDs: array<string>
+    optional DefaultCardRefs: array<CardRef>
+    optional Primary:          ModelSlot
+    optional Fast:             ModelSlot
+    optional Execution:        ModelSlot
+    optional Review:           ModelSlot
+    optional Summary:          ModelSlot
+    optional CompactionPolicy: CompactionPolicy
+    optional StoragePolicy: StoragePolicy
+    optional MaxTurns: int32
+}
+
+
+struct WorkspaceSaveAgentKindConfigReq {
+    Kind:            string
+    DisplayName:     string
+    UserCreatable:   bool
+    SystemManaged:   bool
+    RolePromptRef:   PromptRef
+    optional SystemFragmentRefs: array<PromptRef>
+    optional DefaultBundleIDs: array<string>
+    optional AutoAllowTools: array<string>
+    optional AutoAllowCandidates: array<string>
+    optional EnvironmentContext: map<string, string>
+    optional NamePool: array<string>
+    optional RandomName: RandomNameConfig
+    optional SkillIDs: array<string>
+    optional DefaultCardRefs: array<CardRef>
+    optional Primary:          ModelSlot
+    optional Fast:             ModelSlot
+    optional Execution:        ModelSlot
+    optional Review:           ModelSlot
+    optional Summary:          ModelSlot
+    optional CompactionPolicy: CompactionPolicy
+    optional StoragePolicy: StoragePolicy
+    optional MaxTurns: int32
+}
+
+
+struct WorkspaceListAgentKindsResp {
+    Items: array<AgentKindInfo>
+}
+
+
+struct WorkspaceGetAgentKindConfigReq {
+    Kind: string
+}
+
+
+struct WorkspaceListAgentKindConfigsResp {
+    Items: array<AgentKindConfig>
+}
+
+
+struct ProjectRefListResp {
+    Items: array<ProjectRef>
+}
+
+
+// ---- account / session / preferences (workspace-namespaced callables) ----
+
+struct ActorContextSnapshot {
+    ActorId:         string
+    ActorType:   string
+    SessionId:       string
+    TrustLevel:      string
+    AuthenticatedAs: string
+}
+
+
+struct AccountSnapshot {
+    AccountId:    string
+    DisplayName:  string
+    Roles:        array<string>
+    DefaultActor: ActorContextSnapshot
+}

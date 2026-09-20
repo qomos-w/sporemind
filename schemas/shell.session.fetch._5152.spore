@@ -1,0 +1,34 @@
+// shell.session.fetch namespace — replay buffered session output by Idx.
+//
+// Authoring source of truth for:
+//   - shell.session_fetch request / response
+//
+// @ts-export
+//
+// The shell actor keeps a per-session ring buffer of ShellSessionOutputEvent
+// chunks (see shell.session namespace). session_fetch lets a consumer that
+// subscribes after session_open (or reconnects) replay the output it missed by
+// asking for chunks with Idx >= FromIdx. It is a stateless callable
+// (actor.PureContext): the buffer and Idx counter live on the per-session
+// struct protected by the session lock, shared between the pump goroutine and
+// the fetch handler.
+
+// ShellSessionFetchReq asks for the buffered output chunks of a session whose
+// Idx is >= FromIdx. Pass 0 to replay from the start of the buffer.
+struct ShellSessionFetchReq {
+    SessionId: string
+    FromIdx:   long     // return chunks with Idx >= FromIdx; 0 replays from the start
+}
+
+
+// ShellSessionFetchResp returns the requested buffered chunks plus the next
+// Idx to fetch from. NextIdx is the last returned chunk's Idx + 1 (or FromIdx
+// when no chunk matched), so a consumer can page forward by passing it back as
+// FromIdx. Truncated is true when the ring buffer was overwritten and chunks
+// with Idx < FromIdx were dropped, meaning the returned window is not
+// contiguous with the consumer's view.
+struct ShellSessionFetchResp {
+    Chunks:    array<ShellSessionOutputEvent>
+    NextIdx:   long
+    optional Truncated: bool
+}

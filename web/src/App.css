@@ -1,0 +1,52 @@
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  min-height: 100dvh;
+  font-family: var(--font-sans);
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+
+html::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  border: 1px solid var(--border-subtle);
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 999999;
+}
+
+/* In Wails desktop frameless mode, keep scrollbars away from the window's
+   right and bottom edges so the native resize border isn't intercepted by
+   the WebView2 compositor.  The padding area uses the same background colour,
+   so the gap is invisible. */
+body.wails-desktop .desktop-layout,
+body.wails-desktop .ai-shell-layout.standalone {
+  padding-right: 5px;
+  padding-bottom: 5px;
+}
+
+/* In Capacitor iframe mode, reserve the bottom system navigation/gesture area
+   so the shell content doesn't sit under the gesture bar.  The background
+   extends under the bar (fixing the black strip) while interactive content
+   stays above it. */
+body.capacitor-iframe .ai-shell-layout.standalone {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.plugin-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background: var(--bg-base);
+}

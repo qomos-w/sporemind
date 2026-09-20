@@ -1,0 +1,241 @@
+/* ── New Agent Dialog (body-specific; shell in Modal.css) ── */
+
+.new-agent-dialog-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.new-agent-dialog-subtitle {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.new-agent-dialog-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.new-agent-dialog-label {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.new-agent-dialog-input,
+.new-agent-dialog-select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 6px 10px;
+  font-size: var(--text-sm);
+  font-family: var(--font-sans);
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  outline: none;
+}
+
+.new-agent-dialog-input:focus,
+.new-agent-dialog-select:focus {
+  border-color: var(--accent-primary);
+}
+
+.new-agent-dialog-error {
+  font-size: var(--text-xs);
+  color: var(--status-failed);
+  padding: 6px 8px;
+  border-radius: var(--radius-sm);
+  background: rgba(255, 80, 80, 0.1);
+}
+
+/* Compaction section */
+
+.new-agent-dialog-compaction {
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.new-agent-dialog-compaction-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  cursor: pointer;
+  text-align: left;
+}
+
+.new-agent-dialog-compaction-header:hover {
+  background: var(--bg-hover);
+}
+
+.new-agent-dialog-compaction-source {
+  margin-left: auto;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--bg-hover);
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.new-agent-dialog-compaction-body {
+  padding: 0 12px 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.new-agent-dialog-compaction-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-primary);
+  font-size: var(--text-xs);
+}
+
+.new-agent-dialog-compaction-toggle input {
+  margin: 0;
+}
+
+.new-agent-dialog-compaction-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.new-agent-dialog-models-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.new-agent-dialog-models-row > * {
+  min-width: 0;
+}
+
+.new-agent-dialog-preset {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  border-top: 1px solid var(--border-subtle);
+  padding-top: 12px;
+}
+
+.new-agent-dialog-preset-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.new-agent-dialog-preset-field {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-right: 28px;
+}
+
+.new-agent-dialog-preset-combobox {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.new-agent-dialog-preset-caret {
+  position: absolute;
+  top: 50%;
+  right: 4px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+}
+
+.new-agent-dialog-preset-caret:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.new-agent-dialog-preset-list {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 2px);
+  left: 0;
+  right: 0;
+  max-height: 200px;
+  overflow-y: auto;
+  margin: 0;
+  padding: 4px;
+  list-style: none;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.new-agent-dialog-preset-list li button {
+  display: block;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  border-radius: var(--radius-xs, 3px);
+}
+
+.new-agent-dialog-preset-list li button:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+
+.new-agent-dialog-preset-list-active button {
+  background: var(--bg-hover);
+  font-weight: 500;
+}
+
+.new-agent-dialog-icon-btn {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.new-agent-dialog-icon-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.new-agent-dialog-icon-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.new-agent-dialog-icon-btn-danger:hover:not(:disabled) {
+  color: #d33;
+  border-color: #d33;
+}

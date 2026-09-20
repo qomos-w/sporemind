@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工作台 · 方案 D 黑板板书</title>
+<style>
+  :root {
+    --board: #101316;
+    --chalk: rgba(233,238,242,.92);
+    --chalk-dim: rgba(233,238,242,.42);
+    --card: rgba(255,255,255,.028);
+    --line: rgba(233,238,242,.24);
+    --edge: rgba(233,238,242,.2);
+    --text: #eaeeF1;
+    --muted: #8f979e;
+    --accent: #8fe3c0;
+    --shadow: 0 30px 60px -30px rgba(0,0,0,.9);
+  }
+  .light {
+    --board: #f3f3f0;
+    --chalk: rgba(28,30,32,.9);
+    --chalk-dim: rgba(28,30,32,.4);
+    --card: rgba(255,255,255,.6);
+    --line: rgba(28,30,32,.3);
+    --edge: rgba(28,30,32,.22);
+    --text: #1a1c1e;
+    --muted: #6a7076;
+    --accent: #127a58;
+    --shadow: 0 24px 44px -30px rgba(20,30,25,.4);
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; }
+  body {
+    margin: 0; overflow: hidden;
+    background: var(--board); color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  .board { position: fixed; inset: 0; }
+  .texture {
+    position: absolute; inset: -10%; pointer-events: none; opacity: .05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+  svg.links { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+
+  .chrome { position: fixed; top: 18px; left: 18px; z-index: 5000; }
+  .mode-switch { display: inline-flex; gap: 4px; padding: 3px; border-radius: 999px; background: color-mix(in srgb, var(--text) 8%, transparent); backdrop-filter: blur(8px); }
+  .mode-switch button { display: inline-flex; align-items: center; gap: 6px; border: 0; cursor: pointer; font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 999px; background: transparent; color: var(--muted); transition: background .18s, color .18s; }
+  .mode-switch button:hover { color: var(--text); }
+  .mode-switch button.active { background: color-mix(in srgb, var(--board) 70%, var(--text) 8%); color: var(--text); box-shadow: 0 1px 2px rgba(0,0,0,.25); }
+  .mode-switch svg { width: 14px; height: 14px; }
+
+  .tools { position: fixed; top: 18px; right: 18px; display: flex; align-items: center; gap: 10px; z-index: 5000; }
+  .agent-pill { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; color: var(--muted); padding: 7px 12px; border-radius: 999px; background: color-mix(in srgb, var(--text) 7%, transparent); border: 1px solid var(--line); backdrop-filter: blur(8px); }
+  .agent-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2.4s ease-out infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 45%, transparent) } 70% { box-shadow: 0 0 0 7px transparent } 100% { box-shadow: 0 0 0 0 transparent } }
+  .icon-btn { width: 34px; height: 34px; border-radius: 999px; cursor: pointer; display: grid; place-items: center; background: color-mix(in srgb, var(--text) 7%, transparent); border: 1px solid var(--line); color: var(--text); backdrop-filter: blur(8px); }
+  .icon-btn:hover { background: color-mix(in srgb, var(--text) 14%, transparent); }
+  .icon-btn svg { width: 16px; height: 16px; }
+
+  .card {
+    position: absolute;
+    width: 214px; height: 118px;
+    padding: 14px 15px;
+    border-radius: 14px;
+    background: var(--card);
+    border: 1.6px solid var(--line);
+    backdrop-filter: blur(2px);
+    display: flex; flex-direction: column;
+    cursor: pointer;
+    transition: left .8s cubic-bezier(.22,.8,.24,1), top .8s cubic-bezier(.22,.8,.24,1),
+                opacity .6s ease, border-color .5s ease, box-shadow .5s ease, color .5s ease;
+    will-change: left, top;
+  }
+  .card.focus { border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent); }
+  .card-head { display: flex; align-items: center; gap: 9px; }
+  .glyph { width: 28px; height: 28px; flex: none; display: grid; place-items: center; border-radius: 8px; border: 1.4px solid var(--line); }
+  .glyph svg { width: 15px; height: 15px; }
+  .card.focus .glyph { border-color: var(--accent); color: var(--accent); }
+  .card-title { font-size: 13px; font-weight: 600; letter-spacing: .01em; }
+  .card-sub { font-size: 10.5px; color: var(--muted); }
+  .card-status { margin-top: auto; font-size: 11px; color: var(--muted); }
+  .card.focus .card-status { color: var(--accent); }
+
+  .footer { position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--muted); z-index: 5000; }
+  .hint { padding: 8px 14px; border-radius: 999px; background: color-mix(in srgb, var(--text) 6%, transparent); border: 1px solid var(--line); backdrop-filter: blur(8px); }
+  .btn { border: 1px solid var(--line); background: color-mix(in srgb, var(--text) 6%, transparent); color: var(--text); font: inherit; font-size: 12.5px; padding: 9px 16px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn:active { transform: scale(.97); }
+  .btn svg { width: 14px; height: 14px; }
+</style>
+</head>
+<body>
+  <div class="board" id="board">
+    <div class="texture"></div>
+    <svg class="links" id="links"></svg>
+  </div>
+
+  <div class="chrome">
+    <div class="mode-switch" role="tablist" aria-label="启动模式">
+      <button role="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/></svg>构建</button>
+      <button role="tab"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/></svg>应用</button>
+      <button role="tab" aria-selected="true" class="active"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>工作台</button>
+    </div>
+  </div>
+
+  <div class="tools">
+    <span class="agent-pill"><span class="agent-dot"></span>agent 正在板书</span>
+    <button class="icon-btn" id="theme" title="切换白板 / 黑板"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg></button>
+  </div>
+
+  <div class="footer">
+    <span class="hint">点卡片看它的来龙去脉 · 连线是 agent 写下的关系</span>
+    <button class="btn" id="cycle"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"/><path d="M21 3v6h-6"/></svg>换个焦点</button>
+  </div>
+
+<script>
+const ICONS = {
+  review: '<path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>',
+  code: '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
+  chart: '<path d="M3 3v18h18"/><path d="m7 15 3-4 3 3 5-7"/>',
+  chat: '<path d="M21 15a2 2 0 0 1-2 2H8l-4 4V5a2 2 0 0 1 2-2h13a2 2 0 0 1 2 2z"/>',
+  globe: '<circle cx="12" cy="12" r="10"/><path d="M2 12h20"/>',
+  term: '<path d="m4 17 6-6-6-6"/><path d="M12 19h8"/>',
+  grid: '<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>'
+};
+const svg = n => '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">' + ICONS[n] + '</svg>';
+
+const NODES = [
+  { id: 'review',  title: '审查', sub: 'PR #482', icon: 'review', x: .71, y: .30, status: '等待你的确认' },
+  { id: 'editor',  title: '编辑器', sub: 'sporemind/web', icon: 'code', x: .33, y: .24, status: '2 个文件未保存' },
+  { id: 'chart',   title: '构建面板', sub: 'CI 流水线', icon: 'chart', x: .79, y: .64, status: '刚刚通过' },
+  { id: 'chat',    title: '对话', sub: '主 agent 会话', icon: 'chat', x: .47, y: .47, status: '3 条新消息' },
+  { id: 'browser', title: '浏览器', sub: 'localhost:5173', icon: 'globe', x: .15, y: .58, status: '已加载' },
+  { id: 'term',    title: '终端', sub: 'make dev', icon: 'term', x: .61, y: .82, status: '运行中 12 分钟' },
+  { id: 'apps',    title: '应用', sub: '12 个已安装', icon: 'grid', x: .30, y: .80, status: '空闲' }
+];
+const EDGES = [
+  { from: 'editor',  to: 'chart',   label: '触发构建' },
+  { from: 'chart',   to: 'review',  label: '结果回填' },
+  { from: 'chat',    to: 'editor',  label: '下发指令' },
+  { from: 'term',    to: 'chart',   label: 'make dev' },
+  { from: 'browser', to: 'chart',   label: '预览产物' },
+  { from: 'apps',    to: 'chat',    label: '打开会话' },
+  { from: 'review',  to: 'editor',  label: '要求修改' }
+];
+
+const board = document.getElementById('board');
+const links = document.getElementById('links');
+const nodes = {};
+let focus = 'review';
+let centers = {};
+
+NODES.forEach(n => {
+  const el = document.createElement('article');
+  el.className = 'card';
+  el.style.width = '214px'; el.style.height = '118px';
+  el.innerHTML =
+    '<div class="card-head"><span class="glyph">' + svg(n.icon) + '</span>' +
+    '<span><span class="card-title">' + n.title + '</span><br><span class="card-sub">' + n.sub + '</span></span></div>' +
+    '<div class="card-status">' + n.status + '</div>';
+  el.addEventListener('click', () => { focus = n.id; render(); });
+  board.appendChild(el);
+  nodes[n.id] = el;
+});
+
+function curve(a, b) {
+  const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+  const dx = b.x - a.x, dy = b.y - a.y;
+  const len = Math.hypot(dx, dy) || 1;
+  const bow = 34;
+  const cx = mx - dy / len * bow, cy = my + dx / len * bow;
+  return { d: 'M ' + a.x + ' ' + a.y + ' Q ' + cx + ' ' + cy + ' ' + b.x + ' ' + b.y, mx: cx, my: cy };
+}
+
+function render() {
+  const W = window.innerWidth, H = window.innerHeight;
+  NODES.forEach(n => {
+    const el = nodes[n.id];
+    const px = n.x * W, py = n.y * H;
+    el.style.left = px + 'px';
+    el.style.top = py + 'px';
+    el.style.transform = 'translate(-50%,-50%)';
+    const isFocus = n.id === focus;
+    const linked = EDGES.some(e => (e.from === focus && e.to === n.id) || (e.to === focus && e.from === n.id));
+    el.classList.toggle('focus', isFocus);
+    el.style.opacity = isFocus ? 1 : (linked ? .9 : .5);
+    centers[n.id] = { x: px, y: py };
+  });
+
+  const edgesByFocus = {};
+  let html = '';
+  EDGES.forEach(e => {
+    const a = centers[e.from], b = centers[e.to];
+    const c = curve(a, b);
+    const hot = e.from === focus || e.to === focus;
+    html += '<path d="' + c.d + '" stroke-linecap="round" style="fill:none;stroke:' + (hot ? 'var(--accent)' : 'var(--edge)') +
+      ';stroke-width:' + (hot ? 2 : 1.4) + ';stroke-dasharray:' + (hot ? '0' : '7 7') + ';opacity:' + (hot ? .95 : .5) + '"/>';
+    html += '<text x="' + c.mx + '" y="' + (c.my - 6) + '" text-anchor="middle" font-size="11" font-family="system-ui, sans-serif" style="fill:' + (hot ? 'var(--accent)' : 'var(--muted)') + ';opacity:' + (hot ? 1 : .7) + '">' + e.label + '</text>';
+  });
+
+  const f = centers[focus];
+  html += '<ellipse cx="' + f.x + '" cy="' + f.y + '" rx="' + (214 / 2 + 14) + '" ry="' + (118 / 2 + 12) + '" style="fill:none;stroke:var(--accent);stroke-width:1.6;stroke-dasharray:10 8;opacity:.7"/>';
+  links.innerHTML = html;
+}
+
+document.getElementById('cycle').addEventListener('click', () => {
+  const i = NODES.findIndex(n => n.id === focus);
+  focus = NODES[(i + 1) % NODES.length].id;
+  render();
+});
+document.getElementById('theme').addEventListener('click', () => document.body.classList.toggle('light'));
+window.addEventListener('resize', render);
+render();
+</script>
+</body>
+</html>

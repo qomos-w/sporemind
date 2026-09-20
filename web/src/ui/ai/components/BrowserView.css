@@ -1,0 +1,700 @@
+.browser-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-width: 0;
+  background: var(--bg-base);
+  color: var(--text-primary);
+}
+
+.browser-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-base);
+  flex-shrink: 0;
+}
+
+.browser-nav-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.browser-toolbar-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.browser-toolbar-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.browser-toolbar-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.browser-toolbar-btn .spin {
+  animation: browser-spin 1s linear infinite;
+}
+
+@keyframes browser-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.browser-error-indicator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--danger, #ef4444);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: help;
+  flex-shrink: 0;
+}
+
+.browser-address-bar {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  transition: border-color var(--transition-fast), background var(--transition-fast);
+}
+
+.browser-address-bar:focus-within {
+  border-color: var(--accent-active);
+  background: var(--bg-elevated);
+}
+
+.browser-address-icon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.browser-address-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  outline: none;
+}
+
+.browser-address-input::placeholder {
+  color: var(--text-tertiary);
+}
+
+.browser-address-go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.browser-address-go:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Address-bar history omnibox (independent instances). The dropdown drops
+ * below the toolbar over the browser frame; native-window occlusion is
+ * handled by useBrowserOverlay, so only HTML stacking matters here. */
+.browser-history-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  min-width: 260px;
+  max-height: 320px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-lg);
+  z-index: 30;
+}
+
+.browser-history-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-primary);
+  cursor: pointer;
+  text-align: left;
+  font-size: var(--text-sm);
+  min-width: 0;
+}
+
+.browser-history-item:hover,
+.browser-history-item.active {
+  background: var(--bg-hover);
+}
+
+.browser-history-item-icon {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.browser-history-item-url {
+  flex-shrink: 1;
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-history-item-title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+}
+
+.browser-history-item-time {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+}
+
+.browser-frame {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+  background: var(--bg-base);
+}
+
+.browser-newtab {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  overflow: auto;
+  padding: 16px;
+}
+
+.browser-newtab-content {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 16px;
+  width: 100%;
+  max-width: 960px;
+  max-height: 100%;
+}
+
+.browser-newtab-mode,
+.browser-newtab-scope {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-subtle);
+}
+
+.browser-newtab-mode-btn {
+  flex: 1;
+  min-width: 60px;
+  height: 28px;
+  padding: 0 12px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.browser-newtab-mode-btn:hover:not(.active) {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.browser-newtab-mode-btn.active {
+  background: var(--accent-primary);
+  color: var(--text-on-accent, #fff);
+  font-weight: 500;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+}
+
+.browser-newtab-hint {
+  text-align: center;
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+}
+
+.browser-newtab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.browser-newtab-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 100px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-xs, 0 1px 2px rgba(0, 0, 0, 0.03));
+  cursor: pointer;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), transform var(--transition-fast);
+}
+
+.browser-newtab-card.drag-over {
+  border: 1px dashed var(--accent-active);
+  background: var(--accent-primary-dim, rgba(0, 122, 204, 0.08));
+}
+
+.browser-newtab-card-drop-hint {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: inherit;
+  background: var(--bg-surface);
+  opacity: 0.92;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--text-primary);
+  pointer-events: none;
+}
+
+.browser-newtab-card.open {
+  border-color: var(--accent-active);
+  background: var(--accent-primary-dim, rgba(0, 122, 204, 0.08));
+  box-shadow: var(--shadow-sm);
+  cursor: default;
+}
+
+.browser-newtab-card:hover:not(.open) {
+  border-color: var(--border-default);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.browser-newtab-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+
+.browser-newtab-card-name {
+  flex: 1;
+  min-width: 0;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-newtab-card-url {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-newtab-card-title {
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-newtab-card-proxy {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.browser-newtab-card-tools {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.browser-newtab-card-tool {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.browser-newtab-card-tool:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.browser-newtab-card-tool:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.browser-newtab-card-tool.danger:hover:not(:disabled) {
+  background: var(--error-bg, rgba(239, 68, 68, 0.1));
+  color: var(--error);
+}
+
+.browser-snapshot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.browser-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-tertiary);
+  gap: 12px;
+}
+
+.browser-placeholder-text {
+  font-size: var(--text-sm);
+}
+
+.browser-error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 16px;
+  color: var(--text-error);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.browser-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.browser-loading-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-active);
+  animation: browser-bounce 1.4s infinite ease-in-out both;
+}
+
+.browser-loading-dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.browser-loading-dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+@keyframes browser-bounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+.browser-newtab-add {
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-style: dashed;
+  border-color: var(--border-default);
+  background: transparent;
+  cursor: pointer;
+}
+
+.browser-newtab-add:hover {
+  border-color: var(--accent-active);
+  background: var(--bg-surface);
+}
+
+.browser-newtab-add-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--bg-base);
+  color: var(--accent-active);
+}
+
+.browser-newtab-add-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.browser-modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+}
+
+.browser-modal {
+  width: 90%;
+  max-width: 420px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+}
+
+.browser-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.browser-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.browser-modal-body p {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  line-height: 1.5;
+}
+
+.browser-modal-label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.browser-modal-row {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  justify-content: flex-start;
+}
+
+.browser-modal-col {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 0 0 auto;
+  min-width: 0;
+}
+
+.browser-modal-input {
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  outline: none;
+}
+
+.browser-modal-input:focus {
+  border-color: var(--accent-active);
+}
+
+.browser-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.browser-modal-btn {
+  height: 32px;
+  padding: 0 14px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.browser-modal-btn:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+
+.browser-modal-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.browser-modal-btn.primary {
+  border-color: var(--accent-active);
+  background: var(--accent-primary-dim, rgba(0, 122, 204, 0.12));
+  color: var(--accent-active);
+}
+
+.browser-modal-btn.primary:hover:not(:disabled) {
+  background: var(--accent-active);
+  color: #fff;
+}
+
+.browser-modal-btn.danger {
+  border-color: var(--error-border, var(--border-default));
+  color: var(--error);
+}
+
+.browser-modal-btn.danger:hover:not(:disabled) {
+  background: var(--error-bg, rgba(239, 68, 68, 0.1));
+  border-color: var(--error);
+}
+
+/* Card context menu (export/import cookies) — follows shell ContextMenu style */
+.browser-card-ctx-menu {
+  position: fixed;
+  z-index: 1100;
+  background: var(--bg-elevated, var(--bg-primary));
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md, 6px);
+  box-shadow: var(--shadow-lg, 0 4px 16px rgba(0, 0, 0, 0.2));
+  padding: 4px 0;
+  min-width: 180px;
+  user-select: none;
+}
+
+.browser-card-ctx-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--text-primary);
+  font-size: var(--text-sm, 13px);
+  padding: 4px 12px;
+  cursor: pointer;
+  text-align: left;
+  height: 28px;
+}
+
+.browser-card-ctx-item:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+
+.browser-card-ctx-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.browser-card-ctx-label {
+  flex: 1;
+}
+
+.browser-card-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1200;
+  background: var(--bg-elevated, var(--bg-primary));
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md, 6px);
+  padding: 8px 16px;
+  font-size: var(--text-sm, 13px);
+  color: var(--text-primary);
+  box-shadow: var(--shadow-lg, 0 4px 16px rgba(0, 0, 0, 0.2));
+  max-width: 70vw;
+  overflow-wrap: break-word;
+}

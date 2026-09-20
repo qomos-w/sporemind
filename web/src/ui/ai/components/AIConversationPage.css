@@ -1,0 +1,2122 @@
+/* ── Content wrapper: anchors short content to bottom ── */
+.ai-message-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 16px;
+  min-height: 100%;
+  position: relative;
+  /* Center + cap the conversation column on wide screens. The scroll
+     container (.ai-message-stream) stays full-width so the scrollbar and
+     padding sit at the viewport edge; only the content column is narrowed. */
+  width: 100%;
+  max-width: var(--ai-conversation-max-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ── Empty state ── */
+.ai-conversation-empty-state {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+/* No-project empty state: compact card mirroring the new-chat landing page.
+   Action buttons reuse .project-new-chat-quick-action (global class). */
+.ai-empty-quick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(420px, 100%);
+  padding: 26px 24px 22px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  box-shadow: var(--shadow-md);
+}
+
+.ai-empty-quick-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin-bottom: 10px;
+  border-radius: var(--radius-full);
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+}
+
+.ai-empty-quick-card-title {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ai-empty-quick-card-subtitle {
+  margin: 6px 0 0;
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.ai-empty-quick-card .project-new-chat-quick-actions {
+  width: 100%;
+  margin-top: 16px;
+}
+
+.ai-real-mode-placeholder {
+  width: min(560px, 100%);
+  padding: 20px 22px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  background: color-mix(in srgb, var(--bg-surface) 82%, transparent);
+  box-shadow: var(--shadow-md);
+}
+
+.ai-real-mode-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+
+.ai-real-mode-title {
+  margin: 14px 0 8px;
+  font-size: 20px;
+  line-height: 1.3;
+  color: var(--text-primary);
+}
+
+.ai-real-mode-copy {
+  margin: 0;
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-secondary);
+}
+
+.ai-conversation {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  background: var(--bg-base);
+  position: relative;
+  /* Max content width for the conversation column. On wide screens the
+     message stream and composer are centered and capped at this width;
+     on narrower viewports it collapses to 100%. Override per-mode below. */
+  --ai-conversation-max-width: 900px;
+  --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', 'JetBrains Mono', 'Consolas', 'Courier New', monospace;
+}
+
+.ai-conversation::before,
+.ai-conversation::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 12px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ai-conversation::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--bg-base), transparent);
+}
+
+.ai-conversation::after {
+  bottom: 0;
+  height: 0;
+  background: transparent;
+}
+
+.ai-message-stream {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overflow-anchor: none;
+  padding: 16px 16px calc(var(--composer-card-top, var(--composer-frame-h, 120px)) + 16px + var(--keyboard-height, 0px));
+  font-family: var(--font-sans);
+}
+
+/* ── User message — right-aligned bubble ── */
+.ai-user-bubble-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ai-assistant-turn + .ai-user-bubble-row {
+  margin-top: 20px;
+}
+
+.ai-user-turn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.ai-user-bubble {
+  max-width: 80%;
+  padding: 10px 16px;
+  border-radius: 16px 16px 4px 16px;
+  background: var(--bg-overlay);
+  color: var(--text-primary);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ai-user-bubble.has-media {
+  padding-bottom: 8px;
+}
+
+.ai-user-bubble .ai-step-text > :first-child {
+  margin-top: 0;
+}
+
+.ai-user-bubble .ai-step-text > :last-child {
+  margin-bottom: 0;
+}
+
+.ai-user-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.ai-user-image {
+  max-width: min(280px, 100%);
+  max-height: 200px;
+  border-radius: var(--radius-md);
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.ai-user-attachments {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-top: 8px;
+}
+
+.ai-user-attachment-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--bg-surface) 80%, transparent);
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+
+.ai-user-footer {
+  opacity: 0;
+  pointer-events: none;
+  margin-top: 6px;
+  transition: opacity var(--transition-fast);
+}
+
+.ai-user-turn:hover .ai-user-footer,
+.ai-user-turn:focus-within .ai-user-footer,
+.ai-shell-mobile .ai-user-footer {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── System continuation (Meta=goal/workflow) — light full-width strip ── */
+.ai-system-continuation-row-wrap {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.ai-assistant-turn + .ai-system-continuation-row-wrap {
+  margin-top: 20px;
+}
+
+.ai-system-continuation {
+  max-width: 100%;
+  font-size: var(--text-sm, 13px);
+  line-height: 1.5;
+  color: var(--text-secondary, rgba(127, 127, 127, 0.9));
+}
+
+.ai-system-continuation-goal .ai-system-continuation-icon {
+  color: rgba(59, 130, 246, 0.75);
+}
+
+.ai-system-continuation-workflow .ai-system-continuation-icon {
+  color: rgba(16, 185, 129, 0.75);
+}
+
+.ai-system-continuation-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  /* Left edge lands the 16px icon slot on x=0, matching .ai-step-row */
+  padding: 6px 10px 6px 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  min-width: 0;
+}
+
+.ai-system-continuation-row:hover {
+  background: var(--bg-hover, rgba(127, 127, 127, 0.08));
+}
+
+.ai-system-continuation-row:focus-visible {
+  outline: 1px solid var(--border-color, rgba(127, 127, 127, 0.4));
+  outline-offset: 1px;
+}
+
+/* Icon mirrors .ai-step-icon-slot geometry (16px slot, icon centered, 1px
+   optical nudge) so the goal/workflow icon column lines up with timeline step
+   title icons. */
+.ai-system-continuation-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  flex-shrink: 0;
+  opacity: 0.7;
+  position: relative;
+  top: 1px;
+}
+
+.ai-system-continuation-label {
+  flex-shrink: 0;
+  font-weight: 500;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.ai-system-continuation-summary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.8;
+}
+
+.ai-system-continuation-toggle {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.7;
+}
+
+.ai-system-continuation-body {
+  border-top: 1px solid var(--border-subtle, var(--border-color, rgba(127, 127, 127, 0.12)));
+  /* 16px matches .ai-collapsible-inner margin-left (content under the icon slot) */
+  padding: 8px 10px 8px 16px;
+  color: var(--text-secondary, rgba(127, 127, 127, 0.95));
+  overflow-x: auto;
+}
+
+.ai-assistant-turn {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.ai-message-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+.ai-turn-tail-wrap {
+  position: relative;
+  margin-top: 10px;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ai-turn-tail {
+  flex: 0 1 800px;
+  min-width: 0;
+}
+
+.ai-turn-tail > .ai-step {
+  min-width: 0;
+}
+
+.ai-turn-footer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+/* ── Folded assistant steps ──
+   The fold's collapsible area wraps the same parent node (.ai-assistant-turn)
+   that normally holds the unfolded frames, so each frame keeps its regular
+   step styles. The collapsible inner's vertical padding is removed so
+   spacing around the folded frames matches the regular 8px step rhythm.
+   Left padding is kept at 8px so .ai-card-base can use its negative left
+   margin to extend into the gutter without being clipped by overflow:hidden. */
+.ai-turn-fold-label {
+  color: var(--text-tertiary);
+}
+
+.ai-turn-fold .ai-collapsible-inner {
+  margin-left: 0;
+  padding-left: 8px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.ai-turn-fold .ai-collapsible.open .ai-collapsible-inner {
+  padding-left: 8px;
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+/* ── Header metrics (action badge + tokens) ── */
+.ai-turn-header-metrics {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  line-height: 16px;
+  position: relative;
+  top: 1px;
+}
+
+.ai-turn-header-metrics.streaming {
+  color: var(--text-caption);
+}
+
+.ai-turn-header-metrics.streaming .ai-step-label-wave .ai-step-label-char {
+  display: inline-block;
+  animation:
+    ai-char-shimmer var(--ai-shimmer-duration, 1.6s) ease-in-out infinite;
+}
+
+/* ── Duration badge (wall-clock since turn start) ── */
+.ai-turn-duration-badge {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  line-height: 16px;
+}
+
+.ai-turn-header-metrics.streaming .ai-turn-duration-badge {
+  color: var(--text-caption);
+}
+
+/* ── Usage badge (merged in/out tokens + context budget fill) ── */
+.ai-turn-usage-badge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  box-sizing: border-box;
+  min-height: 16px;
+  min-width: 64px;
+  line-height: 14px;
+  padding: 1px 6px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  background: color-mix(in srgb, var(--border-default) 40%, transparent);
+  white-space: nowrap;
+  isolation: isolate;
+}
+
+.ai-turn-usage-track {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  overflow: hidden;
+  z-index: 0;
+}
+
+.ai-turn-usage-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background: var(--ctx-budget-bar-fill);
+  transition: width 0.4s ease;
+  min-width: 2px;
+  z-index: 0;
+}
+
+.ai-turn-usage-badge.over-budget .ai-turn-usage-fill {
+  background: var(--ctx-budget-bar-fill-over);
+}
+
+.ai-turn-usage-budget-mark {
+  position: absolute;
+  top: -7px;
+  width: 0;
+  height: 0;
+  border-left: 3px solid transparent;
+  border-right: 3px solid transparent;
+  border-top: 4px solid var(--error);
+  transform: translateX(-50%);
+  z-index: 3;
+}
+
+.ai-turn-usage-text-row {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+}
+
+.ai-turn-usage-text-clip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  overflow: hidden;
+  border-radius: inherit;
+  transition: width 0.4s ease;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.ai-turn-usage-text-row.invert {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  padding: 1px 6px;
+  box-sizing: border-box;
+  min-height: 16px;
+  line-height: 14px;
+  white-space: nowrap;
+}
+
+.ai-turn-usage-in { color: var(--accent-primary); }
+.ai-turn-usage-out { color: var(--status-success); }
+.ai-turn-usage-cost { color: var(--text-secondary); }
+.ai-turn-usage-cache { color: var(--status-info); }
+
+.ai-turn-usage-text-row.invert .ai-turn-usage-in,
+.ai-turn-usage-text-row.invert .ai-turn-usage-out,
+.ai-turn-usage-text-row.invert .ai-turn-usage-cost,
+.ai-turn-usage-text-row.invert .ai-turn-usage-cache {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .ai-turn-usage-in,
+[data-theme="dark"] .ai-turn-usage-out,
+[data-theme="dark"] .ai-turn-usage-cost,
+[data-theme="dark"] .ai-turn-usage-cache {
+  color: var(--text-secondary);
+}
+
+.ai-turn-header-metrics.ai-wave-paused .ai-step-label-wave .ai-step-label-char {
+  animation-play-state: paused;
+}
+
+/* ── LLM token-rate timeline monitor (desktop only) ── */
+.ai-token-rate-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  vertical-align: middle;
+  box-sizing: border-box;
+  height: 16px;
+  padding: 0 5px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  line-height: 14px;
+  color: var(--text-caption);
+  background: color-mix(in srgb, var(--border-default) 40%, transparent);
+  white-space: nowrap;
+  opacity: 0.55;
+  cursor: pointer;
+  transition: opacity 0.3s ease, background 0.2s ease;
+}
+
+.ai-token-rate-bar:hover {
+  background: color-mix(in srgb, var(--border-default) 70%, transparent);
+}
+
+.ai-token-rate-bar.active {
+  opacity: 1;
+}
+
+.ai-token-rate-bar.expanded {
+  opacity: 1;
+  padding: 0 4px;
+}
+
+.ai-token-rate-spark {
+  display: block;
+  flex-shrink: 0;
+  overflow: visible;
+}
+
+.ai-token-rate-spark-area {
+  fill: var(--text-secondary);
+  opacity: 0.14;
+  transition: fill 0.3s ease, opacity 0.3s ease;
+}
+
+.ai-token-rate-spark-line {
+  stroke: var(--text-secondary);
+  stroke-width: 1;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  opacity: 0.55;
+  transition: stroke 0.3s ease, opacity 0.3s ease;
+}
+
+.ai-token-rate-bar.active .ai-token-rate-spark-area {
+  fill: var(--status-success);
+  opacity: 0.22;
+}
+
+.ai-token-rate-bar.active .ai-token-rate-spark-line {
+  stroke: var(--status-success);
+  opacity: 1;
+}
+
+.ai-token-rate-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-token-rate-unit {
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+[data-theme="dark"] .ai-token-rate-bar {
+  color: var(--text-secondary);
+}
+
+/* ── Timeline loading skeleton ── */
+.ai-timeline-loading-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+  max-width: 420px;
+}
+
+.ai-timeline-loading-line {
+  height: 12px;
+  border-radius: 6px;
+  background: color-mix(in srgb, var(--text-tertiary) 40%, transparent 60%);
+  animation: ai-timeline-loading-pulse 1.4s ease-in-out infinite;
+}
+
+.ai-timeline-loading-line:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.ai-timeline-loading-line:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes ai-timeline-loading-pulse {
+  0%, 100% { opacity: 0.35; }
+  50%      { opacity: 0.65; }
+}
+
+/* ── Separator dot between metrics ── */
+.ai-turn-footer-sep {
+  color: var(--text-tertiary);
+  opacity: 0.5;
+  user-select: none;
+}
+
+.ai-message-footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-turn-actions-anchor {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-message-footer-time {
+  color: var(--text-tertiary);
+}
+
+.ai-turn-summary-title {
+  font-size: var(--text-xs);
+}
+
+.ai-message-footer-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-message-footer-icon-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.ai-turn-actions-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 132px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 4px 0;
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+}
+
+.ai-turn-details-section {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 220px;
+  max-width: 320px;
+  padding: 2px 0;
+  position: relative;
+  overflow: visible;
+}
+
+.ai-turn-details-section::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 2px;
+  bottom: 2px;
+  width: 1px;
+  background: color-mix(in srgb, var(--border-default) 50%, transparent);
+}
+
+.ai-turn-details-section:not(:has(.ai-turn-tasks-section)):not(:has(.ai-turn-skills-section)):not(:has(.ai-turn-file-changes)):not(:has(.ai-turn-error-section))::before {
+  display: none;
+}
+
+.ai-turn-details-section > .ai-turn-file-changes:not(:last-child),
+.ai-turn-details-section > .ai-turn-tasks-section:not(:last-child),
+.ai-turn-details-section > .ai-turn-error-section:not(:last-child) {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.ai-turn-error-section {
+  padding: 6px 0 6px 10px;
+}
+
+.ai-turn-error-section .ai-error-message {
+  color: var(--error);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── Task list inside turn tail ── */
+.ai-turn-tasks-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-bottom: 3px;
+  margin-bottom: 2px;
+}
+
+.ai-turn-task-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 0 1px 10px;
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ai-turn-task-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.ai-turn-task-pending .ai-turn-task-icon {
+  color: var(--text-tertiary);
+}
+
+.ai-turn-task-in_progress .ai-turn-task-icon {
+  color: var(--accent-primary);
+}
+
+.ai-turn-task-spinner {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border: 1.5px solid color-mix(in srgb, var(--status-running) 72%, var(--text-secondary) 28%);
+  border-top-color: transparent;
+  border-radius: 50%;
+  animation: ai-turn-task-spin 0.8s linear infinite;
+}
+
+.ai-turn-task-completed .ai-turn-task-icon {
+  color: var(--status-success);
+}
+
+/* ── Goal row inside turn tail ── */
+.ai-turn-goal-section {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  padding-bottom: 3px;
+  margin-bottom: 2px;
+}
+
+.ai-turn-goal-row {
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-turn-goal-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 1px 0 1px 10px;
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: default;
+  width: 100%;
+  text-align: left;
+}
+
+.ai-turn-goal-header:not(:disabled) {
+  cursor: pointer;
+}
+
+.ai-turn-goal-header {
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
+}
+
+.ai-turn-goal-header:hover {
+  background: var(--bg-hover);
+}
+
+.ai-turn-goal-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--accent-primary);
+}
+
+.ai-turn-goal-label {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  font-weight: 500;
+}
+
+.ai-turn-goal-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--text-secondary);
+}
+
+.ai-turn-goal-progress {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-turn-workflow-progress {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-secondary);
+}
+
+.ai-turn-workflow-progress-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+}
+
+.ai-turn-workflow-progress-delta--up {
+  color: var(--success);
+}
+
+.ai-turn-workflow-progress-delta--down {
+  color: var(--error);
+}
+
+/* Per-task status mini bars inline in the workflow row. Bar height encodes
+   status: done tallest, backlog shortest/faint. */
+.ai-turn-workflow-bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 12px;
+}
+
+.ai-turn-workflow-bar {
+  width: 3px;
+  height: 4px;
+  border-radius: 1px;
+  opacity: 0.4;
+}
+
+.ai-turn-workflow-bar--todo {
+  height: 6px;
+  opacity: 0.85;
+}
+
+.ai-turn-workflow-bar--doing {
+  height: 8px;
+  opacity: 0.85;
+}
+
+.ai-turn-workflow-bar--pending_review {
+  height: 10px;
+  opacity: 0.85;
+}
+
+.ai-turn-workflow-bar--done {
+  height: 12px;
+  opacity: 0.95;
+}
+
+.ai-turn-goal-detail {
+  padding: 4px 0 4px 34px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.ai-goal-text-view {
+  padding: 12px 16px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: var(--leading-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* ── Skill mount list inside turn tail ── */
+.ai-turn-skills-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 6px;
+  margin-bottom: 4px;
+}
+
+.ai-turn-skill-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 0 2px 10px;
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ai-turn-skill-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--accent-primary);
+  width: 14px;
+  height: 14px;
+}
+
+.ai-turn-skill-unmount .ai-turn-skill-icon {
+  color: var(--text-tertiary);
+}
+
+.ai-turn-skill-name {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.ai-turn-skill-action {
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  margin-left: auto;
+  padding-right: 4px;
+}
+
+/* ── File change list inside turn tail ── */
+.ai-turn-file-changes {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding-bottom: 3px;
+  margin-bottom: 2px;
+  min-width: 0;
+}
+
+.ai-turn-file-changes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.ai-turn-file-change-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 6px 2px 10px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  white-space: nowrap;
+  min-width: 0;
+  text-align: left;
+}
+
+.ai-turn-file-change-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ai-turn-file-change-icon {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.ai-turn-file-change-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.ai-turn-file-change-added .ai-turn-file-change-icon {
+  color: var(--status-success);
+}
+
+.ai-turn-file-change-removed .ai-turn-file-change-icon {
+  color: var(--error);
+}
+
+.ai-turn-file-change-modified .ai-turn-file-change-icon {
+  color: var(--accent-primary);
+}
+
+/* ── Right-click menu for a changed file row ── */
+.ai-turn-file-menu {
+  position: fixed;
+  z-index: 1100;
+  min-width: 200px;
+  max-width: 360px;
+  font-size: 12px;
+  color: var(--text-primary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-strong, var(--border-default));
+  border-radius: var(--radius-sm, 2px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.28);
+  outline: none;
+  overflow: hidden;
+}
+
+.ai-turn-file-menu-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--bg-base);
+  color: var(--text-secondary);
+}
+
+.ai-turn-file-menu-header-icon {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.ai-turn-file-menu-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ai-turn-file-menu-list {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 0;
+}
+
+.ai-turn-file-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border: none;
+  background: none;
+  color: var(--text-primary);
+  font: inherit;
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.08s linear;
+}
+
+.ai-turn-file-menu-item:hover:not(:disabled),
+.ai-turn-file-menu-item:focus-visible {
+  background: var(--bg-hover);
+  outline: none;
+}
+
+.ai-turn-file-menu-item:disabled {
+  color: var(--text-muted);
+  cursor: default;
+}
+
+.ai-turn-file-menu-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.ai-turn-file-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.ai-turn-file-stat {
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.ai-turn-file-stat.add {
+  color: var(--status-success);
+}
+
+.ai-turn-file-stat.del {
+  color: var(--error);
+}
+
+.ai-turn-truncate-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 2px 0;
+  margin-top: 2px;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.ai-turn-truncate-toggle:hover {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+@keyframes ai-turn-task-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+.ai-turn-task-subject {
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.ai-turn-task-in_progress .ai-turn-task-subject {
+  color: var(--accent-primary);
+  font-weight: 500;
+  animation: ai-task-text-breathe 2s ease-in-out infinite;
+}
+
+.ai-turn-task-completed .ai-turn-task-subject {
+  color: var(--text-tertiary);
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--text-tertiary) 40%, transparent);
+}
+
+@keyframes ai-task-text-breathe {
+  0%, 100% {
+    color: color-mix(in srgb, var(--accent-primary) 60%, var(--text-primary) 40%);
+  }
+  50% {
+    color: color-mix(in srgb, var(--accent-primary) 100%, var(--text-primary) 0%);
+  }
+}
+
+/* ── Error summary title ── */
+.ai-turn-summary-status,
+.ai-turn-action-badge {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  gap: 4px;
+  box-sizing: border-box;
+  min-height: 16px;
+  line-height: 14px;
+  font-size: var(--text-xs);
+  font-weight: 500;
+  padding: 1px 5px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--border-default) 40%, transparent);
+  color: var(--text-secondary);
+}
+
+.ai-turn-summary-status {
+  margin-right: 6px;
+}
+
+.ai-turn-summary-status-text {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.ai-turn-badge-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--text-secondary);
+}
+
+.ai-turn-badge-stat-fail {
+  color: var(--error);
+}
+
+.ai-turn-badge-sep {
+  color: var(--text-tertiary);
+}
+
+.ai-turn-summary-status-success {
+  color: var(--status-success);
+  background: color-mix(in srgb, var(--status-success) 12%, transparent);
+}
+
+.ai-turn-summary-status-waiting {
+  color: var(--status-waiting);
+  background: color-mix(in srgb, var(--status-waiting) 12%, transparent);
+}
+
+.ai-turn-summary-status-error {
+  color: var(--error);
+  background: color-mix(in srgb, var(--error) 14%, transparent);
+}
+
+.ai-turn-summary-status-cancelled {
+  color: var(--text-tertiary);
+  background: color-mix(in srgb, var(--text-tertiary) 14%, transparent);
+}
+
+.ai-turn-detail-status-icon-success {
+  color: color-mix(in srgb, var(--accent-primary) 72%, var(--text-secondary) 28%);
+}
+
+.ai-turn-detail-status-icon-waiting {
+  color: color-mix(in srgb, var(--status-waiting) 72%, var(--text-secondary) 28%);
+}
+
+.ai-turn-detail-status-icon-error {
+  color: color-mix(in srgb, var(--error) 72%, var(--text-secondary) 28%);
+}
+
+.ai-turn-detail-status-icon-cancelled {
+  color: var(--text-tertiary);
+}
+
+.ai-turn-actions-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 6px 12px;
+  border: none;
+  background: none;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-turn-actions-item:hover {
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+}
+
+.ai-shell-mobile .ai-assistant-turn .ai-turn-frames > .ai-step,
+.ai-shell-mobile .ai-assistant-turn .ai-turn-frames > .ai-turn-fold {
+  max-width: 90%;
+}
+
+/* Mobile: wrapper cards (edit card) must not bleed 8px into the left gutter.
+   The negative-margin trick is a desktop affordance; on a narrow phone screen
+   the border ends up clearly left of the text segment above it and reads as
+   misaligned. Keep the 8px icon inset (padding) but drop the pull. */
+.ai-shell-mobile.ai-shell-layout .ai-turn-frames .ai-step .ai-card-base,
+.ai-shell-mobile.ai-shell-layout .ai-turn-frames .ai-step .ai-card-base:has(.ai-collapsible.open),
+.ai-shell-mobile.ai-shell-layout .ai-turn-fold .ai-step .ai-card-base,
+.ai-shell-mobile.ai-shell-layout .ai-turn-fold .ai-step .ai-card-base:has(.ai-collapsible.open) {
+  margin-left: 0;
+}
+
+.ai-shell-mobile .ai-turn-tail {
+  flex-basis: 90%;
+}
+
+.ai-shell-mobile .ai-turn-tail .ai-step-row {
+  overflow: hidden;
+  min-width: 0;
+}
+
+.ai-shell-mobile .ai-turn-tail .ai-step-label {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ai-shell-mobile .ai-turn-tail-wrap {
+  width: 100%;
+}
+
+.ai-shell-mobile .ai-user-bubble {
+  max-width: 90%;
+}
+
+.ai-shell-desktop .ai-assistant-turn > .ai-step,
+.ai-shell-desktop .ai-assistant-turn > .ai-turn-fold {
+  max-width: 800px;
+}
+
+.ai-shell-desktop .ai-turn-tail-wrap {
+  width: 100%;
+}
+
+.ai-shell-desktop .ai-user-bubble {
+  max-width: 640px;
+}
+
+.ai-scroll-down-btn {
+  position: absolute;
+  bottom: calc(var(--composer-frame-h, 120px) + 16px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.ai-scroll-down-btn-inner {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--border-secondary, rgba(255,255,255,.12));
+  background: var(--bg-overlay, rgba(255,255,255,.06));
+  color: var(--text-tertiary, rgba(255,255,255,.45));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  animation: ai-scroll-bounce 1.6s ease-in-out infinite;
+  transition: background .2s, color .2s, opacity .25s;
+}
+
+.ai-scroll-down-btn-inner:hover {
+  background: rgba(255,255,255,.2);
+  color: rgba(255,255,255,.6);
+}
+
+@keyframes ai-scroll-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(5px); }
+}
+
+.ai-conversation-composer-area {
+  position: relative;
+  padding: 12px 16px 6px;
+  background: transparent;
+  flex-shrink: 0;
+}
+
+.ai-conversation-quickbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 0 16px 0 24px;
+  /* Align with the centered message column. */
+  max-width: var(--ai-conversation-max-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ai-conversation-quickbar-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  font-family: var(--font-sans);
+  white-space: nowrap;
+}
+
+.ai-conversation-quickbar-trigger:hover,
+.ai-conversation-quickbar-trigger[aria-expanded="true"] {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ai-conversation-quickbar-trigger:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ai-conversation-quickbar-select-value {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-sm);
+}
+
+@container composer (max-width: 520px) {
+  .ai-conversation-quickbar-select-value {
+    max-width: 110px;
+  }
+}
+
+@container composer (max-width: 400px) {
+  .ai-conversation-quickbar-select-value {
+    max-width: 70px;
+  }
+}
+
+/* Positioning anchor for the dropdown — wraps only the trigger so the popup
+   sits directly above the button, independent of ancestor positioning. */
+.ai-conversation-quickbar-menu {
+  position: relative;
+  display: inline-flex;
+}
+
+.ai-conversation-quickbar-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-dropdown) - 1);
+}
+
+.ai-conversation-quickbar-dropdown {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 0;
+  min-width: 160px;
+  max-width: calc(100vw - 16px);
+  max-height: min(360px, 50vh);
+  overflow-y: auto;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 4px;
+  z-index: var(--z-dropdown);
+  box-sizing: border-box;
+}
+
+.ai-conversation-quickbar-dropdown.dual-col {
+  display: flex;
+  width: 320px;
+  max-width: calc(100vw - 16px);
+}
+
+.ai-conversation-quickbar-col {
+  flex: 1;
+  min-width: 0;
+}
+
+.ai-conversation-quickbar-secondary-col {
+  flex: 1;
+  min-width: 0;
+  border-left: 1px solid var(--border-default);
+  margin-left: 4px;
+  padding-left: 4px;
+}
+
+.ai-conversation-quickbar-col-header {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  padding: 4px 8px 2px;
+  font-weight: 500;
+}
+
+.ai-conversation-quickbar-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: var(--radius-md);
+}
+
+.ai-conversation-quickbar-item-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  text-align: left;
+}
+
+.ai-conversation-quickbar-item:has(.ai-conversation-quickbar-item-delete) .ai-conversation-quickbar-item-btn {
+  padding-right: 30px;
+}
+
+.ai-conversation-quickbar-item-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ai-conversation-quickbar-item.active .ai-conversation-quickbar-item-btn {
+  color: var(--text-primary);
+}
+
+.ai-conversation-quickbar-item.active .ai-conversation-quickbar-item-btn svg {
+  color: var(--accent-primary);
+}
+
+.ai-conversation-quickbar-item-delete {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: var(--radius-sm, 4px);
+  background: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-conversation-quickbar-item:hover .ai-conversation-quickbar-item-delete {
+  opacity: 1;
+}
+
+.ai-conversation-quickbar-item-delete:hover {
+  background: var(--danger, hsl(0 70% 50%));
+  color: white;
+}
+
+/* 触摸设备（移动端 / Capacitor WebView）：删除图标常驻显示，桌面端仅 hover 显示 */
+@media (hover: none) {
+  .ai-conversation-quickbar-item-delete {
+    opacity: 1;
+  }
+}
+
+.ai-conversation-quickbar-item-main {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ai-conversation-quickbar-item-status {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.ai-conversation-quickbar-item-status.working {
+  background: var(--accent-primary);
+  animation: ai-quickbar-status-pulse 1.4s ease-in-out infinite;
+}
+
+.ai-conversation-quickbar-item-status.waiting {
+  background: hsl(38 92% 50%);
+}
+
+.ai-conversation-quickbar-item-status.error {
+  background: hsl(0 75% 55%);
+}
+
+@keyframes ai-quickbar-status-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.78); }
+}
+
+/* ── Agent avatars inside project dropdown items ── */
+
+.ai-conversation-quickbar-item-avatars {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  margin-left: 6px;
+  flex-shrink: 0;
+}
+
+.ai-conversation-quickbar-item-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 6px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  user-select: none;
+  line-height: 1;
+  background-color: hsl(var(--avatar-hue) 70% 92%);
+  color: hsl(var(--avatar-hue) 64% 36%);
+  margin-left: -3px;
+  flex-shrink: 0;
+}
+
+.ai-conversation-quickbar-item-avatar:first-child {
+  margin-left: 0;
+}
+
+[data-theme="dark"] .ai-conversation-quickbar-item-avatar {
+  background-color: hsl(var(--avatar-hue) 45% 22%);
+  color: hsl(var(--avatar-hue) 75% 88%);
+}
+
+/* Coordinator avatars use a fixed grayscale scheme instead of the hue color,
+   with the mark in the same soft gray as folder icons. */
+.ai-conversation-quickbar-item-avatar.coordinator {
+  background-color: #f2f2f5;
+  color: var(--text-tertiary);
+}
+
+[data-theme="dark"] .ai-conversation-quickbar-item-avatar.coordinator {
+  background-color: #17181d;
+  color: var(--text-tertiary);
+}
+
+.ai-conversation-quickbar-item-avatar-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  font-size: 8px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+  background: var(--bg-hover);
+  margin-left: -3px;
+  flex-shrink: 0;
+  line-height: 1;
+}
+
+.ai-conversation-quickbar-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ai-conversation-quickbar-separator {
+  height: 1px;
+  background: var(--border-default);
+  margin: 4px 8px;
+}
+
+.ai-conversation-quickbar-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: none;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+  text-align: left;
+}
+
+.ai-conversation-quickbar-action-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ai-conversation-quickbar-arrow {
+  color: var(--text-tertiary);
+  pointer-events: none;
+}
+
+.ai-conversation-quickbar-empty {
+  padding: 8px;
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.ai-conversation-quickbar-status {
+  align-self: center;
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+/* ── Mobile context label (project + agent) above composer ── */
+.ai-conversation-mobile-context {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding: 0 8px 0 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.ai-conversation-mobile-context-project {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* removed: sep no longer used */
+
+.ai-conversation-mobile-context-agent {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+.ai-typewriter-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--text-secondary);
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  animation: ai-cursor-blink 1s step-end infinite;
+}
+
+/* ── Pending submits (queued while turn is running) ── */
+.ai-pending-submits {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 8px;
+  margin-left: 28px;
+  max-width: 800px;
+  padding-left: 10px;
+  border-left: 2px solid var(--accent-primary-dim);
+}
+
+.ai-pending-submit-item {
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+  opacity: 0.85;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 6px;
+  width: fit-content;
+}
+
+.ai-pending-submit-text {
+  /* No flex-grow — button sits right after the text */
+}
+
+.ai-pending-submit-cancel {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  opacity: 0.55;
+  transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+}
+
+.ai-pending-submit-item:hover .ai-pending-submit-cancel {
+  opacity: 1;
+}
+
+.ai-pending-submit-cancel:hover {
+  background: var(--bg-hover, rgba(255, 255, 255, 0.08));
+  color: var(--text-secondary);
+}
+
+/* ── Pending submits, anchored in .ai-turn-tail ──
+   Lives INSIDE the tail card (like TaskList): the scroll-lock pin
+   counter-shifts the whole tail, so this list rides with it and is immune
+   to the smooth-follow glide. Fresh class family, visually aligned with
+   the timeline step rows (icon gutter + label offset). */
+.ai-pending-anchor {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 2px 0 6px;
+}
+
+.ai-pending-anchor-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 22px;
+  padding-left: calc(28px + 10px);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+  white-space: pre-wrap;
+  word-break: break-word;
+  opacity: 0.85;
+}
+
+.ai-pending-anchor-dot {
+  flex-shrink: 0;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-primary-dim);
+}
+
+.ai-pending-anchor-text {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.ai-pending-anchor-cancel {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.15s ease, color 0.15s ease, transform 0.15s ease;
+}
+
+.ai-pending-anchor-cancel-icon {
+  font-size: 14px;
+  line-height: 1;
+  font-weight: 500;
+  user-select: none;
+}
+
+.ai-pending-anchor-cancel:hover {
+  opacity: 1;
+  color: var(--text-secondary);
+  transform: scale(1.05);
+}
+
+.ai-pending-anchor-cancel:active {
+  transform: scale(0.95);
+}
+
+/* ── Load more history button ── */
+.ai-load-more-history {
+  display: flex;
+  justify-content: center;
+  padding: 12px 0;
+}
+
+.ai-load-more-btn {
+  padding: 6px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-load-more-btn:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ai-summarized-boundary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ai-summarized-boundary-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.ai-summarized-boundary-label {
+  white-space: nowrap;
+}
+
+.ai-discarded-boundary {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 0;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.ai-discarded-boundary-line {
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.ai-discarded-boundary-label {
+  white-space: nowrap;
+}
+
+/* ── Error Boundary fallback ── */
+
+.ai-error-boundary {
+  border: 1px solid var(--error, #e25d46);
+  border-radius: var(--radius-md, 6px);
+  background: var(--bg-surface, #1e1e2e);
+  padding: 8px 12px;
+  margin: 4px 0;
+  font-size: var(--text-sm, 13px);
+}
+
+.ai-error-boundary-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ai-error-boundary-icon {
+  color: var(--error, #e25d46);
+  flex-shrink: 0;
+}
+
+.ai-error-boundary-title {
+  color: var(--text-primary, #cdd6f4);
+  font-weight: 500;
+  flex: 1;
+}
+
+.ai-error-boundary-retry {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #a6adc8);
+  cursor: pointer;
+  padding: 2px;
+  border-radius: var(--radius-sm, 4px);
+  transition: background var(--transition-fast, 0.15s), color var(--transition-fast, 0.15s);
+}
+
+.ai-error-boundary-retry:hover {
+  background: var(--bg-hover, #313244);
+  color: var(--text-primary, #cdd6f4);
+}
+
+.ai-error-boundary-toggle {
+  display: block;
+  margin-top: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary, #a6adc8);
+  cursor: pointer;
+  font-size: var(--text-xs, 12px);
+  padding: 2px 0;
+  text-decoration: underline;
+}
+
+.ai-error-boundary-toggle:hover {
+  color: var(--text-primary, #cdd6f4);
+}
+
+.ai-error-boundary-detail {
+  margin-top: 6px;
+  padding: 6px 8px;
+  background: var(--bg-inset, #11111b);
+  border-radius: var(--radius-sm, 4px);
+  color: var(--text-secondary, #a6adc8);
+  font-size: var(--text-xs, 12px);
+  font-family: var(--font-mono, monospace);
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* ── Sender identity avatars (user bubbles / injected peer messages) ── */
+.sender-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  padding: 0;
+  border: none;
+  flex-shrink: 0;
+  background-color: hsl(var(--avatar-hue, 210) 70% 92%);
+  color: hsl(var(--avatar-hue, 210) 45% 30%);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  user-select: none;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .sender-avatar {
+  background-color: hsl(var(--avatar-hue, 210) 45% 22%);
+  color: hsl(var(--avatar-hue, 210) 70% 88%);
+}
+
+.sender-avatar-jump {
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.sender-avatar-jump:hover {
+  transform: scale(1.12);
+}
+
+/* Operator/peer avatar sits just above the user bubble. */
+.ai-user-turn > .sender-avatar {
+  margin-bottom: 4px;
+}
+
+/* Injected peer message: avatar on the left, step fills the rest. */
+.ai-inject-peer-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.ai-inject-peer-row > .sender-avatar {
+  margin-top: 2px;
+}
+
+.ai-inject-peer-row > .ai-step {
+  flex: 1;
+  min-width: 0;
+}

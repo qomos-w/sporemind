@@ -1,0 +1,281 @@
+// plugin namespace — native build/artifact contract.
+// @ts-export
+
+struct NativeBuildContract {
+    Runtime: string
+    TargetOS: string
+    TargetArch: string
+    ArtifactPath: string
+    ManifestPath: string
+    optional EntrySymbol: string
+    optional ArtifactHash: string
+}
+
+struct NativeBuildResult {
+    Success: bool
+    ArtifactPath: string
+    ArtifactHash: string
+    Diagnostic: string
+}
+
+// NativeBuildReq drives a source-to-artifact compilation for a native plugin.
+// The project actor owns the source tree; PluginHost owns the compiler
+// invocation and the resulting artifact. Build is host-platform only: cross
+// compilation is rejected with a stable diagnostic.
+struct NativeBuildReq {
+    ProjectId: string
+    AppId: string
+    optional EntryModule: string            // source entry (.go); default main.gen.go
+    optional AppDir: string                 // subdirectory holding the app source, relative to the project root; "." or empty = project root; rejects "..", absolute paths and backslashes
+    optional SourceRoot: string             // caller-resolved project root (e.g. worktree path); when non-empty, PluginHost skips project.info and uses this as the source root
+    optional TargetOS: string               // default runtime.GOOS
+    optional TargetArch: string             // default runtime.GOARCH
+    optional ArtifactHash: string           // expected sha256 hex; optional
+    optional AgentId: string                // audit identity
+    optional RequestId: string
+    optional Mode: string                   // build mode "subprocess" | "inprocess"; empty defaults to subprocess. dev=subprocess (zero cgo, external go build); release=inprocess (purego c-shared, loaded in-process)
+}
+
+struct NativeBuildResp {
+    Result: NativeBuildResult
+    ManifestPath: string
+    Abi: PluginAbi
+}
+
+// PluginArtifactLoadReq loads a validated native artifact into the PluginHost
+// process: opens the library, binds the ABI invoke symbol, validates manifest
+// and ABI, and registers the callable handlers. Returns the resulting
+// AppStatus so AppManager can route subsequent invokes.
+struct PluginArtifactLoadReq {
+    Manifest: AppManifest
+    Abi: PluginAbi
+    ArtifactPath: string
+    optional ArtifactHash: string           // expected sha256 hex; enforced when set
+    optional EntrySymbol: string            // ABI invoke symbol; default PluginInvoke
+    // OnLoadConfig is the JSON payload delivered to the plugin's OnLoad
+    // lifecycle hook (subprocess transport): {"httpAddr": "...", "sessionSecret": "..."}.
+    // It asks the SDK to bind an ephemeral HTTP listener and enables cookie
+    // auth with the per-instance secret. Empty keeps the legacy no-config
+    // behavior (no listener, auth disabled). Ignored by the in-process
+    // transport, which cannot carry an OnLoad payload.
+    optional OnLoadConfig: bytes
+    optional AgentId: string
+    optional RequestId: string
+}
+
+struct PluginArtifactLoadResp {
+    Status: AppStatus
+    PluginId: string
+    ArtifactHash: string
+    // HttpAddr is the bound HTTP listener address (host:port) reported by the
+    // plugin's OnLoad response when the SDK started a listener from
+    // OnLoadConfig. Empty when no listener runs (in-process transport, empty
+    // config, or a pre-HTTP SDK). AppManager turns it into the record's
+    // BackendPort/BackendUrl for the frontend bootstrap.
+    optional HttpAddr: string
+}
+
+struct PluginArtifactReloadPrepareReq {
+    Manifest: AppManifest
+    Abi: PluginAbi
+    ArtifactPath: string
+    optional ArtifactHash: string
+    optional EntrySymbol: string
+    // Candidate assets served under /plugin/{pluginId}/. Absent (nil) keeps
+    // the currently installed bundle; present replaces it atomically with
+    // the artifact swap at commit time.
+    optional Assets: map<string, bytes>
+    // OnLoadConfig is forwarded to the candidate's OnLoad hook exactly like
+    // PluginArtifactLoadReq.OnLoadConfig (fresh per-instance secret + HTTP
+    // bind request for the respawned process).
+    optional OnLoadConfig: bytes
+    optional AgentId: string
+    optional RequestId: string
+}
+
+struct PluginArtifactReloadPrepareResp {
+    Token: string
+    PluginId: string
+    ArtifactHash: string
+    Status: AppStatus
+}
+
+struct PluginArtifactReloadCommitReq {
+    Token: string
+}
+
+struct PluginArtifactReloadCommitResp {
+    Status: AppStatus
+    PluginId: string
+    ArtifactHash: string
+    // HttpAddr is the candidate process's bound HTTP listener address
+    // (host:port); empty when the candidate runs no listener. See
+    // PluginArtifactLoadResp.HttpAddr.
+    optional HttpAddr: string
+}
+
+struct PluginArtifactReloadAbortReq {
+    Token: string
+}
+
+struct PluginArtifactReloadAbortResp {}
+
+// PluginOnUnload when present, removes handlers, and closes the library handle.
+struct PluginArtifactUnloadReq {
+    PluginId: string
+    optional AgentId: string
+    optional RequestId: string
+}
+
+struct PluginArtifactUnloadResp {
+    Removed: int
+}
+
+// PluginAssetsPutReq installs (or replaces) the HTTP-served asset bundle for
+// a plugin. AppManager pushes the manifest-declared assets when a plugin
+// registers; PluginHost wraps them in an in-memory file handler and serves
+// them under /plugin/{pluginId}/ until the artifact is unloaded.
+struct PluginAssetsPutReq {
+    PluginId: string
+    Assets: map<string, bytes>
+}
+
+struct PluginAssetsPutResp {
+    Registered: int
+}
+
+// PluginAssetsRemoveReq drops the HTTP-served asset bundle for a plugin and
+// unregisters the /plugin/{pluginId}/ route. Idempotent for unknown plugins.
+struct PluginAssetsRemoveReq {
+    PluginId: string
+}
+
+struct PluginAssetsRemoveResp {
+    Removed: int
+}
+
+// PluginStateGetReq reads a per-plugin key-value entry from the host-managed
+// app-state store. The plugin identifier is injected by the host bridge from
+// the calling plugin's identity; the SDK client does not set it.
+struct PluginStateGetReq {
+    Plugin: string
+    Key: string
+}
+
+struct PluginStateGetResp {
+    Value: bytes
+    optional Found: bool
+}
+
+// PluginStateSetReq writes (or overwrites) a per-plugin key-value entry.
+struct PluginStateSetReq {
+    Plugin: string
+    Key: string
+    Value: bytes
+}
+
+struct PluginStateSetResp {}
+
+// PluginStateDeleteReq removes a per-plugin key-value entry. Idempotent for
+// missing keys.
+struct PluginStateDeleteReq {
+    Plugin: string
+    Key: string
+}
+
+struct PluginStateDeleteResp {
+    Removed: bool
+}
+
+// PluginStateListReq enumerates the calling plugin's document keys. The
+// plugin identifier is injected by the host bridge; the SDK client does not
+// set it. Keys are returned relative to the plugin's own namespace (the
+// "<pluginID>/" prefix is stripped server-side, so one plugin can never
+// observe another's keys). Prefix optionally narrows the scan to keys under
+// "<pluginID>/<prefix>".
+struct PluginStateListReq {
+    Plugin: string
+    optional Prefix: string
+}
+
+struct PluginStateListResp {
+    Keys: array<string>
+}
+
+// PluginStateAppendReq appends bytes to one of the calling plugin's
+// append-only logs (jsonl-style). The record is opaque to the host: the
+// caller must make batched records self-delimiting (e.g. each ends with
+// '\n'). Unlike state.set, appends are never read back through state.get;
+// the append surface is a log sink. Requires a backend with Appender
+// capability; backends without it reject the call explicitly.
+struct PluginStateAppendReq {
+    Plugin: string
+    Key: string
+    Data: bytes
+}
+
+struct PluginStateAppendResp {}
+
+// PluginStateGetManyReq reads several of the calling plugin's keys in one
+// call so chatty apps do not pay one invoke per key. Keys that do not exist
+// are simply absent from Entries.
+struct PluginStateGetManyReq {
+    Plugin: string
+    Keys: array<string>
+}
+
+struct PluginStateGetManyResp {
+    Entries: map<string, bytes>
+}
+
+// PluginStateSetManyReq writes several of the calling plugin's keys in one
+// call. The same per-value and per-app quotas as state.set apply.
+struct PluginStateSetManyReq {
+    Plugin: string
+    Entries: map<string, bytes>
+}
+
+struct PluginStateSetManyResp {}
+
+// PluginStatePurgeReq reclaims the target plugin's whole app-state subtree
+// ("<pluginID>/" documents and append logs) when the app is uninstalled. It
+// is a host-side management call (appmanager cascade), never exposed through
+// the plugin host bridge: an app must not be able to purge its own namespace
+// in one shot while it can still delete its individual keys.
+struct PluginStatePurgeReq {
+    PluginId: string
+}
+
+struct PluginStatePurgeResp {
+    Removed: bool
+}
+
+// PluginAppDataUsageItem reports one app.data grant: the directory handed to
+// the plugin at load time and its current on-disk footprint. Sizes are
+// observed by walking the directory at query time — the plugin owns every
+// write to its grant directory, so the host cannot track or block them.
+struct PluginAppDataUsageItem {
+    PluginId: string
+    DataDir: string
+    Bytes: int64
+    Files: int64
+    optional Loaded: bool   // true when the plugin is currently loaded
+}
+
+// PluginAppDataUsageReq queries app.data grant footprints. Empty PluginId
+// reports every grant on record; a grant whose directory no longer exists
+// reports zero bytes (deleted by the user, or already purged).
+struct PluginAppDataUsageReq {
+    optional PluginId: string
+}
+
+// PluginAppDataUsageResp carries per-grant footprints plus the host total.
+// SoftLimitBytes is the explicit per-grant soft limit surfaced for
+// observation (Bytes > SoftLimitBytes = over limit); enforcement is not
+// possible because writes are the plugin's own file I/O.
+struct PluginAppDataUsageResp {
+    Items: array<PluginAppDataUsageItem>
+    TotalBytes: int64
+    SoftLimitBytes: int64
+}
+

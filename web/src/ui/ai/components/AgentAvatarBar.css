@@ -1,0 +1,641 @@
+.agent-avatar-bar-root {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-width: 0;
+}
+
+.agent-avatar-bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  padding: 0 8px;
+}
+
+.agent-avatar-scroll {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  /* 居中于「去掉 dropdown(add) 按钮后的可用区域」内；溢出时回退到 start 以保证横向滚动可达首项 */
+  justify-content: safe center;
+}
+
+.agent-avatar-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.agent-avatar-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform 0.15s ease;
+}
+
+.agent-avatar-item:hover {
+  transform: scale(1.1);
+}
+
+/* Mouse drag-to-pan state on the strip: neutral cursor, no text selection,
+   no hover pop while the strip is being swiped. */
+.agent-avatar-scroll.panning {
+  cursor: grabbing;
+  user-select: none;
+}
+
+.agent-avatar-scroll.panning .agent-avatar-item,
+.agent-avatar-scroll.panning .agent-avatar-item:hover {
+  transform: none;
+}
+
+.agent-avatar-item.active .agent-avatar-initials {
+  box-shadow: 0 0 0 2px var(--accent, hsl(210 80% 55%));
+}
+
+/* active + working: 旋转环变成 accent 实心环，缺口用 avatar 背景色裁切 */
+.agent-avatar-item.active.working .agent-avatar-initials {
+  box-shadow: none;
+}
+
+.agent-avatar-item.active.working .agent-avatar-ring {
+  border: 2px solid var(--accent, hsl(210 80% 55%));
+  border-top-color: hsl(var(--avatar-hue) 70% 92%);
+}
+
+[data-theme="dark"] .agent-avatar-item.active.working .agent-avatar-ring {
+  border-top-color: hsl(var(--avatar-hue) 45% 22%);
+}
+
+/* active + waiting: 琥珀色静止虚线环 — workflow owner 停车等待事件，与 working 的旋转环区分 */
+.agent-avatar-item.active.waiting .agent-avatar-initials {
+  box-shadow: none;
+}
+
+.agent-avatar-item.active.waiting .agent-avatar-ring {
+  border: 2px dashed hsl(38 92% 50%);
+  animation: none;
+}
+
+.agent-avatar-item.paused .agent-avatar-initials {
+  color: var(--text-secondary);
+}
+
+.agent-avatar-initials {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  user-select: none;
+  background-color: hsl(var(--avatar-hue) 70% 92%);
+  color: hsl(var(--avatar-hue) 64% 36%);
+}
+
+.agent-avatar-badge {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 0 1.5px hsl(var(--avatar-hue) 70% 92%);
+  background-color: var(--text-secondary);
+  color: #fff;
+}
+
+[data-theme="dark"] .agent-avatar-badge {
+  box-shadow: 0 0 0 1.5px hsl(var(--avatar-hue) 45% 22%);
+}
+
+.agent-avatar-badge.error {
+  background-color: hsl(0 75% 55%);
+}
+
+.agent-avatar-badge.ask-user {
+  background-color: hsl(30 90% 55%);
+}
+
+.agent-avatar-badge.ask-permission {
+  background-color: hsl(45 95% 45%);
+  color: hsl(0 0% 10%);
+}
+
+[data-theme="dark"] .agent-avatar-badge.ask-permission {
+  color: hsl(0 0% 10%);
+}
+
+.agent-avatar-badge.plan-approval {
+  background-color: hsl(190 80% 45%);
+}
+
+[data-theme="dark"] .agent-avatar-badge.plan-approval {
+  background-color: hsl(190 75% 55%);
+}
+
+.agent-avatar-badge.goal-submit {
+  background-color: hsl(270 70% 60%);
+}
+
+[data-theme="dark"] .agent-avatar-badge.goal-submit {
+  background-color: hsl(270 75% 68%);
+}
+
+.agent-avatar-badge.completed {
+  background-color: hsl(145 65% 42%);
+}
+
+[data-theme="dark"] .agent-avatar-badge.completed {
+  background-color: hsl(145 60% 50%);
+}
+
+[data-theme="dark"] .agent-avatar-initials {
+  background-color: hsl(var(--avatar-hue) 45% 22%);
+  color: hsl(var(--avatar-hue) 75% 88%);
+}
+
+/* Coordinator avatars use a fixed grayscale scheme instead of the hue color:
+   neutral background with the mark in the same soft gray as folder icons. */
+.agent-avatar-initials.coordinator,
+.agent-avatar-dropdown-avatar.coordinator {
+  background-color: #f2f2f5;
+  color: var(--text-tertiary);
+}
+
+[data-theme="dark"] .agent-avatar-initials.coordinator,
+[data-theme="dark"] .agent-avatar-dropdown-avatar.coordinator {
+  background-color: #17181d;
+  color: var(--text-tertiary);
+}
+
+/* Unloaded (lazy) agents render in grayscale until their full state is
+   materialized; the hue color appears once LoadState flips to "loaded". */
+.agent-avatar-initials.unloaded,
+.agent-avatar-dropdown-avatar.unloaded {
+  background-color: #f2f2f5;
+  color: var(--text-tertiary);
+}
+
+[data-theme="dark"] .agent-avatar-initials.unloaded,
+[data-theme="dark"] .agent-avatar-dropdown-avatar.unloaded {
+  background-color: #17181d;
+  color: var(--text-tertiary);
+}
+
+.agent-avatar-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--accent, hsl(210 80% 55%));
+  animation: agent-avatar-spin 1.2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes agent-avatar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.agent-avatar-group {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex-shrink: 0;
+  padding: 2px 4px;
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.12));
+  border-radius: 999px;
+  background-color: var(--bg-secondary, rgba(0, 0, 0, 0.03));
+  /* Soft inner shadow tinted with the background color so the pill looks
+     hollow / recessed, like a cut-out in the composer surface. */
+  box-shadow: inset 0 0 8px var(--bg-base), inset 0 0 2px var(--bg-base);
+}
+
+[data-theme="dark"] .agent-avatar-group {
+  border-color: var(--border-color, rgba(255, 255, 255, 0.12));
+  background-color: var(--bg-secondary, rgba(255, 255, 255, 0.04));
+}
+
+.agent-avatar-more {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.agent-avatar-more:hover {
+  background: var(--bg-hover, rgba(0,0,0,0.05));
+  color: var(--text-primary);
+}
+
+.agent-avatar-add {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 2px dashed var(--border-color, rgba(0,0,0,0.15));
+  background: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.agent-avatar-add:hover {
+  transform: scale(1.1);
+  border-color: var(--text-primary);
+  color: var(--text-primary);
+}
+
+/* Dropdown menu for all agents */
+.agent-avatar-dropdown {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 8px;
+  width: 260px;
+  max-width: calc(100vw - 16px);
+  max-height: 60vh;
+  background: var(--bg-base);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  z-index: var(--z-dropdown);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow-y: auto;
+  padding: 4px;
+  box-sizing: border-box;
+}
+
+.agent-avatar-dropdown.fit-down {
+  top: calc(100% + 6px);
+  bottom: auto;
+}
+
+.agent-avatar-dropdown-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-dropdown) - 1);
+}
+
+.agent-avatar-dropdown-empty {
+  padding: 20px 12px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-tertiary);
+}
+
+.agent-avatar-dropdown-group-label {
+  padding: 6px 8px 2px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-tertiary);
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agent-avatar-dropdown-divider {
+  height: 1px;
+  margin: 4px 6px;
+  background: color-mix(in srgb, var(--border-subtle) 50%, transparent);
+  flex-shrink: 0;
+}
+
+.agent-avatar-dropdown-item {
+  position: relative;
+  display: flex;
+  width: 100%;
+  flex-shrink: 0;
+  border-radius: var(--radius-md);
+  user-select: none;
+}
+
+.agent-avatar-dropdown-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 30px 6px 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+  color: var(--text-secondary);
+  font-size: var(--text-sm);
+  font-family: var(--font-sans);
+  cursor: pointer;
+  text-align: left;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.agent-avatar-dropdown-content:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.agent-avatar-dropdown-content.active {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.agent-avatar-dropdown-delete {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  border-radius: var(--radius-sm, 4px);
+  background: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+}
+
+.agent-avatar-dropdown-item:hover .agent-avatar-dropdown-delete {
+  opacity: 1;
+}
+
+.agent-avatar-dropdown-delete:hover {
+  background: var(--danger, hsl(0 70% 50%));
+  color: white;
+}
+
+/* 触摸设备（移动端 / Capacitor WebView）：删除图标常驻显示，桌面端仅 hover 显示 */
+@media (hover: none) {
+  .agent-avatar-dropdown-delete {
+    opacity: 1;
+  }
+}
+
+.agent-avatar-dropdown-avatar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 600;
+  flex-shrink: 0;
+  user-select: none;
+  background-color: hsl(var(--avatar-hue) 70% 92%);
+  color: hsl(var(--avatar-hue) 64% 36%);
+}
+
+.agent-avatar-dropdown-avatar.working::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1.5px solid transparent;
+  border-top-color: var(--accent, hsl(210 80% 55%));
+  animation: agent-avatar-spin 1.2s linear infinite;
+  pointer-events: none;
+}
+
+[data-theme="dark"] .agent-avatar-dropdown-avatar {
+  background-color: hsl(var(--avatar-hue) 45% 22%);
+  color: hsl(var(--avatar-hue) 75% 88%);
+}
+
+.agent-avatar-dropdown-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.agent-avatar-dropdown-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agent-avatar-dropdown-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.agent-avatar-dropdown-project {
+  font-size: 11px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.agent-avatar-dropdown-status {
+  font-size: 11px;
+}
+
+.agent-avatar-dropdown-status.working {
+  color: var(--accent-primary);
+}
+
+.agent-avatar-dropdown-status.waiting {
+  color: hsl(38 92% 45%);
+}
+
+.agent-avatar-dropdown-avatar.waiting::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1.5px dashed hsl(38 92% 50%);
+  pointer-events: none;
+}
+
+.agent-avatar-dropdown-status.error {
+  color: hsl(0 75% 55%);
+}
+
+.agent-avatar-dropdown-status.ask-user {
+  color: hsl(30 90% 55%);
+}
+
+.agent-avatar-dropdown-status.ask-permission {
+  color: hsl(45 95% 45%);
+}
+
+.agent-avatar-dropdown-status.plan-approval {
+  color: hsl(190 80% 45%);
+}
+
+.agent-avatar-dropdown-status.goal-submit {
+  color: hsl(270 70% 60%);
+}
+
+.agent-avatar-dropdown-status.idle {
+  color: var(--text-tertiary);
+}
+
+.agent-avatar-dropdown-status.paused {
+  color: var(--text-secondary);
+}
+
+.agent-avatar-dropdown-status.completed {
+  color: var(--text-tertiary);
+}
+
+.agent-avatar-dropdown-time {
+  flex-shrink: 0;
+  font-size: 11px;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  margin-left: 2px;
+}
+
+/* ── Dropdown tree connectors (nested agents) ── */
+
+.agent-avatar-dropdown-guides {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.agent-avatar-dropdown-guide {
+  width: 12px;
+  flex-shrink: 0;
+}
+
+.agent-avatar-dropdown-connector {
+  width: 12px;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.agent-avatar-dropdown-connector.last::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  height: 50%;
+  width: 1px;
+  background: var(--border-subtle, rgba(128, 128, 128, 0.25));
+  transform: translateX(-50%);
+}
+
+.agent-avatar-dropdown-connector.last::after,
+.agent-avatar-dropdown-connector.mid::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: var(--border-subtle, rgba(128, 128, 128, 0.25));
+}
+
+.agent-avatar-dropdown-connector.mid::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--border-subtle, rgba(128, 128, 128, 0.25));
+  transform: translateX(-50%);
+}
+
+/* ── Dropdown status icon row ── */
+
+.agent-avatar-dropdown-name-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+
+.agent-avatar-dropdown-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.agent-avatar-dropdown-icon.waypoints {
+  color: hsl(258 90% 66%);
+}
+
+.agent-avatar-dropdown-icon.target {
+  color: hsl(25 90% 50%);
+}
+
+.agent-avatar-dropdown-icon.memory {
+  color: hsl(199 89% 48%);
+}
+
+.agent-avatar-dropdown-icon.worktree {
+  color: hsl(142 60% 45%);
+  cursor: pointer;
+}
+
+.agent-avatar-dropdown-icon.worktree:hover {
+  filter: brightness(1.25);
+}
+
+.agent-avatar-dropdown-degraded {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--danger, #d33a3a);
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: help;
+}

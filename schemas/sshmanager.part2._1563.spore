@@ -1,0 +1,241 @@
+// sshmanager namespace — remote SSH host management, shell sessions, and SFTP file operations.
+// @ts-export
+//
+// Sources of truth for:
+//   - sshmanager.host.* CRUD
+//   - sshmanager.session.* shell / file / status
+//
+
+// ---------------------------------------------------------------------------
+// Host configuration
+// ---------------------------------------------------------------------------
+
+
+struct SshFileMkdirReq {
+    SessionId: string
+    Path:      string
+}
+
+
+struct SshFileMkdirResp {
+}
+
+
+struct SshFileDeleteReq {
+    SessionId: string
+    Path:      string
+}
+
+
+struct SshFileDeleteResp {
+}
+
+
+struct SshFileRenameReq {
+    SessionId: string
+    From:      string
+    To:        string
+}
+
+
+struct SshFileRenameResp {
+}
+
+
+struct SshFileTransferReq {
+    SessionId: string
+    RemotePath: string
+    LocalDir:   string
+    IsUpload:   bool
+}
+
+
+// ---------------------------------------------------------------------------
+// Status monitoring
+// ---------------------------------------------------------------------------
+
+struct SshProcInfo {
+    Pid:     int
+    User:    string
+    Cpu:     double
+    Mem:     double
+    Command: string
+}
+
+
+struct SshDiskInfo {
+    MountPoint: string
+    Available:  int64
+    Total:      int64
+}
+
+
+struct SshNetInfo {
+    Name:  string
+    RxBps: int64
+    TxBps: int64
+}
+
+
+struct SshStatus {
+    HostId:        string
+    HostName:      string
+    Connected:     bool
+    CpuPercent:    double
+    MemUsed:       int64
+    MemTotal:      int64
+    SwapUsed:      int64
+    SwapTotal:     int64
+    Disks:         array<SshDiskInfo>
+    Net:           array<SshNetInfo>
+    Procs:         array<SshProcInfo>
+    LoadAvg:       array<double>
+    Uptime:        int64
+    Timestamp:     string
+}
+
+
+struct SshStatusReq {
+    HostId: string
+}
+
+
+struct SshStatusResp {
+    Status: SshStatus
+}
+
+
+struct SshStatusListReq {
+}
+
+
+struct SshStatusListResp {
+    Items: array<SshStatus>
+}
+
+
+// ---------------------------------------------------------------------------
+// File download (remote → browser). Returns base64-encoded content so binary
+// files survive the JSON transport. Used by the SSH context-menu "Download".
+// ---------------------------------------------------------------------------
+
+struct SshFileDownloadReq {
+    SessionId: string
+    Path:      string
+}
+
+
+struct SshFileDownloadResp {
+    Name:    string
+    Content: string  // base64-encoded file bytes
+    Size:    int64
+}
+
+
+// ---------------------------------------------------------------------------
+// Raw shell output stream for the xterm.js frontend terminal. Long-lived
+// streaming callable (actor.Streaming): one chunk per PTY output burst;
+// final chunk carries Exited=true when the remote shell terminates.
+// Replaces the vt100 shell_screen polling path.
+// ---------------------------------------------------------------------------
+
+struct SshShellStreamReq {
+    SessionId: string
+}
+
+
+struct SshShellStreamChunk {
+    Data:            bytes
+    optional Exited: bool
+    optional Replay: bool   // true for replay-buffer chunks delivered before live data; lets the frontend skip them when it already restored a snapshot
+}
+
+
+// ---------------------------------------------------------------------------
+// Command snippets (favorites) — host-independent reusable commands shared
+// across all SSH sessions. Managed via command_list/create/update/remove.
+// ---------------------------------------------------------------------------
+
+struct SshCommandSnippet {
+    Id:       string
+    Name:     string
+    Content:  string
+    Category: string  // tree grouping, e.g. "Network", "Disk"
+}
+
+
+struct SshCommandListReq {
+}
+
+
+struct SshCommandListResp {
+    Items: array<SshCommandSnippet>
+}
+
+
+struct SshCommandCreateReq {
+    Name:     string
+    Content:  string
+    Category: string
+}
+
+
+struct SshCommandCreateResp {
+    Item: SshCommandSnippet
+}
+
+
+struct SshCommandUpdateReq {
+    Id:       string
+    Name:     string
+    Content:  string
+    Category: string
+}
+
+
+struct SshCommandUpdateResp {
+}
+
+
+struct SshCommandRemoveReq {
+    Id: string
+}
+
+
+struct SshCommandRemoveResp {
+}
+
+
+// ---------------------------------------------------------------------------
+// Command history — recently executed shell commands recorded per session.
+// Queryable via history_list.
+// ---------------------------------------------------------------------------
+
+struct SshHistoryListReq {
+    Limit: int
+}
+
+
+struct SshHistoryListResp {
+    Items: array<string>
+}
+
+
+// ---------------------------------------------------------------------------
+// Directory tar.gz export/import — SSH session-scoped request variants. Both
+// reuse the generic ArchiveExportResp / ArchiveImportResp response types from
+// the filesystem namespace; only the request carries a SessionId to scope the
+// operation to a connected SSH session.
+// ---------------------------------------------------------------------------
+
+struct SshArchiveExportReq {
+    SessionId: string
+    Path:      string  // remote source directory to archive
+}
+
+
+struct SshArchiveImportReq {
+    SessionId: string
+    Path:      string  // remote target directory to extract into
+    Content:   string  // base64-encoded tar.gz archive bytes
+}

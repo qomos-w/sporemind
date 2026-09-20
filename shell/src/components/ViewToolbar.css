@@ -1,0 +1,59 @@
+/* Semi-transparent glass overlay toolbar — absolute-positioned inside any position:relative container */
+.view-toolbar {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  gap: 1px;
+  padding: 2px 3px;
+  background: rgba(18, 21, 27, 0.70);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(42, 47, 62, 0.65);
+  border-radius: var(--radius-md);
+  z-index: 10;
+  user-select: none;
+  pointer-events: auto;
+}
+
+.vt-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 22px;
+  padding: 0 5px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  font-family: var(--font-mono);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), color var(--transition-fast);
+  line-height: 1;
+}
+
+.vt-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+}
+
+.vt-btn.active {
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+}
+
+.vt-btn:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.vt-sep {
+  width: 1px;
+  height: 14px;
+  background: var(--border-default);
+  margin: 0 2px;
+  flex-shrink: 0;
+}

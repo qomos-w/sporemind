@@ -1,0 +1,131 @@
+:root {
+  color-scheme: light dark;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+body {
+  width: 320px;
+  margin: 0;
+  font-size: 13px;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+h1 {
+  font-size: 15px;
+  margin: 0;
+}
+
+button {
+  font: inherit;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  background: transparent;
+  cursor: pointer;
+}
+
+button.primary {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #fff;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.settings-btn {
+  border: none;
+  background: none;
+  font-size: 16px;
+}
+
+#settings {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding: 8px;
+  border: 1px solid rgba(127, 127, 127, 0.3);
+  border-radius: 8px;
+}
+
+#settings label {
+  font-size: 11px;
+  opacity: 0.8;
+  margin-top: 4px;
+}
+
+#settings input {
+  font: inherit;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid rgba(127, 127, 127, 0.4);
+  background: transparent;
+  color: inherit;
+}
+
+.request {
+  border: 1px solid rgba(127, 127, 127, 0.3);
+  border-radius: 8px;
+  padding: 8px;
+  margin-bottom: 8px;
+}
+
+.request .domain {
+  font-weight: 600;
+  word-break: break-all;
+}
+
+.request .meta {
+  opacity: 0.7;
+  font-size: 11px;
+  margin: 2px 0 8px;
+}
+
+.request .row {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+
+.status {
+  padding: 8px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.status.ok {
+  background: rgba(34, 197, 94, 0.12);
+}
+
+.status.err {
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.empty {
+  opacity: 0.7;
+  text-align: center;
+  padding: 16px 0;
+}
+
+.hint {
+  font-size: 11px;
+  opacity: 0.7;
+}
+
+footer {
+  margin-top: 10px;
+}
+
+.hidden {
+  display: none;
+}

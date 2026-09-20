@@ -1,0 +1,70 @@
+.brain-memory-view {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-primary);
+}
+
+.brain-memory-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.brain-memory-state {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.brain-memory-error {
+  color: var(--status-error);
+}
+
+.brain-memory-stats,
+.brain-memory-legend {
+  position: absolute;
+  z-index: 10;
+  display: flex;
+  gap: 12px;
+  padding: 6px 9px;
+  border: 1px solid color-mix(in srgb, var(--border-default) 35%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--bg-surface) 72%, transparent);
+  backdrop-filter: blur(12px);
+  color: var(--text-secondary);
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.brain-memory-stats {
+  top: 54px;
+  right: 10px;
+}
+
+.brain-memory-legend {
+  bottom: 10px;
+  left: 10px;
+}
+
+.brain-memory-legend span {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.brain-memory-legend i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.brain-memory-legend .session { background: #38bdf8; }
+.brain-memory-legend .experience { background: #a78bfa; }
+.brain-memory-legend .ontology { background: #f59e0b; }
+.brain-memory-sleep { color: #f59e0b; }

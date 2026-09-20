@@ -1,0 +1,181 @@
+{
+  "Id": "app.authenticator",
+  "Name": "Authenticator",
+  "Version": "0.1.0",
+  "Runtime": "native",
+  "ProtocolVersion": 2,
+  "Namespace": "authenticator",
+  "Permissions": [
+    "app.state",
+    "registry.read"
+  ],
+  "Listens": [
+    "app_event",
+    "app_lifecycle"
+  ],
+  "Schemas": [
+    {
+      "Name": "ProvisionRequest",
+      "Hash": "73cb386c809466b1359a9f2f01c0b28eaa16f10e97c6768624b4bf1ce03bbe6e",
+      "SchemaId": 650631
+    },
+    {
+      "Name": "ProvisionResponse",
+      "Hash": "71a689c9844dc2da453c37c5a88ccf439df740275710d6f532cc53c31820923f",
+      "SchemaId": 575709
+    },
+    {
+      "Name": "AccountCode",
+      "Hash": "5286fc359bf26294077d30732a3843540090bd7456c54ba896f6702dab098a3e",
+      "SchemaId": 1427323
+    },
+    {
+      "Name": "CodesRequest",
+      "Hash": "3588690cf5edcf233c6d06059aa438480636298685755ac3d96f903bbccab370",
+      "SchemaId": 966388
+    },
+    {
+      "Name": "CodesResponse",
+      "Hash": "34c0b0958e982351f3ee9760b26515a431a9be14bb363bd00206b303eadc2cbe",
+      "SchemaId": 180856
+    },
+    {
+      "Name": "VerifyRequest",
+      "Hash": "f3f23d12ec02b35ff396e862aa52d7a5ee82d3cfd8980c4e3f877da9627317e7",
+      "SchemaId": 1265091
+    },
+    {
+      "Name": "VerifyResponse",
+      "Hash": "4f10f636493d1e58a781dbada51a7d800d41c64feae3aa81035dc42a0b3b4fc3",
+      "SchemaId": 1146033
+    },
+    {
+      "Name": "RemoveRequest",
+      "Hash": "310751cf861eaa76d0e75fbf8a9d29c9aa179bb6e5410c5a7a4803ef3cbac571",
+      "SchemaId": 1707984
+    },
+    {
+      "Name": "RemoveResponse",
+      "Hash": "2a0ba58985aaace6222086abf69604e3f472d67d20d7ee6b8d63e375e127290e",
+      "SchemaId": 763708
+    },
+    {
+      "Name": "UpdateRequest",
+      "Hash": "8520aa66a4f928180664b07412105655cae8a24dbd4c20e96d6215c68a50712b",
+      "SchemaId": 1817967
+    },
+    {
+      "Name": "UpdateResponse",
+      "Hash": "ead9eadff8e1568426002b8b0acef97f2f156c543cd81149e0ebfc1033b9061f",
+      "SchemaId": 855157
+    },
+    {
+      "Name": "DiscoverRequest",
+      "Hash": "4f2dd4d353b0648356d27eed65e41d311e44bc2d92784e1a2b998617291435c8",
+      "SchemaId": 2053745
+    },
+    {
+      "Name": "DiscoverMatch",
+      "Hash": "4bf572e0bb1ee71cc6d9ff734a307e98e8bb017398688d4d50218f9c1f499950",
+      "SchemaId": 715729
+    },
+    {
+      "Name": "DiscoverResponse",
+      "Hash": "48d6a4d9f75c5274340e1615f9aab3f8f7c530d964a626917ce6c8ec53e62bd7",
+      "SchemaId": 1603759
+    }
+  ],
+  "Callables": [
+    {
+      "Id": "provision",
+      "RequestSchema": "ProvisionRequest",
+      "ResponseSchema": "ProvisionResponse",
+      "Effect": "mutate",
+      "Service": "app.authenticator",
+      "ToolName": "authenticator-provision"
+    },
+    {
+      "Id": "codes",
+      "RequestSchema": "CodesRequest",
+      "ResponseSchema": "CodesResponse",
+      "Effect": "read",
+      "Service": "app.authenticator",
+      "ToolName": "authenticator-codes"
+    },
+    {
+      "Id": "verify",
+      "RequestSchema": "VerifyRequest",
+      "ResponseSchema": "VerifyResponse",
+      "Effect": "read",
+      "Service": "app.authenticator",
+      "ToolName": "authenticator-verify"
+    },
+    {
+      "Id": "remove",
+      "RequestSchema": "RemoveRequest",
+      "ResponseSchema": "RemoveResponse",
+      "Effect": "mutate",
+      "Service": "app.authenticator",
+      "ToolName": "authenticator-remove"
+    },
+    {
+      "Id": "update",
+      "RequestSchema": "UpdateRequest",
+      "ResponseSchema": "UpdateResponse",
+      "Effect": "mutate",
+      "Service": "app.authenticator",
+      "ToolName": "authenticator-update"
+    },
+    {
+      "Id": "discover",
+      "Description": "discover is programmatic (not agent-facing): it exercises the registry.read capability through sdk.ListCallables.",
+      "RequestSchema": "DiscoverRequest",
+      "ResponseSchema": "DiscoverResponse",
+      "Effect": "read",
+      "Service": "app.authenticator",
+      "ToolName": "authenticator-discover"
+    }
+  ],
+  "Events": null,
+  "Projections": null,
+  "Entrypoints": [
+    {
+      "Kind": "view",
+      "Id": "main",
+      "Title": "Authenticator",
+      "Route": "/"
+    }
+  ],
+  "Dependencies": null,
+  "Bundles": [
+    {
+      "Title": "Authenticator Tools",
+      "Description": "TOTP account management (Google Authenticator style) with per-app persistent state.\n\n- **authenticator-provision** — add a TOTP account; omit Secret to generate one, set Digits/Period/Algorithm for non-default token shape.\n- **authenticator-codes** — list current codes with seconds remaining; pass AccountId for one account, omit for all.\n- **authenticator-verify** — check a code against an account; Window widens allowed drift in steps (default 1).\n- **authenticator-remove** — delete an account by id.\n\nupdate is not agent-facing (programmatic only).",
+      "Icon": "shield-check",
+      "Tools": [
+        {
+          "CallableId": "provision"
+        },
+        {
+          "CallableId": "codes"
+        },
+        {
+          "CallableId": "verify"
+        },
+        {
+          "CallableId": "remove"
+        }
+      ]
+    }
+  ],
+  "AgentBinding": {
+    "FreeAgent": {
+      "AllowCreate": true,
+      "AllowSwitch": false,
+      "AllowMessage": true,
+      "AgentKinds": [
+        "coder"
+      ]
+    }
+  }
+}

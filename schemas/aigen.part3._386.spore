@@ -1,0 +1,243 @@
+// aigen namespace — AI execution surface wire shapes (non-discriminated).
+// @ts-export
+//
+// Sources of truth for:
+//   - aggregator chat dispatch request (SendSessionMessageReq + ChatMessage
+//     + ContentBlock + ToolSpec)
+//   - turn streaming payload bodies (TurnStartedPayload, TurnTextDelta...,
+//     each individual event payload) and the discriminated TurnEvent
+//     container that carries 12 optional pointer payloads.
+//   - aggregator chunk protocol (AggregatorChunk) and agent session history
+//     (Turn, Session, AgentTurnCompleteReq)
+//   - aggregator status / capability descriptors (AICallableUnitView,
+//     AIAggregatorStatusResp, AggregatorDescriptor)
+//   - agent reference (AgentRef + list resp)
+//   - agent config (AgentConfig)
+//   - turn status snapshot
+//
+
+
+//
+// TurnEventKind / AggregatorChunkKind enum constants remain in pkg/domain
+// as Go-side string aliases; the wire tags on the kind field are plain
+// `string` since Spore DSL does not model enums.
+
+
+struct AgentSessionImportReq {
+    Session: Session
+    optional SummarySegments: array<SummarySegment>
+    optional ExploreResults:  array<ExploreResult>
+    optional Steps:           array<Step>
+    optional Goal:            SessionGoal
+    optional NextIdx:         int
+    optional NextSeq:         long
+    optional NextTurnOrder:   long
+}
+
+
+struct AgentSessionImportResp {
+    AcceptedTurns: int
+    ActiveHead:    int
+}
+
+
+struct AgentSessionSummaryReq {
+    optional MaxTurns:      int
+    optional KnownStepIDs:  array<string>
+    optional knownStepEventSeqs: map<string, int>  // stepId → lastConsumedEventSeq
+    optional offset:        int    // turns offset for load-more
+    optional limit:         int    // max turns to return (for load-more)
+}
+
+
+struct AgentSessionSummaryResp {
+    Turns:              array<Turn>
+    Steps:              array<Step>
+    ActiveTurn:         TurnStatus
+    ActiveTurnEvents:   array<TurnEvent>
+    TotalTurns:         int
+    HasMoreHistory:     bool
+    optional AgentState:       string     // "running" | "" (idle)
+    optional ExploreResults:   array<ExploreResult>
+    optional MissingSteps:     array<Step>
+    optional NextSeq:          int64      // next UI step sequence number; used for gap detection on reconnect
+    optional OpenStepEvents:   array<StepEvent> // events for still-open steps; replayed by frontend on reconnect
+    optional HasDiscardedSteps: bool       // true if any earlier turns were discarded for storage
+    optional Goal:             SessionGoal // current active session goal
+}
+
+
+struct AgentTurnsListReq {
+    optional BeforeTurnId: string
+    optional Limit:        int
+}
+
+
+struct AgentMessagesListResp {
+    Messages: array<ChatMessage>
+    HasMore:  bool
+}
+
+
+struct AgentTurnsListResp {
+    Turns:   array<Turn>
+    HasMore: bool
+    optional Steps:              array<Step>
+}
+
+
+// ---- compaction self-management ----
+
+struct AgentCompactionConfigureReq {
+    optional CompactionPolicy: CompactionPolicy
+    optional ResetSummary:     bool
+}
+
+
+struct AgentCompactionConfigureResp {
+    CompactionPolicy:   CompactionPolicy
+    SummarySegments:    array<SummarySegment>
+    optional EstimatedTokens: int
+    optional Source:          string   // "kind" | "instance"
+}
+
+
+// ---- permission checking ----
+
+struct PermissionPolicy {
+    optional DefaultBehavior: string
+    optional ApproverAgentId: string
+    optional AutoAllowTools:  array<string>
+}
+
+
+struct ToolCallSummary {
+    Id:         string
+    CallableId: string
+    optional Input: string
+    // Registration-permission preview (appmanager registration callables
+    // only): resolved manifest identity plus the host capabilities the
+    // approved registration would grant. Attached by the turn engine at
+    // interception time so the permission panel can show the 宿主权限 before
+    // the user approves. PermissionNote explains why they could not be
+    // resolved (panel then shows the unavailable warning).
+    optional AppId: string
+    optional AppName: string
+    optional Permissions: array<string>
+    optional PermissionNote: string
+}
+
+
+struct PermissionReviewReq {
+    TurnId:    string
+    ToolCalls: array<ToolCallSummary>
+}
+
+
+struct PermissionReviewResp {
+    Allowed: bool
+    optional Reason: string
+}
+
+
+// ---- turn actor responses (turn.* callable surface) ----
+
+struct TurnHistoryResp {
+    Steps:        array<TurnAction>
+    TraceEntries: array<StructuredTraceEntry>
+    optional Usage: UsageData
+}
+
+
+struct TurnMiddlewareResp {
+    Entries: array<MiddlewareEntry>
+}
+
+
+struct TurnStatusResp {
+    State:              string
+    optional PauseKind: string
+    optional TaskId:    string
+}
+
+
+// ---- storage self-management (discard summarized turns to bound memory/disk) ----
+
+struct StoragePolicy {
+    Enabled:          bool
+    optional MaxSessionChars: int      // total visible session chars cap; 0 = disabled
+    optional DiscardBatchSize: int     // max user+assistant turn pairs to discard per compaction
+}
+
+
+struct AgentStorageConfigureReq {
+    optional StoragePolicy: StoragePolicy
+}
+
+
+struct AgentStorageConfigureResp {
+    StoragePolicy: StoragePolicy
+    optional Source: string   // "kind" | "instance"
+}
+
+
+// ModelRef is a single model reference within a ModelSlot fallback chain.
+// kind values:
+//   "unit"       — concrete (model + provider) pair (Unit required, BOTH
+//                  model and provider must be non-empty); served by the
+//                  system aggregator, resolved on demand when pool-external.
+//                  A model without a provider is rejected.
+//   "aggregator" — delegate to a named aggregator pool (AggregatorID required);
+//                  the pool's strategy picks the concrete unit, with in-pool
+//                  fallback/rotation and cooldown feedback.
+//   "auto"       — system aggregator ("system") with empty unit; triggers
+//                  fast random pick. AggregatorID ignored.
+struct ModelRef {
+    kind:                   string
+    optional Unit:          ModelUnit
+    optional AggregatorID:  string
+}
+
+
+// ModelSlot is an ordered fallback chain of ModelRef candidates.
+// First candidate is preferred; on retryable failure (5xx/timeout/no-pool-unit/
+// connection) dispatch tries the next. An empty slot is equivalent to [auto]
+// (system aggregator fast-pick).
+struct ModelSlot {
+    Candidates: array<ModelRef>
+}
+
+
+// DispatchActivity captures the in-flight dispatch state of a single callable
+// unit (or a nested-aggregator ref entry) during an aggregator dispatch. It is
+// a transient, aggregator-local projection: the aggregator holds an in-memory
+// inflight map keyed by unit ID, writes state at dispatch begin/end (and on
+// stream open / session hand-off), and projects the map onto each unit view via
+// handleStatus. It is never persisted.
+//
+// State values follow the aggregator-composer workflow task cards:
+//   "waiting" — the unit is queued behind the currently-attempted candidate in
+//     a failover selection and has not yet been tried.
+//   "trying"  — an attempt to open a stream on this unit is in flight.
+//   "in_use"  — the unit won selection and an active session is streaming
+//     through it.
+// The activity entry is cleared once the dispatch + session complete. Empty
+// State ("") or an absent DispatchActivity means the unit is idle.
+//
+// Naming and propagation structure follow the research conclusion: the field
+// lives on AICallableUnitView (nested), AIAggregatorStatusResp carries it via
+// Units, and for a pool entry referencing a nested aggregator (aggregatorID
+// set) the PARENT aggregator projects the child's inflight onto that ref entry
+// — Depth increments, AggregatorId names the child source aggregator, and
+// SessionId/AgentId/SlotKind carry the initiating context. The authoritative
+// global cooldown is NOT carried here; it lives in the aimanager global health
+// snapshot (AIManagerUnitHealthListResp in provider._1452.spore).
+struct DispatchActivity {
+    State:                 string   // "waiting" | "trying" | "in_use" | "" (idle)
+    optional SessionId:    string   // session whose dispatch this activity belongs to
+    optional AgentId:      string   // agent driving the dispatch
+    optional SlotKind:     string   // model slot kind: "primary" | "fast" | "execution" | "review" | "summary"
+    optional StartedAt:    long     // Unix seconds when the activity entered its current state; 0 = unknown
+    optional Depth:       int      // nesting depth; 0 = this aggregator's own dispatch, >0 propagated from a child
+    optional AggregatorId: string  // when propagated from a nested aggregator: the source aggregator's actor ID
+}

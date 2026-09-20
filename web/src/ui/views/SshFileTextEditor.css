@@ -1,0 +1,132 @@
+/* ── SSH remote file text editor modal ── */
+
+/* Editor modal is wider and taller than the default lg dialog. */
+.modal-dialog.ssh-file-editor-modal {
+  width: min(900px, 92vw);
+  height: min(75vh, 820px);
+}
+
+.ssh-file-editor-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ssh-file-editor-title-icon {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.ssh-file-editor-title-text {
+  color: var(--text-secondary);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+.ssh-file-editor-path {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  direction: rtl;
+  text-align: left;
+  font-family: var(--font-mono, ui-monospace, Menlo, Consolas, monospace);
+  font-size: var(--text-sm);
+}
+
+.ssh-file-editor-size {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+  white-space: nowrap;
+}
+
+.ssh-file-editor-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  height: 100%;
+}
+
+.ssh-file-editor-textarea {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  resize: none;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-mono, ui-monospace, Menlo, Consolas, monospace);
+  font-size: var(--text-sm);
+  line-height: 1.55;
+  tab-size: 2;
+  outline: none;
+}
+
+.ssh-file-editor-textarea:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-primary) 20%, transparent);
+}
+
+.ssh-file-editor-center,
+.ssh-file-editor-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 24px;
+  font-size: var(--text-sm);
+}
+
+.ssh-file-editor-state--error {
+  color: var(--text-error, var(--error));
+}
+
+.ssh-file-editor-save-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-error, var(--error));
+  font-size: var(--text-xs);
+  padding-top: 8px;
+}
+
+.ssh-file-editor-dirty {
+  flex: 1;
+  color: var(--warning);
+  font-size: var(--text-xs);
+}
+
+.ssh-file-editor-toast {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 10;
+  font-size: var(--text-sm);
+}
+
+.ssh-file-editor-spin {
+  animation: ssh-file-editor-spin 1s linear infinite;
+}
+
+@keyframes ssh-file-editor-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

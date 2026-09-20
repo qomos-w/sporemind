@@ -1,0 +1,17 @@
+// workspace.aistats namespace — aistats actor discovery callable types.
+//
+// The aistats actor is spawned as a workspace child with a runtime-assigned
+// actor id. This callable lets agents and aggregators discover that id so they
+// can submit/query request telemetry without hard-coding a naming scheme.
+//
+//
+// @ts-export
+
+struct WorkspaceAistatsActorIdReq {
+}
+
+
+struct WorkspaceAistatsActorIdResp {
+    ActorId: string
+    optional Error: string
+}

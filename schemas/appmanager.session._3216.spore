@@ -1,0 +1,83 @@
+// appmanager frontend iframe session binding.
+//
+// A session token is a server-signed, self-contained credential that turns
+// the appmanager into a trusted frontend identity boundary: the bound
+// AppId / ViewId / AgentId / ProjectId cannot be forged by the iframe, and
+// the server can expire, revoke, or generation-invalidate a token at will.
+// Tokens are HMAC-signed with an ephemeral per-process key, so all sessions
+// are invalidated on appmanager restart.
+// @ts-export
+
+struct AppSessionCreateReq {
+    AppId: string
+    ViewId: string
+    optional Origin: string        // provenance: "builtin" | "user" | "project" (default "user")
+}
+
+struct AppSessionCreateResp {
+    SessionId: string
+    AppId: string
+    ViewId: string
+    optional AgentId: string
+    optional ProjectId: string
+    Origin: string                 // resolved provenance captured at issue time
+    ExpiresAt: long                // unix seconds; 0 means no expiry
+    Nonce: string                  // server-issued random nonce
+    Generation: long               // app generation captured at issue time
+    Token: string                  // signed session credential (payload.signature)
+    // BackendUrl is the app's direct HTTP listener origin (empty when the app
+    // runs no SDK HTTP listener). The plugin iframe loads this origin
+    // directly instead of the gateway asset route.
+    optional BackendUrl: string
+    // CookieToken is the value for the SDK's spore_session cookie on the
+    // BackendUrl origin: "sessionId.hex(HMAC-SHA256(instanceSecret, sessionId))".
+    // It is what the subprocess HTTP server verifies (dual-track: Token stays
+    // the bridge/session-resolve credential). Empty when no listener/secret.
+    optional CookieToken: string
+}
+
+struct AppSessionResolveReq {
+    Token: string                  // signed session credential to validate
+}
+
+struct AppSessionResolveResp {
+    SessionId: string
+    AppId: string
+    ViewId: string
+    optional AgentId: string
+    optional ProjectId: string
+    Origin: string
+    ExpiresAt: long
+    Nonce: string
+    Generation: long
+}
+
+struct AppSessionRevokeReq {
+    Token: string                  // signed session credential to revoke
+}
+
+struct AppSessionRevokeResp {}
+
+// App-to-App route token issuance.
+//
+// A route token authorizes one app (SourceAppId) to invoke a specific
+// callable on another app (TargetAppId). It is HMAC-signed by the
+// appmanager using the same ephemeral key as session tokens, so route
+// authority is cryptographically unforgeable and restart-invalidated.
+// handleInvoke validates the signature, audience (TargetAppId == invoked
+// app), callable match, and expiry before routing a depth>0 invoke.
+// @ts-export
+
+struct AppRouteTokenReq {
+    SourceAppId: string            // app requesting the route authority
+    TargetAppId: string            // app whose callable will be invoked
+    Callable: string               // specific callable authorized for routing
+    optional AgentId: string       // caller identity (fallback; ctx identity wins)
+    optional Role: string
+    optional ProjectId: string
+}
+
+struct AppRouteTokenResp {
+    Token: string                  // signed route credential (payload.signature)
+    ExpiresAt: long                // unix seconds
+}

@@ -1,0 +1,39 @@
+// glass.debug namespace — debug simulation callable (IDs 2563+).
+// @ts-export
+//
+// Source of truth for:
+//   - glass_interact.debug.simulate (public callable for web debug panel)
+//
+// Bypasses session checks: directly manipulates actor state so the debug
+// panel can drive the UI without a real glass connection. Debug-only.
+
+// GlassDebugSimulateReq — one simulation command from the web debug panel.
+// Command values:
+//   "render_idle"         render the idle prefab (other fields ignored)
+//   "render_notification" render a notification (Title, Body, Source)
+//   "render_askuser"      render an AskUser prompt (Title, Options, SelectedIdx)
+//   "render_transcript"   render a live transcription (Body)
+//   "speak"               trigger speak (Body = text)
+//   "enqueue"             enqueue a test inbox event (Title = summary)
+//   "clear"               clear display
+//   "battery"             simulate telemetry battery (BatteryLevel)
+//   "agent_running"       simulate coordinator agent started a turn
+//   "agent_idle"          simulate coordinator agent finished
+struct GlassDebugSimulateReq {
+    Command: string                          // see values above
+    optional Title: string                   // notification title / askuser question / enqueue summary
+    optional Body: string                    // notification body / speak text / transcript
+    optional Source: string                  // notification source (e.g. "coder")
+    optional TimeAgo: string                 // notification relative time (e.g. "3m前")
+    optional Context: string                 // askuser left-column context label
+    optional Options: array<string>          // askuser option labels
+    optional SelectedIdx: int               // askuser selected option index
+    optional Priority: string               // enqueue priority: "high" | "normal" | "low"
+    optional BatteryLevel: int              // battery: 0-100
+}
+
+
+struct GlassDebugSimulateResp {
+    Applied: bool
+    optional Detail: string                  // human-readable result summary
+}

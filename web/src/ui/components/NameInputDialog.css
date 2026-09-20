@@ -1,0 +1,155 @@
+.name-input-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  animation: name-input-dialog-fade-in 0.15s ease-out;
+}
+
+@keyframes name-input-dialog-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.name-input-dialog {
+  width: 400px;
+  max-width: calc(100vw - 32px);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: 20px 24px 24px;
+  animation: name-input-dialog-slide-in 0.2s ease-out;
+}
+
+@keyframes name-input-dialog-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.name-input-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.name-input-dialog-title {
+  margin: 0;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.name-input-dialog-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.name-input-dialog-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+.name-input-dialog-body {
+  margin-bottom: 20px;
+}
+
+.name-input-dialog-input {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-base);
+  color: var(--text-primary);
+  font-family: var(--font-mono, ui-monospace, Menlo, Consolas, monospace);
+  font-size: var(--text-sm);
+  outline: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.name-input-dialog-input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--accent-primary) 20%, transparent);
+}
+
+.name-input-dialog-input::placeholder {
+  color: var(--text-muted);
+}
+
+.name-input-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.name-input-dialog-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.name-input-dialog-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.name-input-dialog-btn.cancel {
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  border-color: var(--border-subtle);
+}
+
+.name-input-dialog-btn.cancel:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.name-input-dialog-btn.confirm {
+  background: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
+}
+
+.name-input-dialog-btn.confirm:hover:not(:disabled) {
+  background: var(--accent-primary-hover);
+  border-color: var(--accent-primary-hover);
+}
+
+.name-input-dialog-spinner {
+  animation: name-input-dialog-spin 1s linear infinite;
+}
+
+@keyframes name-input-dialog-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

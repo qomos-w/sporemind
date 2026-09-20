@@ -1,0 +1,20 @@
+// appmanager namespace — export a project app as a signed zip package.
+// appmanager.app_export packages the app (manifest/modules/assets, plus
+// abi.json + native artifact when runtime=native) into a zip with an
+// Ed25519 signature over the canonical package hash (PACKAGE.sig /
+// PACKAGE.pub, base64). The caller persists PackageData itself (e.g. via
+// project.write); the host never writes export output to disk directly.
+// @ts-export
+
+struct AppManagerAppExportReq {
+    ProjectId: string              // project ID owning the app; optional for agent callers — when empty the host resolves it from the injected caller identity (CallerAgentId), same contract as register_project
+    optional CallerAgentId: string  // calling agent's actor ID; injected by the turn engine, never client-supplied
+    optional AppId: string          // app ID; empty = the project's single app
+    optional AppDir: string         // subdirectory holding the app, relative to the project root; "." or empty = project root; rejects "..", absolute paths and backslashes
+}
+
+struct AppManagerAppExportResp {
+    PackageData: bytes             // zip archive bytes (entry contract aligned with install_local's read side)
+    PackageHash: string            // canonical package hash the signature covers (sporemind.app-package.v2)
+    PublicKey: string              // base64 Ed25519 public key matching the in-zip PACKAGE.pub
+}

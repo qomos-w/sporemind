@@ -1,0 +1,16 @@
+// project.wiki.dispatch namespace — plan card dispatch to agents.
+// @ts-export
+//
+// Sources of truth for:
+//   - project.wiki.dispatch_plan
+
+struct WikiDispatchPlanReq {
+    Id:                  string   // Id of the plan card to dispatch
+    AgentId:             string   // target agent: "agent:<name>" or raw actor ID
+    optional Feedback:   string   // extra instruction appended to the plan text
+}
+
+struct WikiDispatchPlanResp {
+    Id:       string
+    AgentId:  string
+}

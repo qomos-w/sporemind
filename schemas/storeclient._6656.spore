@@ -1,0 +1,114 @@
+// storeclient namespace — sporecloud plugin store client.
+// @ts-export
+//
+// Sources of truth for:
+//   - storeclient.index — poll the cloud store index (GET /store/index) and
+//     return entries annotated with local compatibility flags
+//   - storeclient.install — install a store package (verify → decrypt →
+//     install_local) or a community source tarball (sha256 → extract →
+//     native build → register)
+//   - storeclient.config_get / config_set — store base URL, channel (dev |
+//     production), production signing key, and the download auth token
+//
+// Store packages are AES-256-GCM encrypted zips signed with the sporecloud
+// official Ed25519 key ("sporecloud.store-package.v1:" + hex(sha256(ciphertext)));
+// community entries are GitHub commit-pinned tarballs verified by sha256.
+
+struct StoreClientConfig {
+    BaseURL:         string            // sporecloud base URL, e.g. http://localhost:8080
+    Channel:         string            // "dev" | "production" — selects the pinned official signing key
+    ProductionPubKey: string           // hex Ed25519 public key for Channel == "production" (out-of-band delivery)
+    AuthToken:       string            // bearer token for authenticated download/submit endpoints
+}
+
+// StoreClientConfigView — redacted config projection; secrets become flags.
+struct StoreClientConfigView {
+    BaseURL:              string
+    Channel:              string
+    HasAuthToken:         bool
+    HasProductionPubKey:  bool
+}
+
+struct StoreClientConfigGetReq {}
+
+struct StoreClientConfigGetResp {
+    Config: StoreClientConfigView
+}
+
+struct StoreClientConfigSetReq {
+    optional BaseURL:          string
+    optional Channel:          string  // "dev" | "production"
+    optional ProductionPubKey: string  // hex Ed25519 public key
+    optional AuthToken:        string  // set-only; never returned
+}
+
+struct StoreClientConfigSetResp {
+    Config: StoreClientConfigView
+}
+
+struct StoreIndexReq {}
+
+struct StoreIndexResp {
+    GeneratedAt: string              // cloud index generation timestamp (RFC3339)
+    FetchedAt:   string              // local fetch timestamp (RFC3339)
+    FromCache:   bool                // true when served from the TTL cache
+    Store:       array<StorePluginView>
+    Community:   array<StoreCommunityView>
+}
+
+struct StorePluginView {
+    Id:             string
+    Slug:           string
+    DisplayName:    string
+    Description:    string
+    Publisher:      string
+    Channel:        string            // "official" | "third_party"
+    PublisherPubkey: string           // hex Ed25519; empty for official channel
+    CurrentVersion: string
+    Versions:       array<StoreVersionView>
+}
+
+struct StoreVersionView {
+    Version:          string
+    SdkVersion:       string
+    ProtocolVersion:  int
+    MinHostVersion:   string
+    PayloadSha256:    string
+    Size:             long
+    Changelog:        string
+    CreatedAt:        string
+    Compatible:       bool
+    optional IncompatibleReason: string   // set when Compatible == false
+}
+
+struct StoreCommunityView {
+    Id:            string
+    Slug:          string
+    DisplayName:   string
+    Description:   string
+    RepoUrl:       string
+    CommitSha:     string             // 40-hex GitHub commit pin
+    Version:       string
+    SdkVersion:    string
+    ProtocolVersion: int
+    TarballSha256: string
+    MirrorUrl:     string
+    Compatible:    bool
+    optional IncompatibleReason: string   // set when Compatible == false
+    optional ManifestId:   string
+    optional ManifestName: string
+    optional Permissions:  array<string>
+}
+
+struct StoreInstallReq {
+    Kind: string            // "store" | "community"
+    Slug: string
+    optional Version: string // exact version (store); default = latest compatible
+}
+
+struct StoreInstallResp {
+    AppId:     string       // registered app id (manifest Id)
+    Version:   string
+    State:     string       // appmanager state after install (e.g. "active")
+    Origin:    string       // "store" | "community"
+}

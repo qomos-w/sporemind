@@ -1,0 +1,20 @@
+// events namespace — event payloads used by multiple actors.
+//
+// @ts-export
+
+struct SkillsChangedEvent {
+    ProjectId: string
+    Count:     int
+}
+
+struct WikiCardChangedEvent {
+    Id:       string
+    Modified: string
+}
+
+struct GraphChangedEvent {
+    GraphKind: string   // charter | target | phase | reality | diff | moves | projection | coverage
+    Id:        string   // graph-specific identifier (phaseId, traceId, diffId, …)
+    Revision:  string   // new revision of the changed graph snapshot
+}
+

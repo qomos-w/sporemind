@@ -1,0 +1,221 @@
+// browseruse namespace — browser-use bundle: LLM-driven browser automation tool schemas.
+// @ts-export
+//
+// Sources of truth for:
+//   - browser.use callable (observe/navigate/click/type/scroll/wait actions)
+//   - BrowserUseReq / BrowserUseResp / BrowserElement / BrowserPageObservation
+//
+// The browser.use tool enables LLMs to interact with web pages through a managed
+// browser instance. Each action returns a BrowserPageObservation containing the
+// updated page state and detected interactive elements.
+//
+// Action types:
+//   - "observe": capture current page state and element list
+//   - "navigate": go to URL or perform back/forward/reload
+//   - "click": click element by ID or coordinate
+//   - "type": type text into element by ID
+//   - "scroll": scroll element or page
+//   - "scroll_to": scroll an element into view
+//   - "wait": wait for page to settle or condition
+//   - "press": dispatch key press on element or active element (with optional Modifiers)
+//   - "select": choose an option in a select element
+//   - "hover": hover an element (mouseover/mousemove/mouseenter sequence)
+//   - "double_click": double-click an element
+//   - "right_click": right-click an element (opens context menu)
+//   - "drag": drag an element (ElementId) to a destination element (DragTargetElementId)
+//   - "focus": focus an element
+//   - "screenshot": capture annotated screenshot (declared, not yet implemented)
+
+// =========================================================================
+// Shared value types.
+// =========================================================================
+
+// BrowserElement represents an interactive element detected on a web page.
+struct BrowserElement {
+    // Unique identifier for this element (stable within a session).
+    Id:               string
+    // Element tag name in lowercase (e.g. "button", "a", "input").
+    TagName:          string
+    // CSS selector path for stable re-identification.
+    Selector:         string
+    // XPath expression for the element.
+    XPath:            string
+    // Bounding box in viewport coordinates (physical pixels).
+    Rect:             BrowserElementRect
+    // Inner text content, trimmed and whitespace-normalized.
+    Text:             string
+    // Placeholder attribute (for inputs).
+    Placeholder:      string
+    // ARIA role if present.
+    Role:             string
+    // Computed accessibility label.
+    AriaLabel:        string
+    // Whether the element is visible in the viewport.
+    IsVisible:        bool
+    // Whether the element is currently enabled.
+    IsEnabled:        bool
+    // Whether the element is focusable.
+    IsFocusable:      bool
+    // Whether the element is checked/selected (for checkboxes, radio buttons).
+    IsChecked:       bool
+    // Input type for input elements (e.g. "text", "email", "password").
+    InputType:        string
+    // Current value for input elements.
+    Value:            string
+    // Source URL for img/audio/video elements.
+    Src:              string
+    // Hyperlink href for anchor elements.
+    Href:             string
+    // Computed CSS font size in px.
+    FontSize:         double
+    // Computed CSS font weight.
+    FontWeight:       double
+    // Computed text color as hex (e.g. "#RRGGBB").
+    Color:            string
+    // Computed background color as hex.
+    BackgroundColor:  string
+    // Suggested action hint: "click" | "type" | "navigate" | "select" | "scroll".
+    ActionHint:       string
+    // Confidence score [0,1] for action hint.
+    ActionConfidence: double
+    // Child element count (for containers).
+    ChildCount:       int
+    // Index among siblings with the same tag.
+    SiblingIndex:     int
+    // Parent element ID (empty for root).
+    ParentId:         string
+}
+
+// Rectangle in viewport coordinates.
+struct BrowserElementRect {
+    X:      int
+    Y:      int
+    Width:  int
+    Height: int
+}
+
+// BrowserPageObservation captures the state of a web page after an action.
+struct BrowserPageObservation {
+    // Unique observation ID for correlation.
+    ObservationId:    string
+    // Current page URL.
+    Url:              string
+    // Page title from document.title.
+    Title:            string
+    // Viewport dimensions.
+    ViewportWidth:    int
+    ViewportHeight:   int
+    // Scroll position in the document.
+    ScrollX:          int
+    ScrollY:          int
+    // Page load state: "loading" | "interactive" | "complete" | "error".
+    LoadState:        string
+    // Detected interactive elements on the current viewport.
+    Elements:         array<BrowserElement>
+    // Total element count across the full page.
+    TotalElementCount: int
+    // Screenshot as PNG bytes.
+    Screenshot:       bytes
+    // Screenshot width in pixels.
+    ScreenshotWidth:  int
+    // Screenshot height in pixels.
+    ScreenshotHeight: int
+    // Whether the screenshot is annotated with element grids.
+    IsAnnotated:      bool
+    // Timestamp of observation (ISO 8601).
+    Timestamp:        string
+    // Navigation history depth (0 = initial page).
+    HistoryLength:   int
+    // Error message if the page is in an error state.
+    Error:            string
+    // HTML source snippet around active element (for debugging).
+    ActiveElementHtml: string
+}
+
+// =========================================================================
+// Request / Response types for browser.use callable.
+// =========================================================================
+
+// BrowserUseReq is the request payload for the browser.use callable.
+// One of Action must be set.
+struct BrowserUseReq {
+    // Browser instance ID. If empty, uses the default instance.
+    InstanceId:       string
+    // Action to perform: "observe" | "navigate" | "click" | "type" |
+    //                    "scroll" | "scroll_to" | "wait" | "press" | "select" |
+    //                    "hover" | "double_click" | "right_click" | "drag" |
+    //                    "focus" | "screenshot".
+    Action:           string
+    // Target element ID from a previous observation.
+    optional ElementId: string
+    // Destination element ref for action="drag"; the source element is ElementId.
+    optional DragTargetElementId: string
+    // Click/target by text content (first match).
+    optional ElementText: string
+    // Click/target by CSS selector (first match).
+    optional ElementSelector: string
+    // Coordinate click (overrides element targeting).
+    optional ClickX:    int
+    optional ClickY:    int
+    // Text to type (for action="type").
+    optional Text:       string
+    // Whether to append or replace existing text.
+    optional Append:    bool
+    // Press Enter after typing.
+    optional Submit:   bool
+    // Scroll amount in pixels (positive = down/right).
+    optional ScrollX:   int
+    optional ScrollY:   int
+    // Scroll target: "element" (default) | "window" | "page".
+    optional ScrollTarget: string
+    // Navigate URL (for action="navigate").
+    optional Url:      string
+    // Navigation mode: "navigate" | "back" | "forward" | "reload".
+    optional NavigateMode: string
+    // Key to press (for action="press", e.g. "Enter", "Tab", "Escape").
+    optional Key:      string
+    // Modifier keys to hold during the press (for action="press"),
+    // e.g. "ctrl", "shift", "alt", "meta".
+    optional Modifiers: array<string>
+    // Wait duration in milliseconds (for action="wait").
+    optional WaitMs:   int
+    // Wait for condition: "networkidle" | "domready" | "element" | "none".
+    optional WaitFor:  string
+    // Element ID to wait for (when waitFor="element").
+    optional WaitElementId: string
+    // Screenshot options.
+    optional FullPage: bool
+    optional Annotate: bool
+    optional Format:   string
+    // Timeout for the entire action in milliseconds (default: 30000).
+    optional TimeoutMs: int
+    // Additional context for the action (e.g. purpose description).
+    optional Context:  string
+    // Absolute path to the file to upload (for file upload; native
+    // WebView2 support is under research — may require a native path).
+    optional FilePath: string
+}
+
+// BrowserUseResp is the response from the browser.use callable.
+struct BrowserUseResp {
+    // Whether the action succeeded.
+    Success:          bool
+    // Human-readable status message.
+    Message:          string
+    // The resulting page observation (always present for observe/navigate/
+    // click/type/scroll/screenshot actions).
+    optional Observation: BrowserPageObservation
+    // Error code if the action failed.
+    optional ErrorCode:  string
+    // Element that was acted upon (for click/type actions).
+    optional Element:    BrowserElement
+    // Cursor position after the action.
+    optional CursorX:    int
+    optional CursorY:    int
+    // Whether a navigation occurred.
+    optional Navigated:  bool
+    // New URL after navigation.
+    optional NewUrl:     string
+    // Whether the page state changed significantly.
+    optional PageChanged: bool
+}

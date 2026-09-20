@@ -1,0 +1,516 @@
+// provider namespace — LLM provider/model configuration wire shapes.
+//
+// Sources of truth for:
+//   - aimanager.provider.* configure flows
+//   - aimanager → aiaggregator config version push
+//   - provider / model list responses
+//
+// Field naming follows the legacy hand-written JSON tags byte-for-byte
+
+struct Provider {
+    Name:                      string
+    Kind:                      string
+    Endpoint:                  string
+    Models:                    array<ProviderModel>
+    optional AuthToken:        string
+    optional ReadOnly:         bool
+    optional MaxConcurrency:   int
+    optional HasAuthToken:     bool
+    optional CooldownUntil:    long   // Unix seconds when provider cooldown ends; 0 = healthy
+    optional HealthState:      string // provider health projection: "healthy" (default) | "cooling_down" | "disabled"
+    optional HealthReason:     string // structured failure reason: "rate_limit" | "availability" | "quota_exhausted" | "authentication_failed" | "authorization_failed" | "configuration_error" | "" (healthy)
+    optional LastFailureAt:    long   // Unix seconds of the last upstream failure; 0 = never
+    optional RecoveryMode:     string // how the provider recovers: "cooldown" | "manual_or_balance_refresh" | "probe" | "" (healthy)
+    optional UserAgent:        string // overrides the default User-Agent header for all requests through this provider
+    optional Proxy:            string // HTTP(S)/SOCKS5 proxy URL for all requests through this provider; empty = direct connection
+
+    // Daily disable windows. Each entry is a [Start, End) interval in "HH:MM"
+    // local server time. Each window recurs on the ISO weekdays listed in Days
+    // (1=Monday ... 7=Sunday); an empty/absent Days list means the window
+    // applies every day. When Start > End the interval wraps past midnight
+    // (e.g. 22:00→06:00) and is split at midnight for weekday evaluation.
+    // Multiple windows are unioned; a provider is disabled whenever now falls
+    // inside any matching window. Empty array (or nil) = no daily disable.
+    optional DisableWindows: array<ProviderDisableWindow>
+
+    // DisableUntil is the Unix-seconds deadline of the currently active daily
+    // disable window, recomputed on every provider list / resolve read. It is
+    // the cross-service signal for temporary provider suppression: aiaggregator
+    // hard-skips units whose DisableUntil is in the future, and the frontend
+    // uses it for the countdown display. 0 = no active window.
+    optional DisableUntil: long
+
+    // Disabled is a manual operator override that disables this provider and all
+    // its models. Unlike DisableWindows (scheduled) or HealthState (failure-driven),
+    // this is a persistent user toggle. When true, the aggregator skips every model
+    // through this provider.
+    optional Disabled: bool
+
+    // Token Plan quota metadata. Provider is the authority for these fields;
+    // ManualCallableUnit/CallableUnit carry a synced mirror. The aggregator
+    // hard-skips a unit whose plan is expired or exhausted (Phase 4 filter),
+    // and applies a consumption-rate weight factor under the smart strategy
+    // (Phase 6 scoring).
+    optional IsTokenPlan:             bool
+    optional TokenPlanExpiresAt:      string   // RFC3339; empty = no expiry
+    optional TokenPlanRemainingPct:   int      // 0~100 remaining; 0 = exhausted
+    optional TokenPlanWindowMs:       long     // consumption-rate evaluation window in ms
+}
+
+
+struct ProviderModelCostTier {
+    InputTokensAbove: long    // threshold in tokens
+    CostInput:        double  // $ per 1M tokens
+    CostOutput:       double  // $ per 1M tokens
+    CostCacheRead:    double  // $ per 1M tokens
+    optional CostCacheWrite: double  // $ per 1M tokens; defaults to CostInput * 2 for Anthropic-style 1h write
+}
+
+
+struct ProviderModel {
+    Name:                       string
+    optional MaxContextLength:  int
+    optional MaxTokens:         int
+    optional Modality:          string   // "chat" (default) | "image" | "video"
+    optional Protocol:          string   // wire protocol: "anthropic" | "openai" | "responses" | "endpoint". Explicit value takes precedence over Provider.Kind. No model-name heuristic: unsupported protocols (e.g. "gemini" chat) are rejected at config-build time.
+                                          // (see Protocol above for resolution order)
+
+    // Optional cost rates. When absent, aistats falls back to built-in rates
+    // or leaves costs at zero.
+    optional CostInput:         double   // $ per 1M tokens
+    optional CostOutput:        double   // $ per 1M tokens
+    optional CostCacheRead:     double   // $ per 1M tokens
+    optional CostCacheWrite:    double   // $ per 1M tokens
+    optional CostTiers:         array<ProviderModelCostTier>
+
+    // Persisted availability-probe result recorded by the UI probe action
+    // (aimanager.provider_record_probe). Informational only — dispatch and
+    // health decisions keep using the failure-driven provider health record.
+    optional ProbeState:     string   // "ok" | "failed" | "" (never probed)
+    optional ProbeLatencyMs: int      // round-trip latency of the last successful probe
+    optional ProbeError:     string   // non-sensitive diagnostic from the last failed probe
+    optional ProbeAt:        long     // Unix seconds of the last probe completion
+
+    // Disabled is a manual operator override for this model only. When true,
+    // the aggregator skips this specific model unit.
+    optional Disabled: bool
+}
+
+
+struct FetchedModel {
+    Name:                       string
+    Modality:                   string   // "chat" | "image" | "video" — inferred by name heuristic
+    Protocol:                   string   // resolved wire protocol (explicit model Protocol, else Provider.Kind)
+}
+
+
+struct Model {
+    Id:        string
+    Provider:  string
+    MaxTokens: int
+    Cost:      string
+}
+
+
+struct AIManagerProviderConfigureReq {
+    Name:                     string
+    // PreviousName renames an existing provider: when non-empty and different
+    // from Name, the provider registered under PreviousName is updated in
+    // place (including its Name) instead of a new entry being appended.
+    // Aggregator units referencing PreviousName are rewritten to Name.
+    optional PreviousName:    string
+    Kind:                     string
+    Endpoint:                 string
+    Models:                   array<ProviderModel>
+    optional AuthToken:       string
+    optional MaxConcurrency:  int
+    optional UserAgent:       string
+    optional Proxy:           string // HTTP(S)/SOCKS5 proxy URL; empty = direct connection
+    optional DisableWindows:  array<ProviderDisableWindow>
+    optional IsTokenPlan:             bool
+    optional TokenPlanExpiresAt:      string
+    optional TokenPlanRemainingPct:   int
+    optional TokenPlanWindowMs:       long
+}
+
+
+struct AIManagerProviderConfigureResp {}
+
+
+struct ConfigVersionPush {
+    Version: long
+}
+
+
+struct ProviderListResp {
+    Items: array<Provider>
+}
+
+
+struct ModelListResp {
+    Items: array<Model>
+}
+
+
+struct AIManagerProviderFetchModelsReq {
+    Name:               string
+    Endpoint:           string
+    Kind:               string
+    optional AuthToken: string
+    // HTTP(S)/SOCKS5 proxy URL from the provider form; takes priority over the
+    // stored Provider.Proxy so an unsaved provider can be probed through the
+    // proxy the user just typed. Empty = fall back to stored config / direct.
+    optional Proxy:     string
+}
+
+
+struct AIManagerProviderFetchModelsResp {
+    Models: array<FetchedModel>
+}
+
+
+struct ManualCallableUnit {
+    Model:                   string
+    Endpoint:                string
+    ProviderName:            string
+    Protocol:                string
+    // When set, this pool entry references another aggregator; the concrete
+    // Model, ProviderName, Endpoint, and Protocol fields are ignored.
+    optional aggregatorID:   string
+    optional IsReasoning:    bool
+    optional UserAgent:      string
+    optional Proxy:          string // HTTP(S)/SOCKS5 proxy URL; empty = direct connection. Mirror of Provider.Proxy.
+    optional MaxConcurrency: int
+    optional MaxContextLength: int
+    optional Modality:       string   // "chat" (default) | "image" | "video"
+    optional CooldownUntil:  long     // Unix seconds when provider cooldown ends; 0 = healthy
+    optional DisableUntil:   long     // Unix seconds when a daily disable window ends; 0 = none. Takes precedence over CooldownUntil.
+    // Disabled is a manual operator override that disables this specific pool unit.
+    // For concrete units it mirrors Provider.Disabled or ProviderModel.Disabled;
+    // for aggregatorID references it mirrors the referenced aggregator's Disabled.
+    optional Disabled:       bool     // true = hard-skip during selection.
+    // optional ReasoningEffort: default reasoning effort for this pool unit when
+    // the request does not specify one. Same free-text set as ModelUnit.thinkLevel
+    // ("none" | "low" | "medium" | "high" | "xhigh" | "max" | "ultra" | "").
+    optional ReasoningEffort: string
+
+    // Token Plan mirror synced from Provider by aimanager. Read-only for users;
+    // edited via provider config or provider.set_token_plan, not on the unit.
+    optional IsTokenPlan:             bool
+    optional TokenPlanExpiresAt:      string   // RFC3339; empty = no expiry
+    optional TokenPlanRemainingPct:   int      // 0~100 remaining; 0 = exhausted
+    optional TokenPlanWindowMs:       long     // consumption-rate evaluation window in ms
+
+    // Health projection (mirror of authoritative provider-level health).
+    // The aggregator populates these from the provider health state it received
+    // from aimanager so selectors and UI can show unit-level health without a
+    // cross-actor round-trip on every dispatch.
+    optional HealthState:     string   // "healthy" (default) | "cooling_down" | "disabled"
+    optional HealthReason:    string   // "rate_limit" | "availability" | "quota_exhausted" | "authentication_failed" | "authorization_failed" | "configuration_error" | "" (healthy)
+    optional RecoveryMode:    string   // "cooldown" | "manual_or_balance_refresh" | "probe" | "" (healthy)
+}
+
+
+struct AIManagerProviderResolveTokenReq {
+    Name: string
+}
+
+
+struct AIManagerProviderResolveTokenResp {
+    AuthToken: string
+}
+
+
+struct AIManagerProviderResolveModelReq {
+    Name:  string
+    Model: string
+}
+
+
+struct AIManagerProviderResolveModelResp {
+    MaxContextLength: int
+    MaxTokens:        int
+    // Connection metadata for ad-hoc CallableUnit construction. Populated only
+    // when the model is found; empty otherwise. Used by the system aggregator
+    // to serve a (provider, model) pair that is not in its static pool, without
+    // adding it to the pool (on-demand resolve).
+    Endpoint:            string
+    Protocol:            string
+    Modality:            string
+    MaxConcurrency:      int
+    optional UserAgent:  string
+    optional Proxy:      string // HTTP(S)/SOCKS5 proxy URL; empty = direct connection
+    optional DisableUntil: long     // Unix seconds when the active daily disable window ends; 0 = none
+
+    // Disabled is a manual operator override for this model unit (carried on
+    // on-demand resolve so the aggregator can skip it without a pool entry).
+    optional Disabled: bool
+
+    // Token Plan mirror synced from the provider, so on-demand units are
+    // subject to the same Phase 4 hard filter as pool units.
+    IsTokenPlan:             bool
+    TokenPlanExpiresAt:      string
+    TokenPlanRemainingPct:   int
+    TokenPlanWindowMs:       long
+}
+
+
+struct AIManagerAggregatorConfigureReq {
+    Id:                  string
+    Name:                string
+    optional Units:      array<ManualCallableUnit>
+    optional Strategy:   string   // "round_robin" (default) | "fallback" | "smart" | "standard"
+}
+
+
+struct AIManagerAggregatorConfigureResp {}
+
+
+struct AIManagerAggregatorGetReq {
+    Id: string
+}
+
+
+struct AIManagerAggregatorGetResp {
+    Id:    string
+    Name:  string
+    optional Strategy: string   // "round_robin" | "fallback" | "smart" | "standard"
+    optional Disabled: bool     // manual operator override; disabled aggregators are skipped
+    Units: array<ManualCallableUnit>
+}
+
+
+struct AIManagerAggregatorResolveReq {
+    Id: string
+}
+
+
+struct AIManagerAggregatorResolveResp {
+    Id:    string
+    Name:  string
+    optional Strategy: string   // "round_robin" | "fallback" | "smart" | "standard"
+    optional Disabled: bool     // manual operator override; disabled aggregators are skipped
+    Units: array<ManualCallableUnit>
+}
+
+
+struct AIManagerConfigExportReq {}
+
+
+struct AIManagerConfigExportResp {
+    Data: string
+}
+
+
+struct AIManagerConfigImportReq {
+    Data: string
+}
+
+
+struct AIManagerConfigImportResp {}
+
+
+struct AIAggregatorImageResolveReq {
+    optional Provider: string
+    optional Model:    string
+}
+
+
+struct AIAggregatorImageResolveResp {
+    Model:        string
+    Endpoint:     string
+    ProviderName: string
+    Protocol:     string   // provider Kind: "openai" | "gemini" | etc.
+    AuthToken:    string
+    optional UserAgent: string   // per-provider User-Agent override; empty = use default
+    optional Proxy:     string   // per-provider HTTP(S)/SOCKS5 proxy URL; empty = direct connection
+}
+
+
+// AIAggregatorVideoResolveReq mirrors image_resolve but selects a unit whose
+// Modality is "video". The resolved Protocol tells the videogen dispatcher
+// which backend (ark | gemini | openai-compatible) to use.
+struct AIAggregatorVideoResolveReq {
+    optional Provider: string
+    optional Model:    string
+}
+
+
+struct AIAggregatorVideoResolveResp {
+    Model:        string
+    Endpoint:     string
+    ProviderName: string
+    Protocol:     string   // provider Kind: "ark" | "gemini" | etc.
+    AuthToken:    string
+    optional UserAgent: string   // per-provider User-Agent override; empty = use default
+    optional Proxy:     string   // per-provider HTTP(S)/SOCKS5 proxy URL; empty = direct connection
+}
+
+
+// One-shot image recognition: sends the image plus an optional instruction to
+// a vision-capable chat unit and returns the model's text answer. Unit
+// selection prefers an explicit Provider/Model pin, otherwise picks the first
+// healthy vision-capable chat unit (not marked no-image-input, not a known
+// text-only family); failover rotates only among vision-capable units.
+struct AIAggregatorImageRecognizeReq {
+    Image:             string   // data URL (data:<mime>;base64,...) or https URL
+    optional Prompt:   string   // instruction/question about the image; empty = generic description
+    optional Provider: string   // pin a specific provider
+    optional Model:    string   // pin a specific model
+    optional Aggregator: string // route recognition through this aggregator config id instead of the local pool
+}
+
+
+struct AIAggregatorImageRecognizeResp {
+    Text:         string
+    Model:        string
+    ProviderName: string
+}
+
+
+struct AIManagerProviderSetTokenPlanReq {
+    ProviderName:           string
+    optional ExpiresAt:     string   // RFC3339; empty string = unchanged, "none"/"-" = clear expiry
+    optional RemainingPct:  int      // -1 = unchanged, 0~100 = new value
+    optional WindowMs:      long     // -1 = unchanged, >0 = new window
+    optional IsTokenPlan:   bool     // explicit toggle; omitted = unchanged
+}
+
+
+struct AIManagerProviderSetTokenPlanResp {
+    Ok:    bool
+    Error: string
+}
+
+
+// Structured failure report: the aggregator (or any caller) reports an upstream
+// failure to aimanager so it can update the authoritative provider health state.
+// StatusCode and Code are derived from the normalized UpstreamError, not raw text.
+struct AIManagerProviderReportFailureReq {
+    ProviderName:         string
+    Model:                string   // affected model; empty = provider-level
+    StatusCode:           int      // HTTP status code from the upstream response
+    optional Code:        string   // structured upstream error code (e.g. "insufficient_user_quota"); empty when the response has no structured code
+    optional Type:        string   // structured upstream error type (e.g. "access_terminated_error"); empty when the response has no structured type
+    optional RetryAfter:  int      // seconds from the Retry-After header; 0 = not provided
+    optional Message:     string   // non-sensitive diagnostic message; must not contain token or response body
+}
+
+
+struct AIManagerProviderReportFailureResp {
+    Ok:    bool
+    Error: string
+}
+
+
+// Manual health reset: clears the provider-level health record (cooldown or
+// disabled) and broadcasts a reset to all aggregators so unit-level local
+// state (disabledReason / cooldown) is cleared too. Used by the UI "recover"
+// action after the user fixes a key/balance problem.
+struct AIManagerProviderResetHealthReq {
+    ProviderName: string
+}
+
+
+struct AIManagerProviderResetHealthResp {
+    Ok:    bool
+    Error: string
+}
+
+
+// Persisted probe outcome for a single model unit. Called by the UI after an
+// availability probe completes so the result survives reloads and is surfaced
+// in provider_list. Ok=false records the first line of Error (no secrets).
+struct AIManagerProviderRecordProbeReq {
+    ProviderName:       string
+    Model:              string
+    Ok:                 bool
+    optional LatencyMs: int      // round-trip ms; recorded when Ok
+    optional Error:     string   // diagnostic message; recorded when !Ok
+}
+
+
+struct AIManagerProviderRecordProbeResp {
+    Ok:    bool
+    Error: string
+}
+
+
+struct ProviderDisableWindow {
+    Start: string  // "HH:MM" local time; the window is inclusive at Start
+    End:   string  // "HH:MM" local time; the window is exclusive at End
+
+    // Optional ISO weekday filter: 1=Monday ... 7=Sunday (matches repo cron
+    // convention where 1-5 means weekdays). Empty array or absent = applies
+    // every day. Evaluation is per-day: the [Start, End) interval is first split
+    // at midnight, then each piece is checked against the weekday of its own
+    // calendar day. A window that wraps past midnight is therefore handled as
+    // two half-day intervals with potentially different weekday memberships.
+    optional Days: array<int>
+}
+
+
+// Global unit health snapshot query — callable `aimanager.unit_health_list`,
+// hosted on aimanager. Returns the authoritative provider-level health state
+// for every known callable unit, independent of any aggregator tree, so the
+// composer can render global cooldown badges without per-aggregator status
+// polling. This is the shared global cooldown source; the aggregator status
+// (AIAggregatorStatusResp) no longer serves cooldown to the composer.
+//
+// The response reuses AICallableUnitView: aimanager populates only each unit's
+// identity and health-subset fields; dispatch activity is aggregator-local and
+// is left empty here (see DispatchActivity on the aggregator status instead).
+struct AIManagerUnitHealthListReq {}
+
+
+struct AIManagerUnitHealthListResp {
+    Items: array<AICallableUnitView>
+}
+
+
+// Manual disable toggle: sets or clears the operator-level Disabled flag on a
+// provider or a specific (provider, model) unit. Model empty = provider-level;
+// Model non-empty = unit-level. This is independent of scheduled DisableWindows
+// and failure-driven HealthState.
+struct AIManagerProviderSetDisabledReq {
+    ProviderName: string
+    optional Model:     string   // empty = provider-level; non-empty = unit-level
+    Disabled:     bool
+}
+
+
+struct AIManagerProviderSetDisabledResp {
+    Ok:    bool
+    Error: string
+}
+
+
+struct AIManagerAggregatorSetDisabledReq {
+    Id:       string
+    Disabled: bool
+}
+
+
+struct AIManagerAggregatorSetDisabledResp {
+    Ok:    bool
+    Error: string
+}
+
+
+// Unit list query — callable `aimanager.list_units`, hosted on aimanager.
+// Returns every selectable unit (model, provider) pair across all registered
+// LLM providers, each annotated with its runtime modality ("chat" | "image" |
+// "video") and health projection. Unlike `aimanager.model_list` (bare models
+// without provider pairing) or `aimanager.provider_list` (provider-centric),
+// this is the unit-centric list: the caller gets ModelUnit-equivalent tuples
+// ready for selection, filtered by modality when Modality is set. All units are
+// included regardless of health state — disabled and cooling_down units are
+// visible so the user can manually select them, mirroring aggregator pools.
+struct AIManagerListUnitsReq {
+    optional Modality: string   // "chat" | "image" | "video"; empty = all modalities
+}
+
+
+struct AIManagerListUnitsResp {
+    Items: array<ManualCallableUnit>
+}

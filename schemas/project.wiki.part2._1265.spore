@@ -1,0 +1,21 @@
+// project.wiki namespace — card validation (part2, IDs 1265+).
+// @ts-export
+//
+// Sources of truth for:
+//   - project.wiki.validateCard
+
+struct CardValidationError {
+    Code:      string   // invalid_type | missing_frontmatter | forbidden_tag | parent_not_in_tags | scheduler_cron_invalid | scheduler_cron_expression_conflict
+    Field:     string   // type | tags | parent | data.schedule | -
+    Message:   string
+}
+
+struct WikiValidateCardReq {
+    Id:     string
+    Raw:    string
+}
+
+struct WikiValidateCardResp {
+    Valid:     bool
+    Errors:    array<CardValidationError>
+}

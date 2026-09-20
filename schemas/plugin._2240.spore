@@ -1,0 +1,151 @@
+// plugin namespace — NativePlugin contract and ABI metadata.
+// @ts-export
+
+struct PluginAbi {
+    Name: string
+    Version: int
+    Encoding: string
+    InvokeSymbol: string
+    optional ContractVersion: string
+    optional Isolation: string
+    optional TrustClass: string
+    optional Signer: string
+    optional Capabilities: array<string>
+}
+
+struct PluginLoadReq {
+    Manifest: AppManifest
+    Abi: PluginAbi
+}
+
+struct PluginLoadResp {
+    Status: AppStatus
+}
+
+struct PluginUnloadReq {
+    Id: string
+}
+
+struct PluginAbiInvokeEnvelope {
+    Callable: string
+    Payload: bytes
+    optional RequestId: string
+    optional SessionId: string
+    optional CallSeq: long
+}
+
+struct PluginSdkRequest {
+    PluginId: string
+    CallId: string
+    Payload: bytes
+    optional RequestId: string
+    optional SessionId: string
+    optional CallSeq: long
+}
+
+struct PluginSdkResponse {
+    Payload: any
+}
+
+struct PluginInvokeReq {
+    Id: string
+    Callable: string
+    Payload: bytes
+    optional AgentId: string
+    optional Role: string
+    optional ProjectId: string
+    optional WorkspaceId: string        // workspace ACTOR id forwarded from appmanager.invoke for aistats attribution on bridge-routed llm.* calls; NOT an authorization basis
+    optional RequestId: string
+    optional SessionId: string         // audit/correlation metadata only; host-injected, client-reported values are untrusted; NOT an authorization basis
+    optional CallSeq: long
+    optional TimeoutMs: long           // per-callable budget from manifest; >0 overrides the default 30s, 0 keeps default
+}
+
+struct PluginInvokeResp {
+    Payload: bytes
+}
+
+// PluginInvokeChunk is one intermediate forward-chunk pushed by a streaming
+// callable (SDK HandlerStream emit) before the terminal PluginInvokeResp.
+// Payload carries the same encoding as PluginInvokeResp.Payload — the
+// JSON-encoded, Response-typed partial of the terminal. The actor-side
+// streaming callable (pluginhost.invoke_stream) delivers the plugin's
+// terminal as the LAST chunk with Terminal=true (gospore streams carry no
+// separate final value), so consumers resolve on the flagged chunk.
+struct PluginInvokeChunk {
+    Payload: bytes
+    optional Terminal: bool
+}
+
+// PluginEventDeliverReq pushes one host bus event into pluginhost for
+// fan-out to every loaded plugin whose manifest declares the kind in
+// Listens (appdef `listen <kind> {}`). Payload is the JSON-encoded event
+// body (e.g. AppLifecycleEvent); pluginhost delivers it to each plugin
+// under the reserved dispatch name `__event__:<kind>`, which the SDK maps
+// to RegisterEventListener handlers. Emitted by the event source
+// (appmanager) as a fire-and-forget tell so the owner lane never blocks
+// on plugin delivery.
+struct PluginEventDeliverReq {
+    Kind: string
+    Payload: string
+}
+
+struct PluginEventDeliverResp {
+    Delivered: int
+    optional Failures: array<string>
+}
+
+// PluginRuntimeStateEvent is emitted by the pluginhost actor whenever a native
+// plugin's runtime state changes. It drives the plugin management UI:
+//   - Transport → transport badge (in-process / subprocess)
+//   - Phase → loading state (subprocess: "starting"/"ready" = 进程启动中/进程已就绪;
+//     in-process: "loaded" = 已加载)
+//   - HotReloading → hot-reload indicator (正在热重载…)
+//   - Crashed / Error / ExitCode / Restartable → crash panel
+//     (插件进程异常退出 + restart button)
+struct PluginRuntimeStateEvent {
+    PluginId: string
+    Transport: string
+    Phase: string
+    optional HotReloading: bool
+    optional Crashed: bool
+    optional Error: string
+    optional ExitCode: int
+    optional Restartable: bool
+}
+
+// PluginLogPutReq forwards one app-frontend console entry into the pluginhost
+// per-plugin log ring. Sent by the host shell (plugin bridge) on behalf of a
+// plugin iframe; Message must be pre-truncated by the sender (512 bytes).
+struct PluginLogPutReq {
+    PluginId: string
+    Level: string        // debug | info | warn | error
+    Message: string
+    optional ViewId: string
+}
+
+// PluginLogEntry is one ring entry. Source distinguishes handler logs and
+// stderr (backend) from forwarded iframe console output (frontend).
+struct PluginLogEntry {
+    Time: string         // RFC3339Nano UTC
+    Level: string        // debug | info | warn | error
+    Source: string       // backend | frontend
+    Message: string
+}
+
+// PluginLogsReq queries the per-plugin log ring (newest last).
+struct PluginLogsReq {
+    PluginId: string
+    optional Limit: int  // default 200, capped at ring capacity
+}
+
+// PluginLogsResp returns ring entries plus the live process state so an
+// agent sees crash causes alongside the tail.
+struct PluginLogsResp {
+    PluginId: string
+    Generation: int
+    optional Dropped: int
+    optional Entries: array<PluginLogEntry>
+    optional ProcessState: string   // running | stopped | crashed
+    optional Crash: string
+}

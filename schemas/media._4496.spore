@@ -1,0 +1,133 @@
+// media namespace — image/video generation account protocol.
+// @ts-export
+//
+// Sources of truth for:
+//   - media.account.* list / CRUD request/response types
+//
+// Mirrors the voice.account.* pattern: a single credential store partitioned by
+// Kind. Kind separates the two independent media services: "image" (image
+// generation) and "video" (video generation); each maintains its own active
+// account. ApiKey is persisted in plaintext server-side; it is never returned
+// in list/view projections.
+
+// MediaAccount — a single stored image/video generation credential set. ApiKey
+// is persisted in plaintext server-side; it is never returned in list/view
+// projections. Kind separates the two independent services: "image" (image
+// generation) and "video" (video generation); each maintains its own active
+// account.
+struct MediaAccount {
+    Id:       string
+    Kind:     string   // "image" | "video"; each maintains its own active account
+    Name:     string
+    Provider: string
+    ApiKey:   string
+    optional Model:   string
+    optional BaseUrl: string
+    optional Proxy:   string // HTTP(S)/SOCKS5 proxy URL for all requests through this account; empty = direct connection
+}
+
+
+// MediaAccountView — redacted projection; ApiKey replaced by HasApiKey.
+struct MediaAccountView {
+    Id:        string
+    Kind:      string
+    Name:      string
+    Provider:  string
+    HasApiKey: bool
+    optional Model:   string
+    optional BaseUrl: string
+    optional Proxy:   string // HTTP(S)/SOCKS5 proxy URL; empty = direct connection
+}
+
+
+struct MediaAccountListReq {
+    optional Kind: string
+}
+
+
+struct MediaAccountListResp {
+    Items:         array<MediaAccountView>
+    optional ActiveId: string
+    // Active provider-model binding for the Kind (when no media account is
+    // active): generation routes to this (Provider, Model) pair via the system
+    // aggregator instead of the first matching unit.
+    optional BoundProvider: string
+    optional BoundModel:    string
+    // Vision only: bound aggregator config id for recognition routing.
+    optional BoundAggregator: string
+}
+
+
+struct MediaAccountCreateReq {
+    Kind:     string
+    Name:     string
+    Provider: string
+    optional ApiKey:  string
+    optional Model:   string
+    optional BaseUrl: string
+    optional Proxy:   string // HTTP(S)/SOCKS5 proxy URL; empty = direct connection
+}
+
+
+struct MediaAccountCreateResp {
+    Account: MediaAccountView
+}
+
+
+struct MediaAccountUpdateReq {
+    Id:       string
+    optional Name:     string
+    optional Provider: string
+    optional ApiKey:   string   // empty preserves the stored secret (redacted edit flow)
+    optional Model:    string
+    optional BaseUrl:  string
+    optional Proxy:    string   // HTTP(S)/SOCKS5 proxy URL; empty = direct connection
+}
+
+
+struct MediaAccountUpdateResp {
+    Account: MediaAccountView
+}
+
+
+struct MediaAccountDeleteReq {
+    Id: string
+}
+
+
+struct MediaAccountDeleteResp {}
+
+
+struct MediaAccountActivateReq {
+    Kind: string   // activate independently per Kind ("image" | "video")
+    Id:   string
+}
+
+
+struct MediaAccountActivateResp {
+    ActiveId: string
+}
+
+
+// MediaActiveAccountReq selects the active account for an internal generation
+// request. The matching response intentionally includes ApiKey and is only
+// exposed through the Internal media.active_account callable.
+struct MediaActiveAccountReq {
+    Kind: string
+}
+
+
+// MediaActiveAccountResp — see media.providermodel for the provider-model
+// binding structs that extend this protocol.
+struct MediaActiveAccountResp {
+    Account: MediaAccount
+    // Active provider-model binding for the Kind. Present only when the user
+    // selected a provider model on the media settings page and no media
+    // account is active; the agent passes it as the Provider/Model filters of
+    // aiaggregator.image_resolve / video_resolve.
+    optional BoundProvider: string
+    optional BoundModel:    string
+    // Vision only: bound aggregator config id — recognition routes through
+    // that aggregator's pool instead of a (Provider, Model) pin.
+    optional BoundAggregator: string
+}

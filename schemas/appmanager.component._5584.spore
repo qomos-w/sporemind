@@ -1,0 +1,21 @@
+// appmanager.component namespace — virtual bundle components projected from
+// the running app registry. The bundle definitions live inside the app
+// artifact's manifest; they surface as components exactly while the artifact
+// is loaded (host-wide, every project) and vanish on unload/unregister. No
+// wiki card entity is materialized anywhere.
+// @ts-export
+
+struct AppManagerComponentListReq {
+}
+
+struct AppManagerComponentListResp {
+    Items: array<ComponentDescriptor>
+}
+
+struct AppManagerComponentGetReq {
+    CardId: string
+}
+
+struct AppManagerComponentGetResp {
+    Component: ComponentDescriptor
+}

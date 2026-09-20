@@ -1,0 +1,118 @@
+.memory-node-panel {
+  height: 100%;
+  overflow: auto;
+  padding: 16px 20px 24px;
+  color: var(--text-body);
+  background: var(--bg-base);
+  line-height: var(--leading-normal);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.memory-node-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.memory-node-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.memory-node-panel::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: var(--radius-full);
+}
+
+.memory-node-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+.memory-node-panel-header {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-default);
+}
+
+.memory-node-panel-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.memory-node-panel-layer-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #0f172a;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+}
+
+.memory-node-panel-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-heading);
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.memory-node-panel-close-btn {
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-tertiary);
+  padding: 2px 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.15s, background 0.15s;
+}
+
+.memory-node-panel-close-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.memory-node-panel-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 8px;
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+}
+
+.memory-node-panel-meta span {
+  white-space: nowrap;
+}
+
+.memory-node-panel-protected {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.memory-node-panel-death {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+.memory-node-panel-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 12px;
+  margin-top: 4px;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.memory-node-panel-body {
+  font-size: 0.875rem;
+}

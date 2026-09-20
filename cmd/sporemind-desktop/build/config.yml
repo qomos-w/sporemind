@@ -1,0 +1,37 @@
+version: '3'
+
+info:
+  companyName: "qomos-w"
+  productName: "sporemind"
+  productIdentifier: "com.qomos-w.sporemind"
+  description: "sporemind desktop"
+  copyright: "Copyright (C) 2024-2026 qomos-w. Licensed under AGPL-3.0."
+  comments: ""
+  version: "13.08"
+
+dev_mode:
+  root_path: .
+  log_level: info
+  debounce: 1000
+  ignore:
+    dir:
+      - .git
+      - node_modules
+      - build
+      - bin
+    file:
+      - .DS_Store
+      - .gitignore
+      - .gitkeep
+    watched_extension:
+      - "*.go"
+    git_ignore: true
+  executes:
+    - cmd: cd ../../web && npm run dev
+      type: background
+    - cmd: go mod tidy
+      type: blocking
+    - cmd: wails3 task build
+      type: blocking
+    - cmd: wails3 task run
+      type: primary

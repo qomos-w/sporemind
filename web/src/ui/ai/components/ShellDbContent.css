@@ -1,0 +1,11 @@
+.shell-db-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  overflow-y: auto;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  padding: 12px;
+}

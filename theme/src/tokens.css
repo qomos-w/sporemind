@@ -1,0 +1,413 @@
+/* ============================================
+   Myxos — Design Tokens
+   ============================================
+
+   Architecture: primitive → semantic → derived.
+   - Primitives (prefixed with _) are internal; consumers use semantic names.
+   - Each semantic color has a base + hover/active/dim variant where applicable.
+   - Only two modes: dark and light.
+   ============================================ */
+
+/* ── Light Theme ── */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* ── Primitives: background ── */
+  --_bg-base:     #f7f7f7;
+  --_bg-surface:  #f2f1ef;
+  --_bg-elevated: #ffffff;
+  --_bg-overlay:  #e8e8e8;
+  --_bg-hover:    #e6e6e6;
+  --_bg-subtle:   #f4f4f4;
+
+  /* ── Primitives: surface ── */
+  --_surface-primary:   #ffffff;
+  --_surface-secondary: #f7f7f7;
+  --_surface-tertiary:  #f4f4f4;
+  --_surface-hover:     #efefef;
+
+  /* ── Primitives: border ── */
+  --_border-subtle:  #d8d8d8;
+  --_border-default: #d8d8d8;
+  --_border-strong:  #bbbbbb;
+
+  /* ── Primitives: text ── */
+  --_text-primary:   #1e1e1e;
+  --_text-secondary: #6e6e6e;
+  --_text-tertiary:  #a0a0a0;
+  --_text-inverse:   #ffffff;
+  --_text-muted:     #a0a0a0;
+  --_text-danger:    #c75450;
+
+  /* ── Semantic: text ── */
+  --text-primary:   var(--_text-primary);
+  --text-secondary: var(--_text-secondary);
+  --text-tertiary:  var(--_text-tertiary);
+  --text-inverse:   var(--_text-inverse);
+  --text-muted:     var(--_text-muted);
+  --text-danger:    var(--_text-danger);
+  --text-body:      #1e1e1e;
+  --text-caption:   #6e6e6e;
+
+  /* ── Semantic: background ── */
+  --bg-base:      var(--_bg-base);
+  --bg-surface:   var(--_bg-surface);
+  --bg-elevated:  var(--_bg-elevated);
+  --bg-overlay:   var(--_bg-overlay);
+  --bg-hover:     var(--_bg-hover);
+  --bg-subtle:    var(--_bg-subtle);
+  --bg-input:     var(--_surface-primary);
+
+  /* ── Semantic: surface ── */
+  --surface-primary:   var(--_surface-primary);
+  --surface-secondary: var(--_surface-secondary);
+  --surface-tertiary:  var(--_surface-tertiary);
+  --surface-hover:     var(--_surface-hover);
+
+  /* ── Semantic: border ── */
+  --border-subtle:  var(--_border-subtle);
+  --border-default: var(--_border-default);
+  --border-strong:  var(--_border-strong);
+
+  /* ── Status ── */
+  --status-pending:  #a0a0a0;
+  --status-running:  #007acc;
+  --status-success:  #16825d;
+  --status-failed:   #c75450;
+  --status-waiting:  #b89500;
+  --status-drifted:  #ce9178;
+  --status-canceled: #6e6e6e;
+
+  --status-pending-dim:  #a0a0a018;
+  --status-running-dim:  #007acc18;
+  --status-success-dim:  #16825d18;
+  --status-failed-dim:   #c7545018;
+  --status-waiting-dim:  #b8950018;
+  --status-drifted-dim:  #ce917818;
+  --status-canceled-dim: #6e6e6e18;
+
+  --status-error:    #c75450;
+  --status-error-bg: #c7545018;
+
+  /* ── Accent ── */
+  --accent-primary:        #007acc;
+  --accent-primary-hover:  #0098ff;
+  --accent-primary-active: #005f9e;
+  --accent-primary-dim:    #007acc20;
+  --accent-active:         #005f9e;
+
+  /* ── Feedback ── */
+  --info:    #007acc;
+  --warning: #b89500;
+  --error:   #c75450;
+  --success: #16825d;
+  --color-error: #c75450;
+
+  /* ── Tier (subscription) badges ── */
+  --tier-gold: #c19a2e;
+  --tier-paid: #7c5cd6;
+
+  /* ── Context budget bar ── */
+  --ctx-budget-bar-fill:      #fff2bc;
+  --ctx-budget-bar-fill-over: #f87171;
+
+  /* ── Shadows ── */
+  --shadow-sm:  0 1px 3px rgba(20, 22, 40, 0.10);
+  --shadow-md:  0 3px 10px rgba(20, 22, 40, 0.16);
+  --shadow-lg:  0 6px 20px rgba(20, 22, 40, 0.20);
+  --shadow-xl:  0 12px 40px rgba(20, 22, 40, 0.24);
+
+  /* ── Muted background ── */
+  --bg-muted-30: rgba(244, 244, 246, 0.3);
+
+  /* ── Syntax highlighting (CodeMirror) ── */
+  --syntax-keyword:  #a626a4;
+  --syntax-name:     #d12c5e;
+  --syntax-constant: #986801;
+  --syntax-variable: #383a42;
+  --syntax-type:     #b76b00;
+  --syntax-operator: #0184bc;
+
+  /* ── Workbench board (aurora surface) ── */
+  --workbench-bg:          #f4f2ea;
+  --workbench-fg:          #23262b;
+  --workbench-muted:       #a9a28d;
+  --workbench-aurora-1:    #ffe7cd;
+  --workbench-aurora-2:    #dce9d5;
+  --workbench-aurora-3:    #e3e1f2;
+  --workbench-aurora-1-opacity: 0.55;
+  --workbench-aurora-2-opacity: 0.5;
+  --workbench-aurora-3-opacity: 0.38;
+  --workbench-grain-opacity:  0.05;
+  --workbench-grain-blend:    multiply;
+  --workbench-card-bg:         rgba(255, 255, 255, 0.92);
+  --workbench-card-border:     #e9e4d2;
+  --workbench-card-border-strong: #ddd5bd;
+  --workbench-card-head-fg:    #3a3d43;
+  --workbench-card-head-border: #efece0;
+  --workbench-card-hover:      rgba(127, 208, 138, 0.14);
+  --workbench-card-shadow:     0 12px 34px rgba(40, 35, 20, 0.10);
+  --workbench-card-shadow-lg:  0 26px 64px rgba(40, 35, 20, 0.15);
+  --workbench-card-shadow-max: 0 34px 90px rgba(40, 35, 20, 0.22);
+  --workbench-cbtn-bg:        rgba(255, 255, 255, 0.55);
+  --workbench-cbtn-border:    rgba(216, 210, 191, 0.7);
+  --workbench-tag-bg:         #23262b;
+  --workbench-tag-fg:         #f5f3ec;
+  --workbench-accent-flame:   #b3541e;
+  --workbench-proposing:      rgba(194, 94, 75, 0.6);
+  --workbench-launcher-bg:    rgba(21, 26, 23, 0.06);
+  --workbench-launcher-border: rgba(127, 208, 138, 0.28);
+  --workbench-launcher-border-hover: rgba(127, 208, 138, 0.55);
+  --workbench-term-bg:        #151a17;
+  --workbench-term-fg:        #c9e7ce;
+  --workbench-term-dim:       #5d6f61;
+  --workbench-term-err:       #ff8480;
+  --workbench-term-font:      ui-monospace, Consolas, 'DejaVu Sans Mono', monospace;
+}
+
+/* ── Dark Theme ── */
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --_bg-base:     #1e1e1e;
+  --_bg-surface:  #252526;
+  --_bg-elevated: #2d2d30;
+  --_bg-overlay:  #3e3e42;
+  --_bg-hover:    #3e3e42;
+  --_bg-subtle:   #1e1e1e;
+
+  --_surface-primary:   #252526;
+  --_surface-secondary: #2d2d30;
+  --_surface-tertiary:  #3e3e42;
+  --_surface-hover:     #3e3e42;
+
+  --_border-subtle:  #3e3e42;
+  --_border-default: #3e3e42;
+  --_border-strong:  #5a5a5e;
+
+  --_text-primary:   #c8c8c8;
+  --_text-secondary: #808080;
+  --_text-tertiary:  #808080;
+  --_text-inverse:   #1e1e1e;
+  --_text-muted:     #808080;
+  --_text-danger:    #ff8a74;
+
+  --text-body:    #c0c0c0;
+  --text-caption: #808080;
+
+  --status-pending:  #808080;
+  --status-running:  #2b9be6;
+  --status-success:  #4ec9b0;
+  --status-failed:   #ff8a74;
+  --status-waiting:  #e8e0a0;
+  --status-drifted:  #e0a080;
+  --status-canceled: #5a5a5e;
+
+  --status-pending-dim:  #80808015;
+  --status-running-dim:  #2b9be618;
+  --status-success-dim:  #4ec9b018;
+  --status-failed-dim:   #ff8a7418;
+  --status-waiting-dim:  #e8e0a018;
+  --status-drifted-dim:  #e0a08018;
+  --status-canceled-dim: #5a5a5e15;
+
+  --status-error:    #ff8a74;
+  --status-error-bg: #ff8a7418;
+
+  --accent-primary:        #2b9be6;
+  --accent-primary-hover:  #4aa8f0;
+  --accent-primary-active: #1f8ad4;
+  --accent-primary-dim:    #2b9be620;
+  --accent-active:         #1f8ad4;
+
+  --info:    #2b9be6;
+  --warning: #e8e0a0;
+  --error:   #ff8a74;
+  --success: #4ec9b0;
+  --color-error: #ff8a74;
+
+  /* ── Tier (subscription) badges ── */
+  --tier-gold: #dcb64c;
+  --tier-paid: #a78bfa;
+
+  /* ── Context budget bar ── */
+  --ctx-budget-bar-fill:      #525252;
+  --ctx-budget-bar-fill-over: #ff8a74;
+
+  --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.45);
+  --shadow-md:  0 2px 8px rgba(0, 0, 0, 0.55);
+  --shadow-lg:  0 4px 16px rgba(0, 0, 0, 0.65);
+  --shadow-xl:  0 8px 32px rgba(0, 0, 0, 0.75);
+
+  --bg-muted-30: rgba(20, 22, 28, 0.35);
+
+  /* ── Syntax highlighting (CodeMirror) ── */
+  --syntax-keyword:  #bd93f9;
+  --syntax-name:     #e06c75;
+  --syntax-constant: #d19a66;
+  --syntax-variable: #abb2bf;
+  --syntax-type:     #e5c07b;
+  --syntax-operator: #56b6c2;
+
+  /* ── Workbench board (aurora surface) ── */
+  --workbench-bg:          #17191c;
+  --workbench-fg:          #e6e4d9;
+  --workbench-muted:       #8b8574;
+  --workbench-aurora-1:    #ffe7cd;
+  --workbench-aurora-2:    #dce9d5;
+  --workbench-aurora-3:    #e3e1f2;
+  --workbench-aurora-1-opacity: 0.26;
+  --workbench-aurora-2-opacity: 0.26;
+  --workbench-aurora-3-opacity: 0.26;
+  --workbench-grain-opacity:  0.04;
+  --workbench-grain-blend:    screen;
+  --workbench-card-bg:         rgba(37, 39, 43, 0.94);
+  --workbench-card-border:     #3c3e3a;
+  --workbench-card-border-strong: #55574e;
+  --workbench-card-head-fg:    #dcd9cb;
+  --workbench-card-head-border: #33363b;
+  --workbench-card-hover:      rgba(255, 255, 255, 0.08);
+  --workbench-card-shadow:     0 12px 34px rgba(0, 0, 0, 0.45);
+  --workbench-card-shadow-lg:  0 26px 64px rgba(0, 0, 0, 0.50);
+  --workbench-card-shadow-max: 0 34px 90px rgba(0, 0, 0, 0.60);
+  --workbench-cbtn-bg:        rgba(38, 40, 44, 0.6);
+  --workbench-cbtn-border:    rgba(70, 72, 66, 0.8);
+  --workbench-tag-bg:         #e8e5d8;
+  --workbench-tag-fg:         #23262b;
+  --workbench-accent-flame:   #ffb454;
+  --workbench-proposing:      rgba(255, 180, 84, 0.55);
+  --workbench-launcher-bg:    rgba(255, 255, 255, 0.05);
+  --workbench-launcher-border: rgba(255, 255, 255, 0.14);
+  --workbench-launcher-border-hover: rgba(255, 180, 84, 0.5);
+  --workbench-term-bg:        #151a17;
+  --workbench-term-fg:        #c9e7ce;
+  --workbench-term-dim:       #5d6f61;
+  --workbench-term-err:       #ff8480;
+  --workbench-term-font:      ui-monospace, Consolas, 'DejaVu Sans Mono', monospace;
+}
+
+/* ── Typography ── */
+:root {
+  --font-sans: system-ui, -apple-system, 'Segoe UI', Roboto, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei UI', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+  --font-mono: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+
+  --text-xs:   0.6875rem;   /* 11px */
+  --text-sm:   0.75rem;     /* 12px */
+  --text-base: 0.8125rem;   /* 13px */
+  --text-lg:   0.9375rem;   /* 15px — bumped for chat readability */
+  --text-xl:   1rem;        /* 16px */
+  --text-2xl:  1.25rem;     /* 20px */
+
+  --leading-tight:  1.3;
+  --leading-normal: 1.55;
+  --leading-relaxed: 1.75;
+
+  /* ── Spacing ── */
+  --space-0: 0;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  /* ── Radius ── */
+  --radius-sm:  4px;
+  --radius-md:  6px;
+  --radius-lg:  10px;
+  --radius-xl:  14px;
+  --radius-2xl: 18px;
+  --radius-full: 9999px;
+
+  /* ── Transitions ── */
+  --transition-fast:   100ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow:   300ms ease;
+
+  /* ── Z-Index Scale ── */
+  --z-base:     0;
+  --z-dropdown: 100;
+  --z-sticky:   200;
+  --z-overlay:  300;
+  --z-modal:    400;
+  --z-toast:    500;
+
+  /* ── Layout ── */
+  --header-height:        40px;
+  --titlebar-height:      32px;
+  --toolbar-height:       28px;
+  --activity-bar-width:   32px;
+  --tab-bar-height:       28px;
+  --side-panel-min-width: 200px;
+  --side-panel-max-width: 600px;
+  --split-divider-size:   4px;
+  --timeline-height:      40px;
+  --sidebar-width:        320px;
+  --bottom-panel-height:  200px;
+  --panel-min-width:      240px;
+
+  /* ── AI Shell ── */
+  --ai-shell-sidebar-width:     280px;
+  --ai-shell-sidebar-min:       200px;
+  --ai-shell-sidebar-max:       400px;
+  --ai-shell-card-width:        380px;
+  --ai-shell-card-min:          300px;
+  --ai-shell-card-max:          600px;
+  --ai-shell-breakpoint-mobile: 768px;
+  --ai-shell-breakpoint-tablet: 1024px;
+
+  /* ── Settings Cards ── */
+  --settings-card-bg:      var(--bg-elevated);
+  --settings-card-bg-page: var(--bg-base);
+  --settings-card-shadow: var(--shadow-sm);
+  --settings-section-gap:  24px;
+}
+
+/* ── Global Reset ──
+   Wrapped in @layer base so that layered rules (e.g. Tailwind v4 utilities from
+   ui/settings/shadcn/globals.css) can override margin/padding/box-sizing.
+   All existing component CSS is unlayered and still wins over this reset. */
+@layer base {
+  *, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--text-primary);
+  background-color: var(--bg-base);
+  overflow: hidden;
+  height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+}
+
+#root {
+  height: 100%;
+  width: 100%;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-default); border-radius: var(--radius-full); }
+::-webkit-scrollbar-thumb:hover { background: var(--border-strong); }
+
+/* ── Selection ── */
+::selection { background: var(--accent-primary-dim); color: var(--text-primary); }
+
+/* ── Focus ── */
+:focus-visible { outline: 1.5px solid var(--accent-primary); outline-offset: 1.5px; }

@@ -1,0 +1,32 @@
+// appmanager namespace — project-sourced app lifecycle shortcuts.
+// Combines project_package + register/reload into one callable.
+// @ts-export
+
+struct AppManagerRegisterProjectReq {
+    optional ProjectId: string    // project ID; if empty, uses the caller's bound project
+    optional AppId: string
+    optional EntryModule: string
+    optional CallerAgentId: string  // injected by turn engine: calling agent's actor ID; used to route worktree-bound callers to their bound worktree
+    optional AppDir: string         // subdirectory holding the app, relative to the project root; "." or empty = project root; rejects "..", absolute paths and backslashes
+}
+
+struct AppManagerRegisterProjectResp {
+    Status: AppStatus
+    optional Warnings: array<string>  // set when the artifact was built from a worktree-bound caller's checkout: valid until worktree merge/exit; re-register after merge to activate the main-tree build
+}
+
+struct AppManagerReloadProjectReq {
+    optional ProjectId: string    // project ID; if empty, uses the caller's bound project
+    AppId: string
+    optional EntryModule: string
+    optional ExpectedStateVersion: long
+    optional AgentId: string
+    optional RequestId: string
+    optional AppDir: string      // subdirectory holding the app, relative to the project root; "." or empty = project root; rejects "..", absolute paths and backslashes
+    optional CallerAgentId: string // injected by turn engine: calling agent's actor ID; when ProjectId is omitted, resolves to the agent's bound project
+}
+
+struct AppManagerReloadProjectResp {
+    Status: AppStatus
+    StateVersion: long
+}

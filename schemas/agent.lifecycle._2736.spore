@@ -1,0 +1,54 @@
+// agent.lifecycle namespace — agent pause/resume protocol types.
+// @ts-export
+//
+// Sources of truth for:
+//   - workspace.agent_pause
+//   - workspace.agent_resume
+//   - workspace.agent_unload
+//
+// The workspace handler uses these structs directly. CallerAgentId is injected
+// by the turn engine (injectCallerAgentID) and consumed by the workspace handler
+// for owner/self authorization; the agent-local handler ignores it.
+//
+// Design: 同构于 agent.message — 核心输入都是 ToAgentId + optional Reason，
+// 在目标 agent 中触发暂停/恢复（不涉及 LLM 调用）。workspace.agent_unload 是
+// workspace 侧的一次性卸载（destroy actor、保留 AgentRef 灰色态）。
+
+struct AgentPauseReq {
+    ToAgentId:          string
+    optional Reason:    string
+    optional CallerAgentId: string   // injected by turn engine: calling agent's actor ID for owner/self auth
+}
+
+
+struct AgentPauseResp {
+    Sent: bool
+}
+
+
+struct AgentResumeReq {
+    ToAgentId:          string
+    optional Reason:    string
+    optional CallerAgentId: string   // injected by turn engine: calling agent's actor ID for owner/self auth
+}
+
+
+struct AgentResumeResp {
+    Sent: bool
+}
+
+
+// AgentUnloadReq is the protocol for workspace.agent_unload: unload a
+// project-owned agent while keeping its AgentRef in the workspace registry
+// (LoadState "unloaded", ActorID retained, sidebar grey, lazily reloadable).
+// The project actor fires this fire-and-forget after an ephemeral scheduler
+// run completes; the workspace handler issues a best-effort turn_cancel before
+// destroying the actor.
+struct AgentUnloadReq {
+    AgentId: string   // stable agent ID in the workspace registry
+}
+
+
+struct AgentUnloadResp {
+    Unloaded: bool   // false when the agent was already unloaded or unknown
+}

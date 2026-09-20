@@ -1,0 +1,5 @@
+# Build artifacts for c-shared plugins
+*.dll
+*.so
+*.dylib
+*.h

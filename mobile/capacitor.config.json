@@ -1,0 +1,14 @@
+{
+  "appId": "com.qomos.sporemind",
+  "appName": "sporemind",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": true,
+    "androidScheme": "https"
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    }
+  }
+}

@@ -1,0 +1,173 @@
+// workspace.workflow namespace — agent orchestration callables (IDs 2480+).
+// @ts-export
+//
+// Sources of truth for:
+//   - workspace.agent.spawn_assign
+//   - workspace.agent.assign
+//   - workspace.agent.review
+//   - workspace.agent.terminate
+//   - workspace.agent_spawn_by_type
+
+struct WorkspaceAgentSpawnAssignReq {
+    optional To:        string              // task title; agent displayName comes from kind config
+    AgentKind:          string              // worker | coder | any valid kind
+    optional InterpretedGoal: string        // optional interpreted goal
+    optional BoundTaskCardId: string        // task card to bind the agent to
+    optional MaxTurns:  int                 // default from kind config
+    optional ProjectId: string
+    optional CallerAgentId: string          // injected by turn engine: calling agent's actor ID for workflow validation
+    optional PermissionMode: string         // deprecated: ignored by the workspace; spawned agents inherit the account-global permission mode, not the parent's
+    optional Unit:      ModelUnit           // explicit model unit override; empty = inherit from parent agent runtime slots
+    optional WorktreeBranch: string         // git-safe branch name for the child worktree; empty = auto-generate from display name
+}
+
+
+struct WorkspaceAgentSpawnAssignResp {
+    AgentActorId:  string
+    DisplayName:   string
+    Goal:          GoalSummary
+}
+
+
+struct WorkspaceAgentAssignReq {
+    AgentActorId:       string
+    optional InterpretedGoal: string
+    BoundTaskCardId:    string
+    optional MaxTurns:  int
+    optional ProjectId: string
+    optional CallerAgentId: string          // injected by turn engine: calling agent's actor ID for workflow validation
+}
+
+
+struct WorkspaceAgentAssignResp {
+    Goal: GoalSummary
+}
+
+
+struct WorkspaceAgentReviewReq {
+    AgentActorId:  string
+    Decision:      string   // approve | reject
+    optional Feedback: string   // reject: feedback text injected into agent resume
+    optional TaskCardId: string // card to set status on
+    optional CallerAgentId: string  // injected by turn engine: calling agent's actor ID; parent must equal child.ParentAgentId
+}
+
+
+struct WorkspaceAgentReviewResp {
+    Approved: bool
+    CardStatus: string   // done (approve) | doing (reject)
+    // Populated when an approve was converted to an auto-reject because the
+    // worker's outputs failed the task card's data.outputs contract validation.
+    // Empty for normal approve/reject decisions.
+    optional ReviewNote: string
+}
+
+
+struct WorkspaceAgentTerminateReq {
+    AgentActorId:  string   // worker agent to terminate (must have a BoundTaskCardId)
+    optional Reason: string // logged reason (e.g., "failed", "dead")
+    optional CallerAgentId: string  // injected by turn engine: calling agent's actor ID; parent must equal child.ParentAgentId
+}
+
+
+struct WorkspaceAgentTerminateResp {
+    Deleted: bool
+}
+
+
+// workspace.agent_spawn_by_type — restricted fork-child spawn entry point.
+// Unlike spawn_assign (persistent workflow agent + task-card state machine),
+// this callable creates a short-lived fork child under the calling parent
+// agent. The workspace validates the request, authorizes the caller, and
+// delegates the actual child spawn to the parent agent's internal fork
+// adapter. The parent agent owns activeChildren tracking, explore_progress /
+// explore_complete streaming, cancellation, and timeout cleanup; the
+// workspace only gates authorization and returns the child handle.
+//
+// CallerAgentId / ParentStepId / ToolUseId are injected by the turn engine
+// and MUST NOT be trusted from the raw LLM payload.
+struct WorkspaceAgentSpawnByTypeReq {
+    AgentKind:          string              // required: explorer | reviewer | general | dreamer | <configured fork kind>
+    Description:        string              // task description for the child (shown as step title)
+    Prompt:             string              // prompt body for the child's first turn
+    optional Unit:      ModelUnit           // explicit model unit override; empty = derive from kind slot
+    optional MaxIterations: int            // child max iterations; 0 = kind default
+    optional ParentTurnId:   string        // parent turn reference for result routing
+    optional ParentStepId:   string        // injected by turn engine: parent step that owns this fork
+    optional ToolUseId:      string        // injected by turn engine: tool-use ID for activeChildren tracking
+    optional LifecycleScope: string        // "fork" (default) — identifies a short-lived fork child projection
+    optional CallerAgentId:  string        // injected by turn engine: calling parent agent's actor ID (authorization)
+    optional PermissionMode: string        // deprecated: ignored by the workspace; spawned agents inherit the account-global permission mode, not the parent's
+    optional PlanEvidence:   array<string> // reviewer only: plan card IDs to load as evidence (turn engine injects from fork_review's PlanEvidence)
+}
+
+
+struct WorkspaceAgentSpawnByTypeResp {
+    ChildActorId: string   // spawned child agent actor ID
+    DisplayName:  string   // child display name
+}
+
+// workspace.workflow_start — start a workflow map on an existing agent.
+// The workspace mounts the agent when unloaded, invokes the agent's
+// workflow_start (claims map ownership, mounts workflow mode), then submits
+// a kickoff chat message so the agent begins orchestrating in its next turn.
+struct WorkspaceWorkflowStartReq {
+    AgentActorId: string
+    MapCardId:    string
+    optional ProjectId: string
+    optional TemplateMapId: string  // if set, instantiate this template into a fresh
+                                    // instance map and start that instance; MapCardId
+                                    // is ignored in this branch
+}
+
+
+struct WorkspaceWorkflowStartResp {
+    MapCardId: string
+}
+
+
+// workspace.gate_approve — workflow gate approval: a companion-window toast
+// action (or direct invocation) flips a doing gate card to done, recording
+// who approved and what form values they submitted. CallerAgentId (when
+// injected by the turn engine) names the approver agent; identity role and
+// active-workflow checks run before any card state change. Triggers the
+// workspace's downstream-frontier advance via wiki_set_status's normal
+// done transition.
+//
+// Authorization follows workspace.agent_review's policy: trusted developer /
+// admin identity (ctx.Identity) bypasses; non-developer callers must supply a
+// non-empty CallerAgentId that resolves to a live agent with an active
+// workflow. Direct Public invocations from an anonymous / web role are
+// rejected so an LLM cannot forge an approval.
+struct WorkspaceGateApproveReq {
+    TaskCardId:        string   // bound gate task card id
+    Approver:          string   // free-form approver label (e.g. user id, agent actor id)
+    CallerAgentId:     string   // injected by turn engine when the caller is an agent
+    optional FormValues: map<string, any>  // optional structured form values collected by the UI; normalized against the request layout before persistence
+    optional CallableId: string            // optional: the mutating callable the gate protects (recorded for audit, not re-invoked here)
+    optional Note: string                  // optional free-form note forwarded to task_outputs
+}
+
+
+struct WorkspaceGateApproveResp {
+    CardStatus:  string  // "done"
+    ApprovedAt:  string  // RFC3339Nano UTC
+}
+
+
+// workspace.gate_reject — counterpart of workspace.gate_approve: flips the
+// bound gate card to failed and writes the rejection record to task_outputs.
+// The same authorization rules apply (identity role + CallerAgentId checks).
+struct WorkspaceGateRejectReq {
+    TaskCardId:        string
+    Approver:          string
+    CallerAgentId:     string
+    optional Reason: string  // free-form rejection reason (forwarded to task_outputs)
+    optional CallableId: string  // optional: the mutating callable the gate protected (recorded for audit)
+}
+
+
+struct WorkspaceGateRejectResp {
+    CardStatus: string  // "failed"
+    RejectedAt: string  // RFC3339Nano UTC
+}

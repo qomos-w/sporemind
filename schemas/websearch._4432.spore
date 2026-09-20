@@ -1,0 +1,108 @@
+// websearch namespace — provider-agnostic web search service.
+// @ts-export
+//
+// Sources of truth for:
+//   - websearch.search — execute a web search via the active account's provider
+//   - websearch.provider_list — list available provider adapters
+//   - websearch.account.* — multi-account CRUD + activation (mirrors voice.account.*)
+//
+// Provider adapters are pluggable. v1 ships Zhipu (智谱) Web Search
+// (reuses GLM API key via aimanager credential resolution) and supports
+// independent API key storage as fallback.
+
+struct WebSearchReq {
+    Query:         string
+    optional MaxResults: int    // default 10, max 50
+    optional TimeRange:  string  // "oneDay" | "oneWeek" | "oneMonth" | "oneYear" | "noLimit"
+    optional Engine:     string  // provider-specific engine override
+}
+
+struct WebSearchResp {
+    Results:   array<WebSearchResult>
+    Provider:  string
+}
+
+struct WebSearchResult {
+    Title:    string
+    Url:      string
+    Snippet:  string
+    optional Source:        string  // site name
+    optional Icon:          string  // site icon URL
+    optional PublishedDate: string
+}
+
+// Provider info projection — describes a registered search adapter.
+struct WebSearchProviderInfo {
+    Id:          string  // "zhipu" | "tavily" | "brave" | "searxng"
+    Name:        string
+    RequiresKey: bool
+}
+
+struct WebSearchProviderListReq {}
+
+struct WebSearchProviderListResp {
+    Providers: array<WebSearchProviderInfo>
+}
+
+// WebSearchAccount — a single stored search credential set. ApiKey is persisted
+// in plaintext server-side; it is never returned in list/view projections.
+struct WebSearchAccount {
+    Id:       string
+    Name:     string
+    Provider: string  // provider adapter id, e.g. "zhipu"
+    ApiKey:   string
+    optional Endpoint: string  // custom endpoint (e.g. self-hosted SearXNG)
+}
+
+// WebSearchAccountView — redacted projection; ApiKey replaced by HasApiKey.
+struct WebSearchAccountView {
+    Id:        string
+    Name:      string
+    Provider:  string
+    HasApiKey: bool
+    optional Endpoint: string
+}
+
+struct WebSearchAccountListReq {}
+
+struct WebSearchAccountListResp {
+    Items:    array<WebSearchAccountView>
+    optional ActiveId: string
+}
+
+struct WebSearchAccountCreateReq {
+    Name:     string
+    Provider: string
+    optional ApiKey:   string
+    optional Endpoint: string
+}
+
+struct WebSearchAccountCreateResp {
+    Account: WebSearchAccountView
+}
+
+struct WebSearchAccountUpdateReq {
+    Id:       string
+    optional Name:     string
+    optional Provider: string
+    optional ApiKey:   string  // empty preserves the stored secret (redacted edit flow)
+    optional Endpoint: string
+}
+
+struct WebSearchAccountUpdateResp {
+    Account: WebSearchAccountView
+}
+
+struct WebSearchAccountDeleteReq {
+    Id: string
+}
+
+struct WebSearchAccountDeleteResp {}
+
+struct WebSearchAccountActivateReq {
+    Id: string
+}
+
+struct WebSearchAccountActivateResp {
+    ActiveId: string
+}

@@ -1,0 +1,101 @@
+.topology-graph {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.topology-graph > div {
+  position: absolute;
+  inset: 0;
+}
+
+.topology-agent-overlay-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  /* Pan/zoom is applied as a single transform on this layer; rings are
+     positioned in world coordinates underneath it. */
+  transform-origin: 0 0;
+}
+
+.topology-agent-avatar-overlay {
+  position: absolute;
+  width: 56px;
+  height: 56px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topology-agent-ring {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--accent, hsl(210 80% 55%));
+  animation: agent-avatar-spin 1.2s linear infinite;
+  pointer-events: none;
+}
+
+.topology-agent-avatar-overlay.is-active .topology-agent-ring {
+  border-top-color: var(--agent-ring-active-color, #ff7a00);
+}
+
+/* Bound task card mirroring its working agent's ring: smaller and thinner so
+   it wraps the dot node instead of an avatar. */
+.topology-agent-avatar-overlay.is-bound-card {
+  width: 42px;
+  height: 42px;
+}
+
+.topology-agent-avatar-overlay.is-bound-card .topology-agent-ring {
+  border-width: 2px;
+}
+
+@keyframes agent-avatar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.topology-selection-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  display: none;
+  z-index: 3;
+  /* Pan/zoom is applied as a single transform on this layer; reticles are
+     positioned in world coordinates underneath it. */
+  transform-origin: 0 0;
+}
+
+.topology-selection-frame {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.topology-selection-frame path {
+  fill: none;
+  stroke: var(--accent-primary, #3b82f6);
+  stroke-width: 3;
+  stroke-linecap: round;
+  animation: topology-selection-pulse 2s ease-in-out infinite;
+}
+
+/* Bound-partner reticle: dashed, thinner brackets in the same accent hue so
+   the pair reads as linked but the primary selection stays dominant. */
+.topology-linked-overlay .topology-selection-frame path {
+  stroke-width: 2;
+  stroke-dasharray: 7 5;
+  opacity: 0.8;
+}
+
+@keyframes topology-selection-pulse {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+

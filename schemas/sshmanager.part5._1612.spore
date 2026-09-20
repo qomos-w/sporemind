@@ -1,0 +1,112 @@
+// sshmanager namespace — remote SSH host management, shell sessions, and SFTP file operations.
+// @ts-export
+//
+// Sources of truth for:
+//   - sshmanager.download composite file/directory download
+//   - sshmanager.upload composite file/archive upload
+//   - sshmanager.tunnel_* local port forwarding (ssh -L semantics)
+//
+// This part was split from part4 because part4's ID block (3021–3027) is
+// saturated and the next free IDs (3028–3029) can only fit 2 structs; the
+// following block (3030+) is owned by appmanager/websearch/im. New
+// sshmanager transfer types land here at base 3070; tunnel types continue at
+// 1584 (the 1580–1631 region is reserved for this file; 1632+ is user).
+
+// ---------------------------------------------------------------------------
+// Composite download — remote file or directory → base64. Auto-detects
+// whether the path is a regular file or a directory: a file is read and
+// returned as base64 bytes; a directory is archived into a tar.gz and
+// returned as base64. IsDirectory in the response tells the caller which
+// path was taken.
+// ---------------------------------------------------------------------------
+
+struct SshDownloadReq {
+    SessionId: string
+    Path:      string  // remote file or directory to download
+}
+
+
+struct SshDownloadResp {
+    Name:        string  // basename of the downloaded file or directory
+    Content:     string  // base64-encoded file bytes (file) or tar.gz archive (directory)
+    Size:        int64   // size of the base64-decoded payload in bytes
+    IsDirectory: bool    // true if the remote path was a directory (Content is a tar.gz archive)
+    NumEntries:  int     // number of archived entries (only when IsDirectory is true)
+}
+
+
+// ---------------------------------------------------------------------------
+// Composite upload — base64 → remote file or directory. When IsArchive is
+// true, the base64 payload is decoded as a tar.gz and safely extracted into
+// the target directory (auto-created if missing). When false, the base64
+// payload is decoded as raw bytes and written to the target file path
+// (parent directories auto-created).
+// ---------------------------------------------------------------------------
+
+struct SshUploadReq {
+    SessionId: string
+    Path:      string  // remote target path (file for raw, directory for archive)
+    Content:   string  // base64-encoded file bytes or tar.gz archive bytes
+    IsArchive: bool    // true: extract tar.gz into target directory; false: write raw bytes to target file
+}
+
+
+struct SshUploadResp {
+    NumEntries:   int   // entries extracted (only when IsArchive is true)
+    BytesWritten: int64 // total bytes written to the remote filesystem
+}
+
+
+// ---------------------------------------------------------------------------
+// Local port forwarding (ssh -L semantics). tunnel_open binds 127.0.0.1:0 on
+// this machine and forwards every accepted connection through the SSH host to
+// TargetAddr (host:port as seen *from the SSH host*, e.g. "127.0.0.1:6379"
+// reaches the host's own loopback). Callers dial LocalAddr with any normal
+// TCP client — no SSH involved on the caller side. Tunnels are shared per
+// (host, target) with reference counting: duplicate opens from different
+// backends merge onto one tunnel and each must close exactly once. Tunnels
+// are ephemeral (never persisted) and are torn down when the last reference
+// closes, the host is removed, or the actor stops. A dead SSH connection is
+// re-established once per forwarded connection.
+// ---------------------------------------------------------------------------
+
+struct SshTunnelOpenReq {
+    HostId:     string
+    TargetAddr: string  // host:port reachable from the SSH host, e.g. "127.0.0.1:6379"
+}
+
+
+struct SshTunnelOpenResp {
+    LocalAddr: string  // 127.0.0.1:<port> on this machine; dial with any TCP client
+    RefCount:  int     // references now held on this tunnel
+}
+
+
+struct SshTunnelCloseReq {
+    HostId:     string
+    TargetAddr: string
+}
+
+
+struct SshTunnelCloseResp {
+    Closed:   bool  // true when the tunnel was torn down (last reference released)
+    RefCount: int   // references remaining (0 when Closed)
+}
+
+
+struct SshTunnelListReq {
+}
+
+
+struct SshTunnelInfo {
+    HostId:      string
+    TargetAddr:  string
+    LocalAddr:   string
+    RefCount:    int
+    ActiveConns: int  // forwarded connections currently in flight
+}
+
+
+struct SshTunnelListResp {
+    Items: array<SshTunnelInfo>
+}

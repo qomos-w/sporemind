@@ -1,0 +1,51 @@
+// card namespace — unified MonoCard protocol and builtin card metadata.
+// @ts-export
+//
+// CardRef declares a card request. Runtime callable contracts and policy remain
+// owned by schema/registry/policy layers.
+
+struct CardRef {
+    Id: string
+    optional Version: int
+    optional Source: string
+    optional Scope: string
+    optional Order: int
+    optional Disabled: bool
+}
+
+struct CardPromptContribution {
+    Id: string
+    Section: string   // role | policy | project_context | active_goal | active_plan | task | skills | tool_guidance
+    Text: string
+    optional Priority: int
+}
+
+struct CardToolContribution {
+    Id: string
+    CallableId: string
+    optional Priority: int
+}
+
+struct MonoCard {
+    Id: string
+    Type: string      // agent | prompt | skill | concept | callable | capability_module | scheduler | task | wiki | workflow | bundle
+    optional Version: int
+    optional ProjectId: string
+    optional Source: string
+    optional Protected: bool
+    optional OnDemand: bool
+    optional Body: string
+    PromptContributions: array<CardPromptContribution>
+    ToolContributions: array<CardToolContribution>
+    Dependencies: array<CardRef>
+}
+
+struct BuiltinCardRegistration {
+    Id: string
+    Type: string
+    Directory: string
+    MarkdownPath: string
+    EmbedKey: string
+    optional Protected: bool
+    optional Visibility: string
+}

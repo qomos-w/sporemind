@@ -1,0 +1,273 @@
+// project.graph namespace — semantic project graph state and evolution.
+// @ts-export
+
+struct GraphSnapshotMeta {
+    ProjectId:     string
+    GraphKind:     string   // charter | target | phase | reality | diff | moves | projection | coverage
+    Id:            string   // charter | target | phaseId | traceId | diffId | movesId | projectionId
+    Revision:      string
+    SchemaVersion: string
+    CreatedAt:     string
+    optional UpdatedAt: string
+    optional Source:    string   // user | trace | diff | planner | projection
+}
+
+
+struct ProjectDefinition {
+    Id:       string   // "project"
+    Purpose:  string
+    Scope:    array<string>
+    NonGoals: array<string>
+    Source:   string   // user | inferred | confirmed
+}
+
+
+struct ValueConstraint {
+    Id:        string
+    Statement: string
+    Allows:    array<string>
+    Forbids:   array<string>
+    Source:    string   // user | inferred | confirmed
+}
+
+
+struct EngineeringConstraint {
+    Id:        string
+    Statement: string
+    AppliesTo: array<string>   // code | schema | workflow | prompt | validation
+    Must:      array<string>
+    MustNot:   array<string>
+    Source:    string   // user | inferred | confirmed
+}
+
+
+struct ProjectCharter {
+    Definition:             ProjectDefinition
+    ValueConstraints:       array<ValueConstraint>
+    EngineeringConstraints: array<EngineeringConstraint>
+}
+
+
+struct Capability {
+    Id:       string
+    Promise:  string
+    Concepts: array<string>
+    Checks:   array<string>
+}
+
+
+struct Concept {
+    Id:           string
+    Desc:         string
+    Capabilities: array<string>
+    Constraints:  array<string>
+    Checks:       array<string>
+    State:        string   // real | planned | future
+}
+
+
+struct CoreValue {
+    Id:         string
+    Statement:  string
+    Constrains: array<string>
+    Source:     string   // top_down | bottom_up | confirmed
+}
+
+
+struct Constraint {
+    Id:        string
+    Statement: string
+    AppliesTo: array<string>
+    Scope:     string   // local | cross_cutting
+}
+
+
+struct Check {
+    Id:        string
+    Statement: string
+}
+
+
+struct Relation {
+    From:     string
+    To:       string
+    Relation: string   // part_of | depends_on | enables | constrains
+}
+
+
+struct FileAnchor {
+    Path:          string
+    Role:          string   // primary | supporting | test | doc | generated | reference
+    Supports:      array<string>
+    optional EvidenceScope: string
+}
+
+
+struct FileCoverage {
+    Path:      string
+    Status:    string   // anchored | generated | ignored | orphan
+    optional Supports: array<string>
+    optional Reason:   string
+}
+
+
+struct ProjectGraphScope {
+    Root:    string
+    Include: array<string>
+    Ignore:  array<string>
+    optional PhaseId: string
+}
+
+
+struct TargetGraph {
+    Charter:      ProjectCharter
+    Capabilities: array<Capability>
+    Concepts:     array<Concept>
+    CoreValues:   array<CoreValue>
+    Constraints:  array<Constraint>
+    Checks:       array<Check>
+    Relations:    array<Relation>
+    Sources:      array<string>
+}
+
+
+struct PhaseGraph {
+    PhaseId:      string
+    Baseline:     string   // reality | PhaseId
+    Capabilities: array<string>
+    Concepts:     array<string>
+    CoreValues:   array<string>
+    Constraints:  array<string>
+    Checks:       array<string>
+    Relations:    array<Relation>
+    Future:       array<string>
+}
+
+
+struct RealityGraph {
+    Concepts:  array<Concept>
+    Relations: array<Relation>
+    Anchors:   array<FileAnchor>
+    Coverage:  array<FileCoverage>
+}
+
+
+struct SemanticDiff {
+    Id:       string
+    Type:     string   // missing | partial | drift | orphan | conflict
+    optional Target:  string
+    optional Reality: string
+    Desc:     string
+    Evidence: array<string>
+}
+
+
+struct AlignmentMove {
+    Id:               string
+    Closes:           array<string>
+    TargetState:      string
+    Acceptance:       array<string>
+    CandidateAnchors: array<FileAnchor>
+    Splittable:       bool
+}
+
+
+struct GraphKanbanCard {
+    Id:               string
+    MoveId:           string
+    Closes:           array<string>
+    PhaseId:          string
+    ConceptIds:       array<string>
+    CandidateAnchors: array<string>
+    AcceptanceChecks: array<string>
+    optional ParallelGroup: string
+    optional OwnerAgentId:  string
+}
+
+
+struct DiffPlan {
+    Diffs: array<SemanticDiff>
+    Moves: array<AlignmentMove>
+    Cards: array<GraphKanbanCard>
+}
+
+
+struct ProjectionNode {
+    ProjectionId: string
+    optional ConceptId: string
+    Section:      string   // concept_root | constraints | coverage | diff | moves | cards | charter
+    Children:     array<ProjectionNode>
+}
+
+
+struct ProjectionGraph {
+    ProjectionId: string
+    Root:         ProjectionNode
+}
+
+
+struct ProjectGraphGetReq {
+    ProjectId: string
+    GraphKind: string
+    optional Id:       string
+    optional Revision: string
+}
+
+
+struct ProjectGraphSaveReq {
+    ProjectId:         string
+    GraphKind:         string
+    Id:                string
+    optional ExpectedRevision: string
+    Meta:              GraphSnapshotMeta
+    EnvelopeText:      string
+}
+
+
+struct ProjectGraphEnvelopeResp {
+    Meta:         GraphSnapshotMeta
+    EnvelopeText: string
+}
+
+
+struct ProjectGraphConceptGetReq {
+    ProjectId: string
+    GraphKind: string
+    Id:        string
+    ConceptId: string
+}
+
+struct ProjectGraphConceptGetResp {
+    Concept: Concept
+    GraphKind: string
+    Id:        string
+    Revision:  string
+}
+struct ProjectGraphTraceReq {
+    ProjectId: string
+    optional PhaseId: string
+    optional Include: array<string>
+    optional Ignore:  array<string>
+}
+
+
+struct ProjectGraphDiffReq {
+    ProjectId: string
+    PhaseId:   string
+    optional RealityRevision: string
+}
+
+
+struct ProjectGraphPlanMovesReq {
+    ProjectId: string
+    PhaseId:   string
+    optional DiffRevision: string
+}
+
+
+struct ProjectGraphProjectionReq {
+    ProjectId:    string
+    ProjectionId: string
+    optional GraphKind: string
+    optional Id:        string
+}

@@ -1,0 +1,1447 @@
+[
+  {
+    "Name": "target",
+    "Label": "Target",
+    "Keywords": [
+      "goal",
+      "objective",
+      "aim"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "check-circle",
+    "Label": "Check circle",
+    "Keywords": [
+      "done",
+      "complete",
+      "ok"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "check-square",
+    "Label": "Check square",
+    "Keywords": [
+      "todo",
+      "checkbox",
+      "task"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "calendar",
+    "Label": "Calendar",
+    "Keywords": [
+      "date",
+      "schedule",
+      "plan"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "clock",
+    "Label": "Clock",
+    "Keywords": [
+      "time",
+      "timer",
+      "history"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "star",
+    "Label": "Star",
+    "Keywords": [
+      "favorite",
+      "important",
+      "bookmark"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "flag",
+    "Label": "Flag",
+    "Keywords": [
+      "milestone",
+      "mark"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "pin",
+    "Label": "Pin",
+    "Keywords": [
+      "top",
+      "sticky",
+      "fix"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "bookmark",
+    "Label": "Bookmark",
+    "Keywords": [
+      "save",
+      "collection"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "circle",
+    "Label": "Circle",
+    "Keywords": [
+      "radio",
+      "empty"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "circle-dot",
+    "Label": "Circle dot",
+    "Keywords": [
+      "radio",
+      "checked"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "square-asterisk",
+    "Label": "Square asterisk",
+    "Keywords": [
+      "priority",
+      "blocker"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "trophy",
+    "Label": "Trophy",
+    "Keywords": [
+      "achievement",
+      "win"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "timer",
+    "Label": "Timer",
+    "Keywords": [
+      "pomodoro",
+      "focus"
+    ],
+    "Category": "task"
+  },
+  {
+    "Name": "zap",
+    "Label": "Zap",
+    "Keywords": [
+      "fast",
+      "energy",
+      "quick"
+    ],
+    "Category": "status"
+  },
+  {
+    "Name": "alert-circle",
+    "Label": "Alert",
+    "Keywords": [
+      "warning",
+      "attention",
+      "error"
+    ],
+    "Category": "status"
+  },
+  {
+    "Name": "flame",
+    "Label": "Flame",
+    "Keywords": [
+      "hot",
+      "trending",
+      "urgent"
+    ],
+    "Category": "status"
+  },
+  {
+    "Name": "rocket",
+    "Label": "Rocket",
+    "Keywords": [
+      "launch",
+      "release",
+      "start"
+    ],
+    "Category": "status"
+  },
+  {
+    "Name": "lightbulb",
+    "Label": "Idea",
+    "Keywords": [
+      "insight",
+      "think",
+      "tip"
+    ],
+    "Category": "status"
+  },
+  {
+    "Name": "help-circle",
+    "Label": "Help",
+    "Keywords": [
+      "question",
+      "support"
+    ],
+    "Category": "status"
+  },
+  {
+    "Name": "info",
+    "Label": "Info",
+    "Keywords": [
+      "notice",
+      "details"
+    ],
+    "Category": "status"
+  },
+  {
+    "Name": "bell",
+    "Label": "Bell",
+    "Keywords": [
+      "notification",
+      "remind"
+    ],
+    "Category": "status"
+  },
+  {
+    "Name": "shield-alert",
+    "Label": "Shield alert",
+    "Keywords": [
+      "risk",
+      "warning"
+    ],
+    "Category": "status"
+  },
+  {
+    "Name": "shield-check",
+    "Label": "Shield check",
+    "Keywords": [
+      "safe",
+      "verified"
+    ],
+    "Category": "status"
+  },
+  {
+    "Name": "siren",
+    "Label": "Siren",
+    "Keywords": [
+      "critical",
+      "incident"
+    ],
+    "Category": "status"
+  },
+  {
+    "Name": "book-open",
+    "Label": "Book",
+    "Keywords": [
+      "knowledge",
+      "read",
+      "wiki"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-text",
+    "Label": "Document",
+    "Keywords": [
+      "file",
+      "note",
+      "doc"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "folder",
+    "Label": "Folder",
+    "Keywords": [
+      "directory",
+      "group"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "folder-open",
+    "Label": "Folder open",
+    "Keywords": [
+      "open"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "folder-kanban",
+    "Label": "Kanban folder",
+    "Keywords": [
+      "board",
+      "project"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "folder-git",
+    "Label": "Git folder",
+    "Keywords": [
+      "repo",
+      "repository"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "archive",
+    "Label": "Archive",
+    "Keywords": [
+      "storage",
+      "done"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "pencil",
+    "Label": "Pencil",
+    "Keywords": [
+      "edit",
+      "write",
+      "draft"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "edit-3",
+    "Label": "Edit",
+    "Keywords": [
+      "compose",
+      "modify"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "notebook-pen",
+    "Label": "Notes",
+    "Keywords": [
+      "journal",
+      "log"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "newspaper",
+    "Label": "Article",
+    "Keywords": [
+      "news",
+      "blog"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "files",
+    "Label": "Files",
+    "Keywords": [
+      "copy",
+      "duplicate"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-plus",
+    "Label": "New file",
+    "Keywords": [
+      "create",
+      "add"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-minus",
+    "Label": "Remove file",
+    "Keywords": [
+      "delete"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-search",
+    "Label": "Search file",
+    "Keywords": [
+      "find",
+      "explore"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-code",
+    "Label": "Code file",
+    "Keywords": [
+      "source",
+      "script"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-json",
+    "Label": "JSON file",
+    "Keywords": [
+      "config",
+      "json"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-key",
+    "Label": "Key file",
+    "Keywords": [
+      "secret",
+      "pem"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-lock",
+    "Label": "Locked file",
+    "Keywords": [
+      "secure"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-question",
+    "Label": "Unknown file",
+    "Keywords": [
+      "missing"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-x",
+    "Label": "Deleted file",
+    "Keywords": [
+      "error"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-archive",
+    "Label": "Archive file",
+    "Keywords": [
+      "zip",
+      "compress"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-box",
+    "Label": "Package file",
+    "Keywords": [
+      "bundle"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-image",
+    "Label": "Image file",
+    "Keywords": [
+      "picture",
+      "photo"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-audio",
+    "Label": "Audio file",
+    "Keywords": [
+      "sound",
+      "music"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "file-video",
+    "Label": "Video file",
+    "Keywords": [
+      "movie"
+    ],
+    "Category": "content"
+  },
+  {
+    "Name": "code",
+    "Label": "Code",
+    "Keywords": [
+      "programming",
+      "develop",
+      "source"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "database",
+    "Label": "Database",
+    "Keywords": [
+      "data",
+      "storage",
+      "sql"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "bug",
+    "Label": "Bug",
+    "Keywords": [
+      "issue",
+      "error",
+      "fix"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "spider",
+    "Label": "Spider",
+    "Keywords": [
+      "crawl",
+      "web",
+      "crawler"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "terminal",
+    "Label": "Terminal",
+    "Keywords": [
+      "shell",
+      "command",
+      "cli"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "git-branch",
+    "Label": "Git branch",
+    "Keywords": [
+      "version",
+      "source"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "git-commit",
+    "Label": "Git commit",
+    "Keywords": [
+      "commit"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "git-merge",
+    "Label": "Git merge",
+    "Keywords": [
+      "merge"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "git-pull-request",
+    "Label": "Pull request",
+    "Keywords": [
+      "pr",
+      "review"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "cpu",
+    "Label": "CPU",
+    "Keywords": [
+      "compute",
+      "hardware"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "hard-drive",
+    "Label": "Hard drive",
+    "Keywords": [
+      "disk",
+      "storage"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "server",
+    "Label": "Server",
+    "Keywords": [
+      "backend",
+      "host"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "cloud",
+    "Label": "Cloud",
+    "Keywords": [
+      "deploy",
+      "cloud"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "binary",
+    "Label": "Binary",
+    "Keywords": [
+      "bits",
+      "hex"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "variable",
+    "Label": "Variable",
+    "Keywords": [
+      "var",
+      "state"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "layers",
+    "Label": "Layers",
+    "Keywords": [
+      "stack",
+      "module"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "puzzle",
+    "Label": "Puzzle",
+    "Keywords": [
+      "plugin",
+      "extension"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "wrench",
+    "Label": "Wrench",
+    "Keywords": [
+      "tool",
+      "config"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "plug",
+    "Label": "Plug",
+    "Keywords": [
+      "connect",
+      "adapter"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "network",
+    "Label": "Network",
+    "Keywords": [
+      "graph",
+      "nodes",
+      "topology",
+      "semantic"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "waypoints",
+    "Label": "Waypoints",
+    "Keywords": [
+      "route",
+      "path",
+      "orchestration",
+      "map"
+    ],
+    "Category": "development"
+  },
+  {
+    "Name": "users",
+    "Label": "Users",
+    "Keywords": [
+      "team",
+      "people",
+      "group"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "user",
+    "Label": "User",
+    "Keywords": [
+      "person",
+      "account"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "user-plus",
+    "Label": "Add user",
+    "Keywords": [
+      "invite"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "user-check",
+    "Label": "Verified user",
+    "Keywords": [
+      "approved"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "corner-up-left",
+    "Label": "Parent",
+    "Keywords": [
+      "parent",
+      "up",
+      "back",
+      "ancestor"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "message-circle",
+    "Label": "Message",
+    "Keywords": [
+      "chat",
+      "conversation"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "message-square",
+    "Label": "Message square",
+    "Keywords": [
+      "comment"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "mail",
+    "Label": "Mail",
+    "Keywords": [
+      "email",
+      "letter"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "send",
+    "Label": "Send",
+    "Keywords": [
+      "share",
+      "forward"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "link",
+    "Label": "Link",
+    "Keywords": [
+      "reference",
+      "url",
+      "connection"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "link-2",
+    "Label": "Link alt",
+    "Keywords": [
+      "attach"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "share-2",
+    "Label": "Share",
+    "Keywords": [
+      "publish"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "phone",
+    "Label": "Phone",
+    "Keywords": [
+      "call"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "video",
+    "Label": "Video",
+    "Keywords": [
+      "meeting",
+      "camera"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "graduation-cap",
+    "Label": "Graduation cap",
+    "Keywords": [
+      "learn",
+      "teach",
+      "tutorial",
+      "education"
+    ],
+    "Category": "collaboration"
+  },
+  {
+    "Name": "settings",
+    "Label": "Settings",
+    "Keywords": [
+      "configure",
+      "preferences",
+      "gear"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "search",
+    "Label": "Search",
+    "Keywords": [
+      "find",
+      "lookup"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "lock",
+    "Label": "Lock",
+    "Keywords": [
+      "private",
+      "security"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "unlock",
+    "Label": "Unlock",
+    "Keywords": [
+      "public"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "shield",
+    "Label": "Shield",
+    "Keywords": [
+      "safe",
+      "protect"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "globe",
+    "Label": "Globe",
+    "Keywords": [
+      "web",
+      "world",
+      "internet"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "package",
+    "Label": "Package",
+    "Keywords": [
+      "component",
+      "module",
+      "bundle"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "palette",
+    "Label": "Palette",
+    "Keywords": [
+      "design",
+      "color"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "home",
+    "Label": "Home",
+    "Keywords": [
+      "start",
+      "dashboard"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "layout-grid",
+    "Label": "Grid",
+    "Keywords": [
+      "apps",
+      "menu"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "layout-dashboard",
+    "Label": "Dashboard",
+    "Keywords": [
+      "workbench",
+      "board",
+      "overview"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "grid-3x3",
+    "Label": "Grid 3x3",
+    "Keywords": [
+      "matrix"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "menu",
+    "Label": "Menu",
+    "Keywords": [
+      "list",
+      "burger"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "more-horizontal",
+    "Label": "More",
+    "Keywords": [
+      "ellipsis"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "filter",
+    "Label": "Filter",
+    "Keywords": [
+      "sort"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "refresh-cw",
+    "Label": "Refresh",
+    "Keywords": [
+      "sync",
+      "reload"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "rotate-ccw",
+    "Label": "Undo",
+    "Keywords": [
+      "revert"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "history",
+    "Label": "History",
+    "Keywords": [
+      "log",
+      "timeline"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "trash-2",
+    "Label": "Trash",
+    "Keywords": [
+      "delete",
+      "remove"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "save",
+    "Label": "Save",
+    "Keywords": [
+      "persist",
+      "write"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "download",
+    "Label": "Download",
+    "Keywords": [
+      "export"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "upload",
+    "Label": "Upload",
+    "Keywords": [
+      "import"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "copy",
+    "Label": "Copy",
+    "Keywords": [
+      "duplicate"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "scissors",
+    "Label": "Cut",
+    "Keywords": [
+      "scissor"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "paperclip",
+    "Label": "Paperclip",
+    "Keywords": [
+      "attachment"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "tag",
+    "Label": "Tag",
+    "Keywords": [
+      "label"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "tags",
+    "Label": "Tags",
+    "Keywords": [
+      "labels"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "hash",
+    "Label": "Hash",
+    "Keywords": [
+      "number"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "bar-chart-3",
+    "Label": "Chart",
+    "Keywords": [
+      "graph",
+      "analytics"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "wifi",
+    "Label": "WiFi",
+    "Keywords": [
+      "network",
+      "wireless"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "sun",
+    "Label": "Sun",
+    "Keywords": [
+      "light",
+      "day"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "moon",
+    "Label": "Moon",
+    "Keywords": [
+      "dark",
+      "night"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "eye",
+    "Label": "Eye",
+    "Keywords": [
+      "view",
+      "visible"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "scan",
+    "Label": "Scan",
+    "Keywords": [
+      "qr",
+      "code"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "qr-code",
+    "Label": "QR code",
+    "Keywords": [
+      "link"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "key",
+    "Label": "Key",
+    "Keywords": [
+      "password",
+      "secret"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "crown",
+    "Label": "Crown",
+    "Keywords": [
+      "vip",
+      "owner"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "sparkles",
+    "Label": "Sparkles",
+    "Keywords": [
+      "magic",
+      "ai"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "wand-2",
+    "Label": "Wand",
+    "Keywords": [
+      "transform",
+      "magic"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "webhook",
+    "Label": "Webhook",
+    "Keywords": [
+      "callback",
+      "event"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "radio",
+    "Label": "Radio",
+    "Keywords": [
+      "signal",
+      "live"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "rss",
+    "Label": "RSS",
+    "Keywords": [
+      "feed",
+      "subscribe"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "megaphone",
+    "Label": "Megaphone",
+    "Keywords": [
+      "announce",
+      "broadcast"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "store",
+    "Label": "Store",
+    "Keywords": [
+      "shop",
+      "market"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "shopping-bag",
+    "Label": "Shopping",
+    "Keywords": [
+      "buy"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "credit-card",
+    "Label": "Card",
+    "Keywords": [
+      "payment"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "dollar-sign",
+    "Label": "Dollar",
+    "Keywords": [
+      "money",
+      "cost"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "coins",
+    "Label": "Coins",
+    "Keywords": [
+      "finance"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "wallet",
+    "Label": "Wallet",
+    "Keywords": [
+      "payment"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "percent",
+    "Label": "Percent",
+    "Keywords": [
+      "discount"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "plane",
+    "Label": "Plane",
+    "Keywords": [
+      "travel",
+      "send"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "truck",
+    "Label": "Truck",
+    "Keywords": [
+      "delivery",
+      "ship"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "map",
+    "Label": "Map",
+    "Keywords": [
+      "location"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "map-pin",
+    "Label": "Map pin",
+    "Keywords": [
+      "place",
+      "gps"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "compass",
+    "Label": "Compass",
+    "Keywords": [
+      "direction",
+      "navigation"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "umbrella",
+    "Label": "Umbrella",
+    "Keywords": [
+      "weather",
+      "protect"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "tree-deciduous",
+    "Label": "Tree",
+    "Keywords": [
+      "nature",
+      "green"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "heart",
+    "Label": "Heart",
+    "Keywords": [
+      "love",
+      "like"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "smile",
+    "Label": "Smile",
+    "Keywords": [
+      "happy",
+      "emoji"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "thumbs-up",
+    "Label": "Thumbs up",
+    "Keywords": [
+      "like",
+      "approve"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "thumbs-down",
+    "Label": "Thumbs down",
+    "Keywords": [
+      "dislike"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "coffee",
+    "Label": "Coffee",
+    "Keywords": [
+      "drink",
+      "break"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "joystick",
+    "Label": "Joystick",
+    "Keywords": [
+      "game",
+      "control"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "mouse-pointer-click",
+    "Label": "Pointer click",
+    "Keywords": [
+      "cursor",
+      "click",
+      "browser",
+      "interact"
+    ],
+    "Category": "system"
+  },
+  {
+    "Name": "image",
+    "Label": "Image",
+    "Keywords": [
+      "picture",
+      "photo"
+    ],
+    "Category": "media"
+  },
+  {
+    "Name": "camera",
+    "Label": "Camera",
+    "Keywords": [
+      "photo",
+      "screenshot"
+    ],
+    "Category": "media"
+  },
+  {
+    "Name": "music",
+    "Label": "Music",
+    "Keywords": [
+      "audio",
+      "song"
+    ],
+    "Category": "media"
+  },
+  {
+    "Name": "mic",
+    "Label": "Microphone",
+    "Keywords": [
+      "voice",
+      "record"
+    ],
+    "Category": "media"
+  },
+  {
+    "Name": "play",
+    "Label": "Play",
+    "Keywords": [
+      "video",
+      "start"
+    ],
+    "Category": "media"
+  },
+  {
+    "Name": "monitor",
+    "Label": "Monitor",
+    "Keywords": [
+      "screen",
+      "display"
+    ],
+    "Category": "media"
+  },
+  {
+    "Name": "smartphone",
+    "Label": "Smartphone",
+    "Keywords": [
+      "mobile"
+    ],
+    "Category": "media"
+  },
+  {
+    "Name": "tablet",
+    "Label": "Tablet",
+    "Keywords": [
+      "device"
+    ],
+    "Category": "media"
+  },
+  {
+    "Name": "watch",
+    "Label": "Watch",
+    "Keywords": [
+      "wearable"
+    ],
+    "Category": "media"
+  },
+  {
+    "Name": "tv",
+    "Label": "TV",
+    "Keywords": [
+      "television"
+    ],
+    "Category": "media"
+  }
+]

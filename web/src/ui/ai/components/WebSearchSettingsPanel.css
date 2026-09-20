@@ -1,0 +1,65 @@
+/* Only hints and dialog-specific styles remain — section/account-card moved to shared */
+
+.ws-key-detected {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: var(--text-xs);
+  color: var(--success, #16a34a);
+}
+
+.ws-hints {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+}
+
+.ws-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.ws-dialog {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 380px;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100vh - 64px);
+  overflow-y: auto;
+  padding: 20px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+}
+
+.ws-dialog-header, .ws-dialog-footer { display: flex; align-items: center; justify-content: space-between; }
+.ws-dialog-footer { justify-content: flex-end; gap: 8px; }
+.ws-dialog-body { display: flex; flex-direction: column; gap: 14px; }
+
+.ws-dialog-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.ws-dialog-close:hover { background: var(--bg-base); color: var(--text-primary); }
+
+.ws-field { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.ws-field > span { font-size: var(--text-sm); color: var(--text-secondary); }
+.ws-field input, .ws-field [data-slot="select-trigger"] { width: 100%; max-width: 100%; }

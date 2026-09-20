@@ -1,0 +1,57 @@
+// memory namespace — agent-owned memory graph callables and snapshots.
+// @ts-export
+
+struct MemorySaveReq {
+    Content: string
+    optional Layer: string
+}
+
+struct MemorySaveResp {
+    Node: MemoryNode
+}
+
+struct MemoryRecallReq {
+    optional Query: string
+    optional Layer: string
+    optional Limit: int
+}
+
+struct MemoryRecallResp {
+    Nodes: array<MemoryNode>
+}
+
+struct MemoryWeaveApplyReq {
+    NewNodeId: string
+    Decision: string
+    optional TargetNodeId: string
+}
+
+struct MemorySnapshotReq {
+}
+
+struct MemorySnapshotResp {
+    Mounted: bool
+    SleepDue: bool
+    Nodes: array<MemoryNode>
+    Edges: array<MemoryEdge>
+}
+
+struct MemoryNode {
+    Id: string
+    Layer: string
+    Content: string
+    Head: string
+    Tokens: int
+    Energy: float
+    CreatedAt: string
+    AccessedAt: string
+    MarkedForDeath: bool
+    Protected: bool
+    LastAccessTick: int
+}
+
+struct MemoryEdge {
+    From: string
+    To: string
+    Type: string
+}

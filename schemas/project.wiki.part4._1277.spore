@@ -1,0 +1,255 @@
+// project.wiki namespace — workflow card creation primitives (part4, IDs 1277+).
+// @ts-export
+//
+// Sources of truth for:
+//   - project.wiki.create_map
+//   - project.wiki.create_task_card
+//   - project.wiki.set_task_dependencies
+//   - project.wiki.automation_bind
+//   - project.wiki.list_templates
+
+struct WikiCreateMapReq {
+    Id:                string   // map card id (= title/filename)
+    optional Destination: string  // what this map produces; written to body
+    optional Notes:       string  // extra context; written to body
+}
+
+struct WikiCreateMapResp {
+    Card:   MonoCardListItem
+}
+
+struct WikiCreateTaskCardReq {
+    MapId:    string   // parent root map card id
+    Title:    string   // task card id (= title/filename)
+    Question: string   // decision/goal text; written to card body
+    optional DependsOn: array<string>  // task card ids this depends on (saved in data.depends_on)
+    optional Status:    string          // default: todo
+    optional Category:  string          // task agent category: research | explore | execute | code | review; saved to data.category
+    // Data-flow bindings declaring which upstream task output feeds each input
+    // field. Stored in the workflow_topo graph snapshot (authoritative). Each
+    // binding's FromNode must appear in DependsOn (the upstream must complete
+    // before the downstream can consume its outputs).
+    optional Bindings: array<TaskDataBinding>
+    // Exec is the generic structured pass-through for the task card's
+    // data.exec block (the executor selector). It lets callers author
+    // non-default exec kinds structurally instead of hand-writing raw
+    // frontmatter — the motivating case is a script card
+    // ({kind:"script", capabilities:[...], inputs/budget/gate_card...}).
+    //
+    // This schema deliberately does NOT copy any per-kind field (no typed
+    // Capabilities / Budget / GateCard here): the per-kind contract has a
+    // single source, the save-time validator (validateCard →
+    // pkg/scriptcard, including the script compile probe). The handler
+    // serializes this map verbatim into data.exec; whatever it contains is
+    // then judged by that one gate. Unknown kinds / malformed shapes are
+    // rejected on save, so a bad Exec can never reach a claim.
+    optional Exec: map<string, any>
+}
+
+struct WikiCreateTaskCardResp {
+    Card:   MonoCardListItem
+}
+
+struct WikiSetTaskDependenciesReq {
+    MapId:     string         // root map card id used to validate task scope
+    TaskId:    string         // task whose dependencies are being set
+    DependsOn: array<string>  // complete dep list (replaces existing)
+    // Data-flow bindings replacing this task's existing bindings (replaces all).
+    // Each FromNode must appear in DependsOn. Stored in the workflow_topo graph.
+    optional Bindings: array<TaskDataBinding>
+}
+
+struct WikiSetTaskDependenciesResp {
+    Revision: string
+}
+
+struct WikiClaimAndSpawnAgentReq {
+    CardId:           string
+    ExpectedStatuses: array<string>
+    Spawn:            ProjectSpawnAgentReq
+}
+
+struct WikiClaimAndSpawnAgentResp {
+    ActorId:        string
+    PreviousStatus: string
+    Raw:            string
+}
+
+
+struct WikiListDependenciesReq {
+    optional MapId: string  // filter to one map; empty = all maps
+}
+
+struct WikiListDependenciesResp {
+    Edges: array<TaskDepEdge>
+}
+
+struct TaskDepEdge {
+    MapId: string
+    From:   string  // task card id that depends
+    To:     string  // task card id that is the dependency
+}
+
+// TaskDataBinding declares a data-flow edge: the downstream task's named input
+// field is sourced from an upstream task's named output field. Bindings live in
+// the workflow_topo graph snapshot alongside depends_on edges. A binding is
+// well-formed only when FromNode is one of the task's declared dependencies
+// (the upstream must reach done before the downstream can claim and consume).
+struct TaskDataBinding {
+    Input:      string   // downstream task's input field name (must match a data.inputs key)
+    FromNode:   string   // upstream task card id (must be in depends_on)
+    FromOutput: string   // upstream task's output field name (must match upstream data.outputs key)
+}
+
+// WikiSetTaskOutputsReq persists a worker's produced outputs onto the task
+// card's data.task_outputs block. Called by the workspace review-approve path
+// so that downstream tasks (via data bindings) can resolve upstream outputs
+// after the worker agent has been torn down.
+struct WikiSetTaskOutputsReq {
+    CardId:   string            // task card id to stamp outputs on
+    Outputs:  map<string, any>  // produced output values keyed by output field name
+}
+
+struct WikiSetTaskOutputsResp {
+    Card: MonoCardListItem
+}
+
+// --- template save / instantiate --------------------------------------------
+//
+// template_save snapshots a workflow map's topology graph + task cards into a
+// reusable template, stripping runtime fields. template_instantiate copies a
+// template's graph (remapping node ids) and instantiates each node card into a
+// fresh, runnable instance map. Both are atomic: on failure no half-created
+// cards remain.
+
+// WikiTemplateSaveReq snapshots the workflow map MapId into a new template map
+// TemplateId. The source map's workflow_topo graph is copied (node ids remapped
+// to template-namespaced ids) and every task card is copied with runtime fields
+// stripped (status, depends_on projection, task_outputs) and data.template:true
+// stamped. The topology lives in the template map's graph; template task cards
+// carry zero orchestration fields by design.
+struct WikiTemplateSaveReq {
+    MapId:       string  // source workflow map card (type=workflow) to snapshot
+    TemplateId:  string  // id of the new template map card to create
+}
+
+struct WikiTemplateSaveResp {
+    TemplateMap:  MonoCardListItem             // the created template map card
+    NodeMap:      array<TemplateNodeMapping>   // source task id -> template task id
+}
+
+// WikiTemplateInstantiateReq copies template map TemplateMapId into a new
+// runnable instance map InstanceMapId. The template graph is copied with node
+// ids remapped to instance-namespaced ids; each template task card is copied
+// into a fresh instance card stamped data.instance_of:<template task id>,
+// status:backlog, with depends_on projected from the instance graph. The source
+// must be a template (data.template:true). Atomic: on failure all created cards
+// are rolled back.
+struct WikiTemplateInstantiateReq {
+    TemplateMapId:  string  // template map card (data.template:true) to instantiate
+    InstanceMapId:  string  // id of the new instance map card to create
+    // Instantiation parameters: values validated against the template map's
+    // data.inputs contract before the instance is created. On success these
+    // are written into the instance graph's map-level Inputs table so that
+    // downstream tasks can bind their inputs to them. Channel (b) of the
+    // three-channel typed-inputs system.
+    optional Inputs: map<string, any>
+    // Provenance fields for run history. Empty Source means "manual".
+    optional Source: string         // "scheduler" | "workspace" | "manual"
+    optional SchedulerCardId: string  // scheduler card that triggered the run
+}
+
+struct WikiTemplateInstantiateResp {
+    InstanceMap:  MonoCardListItem             // the created instance map card
+    NodeMap:      array<TemplateNodeMapping>   // template task id -> instance task id
+}
+
+// TemplateNodeMapping records one node id translation performed during save or
+// instantiate. From is the source (original or template) task card id; To is the
+// newly-created (template or instance) task card id.
+struct TemplateNodeMapping {
+    From:  string
+    To:    string
+}
+
+// --- map-level typed inputs (three-channel convergence) ----------------------
+//
+// The workflow_topo graph carries a map-level inputs table (Inputs:
+// map<string, any>). Three channels converge into it:
+//   (a) startup text parsing → project.wiki.set_map_inputs writes parsed
+//       key-value pairs directly;
+//   (b) instantiation parameters → template_instantiate.Inputs, validated
+//       against the template's data.inputs contract, written at instance
+//       creation time;
+//   (c) intake grilling node outputs → project.wiki.promote_node_outputs
+//       reads a node's data.task_outputs and promotes them into the table.
+// Downstream tasks consume these via data-flow bindings whose FromNode is the
+// sentinel "$map" (input sourced from the map-level table, FromOutput = key).
+
+// WikiSetMapInputsReq replaces the map-level inputs table for a workflow map.
+// Channel (a): the caller parses startup/intake text into a key-value map and
+// writes it here. The values are stored verbatim — no schema is enforced at
+// this layer because non-template maps may not declare a data.inputs contract.
+struct WikiSetMapInputsReq {
+    MapId:   string            // root workflow map card id
+    Inputs:  map<string, any>  // parsed input values (replaces existing table)
+}
+
+struct WikiSetMapInputsResp {
+    Revision:  string          // new graph revision after the write
+}
+
+// WikiPromoteNodeOutputsReq promotes a task node's persisted outputs into the
+// map-level inputs table. Channel (c): after an intake grilling node is
+// reviewed and its outputs persisted (via set_task_outputs), this callable
+// reads data.task_outputs from the node card and merges them into the map's
+// Inputs table (existing keys are overwritten by promoted keys). The node's
+// output field names become map-level input keys.
+struct WikiPromoteNodeOutputsReq {
+    MapId:   string  // root workflow map card id
+    NodeId:  string  // task card id whose data.task_outputs are promoted
+}
+
+struct WikiPromoteNodeOutputsResp {
+    Revision:  string            // new graph revision after the promotion
+    Inputs:    map<string, any>  // the resulting map-level inputs table
+}
+
+// --- workflow automation binding ---------------------------------------------
+//
+// automation_bind is the scheduler-centric entry point for workflow automation.
+// It snapshots a workflow map into a reusable template (via the template_save
+// path) and binds that template to a scheduler card by writing the template id
+// into the scheduler card's data.workflow_template. Subsequent timer fires then
+// instantiate fresh workflow instances from the bound template instead of
+// submitting the card body text. The scheduler card is the only place a workflow
+// template can be bound.
+
+struct WikiAutomationBindReq {
+    MapId:           string  // source workflow map card (type=workflow) to snapshot as template
+    SchedulerCardId: string  // scheduler card to bind; data.workflow_template is written on it
+}
+
+struct WikiAutomationBindResp {
+    TemplateId:    string            // created template map id (written to scheduler data.workflow_template)
+    TemplateMap:   MonoCardListItem  // the created template map card
+    SchedulerCard: MonoCardListItem  // the updated scheduler card carrying the binding
+}
+
+// WikiListTemplatesReq lists workflow templates (map cards with
+// data.template:true). Used by the scheduler editor's template selector to
+// populate the dropdown of bindable templates.
+struct WikiListTemplatesReq {
+}
+
+struct WikiListTemplatesResp {
+    Templates: array<MonoCardListItem>  // every template map card in the project
+}
+
+// ProjectWikiUnbindAgentReq is invoked by the workspace agent-deletion path
+// when an agent is destroyed, so the project can clear the deleted agent's id
+// from every card it was bound to (workflow map data.ownerAgentId), returning
+// those cards to the unbound state. Internal-only.
+struct ProjectWikiUnbindAgentReq {
+    AgentActorID: string
+}

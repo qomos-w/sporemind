@@ -1,0 +1,213 @@
+// cloudaccount namespace — sporemind cloud-account linkage protocol.
+// @ts-export
+//
+// Sources of truth for the desktop runtime cloud-account actor's callable
+// surface:
+//   - cloudaccount.link        — store tokens obtained from the OAuth flow
+//   - cloudaccount.unlink      — drop the local cloud-account linkage
+//   - cloudaccount.status      — current link status (no tokens exposed)
+//   - cloudaccount.get_entitlements — entitlements snapshot with TTL fallback
+//   - cloudaccount.content_search    — browse/search the content store
+//   - cloudaccount.content_detail    — single content package detail
+//   - cloudaccount.content_install   — download, verify, and dispatch-install
+//
+// The actor caches the access/refresh tokens and an entitlements snapshot in
+// its persist state (native time.Time fields, not a protocol type). The types
+// below are only the wire surface; tokens never appear in status/get_entitlements
+// responses.
+
+// EntitlementsView — the aggregated entitlements payload returned by the cloud
+// /entitlements endpoint and cached locally. On TTL-expiry the actor degrades
+// to a free-tier view whose core features remain fully enabled.
+struct EntitlementsView {
+    Features:                 map<string, bool>
+    RateLimitTier:            string
+    Tier:                     string  // free | pro | ultimate
+    Pass:                     PassView
+    IsExperimentalSubscriber: bool
+    Credits:                  long
+}
+
+
+// CloudAccountStatus — link status projection for the UI. Tokens are never
+// included; only their absolute expiry (RFC3339) is exposed for display.
+struct CloudAccountStatus {
+    Linked:                   bool
+    AccountId:                string
+    optional DisplayName:     string
+    optional AvatarUrl:       string
+    optional RateLimitTier:   string
+    Tier:                     string  // free | pro | ultimate
+    IsExperimentalSubscriber: bool
+    EntitlementsDegraded:     bool
+    optional TokenExpiresAt:  string
+    optional EntitlementsFetchedAt: string
+}
+
+
+// CloudAccountLinkReq — the OAuth token pair obtained by the login overlay
+// (M3-B), handed to the actor for local storage. ExpiresIn is the access
+// token's remaining lifetime in seconds; the actor computes the absolute
+// expiry at link time so refresh decisions are clock-driven.
+struct CloudAccountLinkReq {
+    AccountId:     string
+    AccessToken:   string
+    RefreshToken:  string
+    ExpiresIn:     long
+    optional DisplayName: string
+    optional AvatarUrl:   string
+}
+
+
+// CloudAccountUnlinkResp — acknowledgement that the local linkage was dropped.
+struct CloudAccountUnlinkResp {}
+
+
+// CloudAccountGetEntitlementsResp — entitlements snapshot plus a flag indicating
+// whether it was served from a stale cache / free-tier fallback (true) or a
+// fresh fetch from the cloud (false).
+struct CloudAccountGetEntitlementsResp {
+    Entitlements: EntitlementsView
+    Degraded:     bool
+}
+
+
+// ---------------------------------------------------------------------------
+// Content store (M4-B) — browse, search, detail, and install dispatch.
+//
+// The cloudaccount actor proxies the sporemind cloud content-store API
+// (§3.5) for the desktop frontend. The actor downloads content packages,
+// verifies sha256 + signature, shows a risk assessment, and dispatches the
+// install to the appropriate runtime installer based on content_type:
+//   - spore_app         → appmanager.register
+//   - native_plugin     → pluginhost.artifact_load (SHA256 verified internally)
+//   - workflow_template → workspace.save_agent_kind_config (workflow exec kind)
+// ---------------------------------------------------------------------------
+
+// ContentListItem — summary of a content package in the store listing.
+struct ContentListItem {
+    Id: string
+    ContentType: string
+    Name: string
+    Slug: string
+    optional Description: string
+    Version: string
+    optional Author: string
+    DownloadCount: long
+    Sha256: string
+    optional Signature: string
+    Visibility: string  // stable | experimental
+    Pricing: string    // free | paid
+}
+
+
+// ContentSearchReq — query parameters for browsing/searching the content store.
+// ContentType filters by type (native_plugin | spore_app | workflow_template).
+// Sort is "newest" | "downloads" | "name".
+struct ContentSearchReq {
+    optional ContentType: string
+    optional Query: string
+    optional Sort: string
+    optional Page: long
+    optional PageSize: long
+}
+
+
+// ContentSearchResp — paginated content store listing.
+struct ContentSearchResp {
+    Items: array<ContentListItem>
+    Page: long
+    PageSize: long
+    Total: long
+}
+
+
+// ContentDetailReq — request for a single content package detail by slug.
+struct ContentDetailReq {
+    Slug: string
+}
+
+
+// ContentDetailResp — content package detail including the raw manifest JSON.
+struct ContentDetailResp {
+    Item: ContentListItem
+    Manifest: string
+}
+
+
+// ContentInstallReq — install a content package: download, verify, dispatch.
+// When Confirm is false, the actor downloads and verifies the package but
+// returns a risk assessment without installing; the UI must show the risk
+// and re-call with Confirm=true to proceed.
+struct ContentInstallReq {
+    Slug: string
+    Confirm: bool
+}
+
+
+// ContentInstallResp — result of an install attempt.
+// Status is "installed" | "risk_pending" | "failed".
+struct ContentInstallResp {
+    Slug: string
+    ContentType: string
+    Status: string
+    Message: string
+    Risk: ContentRiskAssessment
+}
+
+
+// ContentRiskAssessment — risk information shown to the user before install.
+// SignaturePresent reports whether the package carries an Ed25519 signature.
+// Sha256Verified reports whether the downloaded bytes matched the expected hash.
+struct ContentRiskAssessment {
+    ContentType: string
+    SignaturePresent: bool
+    Sha256Verified: bool
+    EntryPoint: string
+    Warnings: array<string>
+}
+
+
+// PassView — subscription pass attached to an entitlement view. Type is one of
+// "trial" | "monthly" | "annual" | "lifetime". StartsAt/EndsAt are RFC3339 UTC
+// timestamps and are absent when the pass has no defined window.
+struct PassView {
+    Type:          string
+    optional StartsAt: string  // RFC3339 UTC
+    optional EndsAt:   string  // RFC3339 UTC
+}
+
+
+// ---------------------------------------------------------------------------
+// CDKey redemption — redeem a sporemind CDKey to extend the account's
+// experimental pass (grant tier). The actor proxies the cloud
+// POST /cdkeys/redeem endpoint and refreshes the entitlements cache after a
+// successful redeem so the UI immediately reflects the new tier.
+// ---------------------------------------------------------------------------
+
+// CdkeyRedeemReq — a single-use CDKey code ("SPX-XXXXX-XXXXX-XXXXX").
+struct CdkeyRedeemReq {
+    Code: string
+}
+
+// CdkeyRedeemResp — result of a successful redemption. EndsAt is the new pass
+// window expiry (RFC3339 UTC); PeriodDays is the granted duration in days.
+struct CdkeyRedeemResp {
+    ProductName: string
+    PeriodDays:  long
+    StartsAt:    string
+    EndsAt:      string
+}
+
+
+// CloudAccountSessionTokenReq — internal accessor for host actors that need a
+// fresh cloud JWT (e.g. storeclient authenticated plugin-store downloads).
+// Registered AdminOnly; tokens never leave the host process through it.
+struct CloudAccountSessionTokenReq {}
+
+// CloudAccountSessionTokenResp — a refreshed-if-necessary access token plus its
+// absolute expiry (RFC3339 UTC). Empty AccessToken when no account is linked.
+struct CloudAccountSessionTokenResp {
+    AccessToken: string
+    ExpiresAt:   string
+}

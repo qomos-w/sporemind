@@ -1,0 +1,142 @@
+@keyframes ft-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.ft-row {
+  display: flex;
+  align-items: center;
+  height: 22px;
+  padding-right: 8px;
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+  transition: background var(--transition-fast);
+}
+
+.ft-row:hover {
+  background: var(--bg-hover);
+}
+
+.ft-row-selected {
+  background: var(--accent-primary-dim);
+}
+
+.ft-row-selected:hover {
+  background: var(--accent-primary-dim);
+}
+
+.ft-row-mount .ft-name::after {
+  content: '';
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-primary);
+  opacity: 0.4;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.ft-row-mount .ft-icon {
+  color: var(--accent-primary);
+}
+
+.ft-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  min-width: 16px;
+  height: 16px;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.ft-chevron-hidden {
+  visibility: hidden;
+}
+
+.ft-icon {
+  display: flex;
+  align-items: center;
+  min-width: 16px;
+  margin-right: 4px;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.ft-name {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+}
+
+.ft-actions {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.ft-row:hover .ft-actions {
+  display: flex;
+}
+
+.ft-actions > button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+}
+
+.ft-actions > button:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ft-badge {
+  font-size: 9px;
+  font-weight: 700;
+  font-family: var(--font-mono);
+  line-height: 1;
+  padding: 1px 3px;
+  border-radius: 2px;
+  margin-left: 4px;
+  flex-shrink: 0;
+}
+
+.ft-badge-modified {
+  color: var(--status-waiting);
+  background: var(--status-waiting-dim);
+}
+
+.ft-badge-untracked,
+.ft-badge-added {
+  color: var(--status-success);
+  background: var(--status-success-dim);
+}
+
+.ft-badge-deleted {
+  color: var(--status-failed);
+  background: var(--status-failed-dim);
+}
+
+.ft-badge-renamed {
+  color: var(--status-running);
+  background: var(--status-running-dim);
+}
+
+.ft-spin {
+  animation: ft-spin 1s linear infinite;
+}

@@ -1,0 +1,45 @@
+{
+  "Id": "app.tooltest",
+  "Name": "ToolTest",
+  "Version": "0.1.0",
+  "Runtime": "native",
+  "ProtocolVersion": 2,
+  "Namespace": "tooltest",
+  "Permissions": [
+    "llm.invoke"
+  ],
+  "Schemas": [
+    {
+      "Name": "ForcedToolRequest",
+      "Hash": "b9175a6dd3e41b543a0606f8294d13ae6c1f22a6165ac5d248b315ab284a6fba",
+      "SchemaId": 1810892
+    },
+    {
+      "Name": "ForcedToolResponse",
+      "Hash": "fd6f23865f9497f01aabd6be299f00c53dea9b986405fd9133d5205a17e37a1e",
+      "SchemaId": 1800192
+    }
+  ],
+  "Callables": [
+    {
+      "Id": "forced_tool",
+      "RequestSchema": "ForcedToolRequest",
+      "ResponseSchema": "ForcedToolResponse",
+      "TimeoutMs": 240000,
+      "Effect": "read",
+      "Service": "app.tooltest",
+      "ToolName": "tooltest-forced-tool"
+    }
+  ],
+  "Events": null,
+  "Projections": null,
+  "Entrypoints": [
+    {
+      "Kind": "view",
+      "Id": "main",
+      "Title": "ToolTest",
+      "Route": "/"
+    }
+  ],
+  "Dependencies": null
+}

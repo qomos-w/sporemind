@@ -1,0 +1,530 @@
+// glass namespace — Glass Interact bootstrap, session token, and lifecycle
+// protocol (IDs 2500+).
+// @ts-export
+//
+// Sources of truth for:
+//   - glass_interact.bootstrap / glass_interact.session.claim / glass_interact.session.get_state
+//   - glass.online / glass.offline / glass.replaced / glass.reconnected lifecycle events
+//
+// Transport: Glass reuses the existing /ws endpoint. sporemind_key is used
+// only for bootstrap; the response carries a short-lived HS256 glass token
+// bound to the server-generated session_id, device_id, scope=glass and an
+// expiry. The token authenticates the /ws handshake (role=glass,
+// subject=session_id).
+
+// GlassCapability — one capability the device reports (e.g. "native_text",
+// "image", "audio", "touch", "battery"). Reported at bootstrap and re-asserted
+// on every session claim/reconnect.
+struct GlassCapability {
+    Name: string
+    optional Version: string
+    optional Features: array<string>
+}
+
+
+// GlassRenderFrame — the confirmed target frame ("lastFrame") of a session.
+// Set by render commands; persisted and restored verbatim when the same
+// session reconnects within the 30s grace window.
+//
+// Three usage modes (checked in priority order):
+//   1. Scene — full component-assembled frame: a GlassScene node with Tick
+//      and an element tree. This is the primary mode for interactive UIs.
+//   2. Text — shortcut: single full-screen text element.
+//   3. ImageUrl — shortcut: single image element at default position.
+struct GlassRenderFrame {
+    optional Text: string                      // shortcut: single full-screen text
+    optional ImageUrl: string                  // shortcut: single image
+    optional Scene: GlassScene                 // full: component-assembled scene node
+    optional Layout: string                    // deprecated
+    optional Meta: string
+}
+
+
+// GlassBootstrapReq — exchange credentials for a short-lived glass session
+// token. The server generates the session_id; every bootstrap starts a fresh
+// logical session. Two auth modes:
+//   - Admin credentials (Username + Password): verified via user.auth_login;
+//     the account must have the admin role.
+//   - Pre-shared key (Key): compared against SPOREMIND_GLASS_KEY; retained for
+//     headless/automated provisioning. If both are supplied, admin credentials
+//     take precedence.
+struct GlassBootstrapReq {
+    optional Key: string
+    optional Username: string
+    optional Password: string
+    optional DeviceId: string
+    optional Capabilities: array<GlassCapability>
+}
+
+
+struct GlassBootstrapResp {
+    SessionId: string
+    DeviceId: string
+    Token: string
+    ExpiresAt: string   // RFC3339 timestamp
+    Kind: string        // "glass"
+    Scope: string       // "glass"
+}
+
+
+// GlassSessionClaimReq — invoked over the authenticated /ws connection after
+// the handshake (identity role=glass, subject=session_id). Claims or refreshes
+// the process-unique active session, re-asserts capabilities, and returns the
+// authoritative session state including any restored lastFrame.
+struct GlassSessionClaimReq {
+    SessionId: string
+    DeviceId: string
+    optional Capabilities: array<GlassCapability>
+}
+
+
+struct GlassSessionClaimResp {
+    SessionId: string
+    DeviceId: string
+    Generation: long
+    Online: bool
+    Reconnected: bool   // true when the same session recovered within grace
+    Replaced: bool      // true when this claim replaced a different active session
+    optional LastFrame: GlassRenderFrame
+}
+
+
+// GlassLifecycleEvent — payload for glass.online / glass.offline /
+// glass.replaced / glass.reconnected lifecycle events emitted to Coordinator.
+struct GlassLifecycleEvent {
+    Kind: string        // "online" | "offline" | "replaced" | "reconnected"
+    SessionId: string
+    DeviceId: string
+    Generation: long
+    optional Reason: string
+    optional Timestamp: string
+}
+
+
+// GlassSessionState — durable logical session projection.
+struct GlassSessionState {
+    SessionId: string
+    DeviceId: string
+    Generation: long
+    Online: bool
+    optional LastSeen: string
+    optional OfflineAt: string
+    optional LastFrame: GlassRenderFrame
+    Capabilities: array<GlassCapability>
+}
+
+
+struct GlassGetStateReq {}
+
+
+struct GlassGetStateResp {
+    Active: bool
+    optional Session: GlassSessionState
+}
+
+
+// --- Stage 3: VAD-gated PCM utterance protocol ------------------------------
+// MentraOS performs local VAD and uploads only voiced segments over the same
+// /ws. Control frames (speech.start / speech.end) and binary audio chunks are
+// delivered as glass_interact actor callables (the Stage 2 callable/session
+// frame surface); the fixed MVP audio format is 16 kHz mono signed 16-bit PCM
+// with 20-40 ms chunks. Every chunk carries a zero-based sequence; the server
+// acknowledges the highest contiguous sequence (cumulative ACK) so the client
+// can discard confirmed data and resend only the tail after a short network
+// blip inside the 30s reconnect grace.
+
+// GlassSpeechStartReq — speech.start control frame. Begins (or restarts) one
+// utterance. The fixed MVP audio parameters are validated when present.
+struct GlassSpeechStartReq {
+    SessionId: string
+    Generation: long
+    UtteranceId: string
+    optional SampleRate: int      // must be 16000 when present
+    optional Channels: int        // must be 1 when present
+    optional BitsPerSample: int   // must be 16 when present
+}
+
+
+// GlassSpeechChunkReq — one binary audio chunk of one utterance.
+struct GlassSpeechChunkReq {
+    SessionId: string
+    Generation: long
+    UtteranceId: string
+    Sequence: long                // zero-based chunk ordinal within the utterance
+    Pcm: bytes                    // 16-bit signed little-endian PCM
+}
+
+
+// GlassSpeechEndReq — speech.end control frame. sporemind STT is submitted only
+// when the received audio sequence is gap-free.
+struct GlassSpeechEndReq {
+    SessionId: string
+    Generation: long
+    UtteranceId: string
+}
+
+
+// GlassSpeechAck — cumulative server acknowledgement of the highest contiguous
+// sequence. HighestContiguousSeq is -1 when no chunk has been accepted.
+struct GlassSpeechAck {
+    SessionId: string
+    UtteranceId: string
+    HighestContiguousSeq: long
+    optional EndReceived: bool    // speech.end was accepted for this utterance
+    optional Accepted: bool       // speech.end accepted a gap-free utterance (STT submitted)
+    optional Reason: string       // rejection reason (e.g. audio gap, format error)
+}
+
+
+struct GlassSpeechStartResp {
+    SessionId: string
+    UtteranceId: string
+    Ack: GlassSpeechAck
+}
+
+
+struct GlassSpeechEndResp {
+    SessionId: string
+    UtteranceId: string
+    Ack: GlassSpeechAck
+}
+
+
+// GlassTranscript — the final STT transcription of one completed utterance. It
+// is the handoff payload toward the Coordinator: runtime-only, never persisted.
+// The Coordinator adapter (Stage 4/5) consumes it via the glass.transcript
+// event and/or the glass_interact.transcript.latest callable.
+struct GlassTranscript {
+    SessionId: string
+    UtteranceId: string
+    Generation: long
+    DeviceId: string
+    Text: string
+    optional Error: string
+    Timestamp: string
+}
+
+
+// GlassTranscriptEvent — payload for the glass.transcript event emitted after
+// a gap-free utterance has been transcribed (or failed STT submission).
+struct GlassTranscriptEvent {
+    Transcript: GlassTranscript
+}
+
+
+struct GlassTranscriptLatestReq {
+}
+
+
+struct GlassTranscriptLatestResp {
+    optional Transcript: GlassTranscript
+}
+
+
+// --- Stage 4: Coordinator render / speak, capabilities and debug ------------
+// Coordinator (the process-unique system manager agent) is the only semantic
+// driver of Glass output. It renders high-level wearable content into the
+// active session's lastFrame (latest-only) and speaks ordered, at-most-once
+// messages. No native drawing lives here: the frame is a
+// device-capability-compatible high-level projection consumed by the MentraOS
+// adapter (a later stage).
+
+// GlassRenderReq — Coordinator-internal render command. Requires an active
+// online glass session. SessionId/Generation are optional; when present they
+// must match the active session. Latest-only: the frame overwrites the last
+// target frame and only lastFrame is persisted.
+struct GlassRenderReq {
+    Frame: GlassRenderFrame
+    optional SessionId: string
+    optional Generation: long
+}
+
+
+struct GlassRenderResp {
+    SessionId: string
+    Generation: long
+    Applied: bool
+    optional Timestamp: string
+}
+
+
+// GlassRenderEvent — payload for the glass.render event emitted after a frame
+// has been applied to the active session. Frontend / MentraOS adapters consume
+// it through the existing authenticated /ws subscription.
+struct GlassRenderEvent {
+    SessionId: string
+    Generation: long
+    Frame: GlassRenderFrame
+    optional Timestamp: string
+}
+
+
+// GlassSpeakReq — Coordinator-internal speak command. MessageId enables
+// runtime-only duplicate suppression: the same id is delivered at most once
+// per process run. Nothing is queued or persisted, so nothing is replayed
+// after a reconnect.
+struct GlassSpeakReq {
+    Text: string
+    MessageId: string
+    optional SessionId: string
+    optional Generation: long
+}
+
+
+struct GlassSpeakResp {
+    SessionId: string
+    Generation: long
+    MessageId: string
+    Duplicate: bool   // true when suppressed as a duplicate
+    optional Timestamp: string
+}
+
+
+// GlassSpeakEvent — payload for the glass.speak event. Kept observable (with
+// Duplicate=true) so the debug UI sees suppression decisions.
+struct GlassSpeakEvent {
+    SessionId: string
+    Generation: long
+    MessageId: string
+    Text: string
+    Duplicate: bool
+    optional Timestamp: string
+}
+
+
+// GlassCapabilitiesState — the device capability projection. Capabilities are
+// sourced from the session claim and snapshots; the struct is secret-free.
+struct GlassCapabilitiesState {
+    Active: bool
+    optional SessionId: string
+    optional DeviceId: string
+    optional Generation: long
+    Capabilities: array<GlassCapability>
+}
+
+
+struct GlassCapabilitiesReq {
+}
+
+
+struct GlassCapabilitiesResp {
+    State: GlassCapabilitiesState
+}
+
+
+// GlassDebugTimelineEntry — one bounded debug timeline record. Kind values:
+// "render" | "speak" | "speak_deduped" | "utterance" | "transcript" | "error".
+struct GlassDebugTimelineEntry {
+    Kind: string
+    optional Detail: string
+    optional Timestamp: string
+}
+
+
+// GlassDebugStats — aggregate counters. Secret-free and bounded by design.
+struct GlassDebugStats {
+    Utterances: long
+    Transcripts: long
+    Renders: long
+    Speaks: long
+    SpeakDeduped: long
+    Errors: long
+}
+
+
+// GlassDebugState — secret-free debug projection safe for the authenticated
+// /ws event subscription / callable surface. Never includes tokens, keys,
+// raw audio, or connection handles. Queue contents are the secret-free event
+// metadata only (payloads are opaque strings).
+struct GlassDebugState {
+    optional Session: GlassSessionState
+    Capabilities: array<GlassCapability>
+    optional CurrentFrame: GlassRenderFrame
+    optional AudioAck: GlassSpeechAck
+    Stats: GlassDebugStats
+    Timeline: array<GlassDebugTimelineEntry>
+    optional Inbox: GlassInboxSnapshot
+    optional Hud: GlassHudStatus
+    Deliveries: array<GlassDeliveryLogEntry>
+}
+
+
+struct GlassDebugReq {
+}
+
+
+struct GlassDebugResp {
+    State: GlassDebugState
+}
+
+
+// --- Stage 5: online event inbox + Coordinator scheduling + HUD whitelist ---
+//
+// Event sources (turn/diagnostic/build) explicitly enqueue events via the
+// internal glass_interact.event.enqueue callable; there is no generic
+// actor-to-actor event bus. The Coordinator completes each delivered event via
+// glass_interact.event.complete (internal) with one of handled/ignored/defer/
+// failed. The inbox is persisted in the glassinteract actor's durable state,
+// ordered by priority then creation time. Same-dedupe-key events merge and
+// refresh. An in_flight event with no receipt for 2 minutes returns to pending
+// and increments retries. TTLs: high 30m, normal 10m, low 2m; defer never
+// exceeds the event's TTL.
+//
+// Delivery gate: while a glass session is online, the session-gated updater
+// polls the Coordinator every 5 seconds (and immediately on enqueue/claim/
+// complete). It delivers at most one event at a time only when the Coordinator
+// reports not running and no active call/turn. Delivery is an explicit
+// internal Coordinator callable (coordinator.ingest_glass_event) carrying
+// GlassEventDeliverReq; every attempt is emitted/recorded on the bounded
+// debug/delivery surface.
+
+// GlassEvent — one persisted inbox item. State wire values:
+//   "pending"    queued and eligible (defer/failed outcomes return here)
+//   "in_flight"  delivered, awaiting Coordinator receipt
+//   "completed"  Coordinator handled it (terminal)
+//   "ignored"    Coordinator ignored it (terminal)
+//   "expired"    TTL elapsed (terminal)
+struct GlassEvent {
+    EventId: string
+    Source: string        // explicit event source (e.g. "turn", "diagnostic", "build")
+    Kind: string          // event kind within the source
+    Priority: string      // "high" | "normal" | "low"
+    Payload: string       // serialized event payload (opaque to the inbox)
+    optional DedupeKey: string
+    State: string
+    CreatedAt: string     // RFC3339
+    optional TTLAt: string
+    optional RetryAt: string
+    Retries: long
+    optional InFlightAt: string
+    optional CompletedAt: string
+    optional Outcome: string  // last Coordinator outcome: handled|ignored|defer|failed
+}
+
+
+// GlassEventEnqueueReq — internal enqueue used by explicit event sources. The
+// handler fast-ignores (Accepted=false) while no glass session is online.
+struct GlassEventEnqueueReq {
+    Source: string
+    Kind: string
+    Priority: string
+    Payload: string
+    optional DedupeKey: string
+}
+
+
+struct GlassEventEnqueueResp {
+    Accepted: bool
+    optional EventId: string
+    optional Reason: string
+}
+
+
+// GlassEventCompleteReq — Coordinator-internal receipt. Outcome wire values:
+// "handled" | "ignored" | "defer" | "failed".
+struct GlassEventCompleteReq {
+    EventId: string
+    Outcome: string
+    optional Reason: string
+}
+
+
+struct GlassEventCompleteResp {
+    EventId: string
+    State: string      // resulting event state
+}
+
+
+// GlassEventDeliverReq — the payload of one delivery to the Coordinator's
+// explicit internal intake callable coordinator.ingest_glass_event.
+struct GlassEventDeliverReq {
+    EventId: string
+    Source: string
+    Kind: string
+    Priority: string
+    Payload: string
+    optional Deliveries: long    // 1-based attempt number
+}
+
+
+struct GlassEventDeliverResp {
+    EventId: string
+    Received: bool
+}
+
+
+// GlassCoordinatorGate — the compact status protocol checked by the updater
+// before each delivery. Running=true when the Coordinator is executing a turn;
+// ActiveCall=true when a Coordinator call/turn is in flight. The updater
+// derives it from the Coordinator agent's existing agent.status surface.
+struct GlassCoordinatorGate {
+    Running: bool
+    ActiveCall: bool
+}
+
+
+// GlassInboxSnapshot — secret-free inbox projection for debug/observability.
+struct GlassInboxSnapshot {
+    Total: long
+    Pending: long
+    InFlight: long
+    Completed: long
+    Ignored: long
+    Expired: long
+    Events: array<GlassEvent>
+}
+
+
+struct GlassInboxReq {
+}
+
+
+struct GlassInboxResp {
+    Snapshot: GlassInboxSnapshot
+}
+
+
+// Observability events for the authenticated /ws subscription. They are
+// observation copies; the semantic path is enqueue -> deliver -> complete.
+struct GlassEventEnqueuedEvent {
+    Event: GlassEvent
+}
+
+
+struct GlassEventDeliveredEvent {
+    Event: GlassEvent
+}
+
+
+struct GlassEventCompletedEvent {
+    Event: GlassEvent
+}
+
+
+// GlassDeliveryLogEntry — one bounded delivery attempt record (runtime-only).
+struct GlassDeliveryLogEntry {
+    EventId: string
+    Success: bool
+    optional Detail: string
+    optional Timestamp: string
+}
+
+
+// GlassHudStatus — the HUD state incrementally synced to the MentraOS client.
+// Glass Interact owns and maintains this; it is NOT part of Coordinator render
+// frames. The client composites it into a fixed HUD bar area independent of the
+// main content region.
+//
+// Connection is derived from session lifecycle; battery comes from client
+// telemetry (glass_interact.telemetry.report); agent status from the
+// Coordinator's agent.status surface polled every 5s.
+struct GlassHudStatus {
+    Connection: string           // "online" | "reconnecting" | "offline"
+    optional BatteryLevel: int   // 0-100; absent when device has no battery reporting
+    optional Charging: bool
+    AgentRunning: bool           // true when Coordinator or another agent is mid-turn
+    optional AgentName: string   // display name of the running / last agent
+    optional AgentState: string  // agent state: "running" | "idle" | "error" | ""
+    optional AgentOutcome: string // last turn outcome: "completed" | "failed" | ""
+    optional Timestamp: string
+}

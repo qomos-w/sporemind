@@ -1,0 +1,157 @@
+// user namespace — user account, group, and permission protocol types.
+//
+// Sources of truth for:
+//   - user.auth.* request/response types (AuthRegisterReq, AuthLoginReq,
+//     AuthLoginResp, AccountView)
+//   - user.* account management types (Account, AccountListResp, etc.)
+//   - user.group.* types (Group, GroupListResp, etc.)
+//   - user.permission.* types (PermissionEntry, PermissionMatrix, etc.)
+//   - gospore component storage types (Account, Group, PermissionMatrix)
+
+struct Account {
+    Id:           string
+    Username:     string
+    DisplayName:  string
+    PasswordHash: string
+    Roles:        array<string>
+    Groups:       array<string>
+    Status:       string
+    CreatedAt:    string
+}
+
+
+struct AccountView {
+    Id:          string
+    Username:    string
+    DisplayName: string
+    Roles:       array<string>
+    Groups:      array<string>
+    Status:      string
+    CreatedAt:   string
+}
+
+
+struct AuthRegisterReq {
+    Username:    string
+    Password:    string
+    optional DisplayName: string
+    optional Roles:       array<string>
+}
+
+
+struct AuthLoginReq {
+    Username: string
+    Password: string
+}
+
+
+struct AuthLoginResp {
+    Token:        string
+    RefreshToken: string
+    ExpiresAt:    string
+    Account:      AccountView
+}
+
+
+struct AuthRefreshReq {
+    RefreshToken: string
+}
+
+
+struct AuthRefreshResp {
+    Token:        string
+    RefreshToken: string
+    ExpiresAt:    string
+}
+
+
+struct RefreshTokenEntry {
+    Token:     string
+    UserID:    string
+    ExpiresAt: string
+}
+
+
+struct AccountListResp {
+    Items: array<AccountView>
+}
+
+
+struct AccountCreateReq {
+    Username:    string
+    Password:    string
+    optional DisplayName: string
+    optional Roles:       array<string>
+    optional Groups:      array<string>
+}
+
+
+struct AccountUpdateReq {
+    Id:          string
+    optional DisplayName: string
+    optional Roles:       array<string>
+    optional Groups:      array<string>
+    optional Status:      string
+}
+
+
+struct AccountDeleteReq {
+    Id: string
+}
+
+
+struct AccountResetPasswordReq {
+    Id:       string
+    Password: string
+}
+
+
+struct Group {
+    Id:          string
+    Name:        string
+    Description: string
+    Roles:       array<string>
+    MemberCount: int
+}
+
+
+struct GroupListResp {
+    Items: array<Group>
+}
+
+
+struct GroupCreateReq {
+    Name:        string
+    optional Description: string
+    optional Roles:       array<string>
+}
+
+
+struct GroupUpdateReq {
+    Id:          string
+    optional Name:        string
+    optional Description: string
+    optional Roles:       array<string>
+}
+
+
+struct GroupDeleteReq {
+    Id: string
+}
+
+
+struct PermissionEntry {
+    Role:    string
+    Actions: map<string, bool>
+}
+
+
+struct PermissionMatrix {
+    Entries: array<PermissionEntry>
+}
+
+
+struct PermissionUpdateReq {
+    Role:    string
+    Actions: map<string, bool>
+}

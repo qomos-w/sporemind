@@ -1,0 +1,25 @@
+// project.card namespace — project-owned card references and mounts.
+// @ts-export
+
+struct ProjectCardMountReq {
+    Ref: CardRef
+}
+
+struct ProjectCardMountResp {
+    Ref: CardRef
+}
+
+struct ProjectCardUnmountReq {
+    Id: string
+}
+
+struct ProjectCardUnmountResp {
+    Id: string
+}
+
+struct ProjectCardListReq {
+}
+
+struct ProjectCardListResp {
+    Refs: array<CardRef>
+}

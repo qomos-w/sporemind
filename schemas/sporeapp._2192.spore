@@ -1,0 +1,57 @@
+// sporeapp namespace — SporeApp runtime callables.
+// @ts-export
+
+struct SporeAppLoadReq {
+    Manifest: AppManifest
+    EntryModule: string
+    Modules: map<string, string>
+    optional Assets: map<string, bytes>
+    optional SchemaDescriptors: map<string, AppObjectDescriptor>
+    optional PackageHash: string
+}
+
+struct SporeAppUnloadReq {
+    Id: string
+}
+
+struct SporeAppReloadReq {
+    Id: string
+    EntryModule: string
+    Modules: map<string, string>
+    optional Assets: map<string, bytes>
+    optional SchemaDescriptors: map<string, AppObjectDescriptor>
+    optional PackageHash: string
+    optional ExpectedStateVersion: long
+    optional MigratedState: map<string, any>
+}
+
+struct SporeAppReloadResp {
+    Id: string
+    Version: string
+    optional StateVersion: long
+}
+
+struct SporeAppStateReq {
+    Id: string
+}
+
+struct SporeAppStateSetReq {
+    Id: string
+    State: map<string, string>
+}
+
+struct SporeAppInvokeReq {
+    Id: string
+    Callable: string
+    Payload: bytes
+    optional AgentId: string
+    optional Role: string
+    optional ProjectId: string
+    optional RequestId: string
+    optional RouteDepth: int
+    optional RouteToken: string
+}
+
+struct SporeAppInvokeResp {
+    Payload: bytes
+}

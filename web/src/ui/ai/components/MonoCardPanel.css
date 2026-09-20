@@ -1,0 +1,238 @@
+.mono-card-panel {
+  height: 100%;
+  overflow: auto;
+  padding: 16px 20px 24px;
+  color: var(--text-body);
+  background: var(--bg-base);
+  line-height: var(--leading-normal);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-strong) transparent;
+}
+
+.mono-card-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.mono-card-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.mono-card-panel::-webkit-scrollbar-thumb {
+  background: var(--border-default);
+  border-radius: var(--radius-full);
+}
+
+.mono-card-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--border-strong);
+}
+
+.mono-card-panel--loading,
+.mono-card-panel--error {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-tertiary);
+  font-size: 0.875rem;
+}
+
+.mono-card-panel--error {
+  color: var(--error);
+}
+
+.mono-card-source {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.mono-card-source-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.mono-card-source-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mono-card-source-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.mono-card-source-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.mono-card-source-btn:hover:not(:disabled) {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.mono-card-source-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mono-card-source-btn.primary {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.mono-card-source-btn.primary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+}
+
+.mono-card-source-error {
+  padding: 8px 12px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--error) 12%, transparent);
+  color: var(--error);
+  font-size: 0.8125rem;
+}
+
+.mono-card-repair-banner {
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  border-radius: var(--radius-md);
+  border: 1px solid color-mix(in srgb, var(--error) 40%, transparent);
+  background: color-mix(in srgb, var(--error) 10%, transparent);
+  color: var(--error);
+  font-size: 0.8125rem;
+}
+
+.mono-card-repair-banner-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.mono-card-repair-banner-errors {
+  margin: 0 0 6px 0;
+  padding-left: 18px;
+}
+
+.mono-card-repair-banner-code {
+  display: inline-block;
+  padding: 0 4px;
+  margin-right: 4px;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, var(--error) 20%, transparent);
+  font-size: 0.75rem;
+  font-family: var(--font-mono);
+}
+
+.mono-card-repair-banner-field {
+  margin-right: 4px;
+  opacity: 0.85;
+  font-size: 0.75rem;
+}
+
+.mono-card-repair-banner-hint {
+  opacity: 0.85;
+}
+
+.mono-card-source-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+/* Right-panel card: double-click-to-edit hint and auto-save status.
+ *
+ * The hint is a floating pill that appears only while hovering the view-mode
+ * card, so it never collides with content and never intercepts the double
+ * click (pointer-events: none). The auto-save status is a compact right-
+ * aligned row rendered only while editing; it sits in normal flow above the
+ * card so it never overlaps the editor. */
+.mono-card-panel {
+  position: relative;
+}
+
+.mono-card-dblclick-hint {
+  position: absolute;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 4;
+  padding: 2px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.6875rem;
+  line-height: 1.5;
+  color: var(--text-tertiary);
+  background: color-mix(in srgb, var(--bg-elevated) 94%, transparent);
+  border: 1px solid var(--border-default);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+  transition: opacity 120ms ease;
+}
+
+.mono-card-panel:hover .mono-card-dblclick-hint {
+  opacity: 0.9;
+}
+
+.mono-card-autosave-status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+  min-height: 20px;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  color: var(--text-tertiary);
+  pointer-events: none;
+  user-select: none;
+}
+
+.mono-card-autosave-status > span,
+.mono-card-autosave-status > span + span {
+  padding: 0 8px;
+  border-radius: var(--radius-full);
+  background: color-mix(in srgb, var(--bg-elevated) 92%, transparent);
+  border: 1px solid var(--border-default);
+}
+
+.mono-card-autosave-error {
+  color: var(--error);
+  border-color: color-mix(in srgb, var(--error) 40%, var(--border-default));
+}
+
+.mono-card-autosave-dirty {
+  color: var(--accent-primary);
+}
+
+.mono-card-autosave-dirty::before {
+  content: '';
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+  margin-right: 5px;
+  vertical-align: 0.5px;
+}
+

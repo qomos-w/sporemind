@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#d68600"/>
+      <stop offset="100%" stop-color="#ff1989"/>
+    </linearGradient>
+    <mask id="m">
+      <circle cx="512" cy="512" r="320" fill="none" stroke="white" stroke-width="112"/>
+      <path d="M 512 192 A 160 160 0 0 0 512 512 A 160 160 0 0 1 512 832"
+            fill="none" stroke="white" stroke-width="112" stroke-linecap="round"/>
+    </mask>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="1024" rx="180" fill="#eeeeee"/>
+  <rect x="14" y="14" width="996" height="996" rx="168" fill="none" stroke="#d5d5d5" stroke-width="4"/>
+
+  <!-- Gradient fill clipped by combined mask -->
+  <circle cx="512" cy="512" r="376" fill="url(#grad)" mask="url(#m)"/>
+</svg>

@@ -1,0 +1,7 @@
+.ai-agent-inspector-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+}

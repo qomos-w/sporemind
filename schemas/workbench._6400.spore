@@ -1,0 +1,112 @@
+// workbench namespace — attention scoring + card layout projection protocol.
+//
+// The workbench actor is the single owner of per-card attention scores and the
+// derived slot assignment (which card occupies the main / side / term / rail
+// band; hidden cards retire to the rail). The frontend subscribes to the
+// WorkbenchSnapshot projection and renders layout from it. Score inputs are
+// ingested by the actor from three sources: app lifecycle events, agent
+// activity (step / turn events), and user click promotion (workbench.promote).
+//
+// Ordering semantics mirror web/src/ui/workbench/blackboard-reference.html:
+// HYSTERESIS = 15 (a challenger must lead the incumbent by more than 15 points
+// to swap), a pinned card is forced to the front (slot "main"), the attention
+// floor is 5 and the ceiling 40, and a user click promotes a card to
+// (max score + HYSTERESIS + 1).
+//
+// @ts-export
+
+// WorkbenchCardState is the per-card scoring + layout cell. Slot is one of
+// "main" | "side" | "term" | "rail" | "hidden"; the actor assigns every slot
+// except "rail" (the frontend uses "rail" while a card is maximized / captured).
+// Title / Icon / Color / StatusText / Visual form the compact (non-focused)
+// presentation the card base renders without embedding the full panel.
+struct WorkbenchCardState {
+    Id:          string
+    Kind:        string        // app | plugin | terminal | chat | file | note
+    Title:       string
+    Icon:        string
+    optional Color:      string
+    Score:       double
+    Slot:        string
+    Pinned:      bool
+    optional Hidden:     bool
+    optional StatusText: string
+    optional Why:        string        // human-readable reason for the current score
+    optional Visual:     ComponentVisual
+    // Attention mode (agent cards): "coordinator" | "workflow" | "worker" |
+    // "normal". Selects the presence base score; running only establishes
+    // presence at that base — scores move via user/coordinator action.
+    optional Mode:       string
+}
+
+// WorkbenchSnapshot is the full attention/layout projection pushed to the
+// frontend. Generation is bumped on every mutation so subscribers can order
+// snapshots (and so an unchanged snapshot is not re-published). Frozen is the
+// ❄ layout-freeze flag and Maximized the current full-capture card id ('' =
+// none); both are layout MODE the actor owns so the coordinator controller
+// can read and switch them.
+struct WorkbenchSnapshot {
+    Cards:      array<WorkbenchCardState>
+    Generation: long
+    optional Frozen:    bool
+    optional Maximized: string
+}
+
+// WorkbenchSnapshotReq requests the current projection. IncludeHidden keeps
+// retired cards in the response (the default view drops them).
+struct WorkbenchSnapshotReq {
+    optional IncludeHidden: bool
+}
+
+// WorkbenchCardRefReq addresses one card by id.
+struct WorkbenchCardRefReq {
+    Id: string
+}
+
+// WorkbenchSetHiddenReq retires or restores a card (terminal summon / retreat).
+struct WorkbenchSetHiddenReq {
+    Id:     string
+    Hidden: bool
+}
+
+// WorkbenchSetPinnedReq pins (or unpins) a card. A pinned card is forced to the
+// head of the ordering and therefore occupies the main slot.
+struct WorkbenchSetPinnedReq {
+    Id:     string
+    Pinned: bool
+}
+
+// WorkbenchUpsertCardReq declares or updates a card's static metadata. The
+// actor owns score / slot; callers supply identity, presentation and status.
+// An omitted Score seeds the card with the default attention score.
+struct WorkbenchUpsertCardReq {
+    Id:         string
+    Kind:       string
+    optional Title:      string
+    optional Icon:       string
+    optional Color:      string
+    optional StatusText: string
+    optional Visual:     ComponentVisual
+    optional Hidden:     bool
+    optional Score:      double
+    // Attention mode for agent cards: "coordinator" | "workflow" | "worker" |
+    // "normal". Selects the presence base score; agent chatter never raises a
+    // card above its mode base — attention moves only via user/coordinator
+    // action (promote/pin) .
+    optional Mode:       string
+}
+
+// WorkbenchSetFrozenReq toggles the ❄ layout freeze: while frozen the board
+// keeps its last placement — score / hidden / descriptor churn does not
+// reflow it.
+struct WorkbenchSetFrozenReq {
+    Frozen: bool
+}
+
+// WorkbenchSetMaximizedReq enters (Id non-empty) or releases ('' Id) a full
+// capture: the card takes the whole field until released. Reason feeds the
+// attention ring for awareness. Capture is ephemeral — never persisted.
+struct WorkbenchSetMaximizedReq {
+    Id: string
+    optional Reason: string
+}

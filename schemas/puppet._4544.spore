@@ -1,0 +1,553 @@
+// puppet namespace — Inochi2D Puppet Editor document protocol (IDs 2962+).
+// @ts-export
+//
+// Sources of truth for:
+//   - puppet.document.snapshot            read-only document projection for the frontend
+//   - puppet.asset.list / stage / commit / reject   staged-asset workflow
+//   - puppet.revision.log                 immutable revision history
+//   - puppet.edit                         auditable command-pattern edit (produces a revision)
+//
+// Domain model. The Puppet Editor actor owns a single active PuppetDocument persisted
+// via persist.Persist (per the persistence constraint). Generated image bytes are
+// non-state data that land on the actor data dir (like audio samples) and are
+// referenced by DataRef; only staging metadata and provenance are persisted state.
+//
+// Staging workflow. generate_image results first enter a "staged" asset stream and
+// must go through an explicit commit to enter the document — they never auto-attach.
+// Committing or rejecting an asset, like every edit command, produces an auditable
+// revision recording the author and command kind. The frontend reads document
+// snapshots and asset/revision state through schema-bound callables; no front-end
+// durable state (localStorage is forbidden).
+
+// PuppetNode — one node in the puppet node hierarchy.
+// Kind values mirror nijigenerate: "part" (deformable mesh), "composite",
+// "mask", "bone", "group" (plain container), "node" (generic).
+// Children form the authoritative tree; edit commands address nodes by Guid.
+// Params is an opaque property bag for node-specific attributes (e.g. z, opacity,
+// tint) keyed by name so the edit command surface stays compact.
+struct PuppetNode {
+    Guid: string
+    Name: string
+    Kind: string                            // "part" | "composite" | "mask" | "bone" | "group" | "node"
+    Enabled: bool
+    optional Z: int                         // z-order (lower = further back)
+    optional TextureAssetId: string         // committed texture asset id attached to this node
+    optional Mesh: PuppetMesh               // explicit mesh geometry (Phase 2); absent = implicit quad
+    optional Params: map<string, string>    // opaque property bag (name -> value)
+    Children: array<PuppetNode>
+}
+
+
+// PuppetDocument — the actor-owned document core. This is the persisted state
+// (under persist.Persist); Revision is the monotonic document revision counter
+// incremented by every applied edit. Root is the node-tree root.
+struct PuppetDocument {
+    Id: string
+    Revision: long                          // monotonic; 0 = freshly initialized
+    Name: string
+    optional SourcePath: string             // origin .inp path if loaded from disk
+    Root: PuppetNode
+    optional Params: array<PuppetParam>     // document-level animatable param definitions (Phase 2)
+    optional ParamValues: map<string, string>   // current param values (param id -> serialized); absent = Default
+    optional Bindings: array<PuppetParamBinding>    // param -> node property binding table
+    CreatedAt: string                       // RFC3339, UTC
+    UpdatedAt: string                       // RFC3339, UTC
+}
+
+
+// PuppetDocumentSnapshot — full read-only projection the frontend renders from.
+// Carries the document plus derived staging/revision counts so a single read
+// paints the editor shell. Secret-free.
+struct PuppetDocumentSnapshot {
+    Document: PuppetDocument
+    StagedAssetCount: int                   // assets currently in "staged" state
+    RevisionCount: long                     // total revisions recorded
+}
+
+
+struct PuppetDocumentSnapshotReq {
+}
+
+
+struct PuppetDocumentSnapshotResp {
+    Snapshot: PuppetDocumentSnapshot
+}
+
+
+// --- Asset staging ----------------------------------------------------------
+//
+// Assets (generated images) flow: stage -> commit/reject. A staged asset holds a
+// DataRef to non-state pixel data on the actor data dir plus provenance (SourceRef)
+// so the staging stream is auditable. Committing attaches the asset to a node and
+// produces a revision; rejecting marks it terminal without touching the document.
+
+// PuppetStagedAsset — one asset in the staging stream.
+// State values: "staged" (eligible), "committed" (terminal, attached to a node),
+// "rejected" (terminal, discarded).
+// Kind values: "texture" (deformable part texture), "reference" (non-attached
+// reference image).
+// SourceRef is generation/upload provenance (e.g. a generation request id).
+struct PuppetStagedAsset {
+    Id: string
+    DocumentId: string
+    State: string                           // "staged" | "committed" | "rejected"
+    Kind: string                            // "texture" | "reference"
+    DataRef: string                         // content-addressed ref to stored pixel data
+    optional Name: string
+    optional Width: int
+    optional Height: int
+    optional SourceRef: string              // provenance: project-relative path for generated assets (e.g. "assets/generated/img_x.png") or "upload"
+    optional GenParamsSummary: string       // generation parameter digest (prompt/model/size/quality) for auditable provenance
+    optional NodeGuid: string               // node the asset was committed to (committed only)
+    CreatedAt: string                       // RFC3339, UTC
+    optional ReviewedAt: string             // RFC3339, UTC — set on commit/reject
+    optional ReviewReason: string           // rejection rationale (rejected only)
+}
+
+
+struct PuppetAssetListReq {
+    optional State: string                  // filter by state; omit = all
+}
+
+
+struct PuppetAssetListResp {
+    Assets: array<PuppetStagedAsset>
+}
+
+
+// PuppetAssetStageReq — stage a freshly generated/uploaded asset into the staging
+// stream. DataRef must already point at stored pixel data; the actor records the
+// staging metadata (state="staged") and provenance.
+struct PuppetAssetStageReq {
+    Kind: string                            // "texture" | "reference"
+    DataRef: string                         // content-addressed ref to stored pixel data
+    optional Name: string
+    optional Width: int
+    optional Height: int
+    optional SourceRef: string              // provenance: project-relative path for generated assets (e.g. "assets/generated/img_x.png") or "upload"
+    optional GenParamsSummary: string       // generation parameter digest (prompt/model/size/quality); required for agent-generated assets
+}
+
+
+struct PuppetAssetStageResp {
+    Asset: PuppetStagedAsset
+}
+
+
+// PuppetAssetCommitReq — commit a staged asset into the document. Attaches it as a
+// texture to the node identified by NodeGuid, sets the node TextureAssetId, marks
+// the asset committed, and records an auditable revision (CommandKind="commit_asset").
+struct PuppetAssetCommitReq {
+    AssetId: string
+    NodeGuid: string                        // explicit target node; empty values are rejected
+}
+
+
+struct PuppetAssetCommitResp {
+    Asset: PuppetStagedAsset
+    Revision: PuppetRevision
+}
+
+
+struct PuppetAssetRejectReq {
+    AssetId: string
+    optional Reason: string
+}
+
+
+struct PuppetAssetRejectResp {
+    Asset: PuppetStagedAsset
+}
+
+
+// --- Revision history -------------------------------------------------------
+
+// PuppetRevision — one immutable revision record. Every applied edit, asset commit,
+// and asset reject produces exactly one revision. ParentRevisionId forms the chain
+// (the root revision's parent is empty). CommandKind mirrors the originating
+// command so the audit log is self-describing.
+struct PuppetRevision {
+    Id: string
+    DocumentId: string
+    Sequence: long                          // monotonic 1-based within the document
+    ParentRevisionId: string                // empty for the root revision
+    Author: string                          // who submitted the change
+    CommandKind: string                     // "init"|"set_node_name"|"set_node_enabled"|"set_node_z"|"commit_asset"|"reject_asset"|…
+    optional AuditSource: string            // audited Agent/tool source; empty for non-agent changes
+    optional Summary: string                // human-readable description
+    optional AffectedGuids: array<string>   // node guids touched by this revision (e.g. commit_asset)
+    Timestamp: string                       // RFC3339, UTC
+}
+
+
+struct PuppetRevisionLogReq {
+    optional Limit: int                     // most recent N; omit = all
+}
+
+
+struct PuppetRevisionLogResp {
+    Revisions: array<PuppetRevision>
+}
+
+
+// --- Auditable edit commands ------------------------------------------------
+//
+// Edits use the command pattern: a single puppet.edit callable accepts a
+// PuppetEditCommand envelope carrying provenance + a discriminated operation. Each
+// applied edit increments the document Revision and appends a PuppetRevision. This
+// keeps the operation surface compact while the command routing/strategy is
+// sporescript-driven, per the compact-operation-surface constraint.
+
+// PuppetEditCommand — one auditable edit. Author is the submitting identity (filled
+// by the actor from the authenticated caller context, ignoring any client-supplied
+// value). RequestId enables runtime idempotency: the same id is applied at most once
+// (a replay returns the original revision without appending a duplicate). Params
+// carries command-specific arguments keyed by name. The actor enforces a whitelist
+// of accepted Kind values; unknown kinds are rejected with a structured failure.
+// Command set: set_node_name needs Params["name"]; set_node_enabled needs
+// Params["enabled"]="true"|"false"; set_node_z needs Params["z"]=<int>;
+// set_node_mesh needs Params["mesh"]=<JSON PuppetMesh> (all-empty = clear);
+// generate_node_mesh optionally takes Params["method"]="contour" and
+// Params["preset"]="detailed"|"thin" and requires the target node to carry a
+// committed texture asset whose alpha drives the automesh pipeline.
+// Param commands (TargetGuid carries the param id): param_create needs
+// Params["name"], Params["kind"] ("float"|"int"|"bool"|"vec2"|"color") and
+// Params["default"] (validated against kind and Min/Max), with optional
+// Params["min"]/["max"]/["step"]/["group"]/["no_inherit"]; param_update takes
+// the same keys (only provided keys are replaced; empty string clears
+// min/max/step/group); param_remove deletes the param and cascades its
+// bindings; set_param_value needs Params["value"] (validated against kind and
+// Min/Max). set_param_binding needs Params["action"]="add"|"update"|"remove",
+// Params["node"] (target node guid) and Params["property"] (node property
+// name, e.g. "opacity", "z"), with optional Params["multiplier"]/["offset"]
+// (float remap; add defaults 1.0/0.0, update keeps omitted values).
+struct PuppetEditCommand {
+    Kind: string                            // whitelist: "set_node_name"|"set_node_enabled"|"set_node_z"|"set_node_mesh"|"generate_node_mesh"|"param_create"|"param_update"|"param_remove"|"set_param_value"|"set_param_binding"
+    TargetGuid: string                      // node the command operates on
+    Author: string                          // submitting identity (overridden by actor from caller context)
+    optional Params: map<string, string>    // command-specific arguments
+    optional RequestId: string              // client idempotency key
+}
+
+
+struct PuppetEditReq {
+    Command: PuppetEditCommand
+}
+
+
+// PuppetEditResp — result of one auditable edit. Revision is the newly appended
+// audit record; AffectedGuids lets the frontend refresh only the touched subtree.
+struct PuppetEditResp {
+    Applied: bool
+    Revision: PuppetRevision
+    optional Detail: string
+    optional AffectedGuids: array<string>   // node guids touched (for partial refresh)
+}
+
+// PuppetAgentRequest — mandatory provenance envelope for agent operations. TargetGuid
+// is the Puppet document Guid; RequestId is the audit/idempotency key and AuditSource
+// identifies the originating agent/tool integration. Empty fields are rejected.
+struct PuppetAgentRequest {
+    TargetGuid: string
+    RequestId: string
+    AuditSource: string
+}
+
+struct PuppetAgentSnapshotReq { Envelope: PuppetAgentRequest }
+struct PuppetAgentSnapshotResp { Snapshot: PuppetDocumentSnapshot }
+struct PuppetAgentRevisionLogReq { Envelope: PuppetAgentRequest, optional Limit: int }
+struct PuppetAgentRevisionLogResp { Revisions: array<PuppetRevision> }
+struct PuppetAgentAssetListReq { Envelope: PuppetAgentRequest, optional State: string }
+struct PuppetAgentAssetListResp { Assets: array<PuppetStagedAsset> }
+struct PuppetAgentEditReq { Envelope: PuppetAgentRequest, Command: PuppetEditCommand }
+struct PuppetAgentEditResp { Result: PuppetEditResp }
+struct PuppetAgentAssetStageReq { Envelope: PuppetAgentRequest, Operation: PuppetAssetStageReq }
+struct PuppetAgentAssetStageResp { Result: PuppetAssetStageResp }
+struct PuppetAgentAssetRejectReq { Envelope: PuppetAgentRequest, AssetId: string, optional Reason: string }
+struct PuppetAgentAssetRejectResp { Result: PuppetAssetRejectResp }
+
+
+// ===========================================================================
+// Phase 2 protocol — mesh, params/binding, asset read, revert, explore, capture
+// ===========================================================================
+//
+// The following structs extend the Puppet protocol to cover second-phase
+// capabilities: explicit mesh geometry on nodes, a param model with keyframe
+// bindings, read-back of stored asset pixel data, document revert (undo/redo
+// via the immutable revision chain), agent explore queries, and viewport
+// capture. These are wire-type definitions only — no business logic.
+
+// --- Mesh ------------------------------------------------------------------
+//
+// PuppetMesh — explicit mesh geometry for a "part" node. Nodes that carry a
+// Mesh render as a deformable triangulated mesh instead of an implicit quad.
+// Vertices are in node-local space (x, y pairs, flat). Indices are triangle
+// indices into the vertex array (0-based, counter-clockwise). UVs are texture
+// coordinates matching the vertex order (u, v pairs, flat, 0..1). All three
+// arrays are optional so a node can clear its mesh by setting an empty value;
+// when present, Vertices and UVs must have equal length, and Indices must
+// reference valid vertex positions.
+struct PuppetMesh {
+    optional Vertices: array<float>    // flat [x0,y0, x1,y1, ...] in node-local space
+    optional Indices:  array<int>      // triangle indices into Vertices (0-based, CCW)
+    optional UVs:      array<float>    // flat [u0,v0, u1,v1, ...], 0..1; same length as Vertices
+}
+
+
+// PuppetNode now carries an optional Mesh field (Phase 2) for explicit
+// geometry on "part" nodes. See the PuppetMesh definition below.
+
+
+// PuppetGenerateNodeMeshReq — request to auto-generate a mesh for a node from
+// its attached texture's alpha channel (Contour AutoMesh). The actor runs the
+// automesh pipeline and stores the result as the node's Mesh. This is a
+// generation command (not a simple edit): it produces a revision with
+// CommandKind="generate_node_mesh".
+struct PuppetGenerateNodeMeshReq {
+    NodeGuid: string                        // target "part" node; must have a texture attached
+    optional Method: string                 // "contour" (default) | future: "skeleton" | "grid"
+    optional SampleDensity: float           // contour resampling density; default implementation-defined
+    optional RequestId: string              // client idempotency key
+}
+
+
+// PuppetGenerateNodeMeshResp — result of mesh generation. Carries the produced
+// mesh and the revision record. The mesh is also stored on the node so
+// subsequent snapshots include it.
+struct PuppetGenerateNodeMeshResp {
+    Applied: bool
+    NodeGuid: string
+    Mesh: PuppetMesh
+    Revision: PuppetRevision
+    optional Detail: string
+}
+
+
+// --- Asset read ------------------------------------------------------------
+//
+// puppet.asset.read — resolves a committed asset's DataRef to a loadable URI
+// (data URL or actor-served path) so the frontend renderer can fetch pixel
+// data without a separate file-system path. Only committed assets are
+// eligible; staged/rejected assets return an error.
+
+struct PuppetAssetReadReq {
+    AssetId: string
+}
+
+
+struct PuppetAssetReadResp {
+    AssetId: string
+    Uri: string                              // data URL or actor-served path to pixel data
+    optional MimeType: string                // e.g. "image/png"
+    optional Width: int
+    optional Height: int
+}
+
+
+// --- Document revert (undo/redo via revision chain) ------------------------
+//
+// puppet.document.revert_to — rebuilds the document to the state recorded at a
+// given revision. The actor records a deep-copy document snapshot when each
+// immutable revision is appended, so the rebuild is a deterministic snapshot
+// restore rather than a command replay (replay would depend on external pixel
+// data). Revisions are immutable; revert does not delete history. Instead it
+// creates a new head revision with CommandKind="revert_to" whose
+// ParentRevisionId links to the current head, recording the revert action in
+// the audit log. The document's Revision counter continues monotonically.
+// Reverting to a state the document already carries is an idempotent no-op
+// that appends nothing; revisions that predate snapshot recording are rejected.
+
+struct PuppetDocumentRevertToReq {
+    RevisionId: string                       // target revision to revert to
+}
+
+
+struct PuppetDocumentRevertToResp {
+    Applied: bool
+    Document: PuppetDocument                 // the reverted document state
+    Revision: PuppetRevision                 // the new "revert_to" revision record
+    optional Detail: string
+}
+
+
+// --- Param model & binding -------------------------------------------------
+//
+// PuppetParam — one animatable parameter on the puppet. Params drive node
+// properties (e.g. opacity, rotation, scale, custom shader uniforms) through
+// bindings. Kind classifies the value type so the frontend can render the
+// appropriate control. Default is the resting value. Min/Max/Step are
+// optional display hints. Group is the UI grouping label.
+struct PuppetParam {
+    Id: string                               // unique param id within the document
+    Name: string                             // display name
+    Kind: string                             // "float" | "int" | "bool" | "vec2" | "color"
+    Default: string                          // default value serialized as string
+    optional Min: string                     // optional range hint
+    optional Max: string
+    optional Step: string
+    optional Group: string                   // UI group label
+    optional NoInherit: bool                 // if true, does not inherit parent value
+}
+
+
+// PuppetParamBinding — binds a param to a node property. When the param value
+// changes, the bound node property is updated. Property is the node attribute
+// name (e.g. "opacity", "rotation", "tint"). Multiplier and Offset allow
+// value remapping (bound = param * multiplier + offset). The binding is
+// stored in the document and changes to bindings produce revisions.
+struct PuppetParamBinding {
+    ParamId: string                          // PuppetParam.Id this binding sources from
+    NodeGuid: string                         // target node
+    Property: string                         // node property name to drive
+    optional Multiplier: float               // value remap multiplier (default 1.0)
+    optional Offset: float                   // value remap offset (default 0.0)
+}
+
+
+// PuppetParamBindingReq — edit command to add, update, or remove a param
+// binding. CommandKind for the revision is "set_param_binding". Action
+// determines the operation: "add" creates a new binding, "update" modifies an
+// existing one, "remove" deletes it.
+struct PuppetParamBindingReq {
+    Action: string                           // "add" | "update" | "remove"
+    Binding: PuppetParamBinding
+    optional RequestId: string               // client idempotency key
+}
+
+
+// PuppetParamBindingResp — result of a binding edit command.
+struct PuppetParamBindingResp {
+    Applied: bool
+    Revision: PuppetRevision
+    optional Detail: string
+}
+
+
+// PuppetParamListReq — list all params and bindings in the document.
+struct PuppetParamListReq {
+}
+
+
+// PuppetParamListResp — all params and their bindings.
+struct PuppetParamListResp {
+    Params:   array<PuppetParam>
+    Bindings: array<PuppetParamBinding>
+}
+
+
+// --- Agent explore query ---------------------------------------------------
+//
+// puppet.agent.explore.query — parameterized node query for the agent surface.
+// Lets an agent find nodes by kind, name pattern, or texture attachment
+// without enumerating the entire document. Results are projections (no
+// mutable references). Requires the PuppetAgentRequest envelope for auditable
+// provenance.
+
+struct PuppetAgentExploreQueryReq {
+    Envelope: PuppetAgentRequest
+    optional Kind: string                    // filter by node kind ("part", "composite", ...)
+    optional NamePattern: string             // substring match on node name
+    optional HasTexture: bool                // if true, only nodes with a TextureAssetId
+    optional HasMesh: bool                   // if true, only nodes with a Mesh
+}
+
+
+// PuppetNodeInfo — a flat projection of a node for query results. Carries the
+// essential attributes without the recursive children tree.
+struct PuppetNodeInfo {
+    Guid: string
+    Name: string
+    Kind: string
+    Enabled: bool
+    optional Z: int
+    optional TextureAssetId: string
+    optional HasMesh: bool
+    optional Depth: int                      // tree depth (root = 0)
+    optional ParentGuid: string              // parent node guid (empty for root)
+}
+
+
+struct PuppetAgentExploreQueryResp {
+    Nodes: array<PuppetNodeInfo>
+}
+
+
+// --- Viewport capture ------------------------------------------------------
+//
+// puppet.viewport.capture — captures the current editor canvas as an image.
+// The WebGL canvas lives in the frontend, so the backend cannot screenshot it;
+// until a frontend capture bridge exists this callable returns a document-
+// level reprojection: a deterministic svg schematic of the document (z-ordered
+// node stack with kind/texture/mesh markers) explicitly labeled as a
+// reprojection via Source="document_reprojection". It never fabricates a
+// raster screenshot — requesting png/jpeg is rejected. This is a read-only
+// operation; it does not modify the document or produce a revision. Used by
+// the agent surface for screenshot-style inspection and by the frontend for
+// thumbnail export.
+
+struct PuppetViewportCaptureReq {
+    optional Width: int                      // capture width; default = 800 (clamped 64..4096)
+    optional Height: int                     // capture height; default = 600 (clamped 64..4096)
+    optional Format: string                  // "" | "svg" (document reprojection); "png"|"jpeg" rejected — no fabricated raster
+    optional Quality: float                  // jpeg quality 0..1 (unused: raster capture unavailable)
+}
+
+
+struct PuppetViewportCaptureResp {
+    Uri: string                              // data URL or actor-served path to captured image
+    Width: int
+    Height: int
+    optional MimeType: string                // e.g. "image/png"
+    optional Source: string                  // "document_reprojection" (backend schematic) | "frontend_canvas" (future real capture)
+}
+
+
+// --- Agent surface: Phase 2 extensions -------------------------------------
+//
+// Agent-callable request/response pairs for the new Phase 2 operations.
+// These follow the existing PuppetAgentRequest envelope pattern.
+
+struct PuppetAgentGenerateNodeMeshReq {
+    Envelope: PuppetAgentRequest
+    Operation: PuppetGenerateNodeMeshReq
+}
+
+
+struct PuppetAgentGenerateNodeMeshResp {
+    Result: PuppetGenerateNodeMeshResp
+}
+
+
+struct PuppetAgentAssetReadReq {
+    Envelope: PuppetAgentRequest
+    AssetId: string
+}
+
+
+struct PuppetAgentAssetReadResp {
+    Result: PuppetAssetReadResp
+}
+
+
+struct PuppetAgentRevertToReq {
+    Envelope: PuppetAgentRequest
+    RevisionId: string
+}
+
+
+struct PuppetAgentRevertToResp {
+    Result: PuppetDocumentRevertToResp
+}
+
+
+struct PuppetAgentExploreCaptureReq {
+    Envelope: PuppetAgentRequest
+    optional Width: int
+    optional Height: int
+    optional Format: string
+}
+
+
+struct PuppetAgentExploreCaptureResp {
+    Result: PuppetViewportCaptureResp
+}

@@ -1,0 +1,32 @@
+// workspace.debug namespace — debug command registry discovery + execution
+// callable types backing the frontend debug console.
+//
+// The command registry lives in pkg/debugcmd: a package-level Register table
+// with per-command files self-registering in init() — the same fixed
+// registration point pattern as pkg/slashcmd and go-ebitor core_debug.go.
+//
+// Arg splitting contract: the FRONTEND console splits the raw input line into
+// args BEFORE the wire, quote-aware, mirroring go-ebitor gui/core_debug.go
+// onSend's regex "([^"]*)"|(\S+). DebugCommandExecReq carries the pre-split
+// args; the backend Dispatch receives them as-is and never re-parses an input
+// line. History (up/down arrows) is frontend state and is not persisted here.
+//
+// The item type reuses SlashCommand (workspace.slashcommand namespace): a
+// debug command is discovered with the same {name, shortHelp} shape.
+//
+// @ts-export
+
+struct DebugCommandsListResp {
+    Commands: array<SlashCommand>
+}
+
+
+struct DebugCommandExecReq {
+    Name: string
+    Args: array<string>
+}
+
+
+struct DebugCommandExecResp {
+    Output: string
+}

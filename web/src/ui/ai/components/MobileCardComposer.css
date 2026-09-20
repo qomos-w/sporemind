@@ -1,0 +1,186 @@
+.mobile-card-composer-backdrop {
+  position: fixed;
+  inset: 0;
+  bottom: var(--keyboard-height, 0px);
+  z-index: 10001;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: mobile-card-composer-fade-in 0.12s ease-out;
+}
+
+.mobile-card-composer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: var(--keyboard-height, 0px);
+  z-index: 10002;
+  background: var(--bg-elevated);
+  border-top: 1px solid var(--border-default);
+  border-radius: 16px 16px 0 0;
+  padding: 12px 12px calc(12px + env(safe-area-inset-bottom, 0px)) 12px;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.28);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 15px;
+  color: var(--text-primary);
+  animation: mobile-card-composer-slide-up 0.18s ease-out;
+}
+
+@keyframes mobile-card-composer-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes mobile-card-composer-slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.mobile-card-composer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+.mobile-card-composer-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.mobile-card-composer-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.mobile-card-composer-close:hover,
+.mobile-card-composer-close:active {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.mobile-card-composer-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-default);
+  border-radius: 12px;
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-family: inherit;
+  font-size: 15px;
+  line-height: 1.45;
+  resize: none;
+  outline: none;
+  min-height: 54px;
+  max-height: 180px;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.mobile-card-composer-textarea:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 2px var(--accent-primary-dim);
+}
+.mobile-card-composer-textarea::placeholder {
+  color: var(--text-tertiary);
+}
+
+.mobile-card-composer-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.mobile-card-composer-action,
+.mobile-card-composer-submit {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.12s ease, color 0.12s ease, opacity 0.12s ease;
+}
+
+.mobile-card-composer-action {
+  width: 40px;
+  height: 40px;
+  background: var(--bg-subtle);
+  color: var(--text-secondary);
+}
+.mobile-card-composer-action:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+.mobile-card-composer-action:active {
+  background: var(--bg-overlay);
+}
+.mobile-card-composer-action[data-active="true"] {
+  color: var(--accent-primary);
+  background: var(--accent-primary-dim);
+}
+.mobile-card-composer-action[data-active="true"]:active {
+  background: var(--accent-primary-dim);
+  filter: brightness(1.05);
+}
+.mobile-card-composer-action:disabled {
+  opacity: 0.4;
+  cursor: default;
+  background: var(--bg-subtle);
+  color: var(--text-tertiary);
+}
+
+.mobile-card-composer-submit {
+  flex: 1;
+  height: 40px;
+  padding: 0 14px;
+  margin-left: auto;
+  background: var(--bg-subtle);
+  color: var(--text-tertiary);
+  font-weight: 600;
+  font-size: 14px;
+}
+.mobile-card-composer-submit:hover {
+  background: var(--bg-hover);
+}
+.mobile-card-composer-submit[data-active="true"] {
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+.mobile-card-composer-submit[data-active="true"]:hover {
+  background: var(--accent-primary-hover);
+}
+.mobile-card-composer-submit[data-active="true"]:active {
+  background: var(--accent-primary-active);
+}
+.mobile-card-composer-submit:disabled {
+  cursor: default;
+  background: var(--bg-subtle);
+  color: var(--text-tertiary);
+}
+
+.mobile-card-composer-submit-label {
+  flex: 1;
+  text-align: center;
+}
+
+/* On very narrow screens keep the submit label readable. */
+@media (max-width: 360px) {
+  .mobile-card-composer-submit-label {
+    font-size: 13px;
+  }
+}

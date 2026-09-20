@@ -1,0 +1,26 @@
+// glass.hud namespace — HUD incremental sync and client telemetry (IDs 2561+).
+// @ts-export
+//
+// Sources of truth for:
+//   - glass_interact.telemetry.report (client→server battery / device state)
+//   - glass.hud.update event (server→client incremental HUD sync)
+//
+// Glass Interact owns the full HUD state (GlassHudStatus, defined in
+// glass._2500.spore) and emits glass.hud.update only when a field changes.
+// The client composites HUD into a fixed bar area independent of the main
+// render frame, so HUD updates and Coordinator renders never interfere.
+
+// GlassTelemetryReq — client-reported device telemetry. Called periodically
+// (e.g. every 60s) or on significant change by the MentraOS miniapp.
+// BatteryLevel is 0-100; omit when the device cannot report battery.
+struct GlassTelemetryReq {
+    SessionId: string
+    Generation: long
+    optional BatteryLevel: int   // 0-100
+    optional Charging: bool
+}
+
+
+struct GlassTelemetryResp {
+    Accepted: bool
+}

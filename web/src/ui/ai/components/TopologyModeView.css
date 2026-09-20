@@ -1,0 +1,713 @@
+.topology-mode-view {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* ── Initial-load status overlay (covers the blank graph area) ── */
+
+.topo-loading {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-bottom: 8px;
+  pointer-events: none;
+  background: color-mix(in srgb, var(--bg-base, transparent) 72%, transparent);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.topo-loading-spinner {
+  animation: topo-loading-spin 0.8s linear infinite;
+}
+
+@keyframes topo-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ── Semi-transparent floating toolbar (top-right) ── */
+
+.topo-floating-toolbar {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--bg-surface) 45%, transparent);
+  backdrop-filter: blur(16px) saturate(1.5);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  border: 1px solid color-mix(in srgb, var(--border-default) 25%, transparent);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.topo-mode-selection,
+.topo-toolbar-settings {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.topo-mode-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.topo-mode-btn:hover {
+  background: color-mix(in srgb, var(--bg-hover) 50%, transparent);
+  color: var(--text-primary);
+}
+
+.topo-mode-btn.active {
+  background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  color: var(--accent-primary);
+}
+
+.topo-mode-btn:active {
+  transform: scale(0.94);
+}
+
+/* ── Topology settings dropdown ── */
+.topo-settings-wrapper {
+  position: relative;
+}
+
+.topo-settings-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 30;
+  min-width: 170px;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+
+.topo-settings-title {
+  padding: 2px 4px 7px;
+  color: var(--text-secondary);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* ── Edge-visibility toggles (Parent/Tag/Type) ── */
+.topo-edge-toggles {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 0 4px;
+  margin-left: 2px;
+  border-left: 1px solid var(--border-subtle);
+}
+
+.topo-settings-dropdown .topo-edge-toggles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 0;
+  margin: 0;
+  border-left: none;
+}
+
+.topo-edge-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 6px;
+  min-width: 0;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+}
+
+.topo-edge-toggle:hover {
+  background: color-mix(in srgb, var(--bg-hover) 50%, transparent);
+  color: var(--text-primary);
+}
+
+.topo-edge-toggle.active {
+  color: var(--accent-primary);
+  border-color: color-mix(in srgb, var(--accent-primary) 35%, transparent);
+  background: color-mix(in srgb, var(--accent-primary) 12%, transparent);
+}
+
+.topo-edge-label {
+  margin-left: auto;
+  text-align: right;
+}
+
+.topo-edge-glyph {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  border-top: 2px solid currentColor;
+}
+
+.topo-edge-glyph--parent {
+  border-top-style: solid;
+}
+
+.topo-edge-glyph--tag {
+  border-top-style: dashed;
+}
+
+.topo-edge-glyph--type {
+  border-top: 2px dotted currentColor;
+}
+
+.topo-edge-glyph--wikiword {
+  border-top: 2px dotted currentColor;
+  opacity: 0.6;
+}
+
+.topo-edge-glyph--depends_on {
+  border-top: 2px dashed #f97316;
+}
+
+.topo-edge-glyph--agent_binding {
+  border-top: 2px solid #06b6d4;
+}
+
+/* ── Separator between mode selection and settings ── */
+
+.topo-toolbar-separator {
+  width: 1px;
+  height: 20px;
+  margin: 0 4px;
+  background: color-mix(in srgb, var(--border-default) 30%, transparent);
+}
+
+/* ── Time filter button + dropdown ── */
+
+.topo-time-filter-wrapper {
+  position: relative;
+}
+
+.topo-time-filter-btn {
+  gap: 4px;
+  width: auto;
+  padding: 0 8px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.topo-time-filter-label {
+  white-space: nowrap;
+}
+
+.topo-time-filter-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  z-index: 30;
+  min-width: 130px;
+  padding: 4px;
+  border-radius: 8px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.topo-time-filter-option {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s ease;
+}
+
+.topo-time-filter-option:hover {
+  background: color-mix(in srgb, var(--bg-hover) 50%, transparent);
+}
+
+/* ── Precise time-filter popover ── */
+
+.topo-time-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 40;
+  min-width: 232px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.topo-time-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.topo-chip-mini {
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-default);
+  background: color-mix(in srgb, var(--bg-hover) 40%, transparent);
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.topo-chip-mini:hover {
+  color: var(--text-primary);
+}
+
+.topo-chip-mini.active {
+  background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  color: var(--accent-primary);
+  border-color: transparent;
+}
+
+.topo-popover-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.topo-popover-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.topo-popover-section-title {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.topo-ago-switch {
+  display: inline-flex;
+  border-radius: 6px;
+  border: 1px solid var(--border-default);
+  overflow: hidden;
+}
+
+.topo-ago-switch-btn {
+  padding: 2px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+
+.topo-ago-switch-btn:hover {
+  color: var(--text-primary);
+}
+
+.topo-ago-switch-btn.active {
+  background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  color: var(--accent-primary);
+}
+
+.topo-ago-suffix {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.topo-ago-row,
+.topo-range-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.topo-range-sep {
+  color: var(--text-secondary);
+}
+
+.topo-popover-input {
+  flex: 1;
+  min-width: 0;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-input, var(--bg-surface));
+  color: var(--text-primary);
+  font-size: 12px;
+}
+
+.topo-popover-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.topo-time-filter-option.selected {
+  background: color-mix(in srgb, var(--accent-primary) 15%, transparent);
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+/* ── Custom filter search bar and chips ── */
+
+.topo-custom-search {
+  display: flex;
+  align-items: center;
+  height: 32px;
+  min-width: 180px;
+  max-width: 260px;
+  gap: 2px;
+  padding: 0 2px 0 6px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: transparent;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.topo-custom-search:hover {
+  background: color-mix(in srgb, var(--bg-hover) 50%, transparent);
+}
+
+.topo-custom-search:focus-within {
+  background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
+  border-color: color-mix(in srgb, var(--accent-primary) 50%, transparent);
+}
+
+.topo-custom-search-field,
+.topo-custom-search-input {
+  height: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: 12px;
+  outline: none;
+}
+
+.topo-custom-search-field {
+  flex: 0 0 auto;
+  max-width: 72px;
+  padding: 0 12px 0 2px;
+  appearance: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0 center;
+}
+
+.topo-custom-search-input {
+  flex: 1;
+  min-width: 60px;
+  padding: 0 4px;
+}
+
+.topo-custom-search-input::placeholder {
+  color: var(--text-tertiary, var(--text-secondary));
+}
+
+.topo-custom-search-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  color: var(--accent-primary);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.topo-custom-search-add:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+}
+
+.topo-custom-search-add:disabled {
+  color: var(--text-secondary);
+  cursor: default;
+}
+
+/* ── Mobile "+" trigger for the custom-filter form ── */
+
+.topo-custom-add-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.topo-custom-filter-wrapper {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.topo-custom-chip {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: 32px;
+  padding: 0 8px;
+  border: none;
+  border-radius: 7px 0 0 7px;
+  background: color-mix(in srgb, var(--bg-hover) 40%, transparent);
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.topo-custom-chip:hover {
+  color: var(--text-primary);
+}
+
+.topo-custom-chip.active {
+  background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  color: var(--accent-primary);
+}
+
+.topo-custom-chip:only-child {
+  border-radius: 7px;
+}
+
+.topo-custom-chip-label {
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.topo-custom-chip-edit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 32px;
+  padding: 0;
+  border: none;
+  border-radius: 0 7px 7px 0;
+  background: color-mix(in srgb, var(--bg-hover) 40%, transparent);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.topo-custom-chip-edit:only-child {
+  border-radius: 7px;
+}
+
+.topo-custom-chip-edit:hover {
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--bg-hover) 75%, transparent);
+}
+
+.topo-custom-chip-operator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 24px;
+  height: 32px;
+  padding: 0 4px;
+  border: none;
+  border-left: 1px solid color-mix(in srgb, var(--border-default) 30%, transparent);
+  border-right: 1px solid color-mix(in srgb, var(--border-default) 30%, transparent);
+  background: color-mix(in srgb, var(--bg-hover) 40%, transparent);
+  color: var(--text-tertiary, var(--text-secondary));
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.topo-custom-chip-operator:hover {
+  color: var(--text-primary);
+  background: color-mix(in srgb, var(--bg-hover) 75%, transparent);
+}
+
+.topo-custom-chip.active + .topo-custom-chip-operator,
+.topo-custom-chip-operator:has(+ .topo-custom-chip-edit .active) {
+  background: color-mix(in srgb, var(--accent-primary) 18%, transparent);
+  color: var(--accent-primary);
+}
+
+/* ── Shared popover (add / edit custom filter) ── */
+
+.topo-filter-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 40;
+  min-width: 210px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.topo-popover-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+
+.topo-popover-row input,
+.topo-popover-row select {
+  padding: 5px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--border-default);
+  background: var(--bg-input, var(--bg-surface));
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.topo-popover-row input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
+.topo-popover-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+}
+
+.topo-popover-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-default);
+  background: color-mix(in srgb, var(--bg-hover) 60%, transparent);
+  color: var(--text-primary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: filter 0.1s ease;
+}
+
+.topo-popover-btn:hover {
+  filter: brightness(0.96);
+}
+
+.topo-popover-btn.primary {
+  background: var(--accent-primary);
+  color: #fff;
+  border-color: transparent;
+}
+
+.topo-popover-btn.danger {
+  color: #e5484d;
+}
+
+/* ── Workflow filter popover ── */
+
+.workflow-filter-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  z-index: 40;
+  min-width: 232px;
+  max-width: 320px;
+  padding: 10px;
+  border-radius: 10px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.workflow-filter-section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.workflow-filter-section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.workflow-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.workflow-filter-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  padding-top: 2px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+/* ── Badge on filter button ── */
+
+.topo-filter-badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 8px;
+  background: var(--accent-primary);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
+  pointer-events: none;
+}
+

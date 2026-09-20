@@ -1,0 +1,319 @@
+.rich-card-editor .ProseMirror {
+  outline: none;
+  min-height: 60px;
+  position: relative;
+}
+
+.rich-card-editor .ProseMirror p {
+  position: relative;
+}
+
+.rich-card-editor .ProseMirror ul { list-style: disc; }
+.rich-card-editor .ProseMirror ol { list-style: decimal; }
+
+.rich-card-editor .ProseMirror del {
+  text-decoration: line-through;
+}
+
+/* Placeholder */
+.rich-card-editor p.rce-empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted, #8a8f98);
+  pointer-events: none;
+  cursor: text;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* Slash command menu */
+.rce-block-menu {
+  position: absolute;
+  z-index: 1000;
+  min-width: 160px;
+  background: var(--bg-elevated, #fff);
+  border: 1px solid var(--border-color, #e0e0e4);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  padding: 4px;
+  font-size: 13px;
+}
+
+.rce-block-menu-item {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 6px 10px;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text, inherit);
+}
+
+.rce-block-menu-item.active,
+.rce-block-menu-item:hover {
+  background: var(--bg-hover, #f0f0f3);
+}
+
+.rce-block-menu-empty {
+  padding: 6px 10px;
+  color: var(--text-muted, #8a8f98);
+}
+
+/* Floating formatting toolbar */
+.rce-format-bar {
+  position: absolute;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg-elevated, #2b2d31);
+  border: 1px solid var(--border-color, #3a3d42);
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  padding: 3px;
+}
+
+.rce-format-btn {
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-on-elevated, #e0e0e4);
+  font-size: 12px;
+  font-weight: 500;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rce-format-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.rce-format-btn.active {
+  background: var(--accent, #4663e8);
+  color: #fff;
+}
+
+.rce-format-sep {
+  width: 1px;
+  height: 18px;
+  background: var(--border-color, #3a3d42);
+  margin: 0 2px;
+}
+
+/* Block plus button (gutter trigger) */
+.rich-card-editor {
+  padding-left: 24px;
+  position: relative;
+}
+
+.rich-card-editor .rce-plus-btn {
+  position: absolute;
+  left: -24px;
+  top: 0.15em;
+  width: 20px;
+  height: 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: var(--text-muted, #8a8f98);
+  opacity: 0;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: opacity 0.15s;
+}
+
+.rich-card-editor .rce-plus-btn:hover {
+  color: var(--accent, #4663e8);
+  background: rgba(70, 99, 232, 0.08);
+}
+
+.rich-card-editor.ProseMirror-focused .rce-plus-btn,
+.rich-card-editor:focus-within .rce-plus-btn {
+  opacity: 1;
+  pointer-events: initial;
+}
+
+/* WikiWord inline chip */
+.rce-wikiword {
+  color: var(--accent-primary, #4663e8);
+  cursor: pointer;
+}
+
+.rce-wikiword:hover {
+  text-decoration: underline;
+}
+
+/* Card mention chip */
+.rce-card-mention {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 6px;
+  margin: 0 1px;
+  border-radius: 4px;
+  background: var(--bg-surface, rgba(46, 160, 67, 0.1));
+  color: var(--green, #2ea043);
+  font-size: 0.9em;
+  font-weight: 500;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  white-space: nowrap;
+}
+
+.rce-card-mention:hover {
+  background: var(--bg-hover, rgba(46, 160, 67, 0.18));
+}
+
+/* Checkbox list */
+.checkbox-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+.checkbox-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  padding: 2px 0;
+}
+
+.checkbox-item .checkbox-toggle {
+  width: 16px;
+  height: 16px;
+  margin-top: 3px;
+  border: 1.5px solid var(--text-muted, #8a8f98);
+  border-radius: 3px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.checkbox-item .checkbox-toggle:hover {
+  border-color: var(--accent, #4663e8);
+}
+
+.checkbox-item.checked .checkbox-toggle {
+  background: var(--accent, #4663e8);
+  border-color: var(--accent, #4663e8);
+  position: relative;
+}
+
+.checkbox-item.checked .checkbox-toggle::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 5px;
+  height: 9px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-item.checked .checkbox-content {
+  color: var(--text-muted, #8a8f98);
+  text-decoration: line-through;
+}
+
+.checkbox-item .checkbox-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.checkbox-item .checkbox-content p {
+  margin: 0;
+}
+
+/* Tables (editor-specific overrides) */
+.rich-card-editor .ProseMirror table {
+  table-layout: fixed;
+}
+
+.rich-card-editor-host {
+  display: flex;
+  flex-direction: column;
+  min-height: 60px;
+}
+
+.rich-card-editor-status {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 4px 8px;
+  border-top: 1px solid var(--border-color, #e0e0e4);
+  font-size: 11px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  color: var(--text-muted, #8a8f98);
+  user-select: none;
+}
+
+.rich-card-editor .ProseMirror th,
+.rich-card-editor .ProseMirror td {
+  min-width: 48px;
+}
+
+.rich-card-editor .ProseMirror .selectedCell {
+  background: var(--accent, rgba(70, 99, 232, 0.12));
+}
+
+.rich-card-editor .ProseMirror th > p,
+.rich-card-editor .ProseMirror td > p {
+  margin: 0;
+}
+
+/* Table floating toolbar */
+.rce-table-toolbar {
+  position: absolute;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--bg-overlay, #dadada);
+  border: 1px solid var(--border-strong, #bbbbbb);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg, 0 4px 16px rgba(0, 0, 0, 0.25));
+  padding: 3px;
+}
+
+.rce-table-toolbar-btn {
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border: none;
+  background: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--text-primary, #1e1e1e);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rce-table-toolbar-btn:hover {
+  background: var(--bg-hover, #dddddd);
+}
+
+.rce-table-toolbar-btn:active {
+  background: var(--bg-surface, #e8e8e8);
+}

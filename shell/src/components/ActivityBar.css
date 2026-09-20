@@ -1,0 +1,99 @@
+.activity-bar {
+  width: var(--activity-bar-width);
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-surface);
+  user-select: none;
+}
+
+.activity-bar.left {
+  border-right: 1px solid var(--border-subtle);
+}
+
+.activity-bar.right {
+  border-left: 1px solid var(--border-subtle);
+}
+
+.ab-upper {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.ab-top,
+.ab-middle,
+.ab-lower {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.ab-top {
+  flex: 1 1 auto;
+  justify-content: flex-start;
+  padding: 4px 0 2px 0;
+}
+
+.ab-middle {
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  padding: 2px 0;
+}
+
+.ab-lower {
+  flex: 0 0 var(--dl-bottom-dock-h, auto);
+  justify-content: flex-end;
+  padding: 2px 0 4px 0;
+  overflow: hidden;
+}
+
+.ab-btn {
+  position: relative;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+
+.ab-btn:hover {
+  color: var(--text-primary);
+}
+
+.ab-btn.active {
+  color: var(--text-primary);
+}
+
+/* Left bar: accent indicator on left edge */
+.activity-bar.left .ab-btn.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 25%;
+  height: 50%;
+  width: 2px;
+  background: var(--accent-active);
+  border-radius: 0 1px 1px 0;
+}
+
+/* Right bar: accent indicator on right edge */
+.activity-bar.right .ab-btn.active::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 25%;
+  height: 50%;
+  width: 2px;
+  background: var(--accent-active);
+  border-radius: 1px 0 0 1px;
+}

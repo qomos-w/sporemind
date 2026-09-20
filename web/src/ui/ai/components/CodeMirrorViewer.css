@@ -1,0 +1,56 @@
+.cmv-container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+}
+
+.cmv-container .cm-editor {
+  height: 100%;
+}
+
+.cm-editor.cm-focused {
+  outline: none;
+}
+
+/* LSP goto-definition busy feedback (plain DOM, no React re-render). */
+.cm-editor.cm-lsp-busy-cursor .cm-content {
+  cursor: progress;
+}
+
+.cm-editor .cm-lsp-busy {
+  position: absolute;
+  z-index: 30;
+  pointer-events: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 11px;
+  line-height: 1;
+  background: var(--popover, hsl(240 10% 12%));
+  color: var(--popover-foreground, hsl(0 0% 90%));
+  border: 1px solid var(--border, hsl(240 6% 20%));
+  box-shadow: 0 1px 4px rgb(0 0 0 / 0.3);
+  white-space: nowrap;
+  animation: cm-lsp-busy-pulse 1.2s ease-in-out infinite;
+}
+
+.cm-editor .cm-lsp-busy::before {
+  content: '';
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: cm-lsp-busy-spin 0.8s linear infinite;
+}
+
+@keyframes cm-lsp-busy-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes cm-lsp-busy-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}

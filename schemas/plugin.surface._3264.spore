@@ -1,0 +1,136 @@
+// plugin.surface namespace — frontend plugin iframe <-> host shell protocol.
+// All messages flow over a MessageChannel port created by the iframe client.
+// @ts-export
+
+struct PluginSurfaceInvokeReq {
+    Type: string
+    RequestId: string
+    CallId: string
+    Payload: any
+    optional PluginId: string
+    optional ViewId: string
+    optional RequestSchema: string
+    optional ResponseSchema: string
+}
+
+struct PluginSurfaceInvokeResp {
+    Type: string
+    RequestId: string
+    Ok: bool
+    optional Result: any
+    optional Error: string
+}
+
+struct PluginSurfaceCastReq {
+    Type: string
+    RequestId: string
+    CallId: string
+    Payload: any
+    optional PluginId: string
+    optional ViewId: string
+    optional RequestSchema: string
+}
+
+struct PluginSurfaceCastResp {
+    Type: string
+    RequestId: string
+    Ok: bool
+    optional Error: string
+}
+
+struct PluginSurfaceEmitReq {
+    Type: string
+    RequestId: string
+    EventKind: string
+    Payload: any
+    optional PluginId: string
+    optional ViewId: string
+    optional PayloadSchema: string
+}
+
+struct PluginSurfaceEmitResp {
+    Type: string
+    RequestId: string
+    Ok: bool
+    optional Error: string
+}
+
+struct PluginSurfaceSubscribeReq {
+    Type: string
+    RequestId: string
+    EventKind: string
+    optional PluginId: string
+}
+
+struct PluginSurfaceUnsubscribeReq {
+    Type: string
+    RequestId: string
+    EventKind: string
+    optional PluginId: string
+}
+
+struct PluginSurfaceSubscribeResp {
+    Type: string
+    RequestId: string
+    Ok: bool
+    optional Error: string
+}
+
+struct PluginSurfaceEventMsg {
+    Type: string
+    EventKind: string
+    Payload: any
+}
+
+struct PluginSurfaceAgentActionReq {
+    Type: string
+    RequestId: string
+    Action: string
+    optional PluginId: string
+    optional Kind: string
+    optional TargetAgentId: string
+    optional Payload: any
+}
+
+struct PluginSurfaceAgentActionResp {
+    Type: string
+    RequestId: string
+    Ok: bool
+    optional Result: any
+    optional Error: string
+}
+
+struct PluginSurfaceUIActionReq {
+    Type: string
+    RequestId: string
+    Action: string
+    optional PluginId: string
+    optional ViewId: string
+    optional Title: string
+    optional Zone: string
+    optional Text: string
+    optional Count: int
+    optional Level: string
+    optional Body: string
+}
+
+struct PluginSurfaceUIActionResp {
+    Type: string
+    RequestId: string
+    Ok: bool
+    optional Error: string
+}
+
+// PluginSurfaceConsoleLogReq forwards one plugin-frontend console entry
+// (console.log/warn/error/debug, window.onerror, unhandledrejection) to the
+// host shell, which persists it into the pluginhost per-plugin log ring via
+// pluginhost.plugin_log_put. Fire-and-forget: the shell sends no response
+// frame, so the iframe never blocks on logging.
+struct PluginSurfaceConsoleLogReq {
+    Type: string
+    RequestId: string
+    Level: string        // debug | info | warn | error
+    Message: string      // pre-truncated to 512 bytes by the bridge client
+    optional PluginId: string
+    optional ViewId: string
+}

@@ -1,0 +1,143 @@
+// project.wiki namespace — story river open-card state (TiddlyWiki-style).
+// @ts-export
+//
+// Sources of truth for:
+//   - project.wiki.getOpenCards
+//   - project.wiki.saveOpenCards
+//   - project.wiki.listCards (merged: list_all_cards + search_cards + structured tree nodes)
+//   - project.wiki.getCardHierarchy
+//   - project.wiki.getCard
+//   - project.wiki.createCard
+//   - project.wiki.editCard
+//   - project.wiki.deleteCard
+//   - project.wiki.validateCard
+//   - project.wiki.getConceptTree
+
+struct WikiOpenCardsReq {
+}
+
+struct WikiOpenCardsResp {
+    OpenCards:  array<string>
+}
+
+struct WikiSaveOpenCardsReq {
+    OpenCards:  array<string>
+}
+
+struct MonoCardListItem {
+    Id:          string
+    Type:        string
+    Source:      string
+    Storage:     string
+    Visibility:  string
+    Tags:        array<string>
+    List:        array<string>
+    Created:     string
+    Modified:    string
+    Protected:   bool
+    Editable:    bool
+    Deletable:   bool
+    optional Due:       string
+    optional Priority:  string
+    optional Status:    string
+    optional Parent:    string
+    optional Data:      map<string, any>
+    optional Standalone: bool
+    Raw:         string
+}
+
+struct WikiListCardsReq {
+    optional RootId:  string
+    optional Limit:   int32  // tree mode: max rendered nodes (default 200); flat mode: max items returned (default 50); -1 = unlimited
+    optional Depth:   int32  // tree mode: max descent depth; 0 = unlimited
+    optional OrderBy: string // sort: "modified"/"created"/"title"/"priority", "-" prefix for descending; default "-modified"
+
+    // flat mode — true returns a flat array instead of a tree
+    optional Flat:           bool
+    optional IncludeRaw:     bool  // flat mode: include raw card body; default false
+    optional IncludeBuiltin: bool  // flat mode: include __builtin_*__ virtual mount nodes; default false
+    optional WorkflowFilter: WikiWorkflowFilter  // flat mode: workflow fold-visibility filter
+    optional Total:          bool  // flat mode: return total count in Total field
+
+    // search/filter params (flat mode only)
+    optional Query:          string  // title substring or /regexp/; empty = match all
+    optional Tags:           array<string>
+    optional Status:         string
+    optional Type:           string
+    optional Source:         string
+    optional List:           string
+    optional Parent:         string
+    optional Priority:       string
+    optional Due:            string
+    optional ModifiedAfter:  string
+    optional ModifiedBefore: string
+    optional CreatedAfter:   string
+    optional CreatedBefore:  string
+    optional DueAfter:       string
+    optional DueBefore:      string
+}
+
+struct WikiListCardsResp {
+    Tree:      string                  // ASCII tree (agent consumption); empty in flat mode
+    Nodes:     array<WikiCardTreeNode>  // structured tree (frontend consumption); empty in flat mode
+    Cards:     array<MonoCardListItem>  // flat array; empty in tree mode
+    Total:     int32                   // flat mode total count (when Total=true)
+}
+
+struct WikiGetCardReq {
+    Id:     string
+}
+
+struct WikiGetCardResp {
+    Id:     string
+    Raw:    string
+}
+
+struct WikiCreateCardReq {
+    Id:     string
+    Raw:    string
+}
+
+struct WikiCreateCardResp {
+    Card:   MonoCardListItem
+}
+
+struct WikiEditCardReq {
+    Id: string
+    optional Raw: string
+    optional OldString: string
+    optional NewString: string
+    optional ReplaceAll: bool
+}
+
+struct WikiEditCardResp {
+    Card:   MonoCardListItem
+}
+
+struct WikiDeleteCardReq {
+    Id:     string
+}
+
+struct WikiDeleteCardResp {
+    Id:     string
+}
+
+struct WikiTimerListItem {
+    Id:              string
+    NextFireAt:      string
+    LastRunAt:       string
+    LastStatus:      string
+    Enabled:         bool
+    CurrentInstance: string
+    optional ScheduleType: string
+    // Task-mode badge fields, derived by the backend from the timer card's
+    // data block: TaskMode is "prompt" (fires prompt at an agent) or
+    // "template" (spawns a fresh agent from BoundTemplate of AgentKind).
+    optional TaskMode:      string
+    optional AgentKind:     string
+    optional BoundTemplate: string
+}
+
+struct WikiListTimersResp {
+    Timers:      array<WikiTimerListItem>
+}

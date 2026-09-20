@@ -1,0 +1,62 @@
+// agent.chat namespace — request/response value types.
+// @ts-export
+//
+// This file is the authoring source of truth for the agent.chat wire shapes.
+// Go types under pkg/domain/gen/agentchat/ are generated from this file.
+//
+
+// AgentChatSubmitReq is the public request payload for agent.chat.submit.
+// It is structurally identical to aigen.TurnInput but lives in the agent.chat
+// namespace so the public callable owns its wire shape.
+
+struct ImageEntry {
+    Url:       string
+    optional Alt:       string
+    optional MimeType:  string
+}
+
+
+struct AttachmentEntry {
+    Name:       string
+    MimeType:   string
+    optional Url:        string
+    optional SizeBytes:  long
+}
+
+
+struct AgentChatSubmitReq {
+    Text:                       string
+    optional Unit:              ModelUnit
+    optional Title:             string
+    optional ThinkingBudget:    int
+    optional ReasoningEffort:   string
+    optional Attachments:       array<AttachmentEntry>
+    optional Images:            array<ImageEntry>
+    optional Meta:              string   // author attribution passed to the created step
+}
+
+
+struct AgentChatSubmitResp {
+    TurnActorId: string
+    optional MessageId: string
+    optional Idx: int32
+    optional Timestamp: string
+}
+
+
+struct AgentChatCancelPendingReq {
+    MessageId: string  // the PendingSubmit ID returned by chat.submit
+}
+
+struct AgentChatCancelPendingResp {
+    Cancelled: bool  // true if a pending submit was found and removed
+}
+
+
+// WorkspaceCoordinatorLookupResp is the response for workspace.coordinator.lookup.
+// Glass delivery uses it to resolve the Coordinator's live actor id.
+struct WorkspaceCoordinatorLookupResp {
+    Found: bool
+    optional Nickname: string
+    optional ActorId: string
+}

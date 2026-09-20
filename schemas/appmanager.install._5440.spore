@@ -1,0 +1,15 @@
+// appmanager namespace — local package installation.
+// @ts-export
+//
+// Path selects the install source on the host: a .zip package file or a
+// package directory containing app.manifest.json. PackageData carries the
+// zip bytes directly (browser flow). Exactly one of the two must be set.
+
+struct AppManagerInstallLocalReq {
+    optional Path: string
+    optional PackageData: bytes
+}
+
+struct AppManagerInstallLocalResp {
+    Status: AppStatus
+}

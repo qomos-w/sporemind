@@ -1,0 +1,69 @@
+/* ============================================
+   Settings shell container & shared residual
+   classes.
+
+   Background: page gray (--settings-card-bg-page
+   = --bg-base) so panels' elevated cards float on
+   it. Card → card spacing uses --settings-section-gap.
+   Panels own their specific styles; only state
+   classes shared across panels (error / placeholder /
+   empty desc / button) plus panel-specific primitives
+   (slider / kind chips) live here.
+   ============================================ */
+
+/* ── Panel title (outside card, per active category) ── */
+
+.sp-settings-panel-title {
+  font-size: var(--text-2xl);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* ── Shell container ── */
+
+.sp-settings-content {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  overflow-y: auto;
+  padding: 24px 32px;
+  background: var(--settings-card-bg-page, var(--bg-base));
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.2;
+}
+
+.sp-settings-content-block {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Mobile: match --ai-shell-breakpoint-mobile; tighter
+   padding since the main card chrome disappears. */
+@media (max-width: 768px) {
+  .sp-settings-content {
+    padding: var(--space-4);
+  }
+}
+
+/* ── Shared empty-state desc (account lists) ── */
+
+/* ── Shared placeholder (loading / empty) ── */
+
+/* ── Shared error text ── */
+
+/* ── Shared add-account button (account list panels) ── */
+
+/* ── Slider value readout (general / voice) ── */
+

@@ -1,0 +1,54 @@
+/* Workbench terminal card skin — aligned with blackboard-reference.html
+ * `.termbody` (dark green console). Colors fall back to the blackboard values
+ * until the `--workbench-*` theme tokens land (spec §6). */
+
+.wb-term {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--workbench-term-bg, #151a17);
+  color: var(--workbench-term-fg, #c9e7ce);
+}
+
+.wb-term--compact {
+  /* Compact cards normally render host metadata only (no iframe-like body);
+   * this class is the fallback when a compact body is shown inline. */
+  font-size: 12px;
+}
+
+.wb-term-body {
+  flex: 1;
+  min-height: 0;
+  padding: 8px 10px;
+  font-family: var(--workbench-term-font, ui-monospace, Consolas, 'DejaVu Sans Mono', monospace);
+  font-size: 12px;
+  line-height: 1.7;
+}
+
+.wb-term-body .xterm {
+  height: 100%;
+}
+
+.wb-term-body .xterm-viewport {
+  background: transparent !important;
+  scrollbar-width: thin;
+}
+
+.wb-term-status {
+  flex: none;
+  padding: 3px 10px;
+  font-size: 11px;
+  color: var(--workbench-term-dim, #5d6f61);
+  border-top: 1px solid rgba(127, 208, 138, 0.16);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wb-term-status[data-phase='error'] {
+  color: var(--workbench-term-err, #ff8480);
+}

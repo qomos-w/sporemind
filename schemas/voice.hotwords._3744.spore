@@ -1,0 +1,48 @@
+// voice.hotwords — STT hotwords binding by project/agent context.
+//
+// Hotwords are domain-specific terms that improve recognition accuracy for
+// a given project or agent scope. They are persisted server-side (actor-owned
+// backend state) and resolved at recognition time.
+//
+// Binding scope:
+//   - ProjectId + AgentId: agent-specific hotwords
+//   - ProjectId only (AgentId empty): project-wide hotwords
+//   - Both empty: global hotwords
+
+struct VoiceHotwordsBinding {
+    ProjectId: string
+    AgentId:   string
+    Hotwords:  array<string>
+}
+
+
+struct VoiceHotwordsSetReq {
+    ProjectId: string
+    AgentId:   string
+    Hotwords:  array<string>
+}
+
+
+struct VoiceHotwordsSetResp {
+    Binding: VoiceHotwordsBinding
+}
+
+
+struct VoiceHotwordsGetReq {
+    ProjectId: string
+    AgentId:   string
+}
+
+
+struct VoiceHotwordsGetResp {
+    Binding: VoiceHotwordsBinding
+}
+
+
+struct VoiceHotwordsDeleteReq {
+    ProjectId: string
+    AgentId:   string
+}
+
+
+struct VoiceHotwordsDeleteResp {}

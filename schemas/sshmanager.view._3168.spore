@@ -1,0 +1,14 @@
+// sshmanager public response views.
+// @ts-export
+
+struct SshHostView {
+    Id:         string
+    Name:       string
+    Host:       string
+    Port:       int
+    User:       string
+    AuthMethod: string
+    Group:      string
+    HasCredential: bool
+    AgentInvisible: bool
+}

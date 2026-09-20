@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>工作台 · 方案对比</title>
+<style>
+  :root {
+    --bg: #101012;
+    --surface: #171719;
+    --line: #26262a;
+    --text: #ecedef;
+    --muted: #8b8d94;
+    --accent: #c6f24e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    min-height: 100dvh;
+    background:
+      radial-gradient(1200px 600px at 50% -10%, #1b1b1f 0%, transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  header {
+    padding: 40px 40px 8px;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+  .kicker {
+    font-size: 12px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 14px;
+  }
+  h1 {
+    margin: 0 0 12px;
+    font-size: clamp(28px, 4vw, 44px);
+    letter-spacing: -.03em;
+    line-height: 1.05;
+    font-weight: 650;
+  }
+  header p {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--muted);
+    line-height: 1.6;
+    font-size: 15px;
+  }
+  .grid {
+    max-width: 1180px;
+    margin: 28px auto 64px;
+    padding: 0 40px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+  }
+  @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } header { padding: 28px 20px 4px } .grid { padding: 0 20px } }
+  .card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    overflow: hidden;
+    transition: border-color .2s ease, transform .2s ease;
+  }
+  .card:hover { border-color: #3a3a40; transform: translateY(-2px); }
+  .thumb {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    border-bottom: 1px solid var(--line);
+    background: #0c0c0e;
+    overflow: hidden;
+  }
+  .thumb iframe {
+    width: 160%;
+    height: 160%;
+    border: 0;
+    transform: scale(.625);
+    transform-origin: 0 0;
+    pointer-events: none;
+  }
+  .meta { padding: 16px 18px 18px; }
+  .meta h2 { margin: 0 0 6px; font-size: 16px; letter-spacing: -.01em; }
+  .meta p { margin: 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+  .tag {
+    display: inline-block;
+    margin-top: 12px;
+    font-size: 11px;
+    color: #b9d977;
+    background: rgba(198,242,78,.08);
+    border: 1px solid rgba(198,242,78,.22);
+    padding: 3px 9px;
+    border-radius: 999px;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <p class="kicker">工作台模式 · Workbench Board</p>
+    <h1>构建 / 应用 / 工作台</h1>
+    <p>工作台是第三个启动模式：进入后整个界面清空，只留一块黑板，原有的页面与应用变成黑板上的圆角卡片。黑板完全由 agent 控制，并用一套注意力优先机制决定每张卡片的位置、大小与亮度。下面是四个方向。</p>
+  </header>
+  <main class="grid">
+    <a class="card" href="01-orbit.html">
+      <div class="thumb"><iframe src="01-orbit.html" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="meta">
+        <h2>方案 A · 引力轨道</h2>
+        <p>注意力最高的卡片占据黑板中心，其余卡片按注意力远近散布在椭圆轨道上。注意力越高越靠内、越大、越亮。</p>
+        <span class="tag">中心聚焦 · 轨道排布</span>
+      </div>
+    </a>
+    <a class="card" href="02-heatfield.html">
+      <div class="thumb"><iframe src="02-heatfield.html" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="meta">
+        <h2>方案 B · 注意力热场</h2>
+        <p>自由画布，卡片像图钉一样散落。注意力塑造一张热力图：热区卡片放大发亮，冷区卡片退到暗处缩小。</p>
+        <span class="tag">自由画布 · 热力衰减</span>
+      </div>
+    </a>
+    <a class="card" href="03-lanes.html">
+      <div class="thumb"><iframe src="03-lanes.html" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="meta">
+        <h2>方案 C · 注意力传送带</h2>
+        <p>三条纵带：现在 / 进行中 / 背景。卡片按注意力从左向右流动，注意力衰减时自动降级到下一带。</p>
+        <span class="tag">分带流动 · 优先级队列</span>
+      </div>
+    </a>
+    <a class="card" href="04-chalk.html">
+      <div class="thumb"><iframe src="04-chalk.html" loading="lazy" tabindex="-1"></iframe></div>
+      <div class="meta">
+        <h2>方案 D · 黑板板书</h2>
+        <p>agent 以板书方式在黑板上画卡片与连线，串起卡片之间的因果关系。注意力 = 板书强调的力度。</p>
+        <span class="tag">关系连线 · 叙事编排</span>
+      </div>
+    </a>
+  </main>
+</body>
+</html>

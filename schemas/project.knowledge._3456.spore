@@ -1,0 +1,18 @@
+// Standardized on-demand project knowledge projections.
+// @ts-export
+
+struct WikiGetConceptTreeReq {
+    Id:     string
+    optional Level: int32
+}
+
+struct WikiConceptNode {
+    Id:        string
+    ParentId:  string
+    Children:  array<WikiConceptNode>
+}
+
+struct WikiGetConceptTreeResp {
+    Root:      WikiConceptNode
+    Source:    string
+}

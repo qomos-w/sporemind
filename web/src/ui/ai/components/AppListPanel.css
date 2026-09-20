@@ -1,0 +1,73 @@
+/* ── Right-panel app picker ──
+   Lists every openable registered app; picking one opens its view. Row layout
+   (icon block + label) suits the narrow right panel better than the sidebar
+   launcher's square grid. */
+
+.ai-app-list-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 8px;
+}
+
+.ai-app-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ai-app-list-tile {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: var(--radius-lg, 10px);
+  background: transparent;
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast, 120ms);
+}
+
+.ai-app-list-tile:hover {
+  background: var(--bg-hover);
+}
+
+.ai-app-list-tile:active {
+  transform: scale(0.98);
+}
+
+.ai-app-list-tile-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-sm);
+}
+
+.ai-app-list-tile-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-sm, 13px);
+  font-weight: 500;
+}
+
+.ai-app-list-empty {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  color: var(--text-tertiary);
+  font-size: var(--text-sm, 13px);
+  text-align: center;
+}

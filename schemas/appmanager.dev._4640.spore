@@ -1,0 +1,52 @@
+// appmanager dev namespace — self-describing callable info and dev guide
+// for the plugin-dev bundle. Read-only knowledge callables that let an
+// agent discover how to use the plugin development surface.
+// @ts-export
+
+struct AppManagerCallableInfoReq {
+    optional Query: string   // substring filter against callable id or description
+}
+
+struct AppManagerCallableParam {
+    Name: string
+    Type: string
+    Required: bool
+    Description: string
+}
+
+struct AppManagerCallableInfoEntry {
+    Id: string                  // full callable id, e.g. "appmanager.register_project"
+    Service: string             // exposed service name, e.g. "appmanager" | "pluginhost"
+    Description: string         // what it does and when to use it
+    Effect: string              // "none" | "reversible" | "irreversible"
+    Params: array<AppManagerCallableParam>
+}
+
+struct AppManagerCallableInfoResp {
+    Items: array<AppManagerCallableInfoEntry>
+}
+
+struct AppManagerDevGuideReq {
+    optional Topic: string      // "prerequisites" | "workflow" | "host_api" | "security" | "errors"; empty = all
+}
+
+struct AppManagerDevGuideStep {
+    Order: int
+    Title: string
+    Detail: string
+    Tools: array<string>        // callable ids used in this step
+}
+
+struct AppManagerDevGuideError {
+    Symptom: string
+    Cause: string
+    Remedy: string
+}
+
+struct AppManagerDevGuideResp {
+    Prerequisites: array<string>
+    Workflow: array<AppManagerDevGuideStep>
+    HostAPI: array<string>       // plugin-side host-call reference: ctx.Host() clients, host callIDs, payloads, capability mapping
+    Security: array<string>
+    CommonErrors: array<AppManagerDevGuideError>
+}

@@ -1,0 +1,88 @@
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-base);
+  z-index: 300;
+}
+
+.splash-screen-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 0;
+  gap: 16px;
+}
+
+.splash-screen-icon {
+  width: 112px;
+  height: 112px;
+}
+
+/* ── App icon bolt choreography ──
+   The bolt polyline has 5 waypoints (4 segments). The mask stroke is drawn
+   waypoint by waypoint: it starts at point 1, extends along the line to
+   point 2, continues from 2 to 3, and so on until the whole mark is extended.
+   pathLength="4" normalizes the total stroke to 4 units; cumulative lengths
+   (segment lengths 371.3 / 300.5 / 300.5 / 371.3 of 1343.6 total) land at
+   1.105 / 2.0 / 2.895 / 4, so the keyframes below give every segment an equal
+   25% slice with its own easing — a short organic beat at each waypoint. */
+
+.splash-bolt-bg {
+  animation: splash-bolt-bg-in 0.3s ease-out both;
+}
+
+@keyframes splash-bolt-bg-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.splash-bolt-draw {
+  stroke-dasharray: 4;
+  animation: splash-bolt-draw 2.4s cubic-bezier(0.4, 0, 0.2, 1) 0.35s both;
+}
+
+@keyframes splash-bolt-draw {
+  0% { stroke-dashoffset: 4; }
+  25% { stroke-dashoffset: 2.89493; }
+  50% { stroke-dashoffset: 2; }
+  75% { stroke-dashoffset: 1.10507; }
+  100% { stroke-dashoffset: 0; }
+}
+
+/* Once the bolt is fully drawn (0.35s + 2.4s), a slanted light band sweeps
+   across the metallic stroke every 5 seconds, like a gleam running over a
+   metal object in a game: quick pass (~0.8s), then rest until the next cycle.
+   The band is inside the bolt mask, so the gleam only lights up the stroke
+   itself. The band is opacity 0 outside the sweep window (base style + `both`
+   fill + keyframe envelope), so it cannot glow while the mark is being drawn;
+   it only appears while actually crossing the stroke (30%→46%). */
+.splash-bolt-sheen {
+  opacity: 0;
+  animation: splash-bolt-sheen 5s cubic-bezier(0.3, 0, 0.7, 1) 2.75s infinite both;
+}
+
+@keyframes splash-bolt-sheen {
+  0%, 30% { transform: translateX(-650px); opacity: 0; }
+  33%, 43% { opacity: 1; }
+  46% { transform: translateX(800px); opacity: 0; }
+  46.01%, 100% { transform: translateX(-650px); opacity: 0; }
+}
+
+
+/* Title fades in only after the bolt draw finishes (0.35s delay + 2.4s draw). */
+.splash-screen-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.5px;
+  animation: splash-title-in 0.6s ease-out 2.75s both;
+}
+
+@keyframes splash-title-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}

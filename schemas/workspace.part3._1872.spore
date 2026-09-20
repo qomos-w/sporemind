@@ -1,0 +1,233 @@
+// workspace namespace — wire-shape types for workspace.* callables and
+// workspace-owned durable UI state.
+//
+// Authoring source of truth for:
+//   - workspace mount / unmount / create / list (incl. ProjectRef tree)
+//   - workspace mounts event broadcast
+//   - workspace account / session / preferences snapshots
+//   - workspace durable UI state (dock, panels, layout, ai shell, explorer)
+//
+//
+// @ts-export
+
+// ---- project handles (shared with future project.* phase via Go alias) ----
+
+
+struct WorkspaceGitPullReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Remote:    string
+}
+
+
+struct WorkspaceGitBranchReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+}
+
+
+struct WorkspaceGitBranchResp {
+    Branches: array<GitBranchInfo>
+}
+
+
+struct WorkspaceGitCheckoutReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Branch:    string
+    Create:    bool
+}
+
+
+struct WorkspaceGitResetReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    optional Paths: array<string>
+}
+
+
+struct GitStashInfo {
+    Index:    int
+    Message:  string
+    Hash:     string
+    When:     string
+}
+
+
+struct WorkspaceGitStashSaveReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    optional Message: string
+}
+
+
+struct WorkspaceGitStashPopReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    optional Index: int
+}
+
+
+struct WorkspaceGitStashListReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+}
+
+
+struct WorkspaceGitStashListResp {
+    Stashes: array<GitStashInfo>
+}
+
+
+struct WorkspaceGitStashDropReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    optional Index: int
+}
+
+
+struct GitRemoteInfo {
+    Name: string
+    Urls: array<string>
+}
+
+
+struct WorkspaceGitRemoteListReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+}
+
+
+struct WorkspaceGitRemoteListResp {
+    Remotes: array<GitRemoteInfo>
+}
+
+
+struct WorkspaceGitRemoteAddReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Name:     string
+    Url:      string
+}
+
+
+struct WorkspaceGitRemoteRemoveReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Name:     string
+}
+
+
+struct GitBlameLine {
+    Hash:    string
+    Author:  string
+    Email:   string
+    When:    string
+    Line:    int
+    Content: string
+}
+
+
+struct WorkspaceGitBlameReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    FilePath:  string
+}
+
+
+struct WorkspaceGitBlameResp {
+    Lines: array<GitBlameLine>
+}
+
+
+struct WorkspaceGitConfigGetReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Key:       string
+}
+
+
+struct WorkspaceGitConfigGetResp {
+    Value: string
+}
+
+
+struct WorkspaceGitConfigSetReq {
+    ProjectId: string
+    optional WorktreeID: string  // 非空时路由到该 worktree（须属于 project）；空 = 项目根
+    Key:       string
+    Value:     string
+    Global:    bool
+}
+
+
+struct WorkspaceUpdateProjectReq {
+    ProjectId: string
+    optional Name: string
+    optional LastOpenedAt: string
+    optional PermissionMode: string
+    optional ClearPermissionMode: bool
+    optional AppKind: string       // 非空时设置项目 App 档位（"dev-app" | "sporeapp"）
+    optional ClearAppKind: bool    // true 时清除 AppKind，恢复普通项目
+}
+
+
+struct WorkspaceUpdateProjectResp {
+    Project: ProjectRef
+}
+
+
+struct WorkspaceLoadAgentReq {
+    AgentId: string
+}
+
+
+struct WorkspaceLogEntry {
+    Timestamp: string
+    Level:     string
+    Caller:    string
+    Message:   string
+    optional Fields: map<string, any>
+    optional CallerFile: string   // file path extracted from Caller (before the last ':')
+    optional CallerLine: int64    // line number extracted from Caller (after the last ':')
+}
+
+
+struct WorkspaceLogsQueryReq {
+    optional Source:  string
+    optional Level:   string
+    optional Caller:  string
+    optional Message: string
+    optional Before:  string
+    optional Limit:   int
+    optional Tail:    int
+}
+
+
+struct WorkspaceLogsQueryResp {
+    Items: array<WorkspaceLogEntry>
+    optional Truncated:  bool    // true when more entries exist before the oldest returned
+    optional NextBefore: string  // pass as Before to fetch the next older segment
+}
+
+
+// ChildSpawnConfig carries the parent-provided context needed to create a
+// fork child agent through the unified project.spawn_agent path. When present,
+// handleSpawnAgent uses NewChildActor instead of NewActor.
+struct ChildSpawnConfig {
+    ParentActorID:  string   // parent agent's actor ID (for ref.Ref lookup)
+    ParentTurnID:   string   // parent turn reference for result routing
+    ParentStepID:   string   // parent step that owns this fork
+    ParentToolUseID: string  // tool-use ID for activeChildren tracking
+    Task:           string   // task description (shown as step title)
+    Prompt:         string   // full prompt body (task + parent context appended by parent)
+    MaxIterations:  int      // child max iterations; 0 = kind default
+    optional HotContext: array<ContentBlock>  // pre-resolved hot context (git status, project roots, etc.)
+}
+
+
+// Marks an agent conversation as viewed by the user: stamps
+// AgentRuntimeState.LastAccessedAt (RFC3339 UTC) so completion badges clear.
+struct WorkspaceAgentAccessReq {
+    AgentActorId: string
+}

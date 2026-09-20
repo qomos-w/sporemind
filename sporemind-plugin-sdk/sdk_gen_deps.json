@@ -1,0 +1,18 @@
+{
+  "_comment": "Maps SDK core contract types to their schema IDs. The gen/ directory is slimmed to only the files containing these types (app.gen.go, plugin.gen.go). dev_generate/sdk_vendor materialize these gen files from the host's live schema registry. CI gate: regenerate + git diff must be empty.",
+  "types": {
+    "AppManifest": 2000,
+    "AppCallableDescriptor": 1988,
+    "AppEntrypoint": 1991,
+    "AppBundle": 1999,
+    "AppBundleTool": 1998,
+    "PluginAbi": 2192,
+    "PluginAbiInvokeEnvelope": 2196,
+    "PluginSdkRequest": 2197,
+    "PluginSdkResponse": 2198
+  },
+  "gen_files": [
+    "app.gen.go",
+    "plugin.gen.go"
+  ]
+}

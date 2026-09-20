@@ -1,0 +1,15 @@
+// appmanager plugin event emit — the pluginhost→appmanager forward for the
+// SDK `app.emit` host call. The pluginhost injects PluginId (the calling
+// plugin's identity); the appmanager re-validates the Event against the app
+// manifest before broadcasting on the app_event bus kind.
+// @ts-export
+
+struct AppManagerPluginEmitReq {
+    PluginId: string
+    Event: string
+    Payload: bytes
+}
+
+struct AppManagerPluginEmitResp {
+    Accepted: bool
+}

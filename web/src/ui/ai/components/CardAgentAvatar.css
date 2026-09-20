@@ -1,0 +1,48 @@
+.card-agent-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  user-select: none;
+  flex-shrink: 0;
+  margin-left: auto;
+  background-color: hsl(var(--avatar-hue) 70% 92%);
+  color: hsl(var(--avatar-hue) 64% 36%);
+}
+
+[data-theme="dark"] .card-agent-avatar {
+  background-color: hsl(var(--avatar-hue) 45% 22%);
+  color: hsl(var(--avatar-hue) 75% 88%);
+}
+
+.card-agent-avatar-ring {
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  border-top-color: var(--accent, hsl(210 80% 55%));
+  animation: card-agent-avatar-spin 1.2s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes card-agent-avatar-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Interactive affordance: only applied when an onClick handler is provided. */
+.card-agent-avatar--clickable {
+  cursor: pointer;
+  transition: box-shadow 0.15s ease;
+}
+
+.card-agent-avatar--clickable:hover {
+  box-shadow: 0 0 0 2px var(--accent, hsl(210 80% 55% / 0.3));
+  z-index: 3;
+}

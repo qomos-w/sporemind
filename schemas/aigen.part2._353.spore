@@ -1,0 +1,429 @@
+// aigen namespace — AI execution surface wire shapes (non-discriminated).
+// @ts-export
+//
+// Sources of truth for:
+//   - aggregator chat dispatch request (SendSessionMessageReq + ChatMessage
+//     + ContentBlock + ToolSpec)
+//   - turn streaming payload bodies (TurnStartedPayload, TurnTextDelta...,
+//     each individual event payload) and the discriminated TurnEvent
+//     container that carries 12 optional pointer payloads.
+//   - aggregator chunk protocol (AggregatorChunk) and agent session history
+//     (Turn, Session, AgentTurnCompleteReq)
+//   - aggregator status / capability descriptors (AICallableUnitView,
+//     AIAggregatorStatusResp, AggregatorDescriptor)
+//   - agent reference (AgentRef + list resp)
+//   - agent config (AgentConfig)
+//   - turn status snapshot
+//
+
+
+//
+// TurnEventKind / AggregatorChunkKind enum constants remain in pkg/domain
+// as Go-side string aliases; the wire tags on the kind field are plain
+// `string` since Spore DSL does not model enums.
+
+
+struct AIAggregatorStatusResp {
+    Id:        string
+    Name:      string
+    Version:   long
+    UnitCount: int
+    // Disabled is true when the aggregator itself is manually disabled by an operator.
+    optional Disabled: bool
+    Units:     array<AICallableUnitView>
+}
+
+
+struct AgentRef {
+    Id:                     string
+    ActorId:                string
+    ProjectId:              string
+    // Human-readable project mount name resolved from workspace mounts at
+    // read time (list projections only). Empty when the project actor is not
+    // mounted; consumers fall back to ProjectId.
+    optional ProjectName:   string
+    DisplayName:            string
+    AgentKind:              string
+    optional LoadState:     string   // "unloaded" | "loading" | "loaded" | "error"
+    optional Mode:          AgentModeState
+    optional Status:        string
+    optional LastActivity:  string
+    optional ActiveTurnRef: string
+    optional Primary:       ModelSlot
+    optional Fast:          ModelSlot
+    optional Execution:     ModelSlot
+    optional Review:        ModelSlot
+    optional Summary:       ModelSlot
+    optional Title:        string
+    optional CompactionPolicy: CompactionPolicy
+    optional StoragePolicy:    StoragePolicy
+    optional Degraded:       bool
+    optional DegradedReason: string
+    // Logical parent agent actor ID (workflow/spawn_assign caller). This is
+    // the single persisted source of truth for the agent tree; Children below
+    // is always derived from each child's ParentAgentId, never persisted as a
+    // second writable copy.
+    optional ParentAgentId:  string
+    // "workflow" (persistent workspace agent) | "turn" (fork child, turn-scoped
+    // temporary projection). Derived; empty for root agents.
+    optional LifecycleScope: string
+    // "" | "deleting" — tombstone while a cascade delete is in flight. Deleting
+    // agents are hidden from interactive projections but keep the persisted
+    // intent so cleanup resumes after a restart.
+    optional DeletionStatus: string
+    // Read-only derived child projection (workflow + fork children), unified
+    // node shape shared by sidebar and topology.
+    optional Children:       array<AgentChildRef>
+    // BoundAppId is set when this agent is a dedicated agent provisioned for
+    // a registered plugin/app (manifest plugin_agent block). It is half of
+    // the binding key: one agent per (app, BoundAppSlot), workspace-global
+    // like the Coordinator, and removed with the app registration.
+    optional BoundAppId:     string
+    // BoundAppSlot distinguishes multiple plugin_agent bindings of the same
+    // app; "" on rows written before slots existed (treated as "default").
+    optional BoundAppSlot:   string
+}
+
+
+// AgentChildRef is the read-only derived projection of one direct logical
+// child agent. Single source of truth is the child's own ParentAgentId; this
+// shape is never persisted as a writable copy. Live fork children, archived
+// fork children and workflow children all render as the same node shape so the
+// sidebar and topology consume one unified child projection.
+struct AgentChildRef {
+    Id:                 string   // stable node ID (child actor ID; unchanged across live→archive transition)
+    ActorId:            string
+    // Optional to match the projection semantics on AgentRef / AgentListItem:
+    // derived state that is empty for root agents or while a projection is
+    // partial (e.g. archived fork children with only the node identity known).
+    optional ParentAgentId: string
+    optional DisplayName:   string
+    optional AgentKind:     string
+    // "turn" (fork child) | "workflow" (persistent workspace agent)
+    optional LifecycleScope: string
+    // "running" | "completed" | "failed" | "cancelled" | "deleting" | "archived"
+    optional Status: string
+    // Opaque conversation routing target. "actor:<actorId>" routes to the
+    // child's own session. Callers must not assume the target actor is alive.
+    optional ConversationTarget: string
+    optional ToolUseId: string   // fork child tool use ID; empty for workflow children
+    optional LastActivity: string
+}
+
+
+struct AgentRefListResp {
+    Items: array<AgentRef>
+}
+
+
+struct AgentConfigureReq {
+    optional Primary:   ModelSlot
+    optional Fast:      ModelSlot
+    optional Execution: ModelSlot
+    optional Review:    ModelSlot
+    optional Summary:   ModelSlot
+    // Title is an explicit, user-driven title edit forwarded by the workspace
+    // from workspace.update_agent. Unlike agent.title.set (LLM inference,
+    // set-once), a non-empty Title here overwrites the current title.
+    optional Title:        string
+}
+
+
+struct CompactionPolicy {
+    Enabled:          bool
+    Strategy:         string
+    TriggerKind:      string
+    optional BudgetMode:       string   // "absolute" | "percentage"
+    optional TokenBudget:      int
+    optional RecentWindow:     int
+    optional SummaryUnit:      ModelUnit
+    optional MaxSummaryTokens: int
+}
+
+
+struct SummarySegment {
+    SourceStartIndex: int
+    SourceEndIndex:   int
+    Level:            int32
+    Text:             string
+    InputTokens:      long
+    OutputTokens:     long
+    CreatedAt:        string
+}
+
+
+struct AgentConfig {
+    RoleId:    string
+    ModelId:   string
+    PromptIDs: array<string>
+    SkillIDs:  array<string>
+    ScriptId:  string
+    optional CompactionPolicy: CompactionPolicy
+}
+
+
+// ---- thinking level registry (per agent, keyed by model+provider) ----
+
+struct ThinkingLevel {
+    Mode:            string
+    optional Effort: string
+    optional Budget: int
+}
+
+
+struct ThinkingRegistryEntry {
+    Unit:         ModelUnit
+    Level:        ThinkingLevel
+}
+
+
+struct SetThinkingLevelReq {
+    Unit:         ModelUnit
+    Level:        ThinkingLevel
+}
+
+
+struct GetThinkingRegistryResp {
+    Entries: array<ThinkingRegistryEntry>
+}
+
+
+struct PlanAllowedPrompt {
+    Tool:   string
+    Prompt: string
+}
+
+
+struct TurnPlanPolicy {
+    Mode:        string
+    optional AllowedPrompts: array<PlanAllowedPrompt>
+}
+
+
+struct TurnPlanApprovalRequestedPayload {
+    TurnId:       string
+    RequestId:    string
+    Plan:         string
+    optional Tasks: array<TurnTask>
+    optional Policy: TurnPlanPolicy
+    optional Editable: bool
+}
+
+
+struct TurnEvent {
+    Kind:                         string
+    TurnId:                       string
+    optional Usage:               UsageData
+    optional ContextBudget:       TurnContextBudgetPayload
+    optional Payload:             map<string, any>
+}
+
+
+struct AggregatorChunk {
+    Kind:                 string
+    optional Text:        string
+    optional Usage:       UsageData
+    optional ToolUseId:   string
+    optional ToolName:    string
+    optional InputDelta:  string
+    optional Input:       string
+    optional StopReason:  string
+    // ResolvedUnit carries the concrete model unit the aggregator actually
+    // selected for this dispatch (Kind="resolved_unit"). Lets the caller learn
+    // the real executing model under aggregator/auto routing, including when
+    // the aggregator auto-switches units.
+    optional ResolvedUnit: ModelUnit
+}
+
+
+// ---- structured trace ----
+
+// StructuredTraceEntry captures one tool invocation's input, output, and
+// routing metadata in a form suitable for long-term history persistence.
+struct StructuredTraceEntry {
+    ToolUseId:    string
+    CallableId:   string
+    Service:      string
+    EffectKind:   string
+    Input:        string
+    Output:       string
+    IsError:      bool
+}
+
+
+// StructuredTraceBlock wraps all tool trace entries from one turn.
+struct StructuredTraceBlock {
+    Entries: array<StructuredTraceEntry>
+}
+
+
+// ---- agent session history ----
+
+struct TurnTask {
+    Id:                   string
+    Subject:              string
+    Status:               string
+    optional ActiveForm:  string
+}
+
+
+struct PendingSubmit {
+    Id:        string
+    Text:      string
+    Timestamp: string
+    optional Attachments: array<AttachmentEntry>
+    optional Images:      array<ImageEntry>
+    optional Meta:        string   // author attribution carried into the injected step
+}
+
+
+struct TurnFileChange {
+    Path:        string
+    Additions:   int32
+    Deletions:   int32
+    DiffContent: string
+}
+
+
+struct ExploreResult {
+    TurnId:       string
+    Summary:      string
+    SearchCount:  int32
+    ReadCount:    int32
+    InputTokens:  int32
+    OutputTokens: int32
+    Timestamp:    string
+    optional StepId: string
+}
+
+
+struct Turn {
+    Id:                   string
+    Role:                 string
+    optional UserInput:   string
+    // State is the canonical lifecycle state: "running" | "paused" | "completed" | "failed" | "cancelled" | "abandoned".
+    // Historical "resumed" is normalized to "completed" on read and must never be written.
+    optional State:       string
+    optional Assessment:  TurnAssessment
+    optional Usage:       UsageData
+    optional ContextBudget: TurnContextBudgetPayload
+    optional Tasks:       array<TurnTask>
+    optional Error:       string
+    optional Cancelled:   bool
+    optional Timestamp:   string
+    optional FileChanges: array<TurnFileChange>
+    optional ExploreResult: ExploreResult
+    optional Unit:          ModelUnit
+    optional StartedAt:     string
+    optional CompletedAt:   string
+    optional Seq:           int64
+    optional TurnOrder:     int64
+    // Revision is a monotonic version counter for this turn record. It is 1 on
+    // start and incremented on every lifecycle transition. Events and summary
+    // updates with a stale revision are ignored or discarded.
+    optional Revision:      int64
+    // PauseReason is required when State == "paused". Valid values:
+    // "user" | "interaction" | "permission" | "plan_approval" | "goal_input" | "recovery".
+    optional PauseReason:   string
+    // ResumeDescriptor is an opaque JSON blob that captures the engine checkpoint
+    // needed to safely resume this turn. It is only meaningful for paused turns.
+    optional ResumeDescriptor: string
+    optional UserAttachments: array<AttachmentEntry>
+    optional UserImages:      array<ImageEntry>
+    optional RequestStats:    array<TurnRequestStat>
+}
+
+
+struct RawSessionArtifact {
+    Kind:       string
+    Visibility: string
+    Retention:  string
+    Payload:    string
+}
+
+
+struct SessionGoal {
+    Condition: string
+    MaxTurns:  int
+    TurnCount: int
+    optional CardID: string
+    optional InterpretedGoal: string
+    optional Confirmed: bool
+    optional PlanCardIDs: array<string>
+    optional Status: string
+    optional ReviewID: string
+    optional ReviewTurnID: string
+    optional BoundTaskCardId: string
+    // Outputs captured from the ready_for_review assessment. Surfaced via
+    // agent_status so the review path (workspace.agent.review) can validate the
+    // worker's typed JSON against the bound task card's data.outputs contract
+    // before approving. Cleared on resume_from_review.
+    optional Outputs: map<string, any>
+}
+
+
+struct RawSession {
+    SummarySegments:        array<SummarySegment>
+    Artifacts:              array<RawSessionArtifact>
+    CompactionEvents:       array<CompactionEvent>
+    // CompactionLock brackets a running compaction attempt. Persisted at
+    // acquire, cleared at release; presence after load = crash mid-compaction.
+    optional CompactionLock: CompactionLockState
+    optional Tasks:         array<TurnTask>
+    // TaskHistory archives tasks swept out of Tasks at turn completion
+    // (completed/cancelled). update_task / task_cancel / task_delete fall
+    // back to it so an LLM replaying a historical task id gets a coherent
+    // result instead of "task not found".
+    optional TaskHistory:   map<string, TurnTask>
+    optional ExploreResults: array<ExploreResult>
+    optional Steps:          array<Step>
+    NextIdx:                int32
+    NextSeq:                int64
+    NextTurnOrder:          int64
+    RetentionPolicy:        string
+    optional Goal:          SessionGoal
+    optional ActiveWorkflow: ActiveWorkflow
+    optional ActiveScheduler: array<ActiveSchedulerEntry>
+    optional PendingWorkflowStart: PendingWorkflowStart
+}
+
+
+struct Session {
+    optional Turns:         array<Turn>
+    optional ActiveHead:    int
+}
+
+
+struct TurnPromptArtifactReq {
+    optional SinceMsgId: string
+}
+
+
+struct AgentTurnCompleteReq {
+    Turn:              Turn
+    NextIdx:           int32
+    optional SummarySegments:  array<SummarySegment>
+    optional CompactionEvents: array<CompactionEvent>
+    optional Steps:             array<Step>
+}
+
+
+struct AgentSessionUndoReq {
+}
+
+
+struct AgentSessionForkReq {
+    optional AtTurnId: string
+}
+
+
+struct AgentSessionForkResp {
+    Session: Session
+    optional SummarySegments: array<SummarySegment>
+    optional ExploreResults:  array<ExploreResult>
+    optional Steps:           array<Step>
+    optional Goal:            SessionGoal
+    optional NextIdx:         int
+    optional NextSeq:         long
+    optional NextTurnOrder:   long
+}

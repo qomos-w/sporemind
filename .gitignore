@@ -1,0 +1,69 @@
+.env
+.idea/
+/bin/
+tmp/
+/build/
+**/build/snapshots/
+/cmd/sporemind-desktop/web/
+package-lock.json
+bun.lock
+go.sum
+*.zip
+*.log
+windows.syso
+resource_windows_amd64.syso
+wails_windows_amd64.syso
+bind_windows_amd64.go
+go.work
+go.work.sum
+.genproto-stub/
+AUDIT.md
+*.exe
+web/node_modules/
+web/dist/
+cmd/sporemind-desktop/build/**
+!cmd/sporemind-desktop/build/Taskfile.yml
+!cmd/sporemind-desktop/build/config.yml
+!cmd/sporemind-desktop/build/windows/
+!cmd/sporemind-desktop/build/windows/Taskfile.yml
+!cmd/sporemind-desktop/build/windows/info.json
+!cmd/sporemind-desktop/build/windows/wails.exe.manifest
+node_modules/
+dist/
+pkg/web/dist/*
+!pkg/web/dist/.gitkeep
+!pkg/web/dist/README.md
+
+
+# Wails v3 generated bindings — kept tracked so `tsc` works without running wails3 first.
+# Regenerate after Go binding signature changes: `wails3 generate bindings -ts`
+
+web/tsconfig.tsbuildinfo
+# sporecode runtime state + knowledge base — stays local, never published
+.sporecode/
+
+# Test LLM configuration (contains API keys)
+test-llm.yaml
+
+# Claude Code local commands, worktrees and settings — stays local
+.claude/
+
+# Runtime actor state
+data/
+mobile/www/app/
+# mobile/www/index.html is the tracked source for the Capacitor login shell
+mobile/android/app/src/main/res/mipmap-*/ic_launcher*.png
+/package.json
+/package-lock.json
+cmd/sporemind-desktop/versioninfo.json
+
+# Global data dir default (dev mode cwd-relative when not set in sporemind.yaml)
+/.sporemind/
+/dev/null
+.wrangler/
+
+# bun package cache (machine-local, re-downloadable)
+.buncache/
+
+# local debugging dumps (logs, diagnostics, one-off scripts)
+dev/

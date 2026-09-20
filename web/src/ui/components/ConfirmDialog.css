@@ -1,0 +1,177 @@
+/* ConfirmDialog overlay */
+.confirm-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(2px);
+  animation: confirm-dialog-fade-in 0.15s ease-out;
+}
+
+@keyframes confirm-dialog-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Absolute variant centers within the nearest positioned ancestor (e.g. the
+   conversation column) instead of the viewport. */
+.confirm-dialog-overlay.absolute {
+  position: absolute;
+}
+
+/* Dialog card */
+.confirm-dialog {
+  width: 400px;
+  max-width: calc(100vw - 32px);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: 20px 24px 24px;
+  animation: confirm-dialog-slide-in 0.2s ease-out;
+}
+
+@keyframes confirm-dialog-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Header */
+.confirm-dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.confirm-dialog-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  background: var(--bg-muted);
+  color: var(--accent-primary);
+}
+
+.confirm-dialog-icon.danger {
+  background: color-mix(in srgb, var(--error) 12%, var(--bg-muted));
+  color: var(--error);
+}
+
+.confirm-dialog-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.confirm-dialog-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-secondary);
+}
+
+/* Body */
+.confirm-dialog-body {
+  margin-bottom: 20px;
+}
+
+.confirm-dialog-title {
+  margin: 0 0 6px;
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+}
+
+.confirm-dialog-desc {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Footer */
+.confirm-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.confirm-dialog-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast), opacity var(--transition-fast);
+  border: 1px solid transparent;
+}
+
+.confirm-dialog-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.confirm-dialog-btn.cancel {
+  background: var(--bg-muted);
+  color: var(--text-secondary);
+  border-color: var(--border-subtle);
+}
+
+.confirm-dialog-btn.cancel:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border-color: var(--border-default);
+}
+
+.confirm-dialog-btn.confirm {
+  background: var(--accent-primary);
+  color: white;
+  border-color: var(--accent-primary);
+}
+
+.confirm-dialog-btn.confirm:hover:not(:disabled) {
+  background: var(--accent-primary-hover);
+  border-color: var(--accent-primary-hover);
+}
+
+.confirm-dialog-btn.confirm.danger {
+  background: var(--error);
+  border-color: var(--error);
+}
+
+.confirm-dialog-btn.confirm.danger:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--error) 85%, black);
+  border-color: color-mix(in srgb, var(--error) 85%, black);
+}
+
+.confirm-dialog-spinner {
+  animation: confirm-dialog-spin 1s linear infinite;
+}
+
+@keyframes confirm-dialog-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

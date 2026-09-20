@@ -1,0 +1,138 @@
+// dbmanager namespace — connection profiles and credentials for persist
+// network backends (workflow decision point 1).
+// @ts-export
+//
+// Sources of truth for:
+//   - dbmanager.profile.* CRUD (admin-gated)
+//   - dbmanager.profile_resolve (internal dial-time credential resolution)
+//   - dbmanager.profile_lookup (internal non-secret profile read for peer
+//     actors like dbclient; secrets never cross this surface)
+//
+// Credential red line: secrets are written through profile_save and never
+// read back — every response carries DbProfileView with Has* flags instead
+// of the secret values. Backends resolve a PersistConfig.CredentialRef
+// (a profile Id) to a credential at dial time through the process-wide
+// resolver this actor installs at startup (pkg/persist/credentials.go).
+// Credentials live only in this actor's own persist document — never in
+// sporemind.yaml, never in an anonymous-role reachable callable, never in
+// a second copy.
+
+// DbProfile is the non-secret connection profile. It mirrors the non-secret
+// fields of persist.PersistConfig; secrets are stored separately (see
+// dbCredential in the actor) and are never serialized here.
+struct DbProfile {
+    Id:        string
+    Name:      string
+    Backend:   string   // persist BackendType value: redis | etcd | mongo | mysql | postgres | oss | webdav
+    optional Endpoint:  string   // host:port or URL of the remote service
+    optional Database:  string   // database / collection namespace / bucket
+    optional TunnelRef: string   // sshmanager hostID; wired by B7, not consumed here
+    optional Username:  string   // non-secret principal (kv/sql user)
+    optional AccessKey: string   // S3-compatible access key id (non-secret identifier)
+}
+
+
+// DbProfileView is the only profile shape returned by callables. Secrets
+// are reduced to Has* presence flags so a masked edit form can offer
+// "keep existing" without ever receiving the value.
+struct DbProfileView {
+    Id:          string
+    Name:        string
+    Backend:     string
+    optional Endpoint:  string
+    optional Database:  string
+    optional TunnelRef: string
+    optional Username:  string
+    optional AccessKey: string
+    HasPassword: bool
+    HasSecret:   bool
+    HasToken:    bool
+}
+
+
+// --- callables ---
+
+// DbProfileSaveReq creates (empty Id) or updates a profile. Secret fields
+// follow the sshmanager host_update rule: if any of Password/Secret/Token
+// is non-empty the whole credential entry is replaced; all-empty keeps the
+// existing credential (and means "no credential" for a new profile).
+struct DbProfileSaveReq {
+    Id:        string
+    Name:      string
+    Backend:   string
+    optional Endpoint:  string
+    optional Database:  string
+    optional TunnelRef: string
+    optional Username:  string
+    optional AccessKey: string
+    optional Password:  string
+    optional Secret:    string
+    optional Token:     string
+}
+
+
+struct DbProfileSaveResp {
+    Profile: DbProfileView
+}
+
+
+struct DbProfileListReq {
+}
+
+
+struct DbProfileListResp {
+    Items: array<DbProfileView>
+}
+
+
+struct DbProfileGetReq {
+    Id: string
+}
+
+
+struct DbProfileGetResp {
+    Profile: DbProfileView
+}
+
+
+struct DbProfileRemoveReq {
+    Id: string
+}
+
+
+struct DbProfileRemoveResp {
+}
+
+
+// DbProfileResolveReq/Resp are the aimanager provider_resolve_token analog:
+// internal-only, returns the full credential for a profile Id so persist
+// network backends can dial with it. Never expose beyond Internal
+// visibility — the response carries raw secrets.
+struct DbProfileResolveReq {
+    Id: string
+}
+
+
+struct DbProfileResolveResp {
+    Username:  string
+    Password:  string
+    AccessKey: string
+    Secret:    string
+    Token:     string
+}
+
+
+// DbProfileLookupReq/Resp expose the non-secret half of a profile to peer
+// actors (dbclient dials from it). Internal-only like profile_resolve, but
+// the response carries no secrets — only what dbclient needs to build a
+// dial target (backend/endpoint/database/tunnel/username/access key); the
+// credential itself still resolves at dial time through the process-wide
+// credential resolver.
+struct DbProfileLookupReq {
+    Id: string
+}
+
+
+struct DbProfileLookupResp {
+    Profile: DbProfile
+}

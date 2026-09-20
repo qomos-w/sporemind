@@ -1,0 +1,32 @@
+// @ts-export
+// Frontend DOM observability for plugins: pluginhost.plugin_dom asks
+// the host webview to serialize a mounted plugin view's DOM through the
+// plugin bridge port (the iframe is cross-origin to the host page, so the
+// bridge is the only channel) and polls this store until the frontend push
+// (pluginhost.plugin_dom_put) lands or a short budget expires.
+
+struct PluginDomReq {
+    PluginId: string
+}
+
+// PluginDomResp carries the latest snapshot captured after the request
+// started. Found=false + Reason explains absence (unknown plugin, no panel
+// mounted, or the snapshot push timed out).
+struct PluginDomResp {
+    PluginId: string
+    Found: bool
+    optional Snapshot: string   // bounded text outline; truncated at source
+    optional CapturedAt: long   // client ms epoch, from the frontend push
+    optional Reason: string
+}
+
+// PluginDomPutReq is the host-shell push carrying the serialized DOM from
+// the plugin iframe's bridge client.
+struct PluginDomPutReq {
+    PluginId: string
+    Snapshot: string
+    Ts: long          // client ms epoch
+}
+
+struct PluginDomPutResp {
+}

@@ -1,0 +1,110 @@
+.km-bindings {
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.km-bindings-header {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(180px, 1.2fr) auto;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #888);
+  padding: 0 8px;
+}
+
+.km-category {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 6px;
+}
+
+.km-category-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-tertiary, #888);
+  padding: 4px 8px 2px;
+}
+
+.km-binding-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) minmax(180px, 1.2fr) auto;
+  gap: 8px;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.km-binding-row:hover {
+  background: var(--bg-hover, rgba(128, 128, 128, 0.08));
+}
+
+.km-action-label {
+  font-size: 0.8125rem;
+}
+
+.km-key-chip {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--border-color, rgba(128, 128, 128, 0.35));
+  background: var(--bg-elevated, rgba(128, 128, 128, 0.06));
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.km-key-chip:hover:not(:disabled) {
+  border-color: var(--accent, #4c8bf5);
+}
+
+.km-key-chip:disabled {
+  cursor: default;
+  opacity: 0.75;
+}
+
+.km-key-chip.km-capturing {
+  border-color: var(--accent, #4c8bf5);
+  background: color-mix(in srgb, var(--accent, #4c8bf5) 14%, transparent);
+  animation: km-pulse 1.1s ease-in-out infinite;
+}
+
+.km-key-chip.km-conflict {
+  border-color: var(--danger, #e5534b);
+}
+
+.km-conflict-hint {
+  font-size: 0.72rem;
+  color: var(--danger, #e5534b);
+}
+
+.km-capture-hint,
+.km-create-title {
+  font-size: 0.75rem;
+  color: var(--text-tertiary, #888);
+}
+
+.km-create {
+  margin-top: 14px;
+}
+
+.km-create-title {
+  margin-bottom: 6px;
+}
+
+.km-custom-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+@keyframes km-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}

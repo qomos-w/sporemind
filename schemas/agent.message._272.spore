@@ -1,0 +1,73 @@
+// agent.message namespace — inter-agent messaging.
+// @ts-export
+//
+// Sources of truth for:
+//   - workspace.agent.send_message
+//   - agent.message.receive
+//   - agent.message.list
+//   - agent.message.clear
+//   - agent_message_received event
+//
+// Design: 同构于 agent.chat.submit — 核心输入都是 Text 字符串。
+// 目标 agent 空闲时以 Role="user" turn（meta=agent|id|name）记录并触发新 turn；
+// 目标 agent 运行中则作为 pending submit 在下一个 step 边界注入。
+
+struct AgentMessageSendReq {
+    ToAgentId:     string
+    Text:          string
+    optional MessageType: string
+    optional CallerAgentId: string   // injected by turn engine: calling agent's actor ID for conversable-grant auth
+}
+
+
+struct AgentMessageSendResp {
+    Sent: bool
+}
+
+
+struct AgentMessageReceiveReq {
+    FromAgentId:   string
+    FromName:      string
+    Text:          string
+    MessageType:   string
+    Timestamp:     string
+}
+
+
+struct AgentMessage {
+    Id:          string
+    FromAgentId: string
+    FromName:    string
+    ToAgentId:   string
+    Text:        string
+    MessageType: string
+    Timestamp:   string
+}
+
+
+struct AgentMessageListResp {
+    Items: array<AgentMessage>
+}
+
+
+// workspace.agent_read_message / agent.message_read — read a target agent's
+// conversation text (closed steps only), newest first. Tool-call steps render
+// the sent parameters only; tool results are not included.
+
+struct AgentMessageReadReq {
+    ToAgentId:          string
+    optional Limit:     int32   // return the last N entries (default 20, max 200)
+    optional BeforeSeq: int64   // continue reading strictly older than this ai-step seq
+    optional CallerAgentId: string   // injected by turn engine: calling agent's actor ID for conversable-grant auth
+}
+
+struct AgentMessageReadResp {
+    Items:   array<AgentMessageReadItem>
+    HasMore: bool
+}
+
+struct AgentMessageReadItem {
+    Seq:     int64   // ai-step sequence number (global, monotonic)
+    Role:    string  // user | assistant | system | tool
+    Content: string  // text content; tool calls render as "Name(input)"
+}

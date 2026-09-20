@@ -1,0 +1,197 @@
+/* ── Project Properties Overlay (body-specific; shell in Modal.css) ── */
+
+.project-properties-title {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.project-properties-subtitle {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+}
+
+/* ── Bundle multi-select (chips + collapsible checklist) ── */
+
+.pp-bundle-select {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pp-bundle-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.pp-bundle-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 2px 4px 2px 8px;
+  font-size: var(--text-xs);
+  color: var(--text-primary);
+  background: var(--bg-hover);
+  border: 1px solid var(--border-default);
+  border-radius: 999px;
+}
+
+.pp-bundle-chip-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.pp-bundle-chip-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-bundle-chip-x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.pp-bundle-chip-x:hover:not(:disabled) {
+  background: var(--border-default);
+  color: var(--text-primary);
+}
+
+.pp-bundle-chip-x:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pp-bundle-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 10px;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.pp-bundle-trigger:hover:not(:disabled) {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.pp-bundle-trigger:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pp-bundle-chevron {
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+  transition: transform 0.12s ease;
+}
+
+.pp-bundle-chevron--open {
+  transform: rotate(180deg);
+}
+
+.pp-bundle-list {
+  max-height: 224px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-elevated);
+}
+
+.pp-bundle-empty {
+  padding: 16px 12px;
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  text-align: center;
+}
+
+.pp-bundle-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  text-align: left;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--border-subtle);
+  cursor: pointer;
+}
+
+.pp-bundle-option:last-child {
+  border-bottom: none;
+}
+
+.pp-bundle-option:hover:not(:disabled) {
+  background: var(--bg-hover);
+}
+
+.pp-bundle-option:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.pp-bundle-option--checked {
+  background: var(--bg-hover);
+}
+
+.pp-bundle-option-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  flex-shrink: 0;
+  color: var(--accent-primary);
+}
+
+.pp-bundle-option-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.pp-bundle-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+
+.pp-bundle-option-title {
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-bundle-option-desc {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

@@ -1,0 +1,247 @@
+// dbclient namespace — unified read-only browse/query surface over
+// dbmanager connection profiles (设计数据库客户端会话视图). The actor
+// dials with persist.ResolveCredential / persist.ResolveTunnel at dial time
+// (secrets never cross a callable boundary); every query path is read-only
+// (sql allowlist, redis read-command whitelist, mongo find/aggregate only).
+// @ts-export
+//
+// Path conventions per backend (slash/dot separated, consumed by
+// dbclient.tree and dbclient.read):
+//   mysql/postgres: "" -> databases, "db" -> tables, "db.table" -> rows
+//   mongo:          "" -> databases, "db" -> collections, "db.coll" -> docs
+//   redis:          "" -> db indexes, "N" -> keys, "N/key" -> value
+//   etcd:           "" -> top-level, "a/b" -> one dir/key level
+//   oss/webdav:     "" -> buckets/root, "bucket/dir" -> dirs, read -> objects
+
+// DbTreeNode is one lazily-loaded browse-tree node.
+struct DbTreeNode {
+    Path:  string            // canonical locator, see conventions above
+    Kind:  string            // database|table|collection|key|keyprefix|dir|bucket|object
+    Label: string            // display name (last path segment)
+    optional Meta: map<string, string>
+}
+
+
+// DbRows is the unified tabular result for read/query. Cells are strings;
+// any cell longer than 512 chars is cut with a "...(truncated)" marker and
+// Truncated flips true.
+struct DbRows {
+    Columns:   array<string>
+    Rows:      array<array<string>>
+    Truncated: bool     // row cap cut the result or a cell was over 512 chars
+    optional Message: string
+}
+
+
+struct DbDialTestReq {
+    ProfileId: string
+}
+
+
+struct DbDialTestResp {
+    Ok:          bool
+    LatencyMs:   int64
+    optional ServerVersion: string
+    optional Error:         string   // dial/ping failure detail (truncated)
+}
+
+
+struct DbTreeReq {
+    ProfileId: string
+    Path:      string
+    optional Cursor: string   // backend pagination token (redis SCAN cursor)
+}
+
+
+struct DbTreeResp {
+    Nodes:     array<DbTreeNode>
+    optional Cursor: string   // pass back to continue paging
+    HasMore:   bool
+}
+
+
+struct DbReadReq {
+    ProfileId: string
+    Path:      string
+    optional Limit:  int   // default 500, clamped to [1, 1000]
+    optional Offset: int
+}
+
+
+// DbQueryReq runs a read-only query. Mode selects the dialect: auto (per
+// backend default) | sql | json (mongo) | cmd (redis). oss/webdav profiles
+// reject query (browse-only). Safety boundary: sql statements must start
+// with SELECT/WITH/SHOW/EXPLAIN (single statement only); redis commands must
+// be in the read whitelist; mongo text is a JSON document:
+//   {"collection": "c", "filter": {...}, "limit": 50}
+//   {"collection": "c", "aggregate": [...]}
+struct DbQueryReq {
+    ProfileId: string
+    Text:      string
+    optional Mode: string   // auto|sql|json|cmd, default auto
+}
+
+
+struct DbCloseReq {
+    ProfileId: string   // releases all pooled handles for this profile
+}
+
+
+struct DbCloseResp {
+}
+
+
+// --- table structure surface (mysql | postgres sql profiles) ---
+
+// DbColumnDef is one column of a table structure (dbclient.describe).
+struct DbColumnDef {
+    Name:     string
+    DataType: string          // type as reported by the server
+    Nullable: bool
+    optional Default: string  // rendered default, "" when none
+    optional Key:     string  // PRI/UNI/MUL (mysql key info; empty when n/a)
+    optional Extra:   string  // auto_increment etc.
+}
+
+
+// DbIndexDef is one index of a table structure.
+struct DbIndexDef {
+    Name:    string
+    Columns: string   // comma-separated ordered column list
+    Unique:  bool
+}
+
+
+// DbDescribeReq returns the structure (columns + indexes) of one table.
+// Path uses the same "db.table" shape as tree/read. Only mysql/postgres
+// profiles support describe; other backends reject the call.
+struct DbDescribeReq {
+    ProfileId: string
+    Path:      string
+}
+
+
+struct DbDescribeResp {
+    Columns: array<DbColumnDef>
+    Indexes: array<DbIndexDef>
+}
+
+
+// --- object storage surface (oss | webdav profiles) ---
+//
+// Path conventions:
+//   oss:    "" -> buckets, "<bucket>" -> objects (recursive listing), "<bucket>/<prefix>" -> dir/objects
+//   webdav: "" -> root, "<dir>" -> dir children, "<dir>/<file>" -> file
+//
+// All byte payloads are base64 (matches sshmanager.file_download pattern).
+// Safety boundary: only oss/webdav profiles may invoke these; other backends
+// reject the call. Storage-effectful callables (write/delete/mkdir) are
+// admin-only (CLAUDE.md 约束面 显式).
+
+// DbObjectEntry is one object or directory in a storage listing.
+struct DbObjectEntry {
+    Name:        string   // last path segment (display name)
+    Path:        string   // canonical full path (same shape as Tree Path)
+    IsDir:       bool
+    Size:        int64    // -1 when size is unknown (oss dir, etc.)
+    optional Modified:    string   // RFC3339 UTC
+    optional ContentType: string
+}
+
+
+// DbObjectListReq lists the immediate children of Path (bucket, prefix, or dir).
+struct DbObjectListReq {
+    ProfileId: string
+    Path:      string
+    optional Cursor: string   // backend pagination token (oss ListObjects v2 continuation token)
+    optional Limit:  int      // default 1000, clamped to [1, 5000]
+}
+
+
+// DbObjectListResp returns the page of children plus paging cursors.
+struct DbObjectListResp {
+    Entries:    array<DbObjectEntry>
+    optional Cursor: string
+    HasMore:    bool
+}
+
+
+// DbObjectReadReq fetches the raw bytes of one object. WebDAV dirs return an error.
+struct DbObjectReadReq {
+    ProfileId: string
+    Path:      string
+}
+
+
+// DbObjectReadResp carries base64-encoded bytes + metadata. Content is truncated
+// to the 50 MiB cap (matches sshmanager.file_download limit) to keep callables
+// bounded; Truncated flips true when the source exceeds the cap.
+struct DbObjectReadResp {
+    Content:    string   // base64-encoded bytes
+    Size:       int64    // byte count of the decoded content
+    Truncated:  bool     // true when the source exceeds the cap
+    optional ContentType: string
+    optional Modified:    string
+}
+
+
+// DbObjectWriteReq uploads bytes to Path. Parent directory must already exist
+// (use mkdir first). ContentType is forwarded to oss/webdav when set.
+struct DbObjectWriteReq {
+    ProfileId:      string
+    Path:           string
+    Content:        string   // base64-encoded bytes
+    optional ContentType: string
+}
+
+
+// DbObjectWriteResp returns the bytes written (sanity check).
+struct DbObjectWriteResp {
+    Size: int64
+}
+
+
+// DbObjectDeleteReq removes a file or directory (recursive). Object-store
+// prefixes with no children are removed as a single object.
+struct DbObjectDeleteReq {
+    ProfileId: string
+    Path:      string
+}
+
+
+// DbObjectDeleteResp is empty.
+struct DbObjectDeleteResp {
+}
+
+
+// DbObjectMkdirReq creates an empty directory at ParentPath + Name. oss has
+// no native directories; the call creates a zero-byte marker object with a
+// trailing slash, which the listing layer normalises away.
+struct DbObjectMkdirReq {
+    ProfileId:  string
+    ParentPath: string
+    Name:       string
+}
+
+
+// DbObjectMkdirResp is empty.
+struct DbObjectMkdirResp {
+}
+
+
+// DbObjectStatReq returns metadata for one path without fetching its bytes.
+struct DbObjectStatReq {
+    ProfileId: string
+    Path:      string
+}
+
+
+// DbObjectStatResp reports size + metadata. IsDir distinguishes a directory
+// listing from a file head.
+struct DbObjectStatResp {
+    Size:       int64
+    IsDir:      bool
+    optional Modified:    string
+    optional ContentType: string
+}
+

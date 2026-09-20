@@ -1,0 +1,72 @@
+// coordinator.wearable namespace — Coordinator-only high-level wearable
+// interaction tools (IDs 2550+).
+// @ts-export
+//
+// Sources of truth for the payloads of:
+//   - coordinator.wearable.notify
+//   - coordinator.wearable.call
+//
+// These are the ONLY wearable-facing tools the Coordinator LLM sees. They are
+// registered at runtime via ctx.Register on the Coordinator agent; .spore files
+// declare payload structs only, and the callable manifest is derived from the
+// live actor tree (see cmd/sporemind-gen-manifest).
+//
+// Handlers (pkg/actor/agent/coordinator_wearable.go) resolve the glassinteract
+// service and call only the existing high-level internal Glass Interact
+// callables glass_interact.speak / glass_interact.render. There is no raw
+// cross-session channel; both tools fail with a clear error when no active
+// online glass session exists.
+
+// CoordinatorWearableNotifyReq — high-level notify command. Text is spoken via
+// glass_interact.speak; a non-empty Frame is rendered via glass_interact.render
+// (latest-only lastFrame). MessageId is optional; an id is generated when
+// omitted so speak keeps its at-most-once duplicate contract. SessionId and
+// Generation are optional active-session targets validated by Glass Interact.
+struct CoordinatorWearableNotifyReq {
+    optional Text: string
+    optional MessageId: string
+    optional Frame: GlassRenderFrame
+    optional SessionId: string
+    optional Generation: long
+}
+
+
+// CoordinatorWearableNotifyResp — outcome of a notify. Spoken/Displayed report
+// which high-level channels were applied; Duplicate mirrors speak dedup.
+struct CoordinatorWearableNotifyResp {
+    optional SessionId: string
+    optional Generation: long
+    optional MessageId: string
+    Applied: bool
+    Spoken: bool
+    Displayed: bool
+    Duplicate: bool
+    optional Error: string
+}
+
+
+// CoordinatorWearableCallReq — high-level interaction request: prompt the
+// wearable user for input. The prompt is delivered through the existing
+// high-level speak/render surface and recorded as a bounded pending interaction
+// on the Coordinator (runtime-only) so a later reply can be correlated.
+struct CoordinatorWearableCallReq {
+    Prompt: string
+    optional MessageId: string
+    optional Frame: GlassRenderFrame
+    optional SessionId: string
+    optional Generation: long
+}
+
+
+// CoordinatorWearableCallResp — bounded pending interaction response.
+// InteractionId identifies the pending interaction for later correlation;
+// Pending=true means the interaction was accepted and is awaiting the reply.
+struct CoordinatorWearableCallResp {
+    InteractionId: string
+    optional SessionId: string
+    optional Generation: long
+    optional MessageId: string
+    Pending: bool
+    optional Prompt: string
+    optional Error: string
+}

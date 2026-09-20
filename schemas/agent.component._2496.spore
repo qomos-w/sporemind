@@ -1,0 +1,48 @@
+// agent.component namespace — Agent-owned MonoCard component mounts.
+// @ts-export
+
+struct AgentComponentMountReq {
+    CardId: string
+    optional Enabled: bool
+    optional Order: int
+    optional Scope: string
+}
+
+struct AgentComponentMountResp {
+    Mount: AgentComponentMount
+}
+
+struct AgentComponentUnmountReq {
+    CardId: string
+    // Confirm acknowledges destructive side effects of unmounting. Required
+    // for builtin:mode:worktree, whose unmount discards the agent's worktree
+    // (uncommitted changes are lost).
+    optional Confirm: bool
+}
+
+struct AgentComponentUnmountResp {
+    CardId: string
+}
+
+struct AgentComponentSetEnabledReq {
+    CardId: string
+    Enabled: bool
+}
+
+struct AgentComponentSetEnabledResp {
+    Mount: AgentComponentMount
+}
+
+struct AgentComponentListReq {
+}
+
+struct AgentComponentListResp {
+    Items: array<AgentComponentMount>
+}
+
+struct AgentComponentSnapshotReq {
+}
+
+struct AgentComponentSnapshotResp {
+    Snapshot: AgentComponentSnapshot
+}

@@ -1,0 +1,22 @@
+// appmanager plugin namespace — load/unload a registered native plugin's
+// artifact without unregistering the app. The appmanager record persists
+// manifest + ABI + artifact path, so a stopped plugin can be re-loaded
+// without re-running the project build. Spore-runtime apps are managed by
+// register/unregister only and are rejected here with a stable error.
+// @ts-export
+
+struct AppManagerPluginLoadReq {
+    Id: string
+}
+
+struct AppManagerPluginLoadResp {
+    Status: AppStatus
+}
+
+struct AppManagerPluginUnloadReq {
+    Id: string
+}
+
+struct AppManagerPluginUnloadResp {
+    Status: AppStatus
+}

@@ -1,0 +1,149 @@
+// im namespace — instant messaging gateway.
+// @ts-export
+//
+// Sources of truth for:
+//   - im.account.* list / CRUD request/response types
+//   - im.route.* — exclusive account→agent mount routing
+//   - im.send — outbound push from sporemind into an IM chat
+//
+// Provider adapters are pluggable. v1 ships Telegram (Bot API long polling,
+// no public endpoint required); feishu (WebSocket) and wecom/dingtalk (public
+// webhook via frp) are follow-ups.
+
+// ImAccount — a single stored IM bot connection. Token is persisted in
+// plaintext server-side; it is never returned in list/view projections.
+// AllowUsers is the inbound identity gate: messages from IM user ids not in
+// the list are rejected with a notice (empty list denies everyone).
+struct ImAccount {
+    Id:       string
+    Name:     string
+    Provider: string  // "telegram"
+    Token:    string
+    Enabled:  bool
+    optional AllowUsers: array<string>
+    optional ApiBase:    string  // endpoint override (e.g. self-hosted Bot API server)
+}
+
+
+// ImAccountView — redacted projection; Token replaced by HasToken.
+struct ImAccountView {
+    Id:        string
+    Name:      string
+    Provider:  string
+    Enabled:   bool
+    HasToken:  bool
+    optional AllowUsers:   array<string>
+    optional ApiBase:      string
+    optional BotUsername:  string  // resolved via provider identity call after connect
+    optional Status:       string  // "connected" | "disconnected" | "connecting" | "error"
+    optional StatusDetail: string
+}
+
+
+struct ImAccountListReq {}
+
+
+struct ImAccountListResp {
+    Items: array<ImAccountView>
+}
+
+
+struct ImAccountCreateReq {
+    Name:     string
+    Provider: string
+    Token:    string
+    optional Enabled:    bool  // default true
+    optional AllowUsers: array<string>
+    optional ApiBase:    string
+}
+
+
+struct ImAccountCreateResp {
+    Account: ImAccountView
+}
+
+
+struct ImAccountUpdateReq {
+    Id: string
+    optional Name:      string
+    optional Token:     string  // empty preserves the stored secret (redacted edit flow)
+    optional Enabled:   bool
+    optional AllowUsers: array<string>
+    optional ApiBase:   string
+}
+
+
+struct ImAccountUpdateResp {
+    Account: ImAccountView
+}
+
+
+struct ImAccountDeleteReq {
+    Id: string
+}
+
+
+struct ImAccountDeleteResp {}
+
+
+// ImRoute — mounts one IM account exclusively onto one sporemind agent
+// (account→agent mount semantics: at most one route per account, one account
+// per agent). Inbound messages from the mounted account are submitted via
+// agent.chat.submit on the bound agent; turn results are sent back to the
+// account's chat. Deleting the route unmounts. MountedAt is server-stamped
+// UTC ISO on set (the presentation layer converts to local time).
+struct ImRoute {
+    Id: string
+    AccountId: string
+    AgentActorId: string
+    optional MountedAt: string  // server-stamped UTC ISO mount time
+}
+
+
+struct ImRouteListReq {}
+
+
+struct ImRouteListResp {
+    Items: array<ImRoute>
+}
+
+
+struct ImRouteSetReq {
+    AccountId:    string
+    AgentActorId: string
+}
+
+
+struct ImRouteSetResp {
+    Route: ImRoute
+}
+
+
+struct ImRouteDeleteReq {
+    Id: string
+}
+
+
+struct ImRouteDeleteResp {}
+
+
+// ImStatus — live connection state for all enabled accounts.
+struct ImStatusReq {}
+
+
+struct ImStatusResp {
+    Items: array<ImAccountView>
+}
+
+
+// im.send — push a text message into an IM chat (notifications, reminders).
+struct ImSendReq {
+    AccountId:    string
+    ChatId:       string
+    Text:         string
+}
+
+
+struct ImSendResp {
+    Sent: bool
+}

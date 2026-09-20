@@ -1,0 +1,284 @@
+/* ── CompactMessageStream ── */
+/* Simplified bubble layout for the message drawer. */
+
+.compact-message-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding: 8px 12px;
+  scroll-behavior: smooth;
+}
+
+.compact-message-empty {
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.3));
+  font-size: 12px;
+  text-align: center;
+  padding: 16px 0;
+}
+
+/* ── User bubble: right-aligned ── */
+
+.compact-bubble-row.compact-user-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+
+.compact-user-turn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.compact-user-turn > .sender-avatar {
+  margin-bottom: 3px;
+}
+.compact-user-bubble {
+  max-width: 80%;
+  padding: 6px 12px;
+  border-radius: 14px 14px 4px 14px;
+  background: var(--accent-primary, rgba(99, 102, 241, 0.15));
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  font-size: 13px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* ── System continuation (Meta=goal/workflow): light left-aligned strip ──
+   Kept in sync with the full-stream block in AIConversationPage.css, sized
+   down for the compact drawer. */
+
+.compact-bubble-row.compact-system-continuation-row {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.compact-system-continuation-row .ai-system-continuation {
+  max-width: 100%;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.65));
+}
+
+.compact-system-continuation-row .ai-system-continuation-goal .ai-system-continuation-icon {
+  color: rgba(59, 130, 246, 0.75);
+}
+
+.compact-system-continuation-row .ai-system-continuation-workflow .ai-system-continuation-icon {
+  color: rgba(16, 185, 129, 0.75);
+}
+
+.compact-system-continuation-row .ai-system-continuation-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  /* Left edge lands the icon box on x=10, matching .compact-tool-bubble's icon */
+  padding: 4px 8px 4px 10px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: inherit;
+  font: inherit;
+  min-width: 0;
+}
+
+.compact-system-continuation-row .ai-system-continuation-row:hover {
+  background: var(--bg-hover, rgba(127, 127, 127, 0.08));
+}
+
+.compact-system-continuation-row .ai-system-continuation-icon,
+.compact-system-continuation-row .ai-system-continuation-toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  opacity: 0.7;
+}
+
+/* Icon box matches the 13px compact tool icon so centers coincide (x=16.5) */
+.compact-system-continuation-row .ai-system-continuation-icon {
+  width: 13px;
+  justify-content: center;
+  top: 0;
+}
+
+.compact-system-continuation-row .ai-system-continuation-label {
+  flex-shrink: 0;
+  font-weight: 500;
+  opacity: 0.85;
+  white-space: nowrap;
+}
+
+.compact-system-continuation-row .ai-system-continuation-summary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 0.8;
+}
+
+.compact-system-continuation-row .ai-system-continuation-body {
+  border-top: 1px solid var(--border-subtle, var(--border-color, rgba(127, 127, 127, 0.12)));
+  padding: 6px 8px;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+  overflow-x: auto;
+}
+
+.compact-user-bubble .ai-step-text,
+.compact-user-bubble .markdown-content {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+.compact-user-bubble .markdown-content a,
+.compact-user-bubble .markdown-content a.ai-file-ref code {
+  color: #fff;
+}
+
+.compact-user-bubble .ai-step-text > :first-child {
+  margin-top: 0;
+}
+
+.compact-user-bubble .ai-step-text > :last-child {
+  margin-bottom: 0;
+}
+
+/* ── Assistant text bubble: left-aligned ── */
+
+.compact-assistant-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: flex-start;
+}
+
+.compact-text-bubble {
+  max-width: 85%;
+  padding: 6px 12px;
+  border-radius: 14px 14px 14px 4px;
+  background: var(--surface-tertiary, rgba(255, 255, 255, 0.06));
+  color: var(--text-primary, #fff);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  font-size: 13px;
+  line-height: 1.4;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+.compact-text-bubble .ai-step-text > :first-child {
+  margin-top: 0;
+}
+
+.compact-text-bubble .ai-step-text > :last-child {
+  margin-bottom: 0;
+}
+
+/* ── Tool call bubble: title-only, left-aligned ── */
+
+.compact-tool-bubble {
+  max-width: 85%;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--surface-secondary, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  font-size: 12px;
+  cursor: default;
+  transition: background var(--transition-fast, 0.15s ease);
+}
+
+.compact-tool-bubble[role='button'] {
+  cursor: pointer;
+}
+
+.compact-tool-bubble[role='button']:hover {
+  background: var(--surface-hover, rgba(255, 255, 255, 0.08));
+}
+
+.compact-tool-row {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.compact-tool-icon {
+  flex-shrink: 0;
+  opacity: 0.6;
+}
+
+.compact-tool-title {
+  flex-shrink: 0;
+  font-weight: 500;
+  color: var(--text-secondary, rgba(255, 255, 255, 0.7));
+}
+
+.compact-tool-duration {
+  flex-shrink: 0;
+  font-size: 10px;
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.3));
+}
+
+.compact-tool-stats {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  font-size: 10px;
+  font-variant-numeric: tabular-nums;
+}
+
+.compact-tool-stat.add {
+  color: var(--success, #22c55e);
+}
+
+.compact-tool-stat.del {
+  color: var(--error, #ef4444);
+}
+
+.compact-tool-subtitle {
+  flex: 1;
+  min-width: 0;
+  font-size: 11px;
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.4));
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ── Status icons ── */
+
+.compact-tool-spinner {
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.3));
+  animation: compact-spin 1s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes compact-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.compact-tool-check,
+.compact-tool-error,
+.compact-tool-cancelled {
+  color: var(--text-tertiary, rgba(255, 255, 255, 0.3));
+  flex-shrink: 0;
+}
+
+/* Typewriter cursor used inside text bubbles */
+.typewriter-cursor {
+  display: inline-block;
+  color: var(--accent-primary, rgba(99, 102, 241, 0.8));
+  animation: typewriter-cursor-blink 1s step-end infinite;
+  margin-left: 1px;
+}
+
+@keyframes typewriter-cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}

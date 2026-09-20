@@ -1,0 +1,455 @@
+.ssh-manager-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+}
+
+.ssh-manager-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  flex-shrink: 0;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.ssh-manager-title {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+}
+
+.ssh-manager-actions {
+  display: flex;
+  gap: 2px;
+}
+
+.ssh-manager-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ssh-manager-action:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ssh-manager-action:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* ---- tree ---- */
+
+.ssh-tree-container {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 2px 4px calc(var(--composer-card-top, var(--composer-frame-h, 120px)) + 16px);
+  user-select: none;
+}
+
+.ssh-tree-root {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.ssh-tree-root:hover {
+  background: var(--bg-hover);
+}
+
+.ssh-tree-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  flex-shrink: 0;
+  color: var(--text-tertiary);
+}
+
+.ssh-tree-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ssh-tree-icon img,
+.ssh-tree-icon svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.ssh-tree-root-label {
+  font-weight: 600;
+  font-size: var(--text-sm);
+}
+
+.ssh-tree-root-count {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  padding: 0 5px;
+}
+
+/* group folder row */
+
+.ssh-tree-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+}
+
+.ssh-tree-group:hover {
+  background: var(--bg-hover);
+}
+
+/* drag-and-drop */
+.ssh-tree-group[draggable="true"]:active,
+.ssh-host-item[draggable="true"]:active {
+  cursor: grabbing;
+}
+
+.ssh-drop-target {
+  background: color-mix(in srgb, var(--accent-primary) 14%, transparent) !important;
+  outline: 1px dashed var(--accent-primary);
+  outline-offset: -1px;
+}
+
+.ssh-tree-group-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ssh-tree-group-count {
+  font-size: 10px;
+  color: var(--text-tertiary);
+  padding: 0 5px;
+}
+
+.ssh-tree-children {
+  padding-left: 14px;
+}
+
+.ssh-tree-empty {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  padding: 4px 8px;
+}
+
+/* ---- host row (inline buttons) ---- */
+
+.ssh-host-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  /* 26px = row padding (8) + chevron (14) + gap (4): icon left edge aligns with the folder icon above */
+  padding: 4px 8px 4px 26px;
+  border-radius: var(--radius-sm);
+}
+
+.ssh-host-item:hover {
+  background: var(--bg-hover);
+}
+
+.ssh-host-item-name {
+  font-size: var(--text-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex-shrink: 1;
+  min-width: 0;
+}
+
+.ssh-host-item-addr {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+}
+
+.ssh-host-item-actions {
+  display: flex;
+  gap: 1px;
+  /* Quick actions are always visible — no hover reveal. */
+  flex-shrink: 0;
+}
+
+.ssh-host-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px;
+  border: none;
+  background: transparent;
+  color: var(--text-tertiary);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ssh-host-btn:hover {
+  background: var(--bg-active);
+  color: var(--text-primary);
+}
+
+.ssh-host-btn.primary {
+  color: var(--accent-primary);
+}
+
+.ssh-host-btn.primary:hover {
+  background: color-mix(in srgb, var(--accent-primary) 14%, transparent);
+}
+
+.ssh-host-btn.danger:hover {
+  color: var(--status-failed);
+  background: color-mix(in srgb, var(--status-failed) 12%, transparent);
+}
+
+/* ---- error banner ---- */
+
+.ssh-error-banner {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  font-size: var(--text-xs);
+  color: var(--status-failed);
+  margin: 0 8px 4px;
+}
+
+.ssh-error-dismiss {
+  margin-left: auto;
+  border: none;
+  background: none;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+}
+
+.ssh-error-dismiss:hover {
+  color: var(--text-primary);
+}
+
+/* ---- context menu ---- */
+
+.ssh-context-menu {
+  position: fixed;
+  z-index: 1400;
+  min-width: 160px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.ssh-ctx-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 8px;
+  border: none;
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-xs);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  transition: background var(--transition-fast);
+}
+
+.ssh-ctx-item:hover {
+  background: var(--bg-hover);
+}
+
+.ssh-ctx-item.danger {
+  color: var(--status-failed);
+}
+
+.ssh-ctx-item.danger:hover {
+  background: color-mix(in srgb, var(--status-failed) 12%, transparent);
+}
+
+.ssh-ctx-sep {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 3px 4px;
+}
+
+/* ---- dialog ---- */
+
+.ssh-dialog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1500;
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ssh-dialog {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-md);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.36);
+  padding: 16px;
+  width: 360px;
+  max-width: 90vw;
+}
+
+.ssh-dialog-title {
+  margin: 0 0 12px;
+  font-size: var(--text-md);
+  font-weight: 600;
+}
+
+.ssh-dialog-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ssh-dialog-label {
+  font-size: var(--text-xs);
+  color: var(--text-tertiary);
+  margin-top: 6px;
+}
+
+.ssh-dialog-check {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: var(--text-xs);
+  color: var(--text-secondary);
+  cursor: pointer;
+  user-select: none;
+}
+
+.ssh-host-item-hidden {
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+}
+
+.ssh-dialog-input {
+  padding: 6px 8px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.ssh-dialog-input:focus {
+  border-color: var(--accent-primary);
+}
+
+.ssh-dialog-select {
+  padding: 6px 8px;
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  background: var(--bg-input);
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  outline: none;
+}
+
+.ssh-dialog-input-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.ssh-dialog-input-row .ssh-dialog-input {
+  flex: 1;
+}
+
+.ssh-dialog-input-row .ssh-btn {
+  flex-shrink: 0;
+}
+
+.ssh-dialog-row {
+  display: flex;
+  gap: 8px;
+}
+
+.ssh-dialog-row > div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ssh-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.ssh-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--border-default);
+  background: transparent;
+  color: var(--text-primary);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.ssh-btn:hover {
+  background: var(--bg-hover);
+}
+
+.ssh-btn-primary {
+  background: var(--accent-primary);
+  border-color: var(--accent-primary);
+  color: white;
+}
+
+.ssh-btn-primary:hover {
+  background: color-mix(in srgb, var(--accent-primary) 85%, white);
+}
+
+.ssh-spin {
+  animation: ssh-spin 1s linear infinite;
+}
+
+@keyframes ssh-spin {
+  to { transform: rotate(360deg); }
+}

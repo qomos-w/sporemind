@@ -1,0 +1,44 @@
+// scheduler namespace — timer-card scheduling state and internal messages.
+// @ts-export
+
+struct TimerSchedule {
+    optional Cron:       string
+    optional Expression: string
+    optional Timezone:   string
+    Enabled:             bool
+}
+
+struct SchedulerRegisterReq {
+    ProjectID:  string
+    CardID:     string
+    Schedule:   TimerSchedule
+}
+
+struct SchedulerUnregisterReq {
+    ProjectID: string
+    CardID:    string
+}
+
+struct SchedulerListReq {
+}
+
+struct SchedulerEntryInfo {
+    ProjectID:  string
+    CardID:     string
+    Schedule:   TimerSchedule
+    optional NextFireAt: string
+}
+
+struct SchedulerListResp {
+    Entries:  array<SchedulerEntryInfo>
+}
+
+struct SchedulerSetEnabledReq {
+    ProjectID: string
+    CardID:    string
+    Enabled:   bool
+}
+
+struct SchedulerSetEnabledResp {
+    Enabled: bool
+}

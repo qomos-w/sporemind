@@ -1,0 +1,460 @@
+/* ── Sidebar launcher: app-mode home pane ──
+   Android-desktop (pawpad frontend/system-ui/index.css) visual language:
+   - 44px rounded-square icon tiles (pawpad :163 .app-icon-bg) with a dual
+     soft shadow (0 4px 12px rgba(0,0,0,0.15), 0 0 12px rgba(102,126,234,0.2))
+   - :active squash scale(0.92) / 0.2s (pawpad :168)
+   - 12px single-line label only — no description line (pawpad :174)
+   Structure (Builder App): vertical flex body with overflow-y scroll, three
+   sections (收藏 / 最近 / 列表), an auto-fill square-cell grid per section
+   whose column count follows the available width.
+   Theme-aware via custom properties: k light values are the defaults and
+   [data-theme='dark'] overrides them ([data-theme] lives on <html>). */
+
+.ai-sidebar-launcher {
+  /* ── Light theme (default) ── */
+  --launcher-canvas: linear-gradient(135deg, #f2f1ef 0%, #ffffff 100%);
+  --launcher-divider: rgba(0, 0, 0, 0.08);
+  --launcher-tile-bg: rgba(255, 255, 255, 0.95);
+  --launcher-tile-color: var(--text-primary);
+  --launcher-label-color: var(--text-primary);
+
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  /* Drawer/inline container supplies no background; the launcher pane must
+     paint its own canvas or the mobile overlay drawer shows through. */
+  background: var(--launcher-canvas);
+}
+
+[data-theme='dark'] .ai-sidebar-launcher {
+  /* ── Dark theme (pawpad) ── */
+  --launcher-canvas: linear-gradient(135deg, #1e1e1e 0%, #2d2d2d 100%);
+  --launcher-divider: rgba(255, 255, 255, 0.08);
+  --launcher-tile-bg: rgba(255, 255, 255, 0.12);
+  --launcher-tile-color: #ffffff;
+  --launcher-label-color: #ffffff;
+}
+
+/* ── Zip package drop-to-install ── */
+.ai-sidebar-launcher.zip-drag-over {
+  outline: 2px dashed var(--accent-color, #3b82f6);
+  outline-offset: -6px;
+}
+
+.ai-sidebar-launcher-zip-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  pointer-events: none;
+  border-radius: 8px;
+  background: rgba(59, 130, 246, 0.08);
+  backdrop-filter: blur(1px);
+  color: var(--launcher-label-color);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ai-sidebar-launcher-header {
+  flex-shrink: 0;
+  padding: 10px 12px 8px;
+  border-bottom: 1px solid var(--launcher-divider);
+}
+
+/* ── Toolbar: view toggle (grid/list) on the left, install-local on the right ── */
+.ai-sidebar-launcher-toolbar {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 12px 2px;
+  border-bottom: 1px solid var(--launcher-divider);
+  /* The toolbar is the query container for the label-collapse below. */
+  container-type: inline-size;
+}
+
+/* Narrow toolbar: degrade the label buttons to icon-only. Labels are
+   dropped (display:none), never squashed — buttons keep intrinsic size. */
+@container (max-width: 260px) {
+  .ai-sidebar-launcher-view-btn,
+  .ai-sidebar-launcher-install {
+    gap: 0;
+  }
+
+  .ai-sidebar-launcher-view-btn {
+    /* Keep the icon flush with the section titles' left edge. */
+    padding: 0 6px 0 0;
+  }
+
+  .ai-sidebar-launcher-install {
+    padding: 0 6px;
+  }
+
+  .ai-sidebar-launcher-view-btn span,
+  .ai-sidebar-launcher-install span {
+    display: none;
+  }
+}
+
+.ai-sidebar-launcher-dev-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.ai-sidebar-launcher-view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  /* Left padding zeroed so the icon lines up with the section titles'
+     left edge (body padding 12px == toolbar padding 12px). */
+  padding: 0 10px 0 0;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-tertiary);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-sidebar-launcher-view-btn:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+/* ── Login-state footer: same account button as the code-mode sidebar bottom ── */
+.ai-sidebar-launcher-footer {
+  flex-shrink: 0;
+  padding: 5px 12px 0;
+  border-top: 1px solid var(--launcher-divider);
+}
+
+.ai-sidebar-launcher-install {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 26px;
+  padding: 0 10px;
+  border: none;
+  border-radius: var(--radius-full);
+  background: transparent;
+  color: var(--text-tertiary);
+  font: inherit;
+  font-size: var(--text-sm);
+  cursor: pointer;
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.ai-sidebar-launcher-install:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+/* Vertical document-like scroll body: sections stack top to bottom. */
+.ai-sidebar-launcher-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* 段间 margin 12px */
+}
+
+/* 每段左上角一个纯文字小标签：无背景、无图标、无按钮。 */
+.ai-sidebar-launcher-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.ai-sidebar-launcher-section-title {
+  margin: 0 0 10px;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-tertiary);
+}
+
+/* Fixed-size cells, auto-fill column count, LEFT-aligned: adding a column
+   just fills the right-edge slack, so existing tiles never shift while the
+   sidebar is resized (centering would move the whole grid on every column
+   change). All leftover width stays on the right, inside the section's own
+   symmetric padding. */
+.ai-sidebar-launcher-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 64px);
+  gap: 10px;
+  justify-content: start;
+}
+
+.ai-sidebar-launcher-tile {
+  /* 单元格宽高相等；tile 内容在方形格内垂直居中。 */
+  aspect-ratio: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--launcher-label-color);
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
+}
+
+.ai-sidebar-launcher-tile.is-dragging {
+  opacity: 0.4;
+}
+
+/* Disabled (restart_pending) tiles: update staged but not active yet. The
+   tile is non-interactive, desaturated, and carries an amber update dot; the
+   tooltip on the dot carries the full "restart to activate" text. */
+.ai-sidebar-launcher-tile.disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+  filter: grayscale(0.55);
+}
+.ai-sidebar-launcher-tile.disabled .ai-sidebar-launcher-tile-icon {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Crashed tiles: the plugin process died. Greyed out like the disabled
+   state, but still clickable — clicking opens the panel, which shows the
+   crash cause and a restart action (PluginIframe error state). A red dot
+   marks the dead process. */
+.ai-sidebar-launcher-tile.crashed {
+  opacity: 0.55;
+  filter: grayscale(0.55);
+}
+.ai-sidebar-launcher-tile.crashed .ai-sidebar-launcher-tile-icon {
+  box-shadow: var(--shadow-sm);
+}
+
+.ai-sidebar-launcher-tile-crash {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--launcher-tile-bg);
+  background: #ef4444;
+  z-index: 3;
+}
+
+/* List view: hide the corner dot, show a red text pill instead. */
+.ai-sidebar-launcher-tile.row .ai-sidebar-launcher-tile-crash {
+  display: none;
+}
+.ai-sidebar-launcher-tile-crash-text {
+  flex: none;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  background: rgba(239, 68, 68, 0.14);
+  color: #b91c1c;
+  font-size: 9px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+[data-theme='dark'] .ai-sidebar-launcher-tile-crash-text {
+  background: rgba(239, 68, 68, 0.22);
+  color: #ef4444;
+}
+
+.ai-sidebar-launcher-tile-pending {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--launcher-tile-bg);
+  background: #f5a623;
+  z-index: 3;
+}
+
+/* List view: a text pill next to the description instead of the corner dot. */
+.ai-sidebar-launcher-tile.row .ai-sidebar-launcher-tile-pending {
+  display: none;
+}
+.ai-sidebar-launcher-tile-pending-text {
+  flex: none;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(245, 166, 35, 0.45);
+  background: rgba(245, 166, 35, 0.18);
+  color: #b45309;
+  font-size: 9px;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+[data-theme='dark'] .ai-sidebar-launcher-tile-pending-text {
+  background: rgba(245, 166, 35, 0.22);
+  color: #f5a623;
+}
+
+/* ── List view: one app per row (icon + label + description) ── */
+.ai-sidebar-launcher-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ai-sidebar-launcher-tile.row {
+  aspect-ratio: auto;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 5px 8px;
+  border-radius: var(--radius-lg);
+  text-align: left;
+}
+
+.ai-sidebar-launcher-tile.row:hover {
+  background: var(--bg-hover);
+}
+
+.ai-sidebar-launcher-tile.row .ai-sidebar-launcher-tile-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  box-shadow: none;
+  flex: none;
+}
+
+.ai-sidebar-launcher-tile.row .ai-sidebar-launcher-tile-icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.ai-sidebar-launcher-tile.row .ai-sidebar-launcher-tile-label {
+  flex: none;
+}
+
+.ai-sidebar-launcher-tile-desc {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--text-sm);
+  color: var(--text-tertiary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+
+/* 44px rounded-square icon block; shadow matches the edit card (--shadow-sm
+   resting → --shadow-md on hover) instead of the pawpad purple glow. */
+.ai-sidebar-launcher-tile-icon {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 13px;
+  background: var(--launcher-tile-bg);
+  color: var(--launcher-tile-color);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-normal), box-shadow var(--transition-fast);
+}
+
+.ai-sidebar-launcher-tile:hover .ai-sidebar-launcher-tile-icon {
+  box-shadow: var(--shadow-md);
+}
+
+.ai-sidebar-launcher-tile:active .ai-sidebar-launcher-tile-icon {
+  transform: scale(0.92);
+}
+
+.ai-sidebar-launcher-tile-icon svg {
+  position: relative;
+  z-index: 1;
+  width: 22px;
+  height: 22px;
+}
+
+/* Native-app transport/trust corner badge on the tile icon.
+   subprocess (green) = crash-isolated, separate OS process; inprocess (amber)
+   = shares the host process (a plugin crash can take the host down). A red ring
+   marks third-party (untrusted) regardless of transport. Tooltip carries the
+   detail; the dot is the at-a-glance signal. */
+.ai-sidebar-launcher-tile-badge {
+  position: absolute;
+  right: -3px;
+  bottom: -3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--launcher-tile-bg);
+  z-index: 2;
+}
+.ai-sidebar-launcher-tile-badge.subprocess { background: #34d399; }
+.ai-sidebar-launcher-tile-badge.inprocess { background: #f5a623; }
+.ai-sidebar-launcher-tile-badge.third-party { box-shadow: 0 0 0 1.5px #ef4444; }
+
+/* 12px single-line label (pawpad :174 .app-name). */
+.ai-sidebar-launcher-tile-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--launcher-label-color);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+[data-theme='dark'] .ai-sidebar-launcher-tile-label {
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* Tile context menu: small fixed overlay, registered via useBrowserOverlay. */
+.ai-sidebar-launcher-menu {
+  position: fixed;
+  z-index: 1000;
+  min-width: 160px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ai-sidebar-launcher-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+}
+
+.ai-sidebar-launcher-menu-item:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}

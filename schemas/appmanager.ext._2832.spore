@@ -1,0 +1,45 @@
+// appmanager extension namespace — free-agent gating and audited reload.
+// @ts-export
+
+// AppManagerAgentActionReq gates free-agent actions (create/switch/message)
+// requested by an app on behalf of its bound agent. The action is authorized
+// against the app's FreeAgentBinding policy before dispatch.
+struct AppManagerAgentActionReq {
+    Id: string                      // app id
+    Action: string                  // "create" | "switch" | "message"
+    optional Kind: string           // agent kind for create (e.g. "coder")
+    optional TargetAgentId: string  // target agent for switch/message
+    optional Payload: map<string, any> // action payload (e.g. message text)
+    optional AgentId: string        // bound agent identity (fallback; ctx identity wins)
+    optional Role: string
+    optional ProjectId: string
+    optional RequestId: string
+}
+
+struct AppManagerAgentActionResp {
+    Accepted: bool
+}
+
+// AppManagerReloadReq reloads an app's package through the manager so the
+// reload is audited and pre-validated (exports, entrypoints, state version).
+struct AppManagerReloadReq {
+    Id: string
+    EntryModule: string
+    Modules: map<string, string>
+    optional Assets: map<string, bytes>
+    optional SchemaDescriptors: map<string, AppObjectDescriptor>
+    optional PackageHash: string
+    optional ExpectedStateVersion: long     // optimistic concurrency on state
+    optional MigratedState: map<string, any> // state replacement after migration
+    optional AgentId: string
+    optional RequestId: string
+    optional CandidateManifest: AppManifest
+    optional CandidateAbi: PluginAbi
+    optional CandidateArtifactPath: string
+    optional CandidateArtifactHash: string
+}
+
+struct AppManagerReloadResp {
+    Status: AppStatus
+    StateVersion: long
+}

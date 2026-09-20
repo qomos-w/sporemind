@@ -1,0 +1,166 @@
+/* ProviderSlotMenu — the right-click "assign models to agent slots" pop-over.
+   Visual language mirrors `.ai-composer-provider-dropdown` (same palette,
+   border, radius, shadow, type scale). It is anchored to the composer's
+   provider button exactly like that dropdown: `position: absolute` inside
+   `.ai-composer-provider`, opening upward. Using absolute (not fixed) is
+   required because `.ai-composer` sets `container-type: inline-size`, which
+   would otherwise become the containing block for a fixed menu and misplace
+   it against the composer instead of the viewport. */
+
+.ai-composer-slot-menu {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  right: 0;
+  z-index: var(--z-dropdown);
+  min-width: 260px;
+  max-width: calc(100vw - 16px);
+  max-height: min(480px, calc(100vh - 16px));
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px;
+  box-sizing: border-box;
+  background: var(--bg-base);
+  border: 1px solid var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  outline: none;
+}
+
+/* useDropdownVerticalFit flips the menu downward when it would clip at the top. */
+.ai-composer-slot-menu.fit-down {
+  bottom: auto;
+  top: calc(100% + 6px);
+}
+
+/* ── Slot rows ── */
+
+.ai-composer-slot-entry {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ai-composer-slot-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-composer-slot-row:hover,
+.ai-composer-slot-row.open {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ai-composer-slot-row-name {
+  flex: 0 0 auto;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.ai-composer-slot-row-value {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+  color: var(--text-tertiary);
+}
+
+.ai-composer-slot-row-meta {
+  color: var(--text-tertiary);
+  opacity: 0.85;
+}
+
+.ai-composer-slot-row > svg {
+  flex: 0 0 auto;
+  transition: transform var(--transition-fast);
+}
+
+.ai-composer-slot-row > svg.expanded {
+  transform: rotate(180deg);
+}
+
+/* ── Inline candidate list ── */
+
+.ai-composer-slot-candidates {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-left: 8px;
+  padding: 2px 0 4px 10px;
+  border-left: 1px solid var(--border-subtle);
+}
+
+.ai-composer-slot-option {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 6px 8px;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: var(--text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.ai-composer-slot-option:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.ai-composer-slot-option.active {
+  background: var(--accent-primary-dim);
+  color: var(--accent-primary);
+}
+
+.ai-composer-slot-option-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Aggregator route / auto title: capsule badge with inverted text, matching
+   `.ai-composer-provider-route-label.is-badge`. */
+.ai-composer-slot-option-label.is-badge {
+  flex: 0 1 auto;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--accent-primary);
+  color: var(--text-inverse);
+}
+
+.ai-composer-slot-option-subtitle {
+  flex: 0 0 auto;
+  color: var(--text-tertiary);
+  font-size: var(--text-xs);
+}
+
+.ai-composer-slot-option > svg {
+  flex: 0 0 auto;
+  margin-left: auto;
+}

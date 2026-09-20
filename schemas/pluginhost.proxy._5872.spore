@@ -1,0 +1,22 @@
+// pluginhost.proxy — gateway reverse-proxy bridge for plugin backends.
+// AppManager attaches a plugin's loopback HTTP listener to the gateway router
+// (/plugin/{id}/*) after the backend commits; the proxy supersedes the
+// plugin's static assets handler while the backend is live and detaches on
+// crash / unload / explicit detach, falling back to assets or 404.
+// Internal actor-to-actor protocol (appmanager → pluginhost): no @ts-export.
+
+struct PluginProxyAttachReq {
+    PluginId: string
+    Addr:     string              // plugin backend loopback listener host:port
+    Token:    string              // gateway-proxy token, minted by appmanager with the instance secret; sent as X-Spore-Gateway-Token
+}
+
+struct PluginProxyAttachResp {
+}
+
+struct PluginProxyDetachReq {
+    PluginId: string
+}
+
+struct PluginProxyDetachResp {
+}
