@@ -1,5 +1,6 @@
 import { client } from './generated-client'
 import * as browserClient from '../gen-clients/browsermanager/client'
+import { onServiceEventResilient } from './resilient-service-events'
 import type { BrowserManagerCreateReq, BrowserManagerUpdateReq, BrowserManagerOpenGlobalReq } from '../gen-types/browser'
 import type { BrowserManagerEvent } from '../gen-types/browser'
 import type { BrowserCookieEntry } from '../gen-types/browser.cookie'
@@ -93,7 +94,7 @@ export async function openGlobalBrowser(url: string) {
 }
 
 export function onBrowserManagerEvent(handler: (e: BrowserManagerEvent) => void): () => void {
-  return browserClient.OnBrowserManagerEvent(client, handler)
+  return onServiceEventResilient(client, 'browsermanager', 'browser_manager_event', handler as (payload: unknown) => void)
 }
 
 /** Export cookies of a browser instance, grouped by domain. */
