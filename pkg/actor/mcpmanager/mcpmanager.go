@@ -36,7 +36,9 @@
 //     safe view (key names only), so internal system actors — e.g. the
 //     project actor's McpExternalCardProvider — may read it; mcp.add_server
 //     additionally accepts agent-originated registration (the bundle-use
-//     flow: an agent adds a server on the user's behalf); the remaining CRUD
+//     flow: an agent adds a server on the user's behalf) and mcp.reconnect
+//     accepts agent-initiated self-healing (a mounted agent re-establishing
+//     a dropped server's session); the remaining CRUD
 //     and lifecycle callables (update/remove/connect/disconnect) stay
 //     strictly admin-gated via requireAdmin.
 package mcpmanager
@@ -157,6 +159,11 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	}
 	if err := ctx.Register("mcp.disconnect", a.handleDisconnect, actor.AdminOnly()); err != nil {
 		return fmt.Errorf("mcpmanager: register disconnect: %w", err)
+	}
+	if err := ctx.Register("mcp.reconnect", a.handleReconnect, actor.AdminOnly(),
+		actor.WithDescription("Force-reconnect an MCP server: tear down any live session, reset the auto-reconnect budget, and establish a fresh connection (a plain connect is a no-op while the instance still reports connected). Agent-facing so a mounted agent can self-heal a dropped server; returns the live status."),
+	); err != nil {
+		return fmt.Errorf("mcpmanager: register reconnect: %w", err)
 	}
 	if err := ctx.Register("mcp.call_tool", a.handleCallTool, actor.AdminOnly()); err != nil {
 		return fmt.Errorf("mcpmanager: register call_tool: %w", err)
@@ -470,6 +477,29 @@ func (a *Actor) handleDisconnect(ctx actor.PureContext, req domain.McpDisconnect
 	return domain.McpDisconnectResp{Status: status}, nil
 }
 
+// handleReconnect routes to the child's Internal reconnect callable.
+// Agent-facing (requireAgentOrHuman): the hot-context MCP status block tells
+// every mounted agent which mcp:<server-id> cards it carries and instructs it
+// to self-heal a dropped server with this callable; the anonymous web role is
+// still denied. Stateless (PureContext) for the same reason as
+// handleConnect: the teardown + handshake budget runs on a forked goroutine.
+func (a *Actor) handleReconnect(ctx actor.PureContext, req domain.McpReconnectReq) (domain.McpReconnectResp, error) {
+	if err := requireAgentOrHuman(ctx.Identity().Role); err != nil {
+		return domain.McpReconnectResp{}, err
+	}
+	cfg, ok := a.findServer(req.ID)
+	if !ok {
+		return domain.McpReconnectResp{}, fmt.Errorf("mcp.reconnect: server %q not found", req.ID)
+	}
+	status, err := a.invokeChildStatus(ctx, cfg, "mcpinstance.reconnect", nil)
+	if err != nil {
+		return domain.McpReconnectResp{}, fmt.Errorf("mcp.reconnect: %w", err)
+	}
+	ctx.Logger().Info("mcp.reconnect", "id", cfg.ID, "name", cfg.Name, "connected", status.Connected)
+	a.refreshListSnapshot(ctx)
+	return domain.McpReconnectResp{Status: status}, nil
+}
+
 // handleCallTool routes to the child's Internal call_tool callable.
 // Agent-facing: the relaxed requireAgentOrHuman gate lets the agent turn
 // engine (an internal actor with zero identity) execute mcp.<server>.<tool>
@@ -714,7 +744,7 @@ func (a *Actor) invokeChildCall(ctx actor.PureContext, cfg domain.McpServerConfi
 		return nil, fmt.Errorf("child for server %q is not running", cfg.ID)
 	}
 	budget := childInvokeTimeout
-	if callID == "mcpinstance.connect" || callID == "mcpinstance.disconnect" {
+	if callID == "mcpinstance.connect" || callID == "mcpinstance.disconnect" || callID == "mcpinstance.reconnect" {
 		budget = childConnectInvokeTimeout
 	}
 	invokeCtx, cancel := context.WithTimeout(ctx.Lifecycle(), budget)
@@ -936,11 +966,11 @@ func requireAdmin(role id.Role) error {
 //
 // The explicit anonymous web role ("anonymous") is still denied. Applies to
 // the agent-facing callables (mcp.discover_tools, mcp.call_tool,
-// mcp.list_servers) and to mcp.add_server, which accepts agent-originated
-// registration (the bundle-use flow: an agent mounts mcp.add_server and adds
-// a server on the user's behalf). The remaining CRUD and lifecycle callables
-// (update/remove/connect/disconnect) stay strictly admin-gated via
-// requireAdmin.
+// mcp.list_servers, mcp.reconnect) and to mcp.add_server, which accepts
+// agent-originated registration (the bundle-use flow: an agent mounts
+// mcp.add_server and adds a server on the user's behalf). The remaining CRUD
+// and lifecycle callables (update/remove/connect/disconnect) stay strictly
+// admin-gated via requireAdmin.
 func requireAgentOrHuman(role id.Role) error {
 	if role == "" {
 		return nil

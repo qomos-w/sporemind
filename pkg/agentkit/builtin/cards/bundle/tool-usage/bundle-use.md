@@ -26,6 +26,7 @@ data:
     - project.component_get
     - mcp.list_servers
     - mcp.add_server
+    - mcp.reconnect
 ---
 
 ### Bundle Use
@@ -70,7 +71,9 @@ MCP (Model Context Protocol) servers extend your tool surface. Each configured s
 
 **Add to the system** — when the user asks to use an MCP server that is not configured yet, register it with `mcp.add_server`. Transport is either stdio (`Stdio: {Command, Args, Env}`) or http (`Http: {Url, Headers}`); set `Enabled: true` so the server auto-connects. Only add a server the user explicitly asked for. Secrets in `Stdio.Env` / `Http.Headers` are write-only: they are accepted once and never returned by any callable.
 
-**Add to yourself (mount)** — `component_mount` the server's `mcp:<server-id>` card. The server must be connected for its tools to appear (check `mcp.list_servers` status); a freshly added server connects asynchronously, so its tools may only materialize on the next turn. Mounted MCP tools appear as `mcp-<server>-<tool>`.
+**Add to yourself (mount)** — `component_mount` the server's `mcp:<server-id>` card. The server must be connected for its tools to appear (check `mcp.list_servers` status); a freshly added server connects asynchronously, so its tools may only materialize on the next turn. Mounted MCP tools appear as `mcp-<server>-<tool>`. While any `mcp:<server-id>` card is mounted, a "Mounted MCP Servers" live-status section is injected into your system prompt each turn listing every mounted server's connected/toolCount/error state.
+
+**Reconnect (self-heal)** — when a mounted server shows `DISCONNECTED` in that section, or its tools error out mid-task, call `mcp.reconnect` with the server's `Id`. It force-tears-down any wedged session, resets the reconnect budget, and establishes a fresh connection; the server's tools re-enter your surface once it is connected again. A failed reconnect keeps retrying in the background with backoff.
 
 **Remove from yourself (unmount)** — `component_unmount` the `mcp:<server-id>` card; the server's tools drop out of your surface immediately. Unmounting does NOT remove the server from the system — the config stays registered for other agents (system-level removal stays a human UI action).
 

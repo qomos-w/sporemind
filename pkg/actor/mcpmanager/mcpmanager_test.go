@@ -518,6 +518,8 @@ func attachFakeChild(a *Actor, ctx *testutil.FakeCtx, serverID string, resp doma
 				return domain.McpServerStatus{ID: serverID, Connected: true, ToolCount: 3}
 			case "mcpinstance.disconnect":
 				return domain.McpServerStatus{ID: serverID, Connected: false}
+			case "mcpinstance.reconnect":
+				return domain.McpServerStatus{ID: serverID, Connected: true, ToolCount: 3}
 			case "mcpinstance.call_tool":
 				return resp
 			case "mcpinstance.tools":
@@ -582,6 +584,54 @@ func TestHandleDisconnect_RoutesToChild(t *testing.T) {
 func TestHandleDisconnect_RequiresHuman(t *testing.T) {
 	a, ctx := freshMMAnon(t)
 	if _, err := a.handleDisconnect(ctx, domain.McpDisconnectReq{ID: "srv-0"}); err == nil {
+		t.Error("expected error for anonymous role")
+	}
+}
+
+func TestHandleReconnect_RoutesToChild(t *testing.T) {
+	a, ctx := freshMM(t)
+	created, err := a.handleAddServer(ctx, validAddReq())
+	if err != nil {
+		t.Fatal(err)
+	}
+	attachFakeChild(a, ctx, created.Server.ID, domain.McpCallToolResp{})
+	resp, err := a.handleReconnect(ctx, domain.McpReconnectReq{ID: created.Server.ID})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !resp.Status.Connected || resp.Status.ToolCount != 3 {
+		t.Errorf("expected connected status from child, got %+v", resp.Status)
+	}
+}
+
+func TestHandleReconnect_NotFound(t *testing.T) {
+	a, ctx := freshMM(t)
+	if _, err := a.handleReconnect(ctx, domain.McpReconnectReq{ID: "ghost"}); err == nil {
+		t.Error("expected error for missing id")
+	}
+}
+
+// TestHandleReconnect_AllowsInternalCaller: the agent self-heal path — the
+// turn engine invokes mcp.reconnect with a zero/system identity — must pass
+// the gate; the anonymous web role is denied.
+func TestHandleReconnect_AllowsInternalCaller(t *testing.T) {
+	for _, role := range []id.Role{"", "system"} {
+		a, ctx := freshMM(t)
+		created, err := a.handleAddServer(ctx, validAddReq())
+		if err != nil {
+			t.Fatal(err)
+		}
+		attachFakeChild(a, ctx, created.Server.ID, domain.McpCallToolResp{})
+		ctx.Identity_ = id.Identity{Role: role}
+		if _, err := a.handleReconnect(ctx, domain.McpReconnectReq{ID: created.Server.ID}); err != nil {
+			t.Fatalf("role %q: internal caller should be allowed, got %v", role, err)
+		}
+	}
+}
+
+func TestHandleReconnect_DeniesAnonymousRole(t *testing.T) {
+	a, ctx := freshMMAnon(t)
+	if _, err := a.handleReconnect(ctx, domain.McpReconnectReq{ID: "srv-0"}); err == nil {
 		t.Error("expected error for anonymous role")
 	}
 }
@@ -988,6 +1038,7 @@ func TestRegistrationRoutingLanes(t *testing.T) {
 		"mcp.call_tool":                      "must run stateless (PureContext)",
 		"mcp.connect":                        "must run stateless (PureContext)",
 		"mcp.disconnect":                     "must run stateless (PureContext)",
+		"mcp.reconnect":                      "must run stateless (PureContext)",
 		"mcp.internal_server_status_changed": "must run stateless (PureContext; atomic cache store only)",
 	}
 	for callID, why := range stateless {

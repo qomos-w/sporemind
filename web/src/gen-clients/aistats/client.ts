@@ -26,14 +26,14 @@ export const backfill_meta = {
 } as const;
 
 export async function cleanup(client: GosporeClient, req: systemTypes.AIStatsCleanupReq, opts?: InvokeOptions): Promise<systemTypes.AIStatsCleanupResp> {
-  return client.invoke<systemTypes.AIStatsCleanupReq, systemTypes.AIStatsCleanupResp>("aistats.cleanup", req, { reqSchemaId: 1657, resSchemaId: 1658, ...opts });
+  return client.invoke<systemTypes.AIStatsCleanupReq, systemTypes.AIStatsCleanupResp>("aistats.cleanup", req, { reqSchemaId: 1797, resSchemaId: 1798, ...opts });
 }
 
 export const cleanup_meta = {
   callable: "aistats.cleanup",
   name: "cleanup",
-  reqSchemaId: 1657,
-  resSchemaId: 1658,
+  reqSchemaId: 1797,
+  resSchemaId: 1798,
 } as const;
 
 export async function costConfigure(client: GosporeClient, req: systemTypes.AIStatsCostConfigureReq, opts?: InvokeOptions): Promise<systemTypes.AIStatsCostConfigureResp> {

@@ -13,30 +13,32 @@ import (
 const (
 	McpAddServerReqSchemaID       uint64 = 4186
 	McpAddServerRespSchemaID      uint64 = 4187
-	McpCallToolReqSchemaID        uint64 = 4197
-	McpCallToolRespSchemaID       uint64 = 4198
+	McpCallToolReqSchemaID        uint64 = 4199
+	McpCallToolRespSchemaID       uint64 = 4200
 	McpConnectReqSchemaID         uint64 = 4192
 	McpConnectRespSchemaID        uint64 = 4193
 	McpDisconnectReqSchemaID      uint64 = 4194
 	McpDisconnectRespSchemaID     uint64 = 4195
-	McpDiscoverToolsReqSchemaID   uint64 = 4202
-	McpDiscoverToolsRespSchemaID  uint64 = 4203
+	McpDiscoverToolsReqSchemaID   uint64 = 4204
+	McpDiscoverToolsRespSchemaID  uint64 = 4205
 	McpEnvVarEntrySchemaID        uint64 = 4180
 	McpHttpTransportSchemaID      uint64 = 4177
 	McpHttpTransportViewSchemaID  uint64 = 4182
 	McpListServersReqSchemaID     uint64 = 4184
 	McpListServersRespSchemaID    uint64 = 4185
+	McpReconnectReqSchemaID       uint64 = 4196
+	McpReconnectRespSchemaID      uint64 = 4197
 	McpRemoveServerReqSchemaID    uint64 = 4190
 	McpRemoveServerRespSchemaID   uint64 = 4191
 	McpServerConfigSchemaID       uint64 = 4178
 	McpServerStatusSchemaID       uint64 = 4179
-	McpServerStatusEventSchemaID  uint64 = 4199
-	McpServerToolsSchemaID        uint64 = 4201
+	McpServerStatusEventSchemaID  uint64 = 4201
+	McpServerToolsSchemaID        uint64 = 4203
 	McpServerViewSchemaID         uint64 = 4183
 	McpStdioTransportSchemaID     uint64 = 4176
 	McpStdioTransportViewSchemaID uint64 = 4181
-	McpToolContentSchemaID        uint64 = 4196
-	McpToolViewSchemaID           uint64 = 4200
+	McpToolContentSchemaID        uint64 = 4198
+	McpToolViewSchemaID           uint64 = 4202
 	McpUpdateServerReqSchemaID    uint64 = 4188
 	McpUpdateServerRespSchemaID   uint64 = 4189
 )
@@ -57,6 +59,8 @@ func init() {
 	schema.RegisterStructType(McpHttpTransportViewSchemaID, reflect.TypeOf(McpHttpTransportView{}))
 	schema.RegisterStructType(McpListServersReqSchemaID, reflect.TypeOf(McpListServersReq{}))
 	schema.RegisterStructType(McpListServersRespSchemaID, reflect.TypeOf(McpListServersResp{}))
+	schema.RegisterStructType(McpReconnectReqSchemaID, reflect.TypeOf(McpReconnectReq{}))
+	schema.RegisterStructType(McpReconnectRespSchemaID, reflect.TypeOf(McpReconnectResp{}))
 	schema.RegisterStructType(McpRemoveServerReqSchemaID, reflect.TypeOf(McpRemoveServerReq{}))
 	schema.RegisterStructType(McpRemoveServerRespSchemaID, reflect.TypeOf(McpRemoveServerResp{}))
 	schema.RegisterStructType(McpServerConfigSchemaID, reflect.TypeOf(McpServerConfig{}))
@@ -137,6 +141,14 @@ type McpListServersReq struct {
 
 type McpListServersResp struct {
 	Items []McpServerView `json:"Items"`
+}
+
+type McpReconnectReq struct {
+	ID string `json:"Id"`
+}
+
+type McpReconnectResp struct {
+	Status McpServerStatus `json:"Status"`
 }
 
 type McpRemoveServerReq struct {

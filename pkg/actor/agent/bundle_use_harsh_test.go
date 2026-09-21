@@ -71,6 +71,7 @@ func TestHarshScenario_OnlyBundleUseMounted(t *testing.T) {
 				// domain, plus the declared effect for the mutation.
 				{Name: "mcp.list_servers", ServiceName: "mcp"},
 				{Name: "mcp.add_server", ServiceName: "mcp", EffectKind: string(domain.EffectReversible)},
+				{Name: "mcp.reconnect", ServiceName: "mcp"},
 			}},
 		},
 	}
@@ -84,7 +85,7 @@ func TestHarshScenario_OnlyBundleUseMounted(t *testing.T) {
 		byID[tl.CallableID] = tl
 	}
 	// Retrieval surface is present for every bundle-use tool…
-	for _, want := range []string{"component_list", "component_snapshot", "component_mount", "component_unmount", "component_set_enabled", "project.component_list", "project.component_get", "mcp.list_servers", "mcp.add_server"} {
+	for _, want := range []string{"component_list", "component_snapshot", "component_mount", "component_unmount", "component_set_enabled", "project.component_list", "project.component_get", "mcp.list_servers", "mcp.add_server", "mcp.reconnect"} {
 		spec, ok := byID[want]
 		if !ok {
 			t.Fatalf("turn N: bundle-use tool %q missing from tool surface: %+v", want, toolsN)
@@ -114,6 +115,13 @@ func TestHarshScenario_OnlyBundleUseMounted(t *testing.T) {
 	}
 	if addSpec.EffectKind != string(domain.EffectReversible) {
 		t.Fatalf("turn N: mcp.add_server EffectKind = %q, want reversible", addSpec.EffectKind)
+	}
+	reconnSpec := byID["mcp.reconnect"]
+	if reconnSpec.ServiceName != "mcp" {
+		t.Fatalf("turn N: mcp.reconnect ServiceName = %q, want mcp", reconnSpec.ServiceName)
+	}
+	if !strings.Contains(reconnSpec.InputSchema, "Id") {
+		t.Fatalf("turn N: mcp.reconnect input schema lacks Id: %s", reconnSpec.InputSchema)
 	}
 	// No browser capability exists yet — correct per premise: the shell
 	// callable is in the topology map, but browser-tools is not mounted, so

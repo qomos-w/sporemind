@@ -15,14 +15,14 @@ export const addServer_meta = {
 } as const;
 
 export async function callTool(client: GosporeClient, req: systemTypes.McpCallToolReq, opts?: InvokeOptions): Promise<systemTypes.McpCallToolResp> {
-  return client.invoke<systemTypes.McpCallToolReq, systemTypes.McpCallToolResp>("mcp.call_tool", req, { reqSchemaId: 4197, resSchemaId: 4198, ...opts });
+  return client.invoke<systemTypes.McpCallToolReq, systemTypes.McpCallToolResp>("mcp.call_tool", req, { reqSchemaId: 4199, resSchemaId: 4200, ...opts });
 }
 
 export const callTool_meta = {
   callable: "mcp.call_tool",
   name: "call_tool",
-  reqSchemaId: 4197,
-  resSchemaId: 4198,
+  reqSchemaId: 4199,
+  resSchemaId: 4200,
 } as const;
 
 export async function connect(client: GosporeClient, req: systemTypes.McpConnectReq, opts?: InvokeOptions): Promise<systemTypes.McpConnectResp> {
@@ -48,12 +48,23 @@ export const disconnect_meta = {
 } as const;
 
 export async function discoverTools(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.McpDiscoverToolsResp> {
-  return client.invoke<void, systemTypes.McpDiscoverToolsResp>("mcp.discover_tools", undefined, { resSchemaId: 4203, ...opts });
+  return client.invoke<void, systemTypes.McpDiscoverToolsResp>("mcp.discover_tools", undefined, { resSchemaId: 4205, ...opts });
 }
 
 export async function listServers(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.McpListServersResp> {
   return client.invoke<void, systemTypes.McpListServersResp>("mcp.list_servers", undefined, { resSchemaId: 4185, ...opts });
 }
+
+export async function reconnect(client: GosporeClient, req: systemTypes.McpReconnectReq, opts?: InvokeOptions): Promise<systemTypes.McpReconnectResp> {
+  return client.invoke<systemTypes.McpReconnectReq, systemTypes.McpReconnectResp>("mcp.reconnect", req, { reqSchemaId: 4196, resSchemaId: 4197, ...opts });
+}
+
+export const reconnect_meta = {
+  callable: "mcp.reconnect",
+  name: "reconnect",
+  reqSchemaId: 4196,
+  resSchemaId: 4197,
+} as const;
 
 export async function removeServer(client: GosporeClient, req: systemTypes.McpRemoveServerReq, opts?: InvokeOptions): Promise<systemTypes.McpRemoveServerResp> {
   return client.invoke<systemTypes.McpRemoveServerReq, systemTypes.McpRemoveServerResp>("mcp.remove_server", req, { reqSchemaId: 4190, resSchemaId: 4191, ...opts });

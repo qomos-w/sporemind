@@ -76,11 +76,12 @@ interface CardProps {
   busy: boolean
   onConnect: () => void
   onDisconnect: () => void
+  onReconnect: () => void
   onEdit: () => void
   onRemove: () => void
 }
 
-function McpServerCard({ server, busy, onConnect, onDisconnect, onEdit, onRemove }: CardProps) {
+function McpServerCard({ server, busy, onConnect, onDisconnect, onReconnect, onEdit, onRemove }: CardProps) {
   const { t } = useI18n()
   const { tone, label } = statusOf(server.Status, t)
   const endpoint = endpointOf(server)
@@ -185,6 +186,16 @@ function McpServerCard({ server, busy, onConnect, onDisconnect, onEdit, onRemove
             <Plug size={12} /> {t('settings.mcp.action.connect')}
           </Button>
         )}
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          disabled={busy}
+          onClick={onReconnect}
+          title={t('settings.mcp.action.reconnect')}
+        >
+          <RefreshCw size={12} /> {t('settings.mcp.action.reconnect')}
+        </Button>
         <Button type="button" variant="ghost" size="icon-sm" disabled={busy} onClick={onEdit} title={t('common.edit')}>
           <Edit2 size={12} />
         </Button>
@@ -640,6 +651,10 @@ export function ShellMcpSettings() {
     return wrap(id, () => mcp.disconnect(client, { Id: id }))
   }, [wrap])
 
+  const handleReconnect = useCallback((id: string) => {
+    return wrap(id, () => mcp.reconnect(client, { Id: id }))
+  }, [wrap])
+
   const handleRemove = useCallback((id: string, name: string) => {
     if (!window.confirm(t('settings.mcp.removeConfirm', { name }))) return
     return wrap(id, () => mcp.removeServer(client, { Id: id }))
@@ -715,6 +730,7 @@ export function ShellMcpSettings() {
               busy={busy === s.Id}
               onConnect={() => handleConnect(s.Id)}
               onDisconnect={() => handleDisconnect(s.Id)}
+              onReconnect={() => handleReconnect(s.Id)}
               onEdit={() => setDialog({ mode: 'edit', server: s })}
               onRemove={() => handleRemove(s.Id, s.Name)}
             />

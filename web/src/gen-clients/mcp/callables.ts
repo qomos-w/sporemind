@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "call_tool",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4197,
-    finalSchemaId: 4198,
+    reqSchemaId: 4199,
+    finalSchemaId: 4200,
     req: {
       kind: "struct",
       name: "McpCallToolReq",
@@ -81,7 +81,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "admin",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4203,
+    finalSchemaId: 4205,
     req: {
       kind: "void",
       name: "void"
@@ -107,6 +107,24 @@ export const callableEntries: CallableEntry[] = [
       kind: "struct",
       name: "McpListServersResp",
       className: "McpListServersResp"
+    }
+  },
+  {
+    namespace: "mcp",
+    name: "reconnect",
+    visibility: "admin",
+    mode: "unary",
+    reqSchemaId: 4196,
+    finalSchemaId: 4197,
+    req: {
+      kind: "struct",
+      name: "McpReconnectReq",
+      className: "McpReconnectReq"
+    },
+    final: {
+      kind: "struct",
+      name: "McpReconnectResp",
+      className: "McpReconnectResp"
     }
   },
   {

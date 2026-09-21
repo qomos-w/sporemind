@@ -815,7 +815,7 @@ export const callableEntries: CallableEntry[] = [
     name: "session_import_turns",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1665,
+    reqSchemaId: 1806,
     finalSchemaId: 1786,
     req: {
       kind: "struct",

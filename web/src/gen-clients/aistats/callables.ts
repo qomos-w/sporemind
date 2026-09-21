@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "cleanup",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1657,
-    finalSchemaId: 1658,
+    reqSchemaId: 1797,
+    finalSchemaId: 1798,
     req: {
       kind: "struct",
       name: "AIStatsCleanupReq",

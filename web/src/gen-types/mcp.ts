@@ -105,6 +105,14 @@ export interface McpDisconnectResp {
   Status: McpServerStatus;
 }
 
+export interface McpReconnectReq {
+  Id: string;
+}
+
+export interface McpReconnectResp {
+  Status: McpServerStatus;
+}
+
 export interface McpToolContent {
   Type: string;
   Text: string;

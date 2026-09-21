@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "stats",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1743,
-    finalSchemaId: 1771,
+    reqSchemaId: 1771,
+    finalSchemaId: 1772,
     req: {
       kind: "struct",
       name: "eventStatsReq",

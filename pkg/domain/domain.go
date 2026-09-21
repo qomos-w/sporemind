@@ -1790,6 +1790,12 @@ type McpDisconnectReq = gen.McpDisconnectReq
 // McpDisconnectResp is the response for mcp.disconnect.
 type McpDisconnectResp = gen.McpDisconnectResp
 
+// McpReconnectReq targets mcp.reconnect (force teardown + fresh connect).
+type McpReconnectReq = gen.McpReconnectReq
+
+// McpReconnectResp is the response for mcp.reconnect.
+type McpReconnectResp = gen.McpReconnectResp
+
 // McpToolContent is one content block of a tools/call result.
 type McpToolContent = gen.McpToolContent
 

@@ -1685,6 +1685,137 @@ func TestResolveHotContext_ConversableBlock_MixedAgentAndBrowser(t *testing.T) {
 	}
 }
 
+// mcpStatusTestCtx builds an agent-test context whose fake planner resolves
+// mcp.list_servers to the given server views (or listErr), used by the
+// buildMCPStatusBlock hot-context tests.
+func mcpStatusTestCtx(t *testing.T, items []domain.McpServerView, listErr error) actor.Context {
+	t.Helper()
+	ctx := testutil.AnonCtx(testutil.GenActorID())
+	ctx.ParentRef = testutil.NewFakeRef(testutil.GenActorID(), nil)
+	ctx.LookupServiceFn = func(name string) (ref.Ref, bool) {
+		if name == "mcp" {
+			return testutil.NewFakeRef(testutil.GenActorID(), nil), true
+		}
+		return nil, false
+	}
+	ctx.PlannerFn = func() actor.Planner {
+		return fakePlannerForInvoke{
+			callFunc: func(_ context.Context, _ ref.Ref, callID string, _ any) (any, error) {
+				if callID == "mcp.list_servers" {
+					if listErr != nil {
+						return nil, listErr
+					}
+					return domain.McpListServersResp{Items: items}, nil
+				}
+				return nil, fmt.Errorf("unexpected call %s", callID)
+			},
+		}
+	}
+	return ctx
+}
+
+// findMCPStatusBlock returns the hot-context block carrying the mounted MCP
+// servers section, or nil when absent.
+func findMCPStatusBlock(blocks []domain.ContentBlock) *domain.ContentBlock {
+	for i := range blocks {
+		if strings.Contains(blocks[i].Text, "## Mounted MCP Servers") {
+			return &blocks[i]
+		}
+	}
+	return nil
+}
+
+func TestResolveHotContext_MCPBlock_Mounted(t *testing.T) {
+	items := []domain.McpServerView{
+		{ID: "srv-0", Name: "deepwiki", Enabled: true, Status: domain.McpServerStatus{ID: "srv-0", Connected: true, ToolCount: 5}},
+		{ID: "srv-1", Name: "playwright", Enabled: true, Status: domain.McpServerStatus{ID: "srv-1", Connected: false, Error: "reconnect failed after 10 attempts: dial refused"}},
+		{ID: "srv-2", Name: "pinned-off", Enabled: false, Status: domain.McpServerStatus{ID: "srv-2"}},
+	}
+	ctx := mcpStatusTestCtx(t, items, nil)
+	a := &Actor{
+		ComponentMounts: []domain.AgentComponentMount{
+			{CardID: "mcp:srv-1", Enabled: true, Scope: "user"},
+			{CardID: "mcp:srv-0", Enabled: true, Scope: "user"},
+			{CardID: "mcp:srv-ghost", Enabled: true, Scope: "user"},
+			// Disabled mount contributes nothing.
+			{CardID: "mcp:srv-2", Enabled: false, Scope: "user"},
+		},
+	}
+	block := findMCPStatusBlock(a.resolveHotContext(ctx))
+	if block == nil {
+		t.Fatal("expected a mounted-MCP-servers hot-context block for mcp: mounts")
+	}
+	if got := strings.Count(block.Text, "## Mounted MCP Servers"); got != 1 {
+		t.Fatalf("expected exactly one heading, got %d:\n%s", got, block.Text)
+	}
+	// Deterministic order: sorted by server id.
+	for _, want := range []string{
+		"- srv-0 (name: deepwiki, connected, 5 tools)",
+		"- srv-1 (name: playwright, DISCONNECTED, 0 tools), error: reconnect failed after 10 attempts: dial refused — call mcp.reconnect with Id=srv-1",
+		"- srv-ghost (not registered — no such server in the system)",
+		"Call mcp.reconnect with Id=<server-id>",
+	} {
+		if !strings.Contains(block.Text, want) {
+			t.Fatalf("missing %q in block:\n%s", want, block.Text)
+		}
+	}
+	if strings.Contains(block.Text, "srv-2") {
+		t.Fatalf("disabled mcp mount must not yield a row:\n%s", block.Text)
+	}
+	if pos0, pos1, posG := strings.Index(block.Text, "- srv-0"), strings.Index(block.Text, "- srv-1"), strings.Index(block.Text, "- srv-ghost"); !(pos0 < pos1 && pos1 < posG) {
+		t.Fatalf("rows must be sorted by server id:\n%s", block.Text)
+	}
+}
+
+func TestResolveHotContext_MCPBlock_Unmounted(t *testing.T) {
+	ctx := mcpStatusTestCtx(t, nil, nil)
+	a := &Actor{}
+	if block := findMCPStatusBlock(a.resolveHotContext(ctx)); block != nil {
+		t.Fatalf("expected no MCP block without mcp: mounts, got:\n%s", block.Text)
+	}
+	b := &Actor{
+		ComponentMounts: []domain.AgentComponentMount{
+			{CardID: "mcp:srv-0", Enabled: false, Scope: "user"},
+		},
+	}
+	if block := findMCPStatusBlock(b.resolveHotContext(ctx)); block != nil {
+		t.Fatalf("expected no MCP block for a disabled mcp: mount, got:\n%s", block.Text)
+	}
+}
+
+// TestResolveHotContext_MCPBlock_StatusUnavailableDegrades: when
+// mcp.list_servers fails the block survives with status-unavailable rows —
+// the agent still knows which servers it has mounted.
+func TestResolveHotContext_MCPBlock_StatusUnavailableDegrades(t *testing.T) {
+	ctx := mcpStatusTestCtx(t, nil, errors.New("manager unreachable"))
+	a := &Actor{
+		ComponentMounts: []domain.AgentComponentMount{
+			{CardID: "mcp:srv-0", Enabled: true, Scope: "user"},
+		},
+	}
+	block := findMCPStatusBlock(a.resolveHotContext(ctx))
+	if block == nil {
+		t.Fatal("expected the MCP block to degrade, not disappear")
+	}
+	if !strings.Contains(block.Text, "- srv-0 (status unavailable)") {
+		t.Fatalf("expected a status-unavailable row:\n%s", block.Text)
+	}
+}
+
+func TestTruncateMid(t *testing.T) {
+	if got := truncateMid("short", 160); got != "short" {
+		t.Fatalf("short string must pass through, got %q", got)
+	}
+	long := strings.Repeat("a", 300)
+	got := truncateMid(long, 160)
+	if len(got) != 160 {
+		t.Fatalf("truncated length = %d, want 160", len(got))
+	}
+	if !strings.Contains(got, "...") {
+		t.Fatalf("truncated string must carry an ellipsis, got %q", got)
+	}
+}
+
 func TestResolveHotContext_BrowserBlock_Unmounted(t *testing.T) {
 	agents := []domain.AgentRef{
 		{ID: "Coder#0001", ActorID: "actor-1", DisplayName: "Alice", AgentKind: "coder", LoadState: "loaded", Status: "idle"},

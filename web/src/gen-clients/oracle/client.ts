@@ -25,6 +25,10 @@ export const capabilityExplain_meta = {
   resSchemaId: 948,
 } as const;
 
+export async function eventsStatsTick(client: GosporeClient, opts?: InvokeOptions): Promise<void> {
+  return client.invoke<void, void>("oracle.events_stats_tick", undefined, opts);
+}
+
 export async function getDiagnostic(client: GosporeClient, req: systemTypes.OracleGetDiagnosticReq, opts?: InvokeOptions): Promise<systemTypes.Diagnostic> {
   return client.invoke<systemTypes.OracleGetDiagnosticReq, systemTypes.Diagnostic>("oracle.get_diagnostic", req, { reqSchemaId: 954, resSchemaId: 949, ...opts });
 }

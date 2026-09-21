@@ -118,13 +118,13 @@ export async function *invokeStream(client: GosporeClient, req: systemTypes.Plug
 }
 
 export async function listPlugins(client: GosporeClient, req: systemTypes.listPluginsReq, opts?: InvokeOptions): Promise<systemTypes.ListPluginsResp> {
-  return client.invoke<systemTypes.listPluginsReq, systemTypes.ListPluginsResp>("pluginhost.list_plugins", req, { reqSchemaId: 1662, resSchemaId: 1781, ...opts });
+  return client.invoke<systemTypes.listPluginsReq, systemTypes.ListPluginsResp>("pluginhost.list_plugins", req, { reqSchemaId: 1802, resSchemaId: 1781, ...opts });
 }
 
 export const listPlugins_meta = {
   callable: "pluginhost.list_plugins",
   name: "list_plugins",
-  reqSchemaId: 1662,
+  reqSchemaId: 1802,
   resSchemaId: 1781,
 } as const;
 

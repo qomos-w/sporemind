@@ -8,14 +8,16 @@
 //     session (stdio subprocess or Streamable HTTP, initialize handshake,
 //     tools/list discovery + cache)
 //   - disconnect (Internal) tears the session down
+//   - reconnect (Internal) force-establishes a fresh session (teardown +
+//     reset reconnect budget + connect), re-enabling auto-reconnect
 //   - call_tool (Internal) executes one tool through the live session
 //   - configure (Internal) replaces cfg and reconciles connection state
 //   - status (Public) returns the sanitized McpServerStatus
 //
-// Lane layout: connect/disconnect/call_tool/configure run on the dedicated
-// ExecLoop lane (ModeStateful) because their MCP round trips are bounded by
-// connectTimeout (45s handshake) and callTimeout (2min tools/call). status
-// and tools stay on the owner loop, so connectivity and cached tool-list
+// Lane layout: connect/disconnect/reconnect/call_tool/configure run on the
+// dedicated ExecLoop lane (ModeStateful) because their MCP round trips are
+// bounded by connectTimeout (45s handshake) and callTimeout (2min tools/call).
+// status and tools stay on the owner loop, so connectivity and cached tool-list
 // queries answer instantly even while a long call is in flight.
 //
 // Every connection state change emits the mcp.server_status event so the
@@ -275,6 +277,9 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	if err := ctx.Register("mcpinstance.disconnect", a.handleDisconnect, actor.Internal(), actor.WithLoop(ExecLoop)); err != nil {
 		return fmt.Errorf("mcpinstance: register disconnect: %w", err)
 	}
+	if err := ctx.Register("mcpinstance.reconnect", a.handleReconnect, actor.Internal(), actor.WithLoop(ExecLoop)); err != nil {
+		return fmt.Errorf("mcpinstance: register reconnect: %w", err)
+	}
 	if err := ctx.Register("mcpinstance.call_tool", a.handleCallTool, actor.Internal(), actor.WithLoop(ExecLoop)); err != nil {
 		return fmt.Errorf("mcpinstance: register call_tool: %w", err)
 	}
@@ -339,6 +344,36 @@ func (a *Actor) handleDisconnect(ctx actor.Context) (domain.McpServerStatus, err
 	a.mu.Unlock()
 	a.emitStatus(ctx)
 	return status, nil
+}
+
+// handleReconnect force-establishes a fresh session even when the instance
+// currently reports connected: any live (possibly wedged) session is torn
+// down, the reconnect budget is reset, and auto-reconnect supervision is
+// re-enabled — an explicit disconnect beforehand no longer pins the instance
+// offline. A failed immediate connect hands off to the standard reconnect
+// loop (bounded backoff retries) while the error is returned to the caller.
+// Runs on the ExecLoop lane like connect/disconnect so the teardown +
+// handshake never park the owner loop.
+func (a *Actor) handleReconnect(ctx actor.Context) (domain.McpServerStatus, error) {
+	a.disconnectLocked(ctx) // also cancels any in-flight reconnect loop
+	a.mu.Lock()
+	a.reconnectDisabled = false
+	a.reconnectAttempts = 0
+	a.lastErr = ""
+	a.mu.Unlock()
+	if err := a.connect(ctx); err != nil {
+		// Mirror OnStart's auto-connect failure path: keep retrying in the
+		// background instead of leaving the server offline until another
+		// manual lifecycle call.
+		a.startReconnectLoop(ctx)
+		a.mu.Lock()
+		status := a.statusLocked()
+		a.mu.Unlock()
+		return status, err
+	}
+	a.mu.Lock()
+	defer a.mu.Unlock()
+	return a.statusLocked(), nil
 }
 
 // handleCallTool executes one tool through the live session. Returns a

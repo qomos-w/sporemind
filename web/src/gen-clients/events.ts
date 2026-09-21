@@ -142,7 +142,7 @@ export const Events = {
     "mcp.server_status": {
       actorPath: "mcpmanager",
       kind: "mcp.server_status",
-      schemaId: 4199,
+      schemaId: 4201,
       schemaName: "McpServerStatusEvent",
     },
   },

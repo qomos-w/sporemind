@@ -211,6 +211,14 @@ func ensureLocalInteractionCallables(callables map[string]domain.CallableInterfa
 			},
 			ServiceName: "mcp",
 		},
+		"mcp.reconnect": {
+			Name:        "mcp.reconnect",
+			Description: "Force-reconnect an MCP server: tear down any live (possibly wedged) session, reset the auto-reconnect budget, and establish a fresh connection. Use it when a mounted MCP server shows DISCONNECTED in your hot-context \"Mounted MCP Servers\" block or its tools stopped responding; on failure the background reconnect loop keeps retrying with backoff. Returns the live status (connected, toolCount, error).",
+			Params: []domain.CallableParam{
+				{Name: "Id", Type: "string", Required: true, Description: "MCP server ID as shown in the Mounted MCP Servers hot-context block (the mcp:<server-id> card without the mcp: prefix)."},
+			},
+			ServiceName: "mcp",
+		},
 		"open_global_browser": {
 			Name:        "open_global_browser",
 			Description: "Open a URL or local file in the sporemind desktop's shared global browser (the right-panel global browser tab). Supports http://, https://, file:// URLs and project-relative paths. Only available in the desktop client; in headless mode an open_global event is emitted but no browser window will appear.",
@@ -1122,7 +1130,10 @@ func (a *Actor) resolveStaticEnvironment(ctx actor.Context) string {
 // Git status is deliberately excluded from hot context because it is not part
 // of the per-turn instruction surface and should not influence the model's
 // reasoning. The active task board (buildTaskBoardBlock) is included here so
-// the LLM sees its own pending/in-progress tasks every turn.
+// the LLM sees its own pending/in-progress tasks every turn. Mounted MCP
+// servers (buildMCPStatusBlock) are included so the agent knows which
+// external tool servers it carries and can self-heal a dropped one via
+// mcp.reconnect.
 func (a *Actor) resolveHotContext(ctx actor.Context) []domain.ContentBlock {
 	var blocks []domain.ContentBlock
 	if block := a.buildGoalBlock(ctx); block != nil {
@@ -1135,6 +1146,9 @@ func (a *Actor) resolveHotContext(ctx actor.Context) []domain.ContentBlock {
 		blocks = append(blocks, *block)
 	}
 	if block := a.buildConversableBlock(ctx); block != nil {
+		blocks = append(blocks, *block)
+	}
+	if block := a.buildMCPStatusBlock(ctx); block != nil {
 		blocks = append(blocks, *block)
 	}
 	return blocks

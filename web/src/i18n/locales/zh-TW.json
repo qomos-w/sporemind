@@ -1697,6 +1697,7 @@
   "settings.keymap.unbound": "未綁定",
   "settings.mcp.action.connect": "連線",
   "settings.mcp.action.delete": "刪除",
+  "settings.mcp.action.reconnect": "重連",
   "settings.mcp.action.disconnect": "斷開",
   "settings.mcp.addServer": "新增伺服器",
   "settings.mcp.desc": "設定 Model Context Protocol 伺服器連線。",

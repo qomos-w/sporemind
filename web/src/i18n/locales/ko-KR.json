@@ -1642,6 +1642,7 @@
   "settings.keymap.unbound": "할당 안 됨",
   "settings.mcp.action.connect": "연결",
   "settings.mcp.action.delete": "삭제",
+  "settings.mcp.action.reconnect": "다시 연결",
   "settings.mcp.action.disconnect": "연결 끊기",
   "settings.mcp.addServer": "서버 추가",
   "settings.mcp.desc": "Model Context Protocol 서버 연결을 구성합니다.",

@@ -26,7 +26,7 @@ export const callableEntries: CallableEntry[] = [
     name: "get",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1661,
+    reqSchemaId: 1801,
     finalSchemaId: 139,
     req: {
       kind: "struct",
@@ -151,8 +151,8 @@ export const callableEntries: CallableEntry[] = [
     name: "submit",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1659,
-    finalSchemaId: 1660,
+    reqSchemaId: 1799,
+    finalSchemaId: 1800,
     req: {
       kind: "struct",
       name: "SubmitReq",

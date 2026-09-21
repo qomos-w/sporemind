@@ -7,6 +7,7 @@ import (
 	"errors"
 	"fmt"
 	"log/slog"
+	"maps"
 	"slices"
 
 	"github.com/qomos-w/gospore/actor"
@@ -3620,6 +3621,115 @@ func buildBrowserWindowsSection(instances []string) string {
 		sb.WriteString(fmt.Sprintf("- %s (Config.InstanceID = %q)\n", instanceID, instanceID))
 	}
 	return sb.String()
+}
+
+// mcpStatusBlockBase is the fixed guidance section of the mounted MCP
+// servers hot-context block. buildMCPStatusSection appends one row per
+// mounted mcp:<server-id> card after it.
+const mcpStatusBlockBase = `## Mounted MCP Servers
+
+External MCP tool servers are mounted on you as mcp:<server-id> cards; their tools appear as mcp.<server>.<tool>.
+- When a mounted server is disconnected, its tools are NOT in your surface. Call mcp.reconnect with Id=<server-id> to re-establish the session; the tools re-enter your surface after the reconnect (same turn at the next safe judgment window, otherwise next turn).
+- A server whose row says "not registered" no longer exists in the system registry; unmount its card with component_unmount if you no longer need it.`
+
+// buildMCPStatusBlock injects the live status of every mounted MCP server
+// into hot context so the agent knows which external tool servers it carries
+// and can self-heal a dropped one (mcp.reconnect). Returns nil when no
+// mcp:<server-id> card is mounted (zero token cost).
+//
+// Live status comes from one mcp.list_servers call (the safe view), mirroring
+// buildConversableBlock's degrade pattern: on call failure every row is
+// marked (status unavailable) instead of dropping the block — the agent still
+// knows which servers it has mounted.
+func (a *Actor) buildMCPStatusBlock(ctx actor.Context) *domain.ContentBlock {
+	// Tolerate a nil ctx (resolveFullHotContext(nil) in tests): fall back to
+	// the raw mount list; every sibling block is nil-ctx safe.
+	var mounts []domain.AgentComponentMount
+	if ctx != nil {
+		mounts = a.resolveComponentSnapshot(ctx).Mounts
+	} else {
+		mounts = a.ComponentMounts
+	}
+	serverIDs := mountedMCPServerIDs(mounts)
+	if len(serverIDs) == 0 {
+		return nil
+	}
+
+	items, ok := a.fetchMCPServerViews(ctx)
+	var sb strings.Builder
+	sb.WriteString(mcpStatusBlockBase)
+	sb.WriteString("\n")
+	byID := make(map[string]domain.McpServerView, len(items))
+	for _, v := range items {
+		byID[v.ID] = v
+	}
+	for _, id := range slices.Sorted(maps.Keys(serverIDs)) {
+		if !ok {
+			sb.WriteString(fmt.Sprintf("- %s (status unavailable)\n", id))
+			continue
+		}
+		view, found := byID[id]
+		if !found {
+			sb.WriteString(fmt.Sprintf("- %s (not registered — no such server in the system)\n", id))
+			continue
+		}
+		if !view.Enabled {
+			sb.WriteString(fmt.Sprintf("- %s (name: %s, disabled)\n", id, view.Name))
+			continue
+		}
+		if view.Status.Connected {
+			sb.WriteString(fmt.Sprintf("- %s (name: %s, connected, %d tools)\n", id, view.Name, view.Status.ToolCount))
+			continue
+		}
+		row := fmt.Sprintf("- %s (name: %s, DISCONNECTED, %d tools)", id, view.Name, view.Status.ToolCount)
+		if view.Status.Error != "" {
+			row += fmt.Sprintf(", error: %s", truncateMid(view.Status.Error, 160))
+		}
+		sb.WriteString(row + " — call mcp.reconnect with Id=" + id + "\n")
+	}
+	return &domain.ContentBlock{Type: "text", Text: sb.String()}
+}
+
+// fetchMCPServerViews queries mcp.list_servers (the safe view: env/header key
+// names only). Returns ok=false when the manager is unreachable so callers
+// can degrade instead of dropping the hot-context block.
+func (a *Actor) fetchMCPServerViews(ctx actor.Context) ([]domain.McpServerView, bool) {
+	if ctx == nil || ctx.Planner() == nil {
+		return nil, false
+	}
+	mcpRef, ok := ctx.LookupService("mcp")
+	if !ok {
+		return nil, false
+	}
+	callCtx, cancel := context.WithTimeout(ctx.Lifecycle(), domain.DefaultInvokeTimeout)
+	defer cancel()
+	result, err := ctx.Planner().Call(callCtx, mcpRef, "mcp.list_servers", domain.McpListServersReq{}).Await()
+	if err != nil || result == nil {
+		return nil, false
+	}
+	switch v := result.(type) {
+	case domain.McpListServersResp:
+		return v.Items, true
+	case *domain.McpListServersResp:
+		if v == nil {
+			return nil, false
+		}
+		return v.Items, true
+	default:
+		return nil, false
+	}
+}
+
+// truncateMid bounds an upstream error string for hot-context rendering:
+// keep the head and tail around an ellipsis so both the failing stage and
+// the root cause stay visible.
+func truncateMid(s string, max int) string {
+	if len(s) <= max {
+		return s
+	}
+	head := (max - 3) / 2
+	tail := max - 3 - head
+	return s[:head] + "..." + s[len(s)-tail:]
 }
 
 func cardField(raw, field string) string {

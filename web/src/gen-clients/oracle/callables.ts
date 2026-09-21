@@ -41,6 +41,22 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "oracle",
+    name: "events_stats_tick",
+    visibility: "public",
+    mode: "unary",
+    reqSchemaId: 0,
+    finalSchemaId: 0,
+    req: {
+      kind: "void",
+      name: "void"
+    },
+    final: {
+      kind: "void",
+      name: "void"
+    }
+  },
+  {
+    namespace: "oracle",
     name: "get_diagnostic",
     visibility: "public",
     mode: "unary",

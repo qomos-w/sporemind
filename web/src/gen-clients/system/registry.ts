@@ -41,6 +41,7 @@ export const SchemaIDs = {
   AgentCaptureProfileReq: 169,
   AgentCaptureProfileResp: 170,
   eventStatsSub: 172,
+  eventStatsRing: 174,
   GoalSummary: 175,
   AgentWorkflowStartReq: 176,
   AgentWorkflowStartResp: 177,
@@ -48,6 +49,7 @@ export const SchemaIDs = {
   AgentWorkflowStopResp: 179,
   AgentWorkflowPauseAllReq: 180,
   AgentWorkflowPauseAllResp: 181,
+  eventStatsStoreSub: 188,
   SystemTreeNode: 190,
   ImageEntry: 224,
   AttachmentEntry: 225,
@@ -553,13 +555,6 @@ export const SchemaIDs = {
   SshTunnelListReq: 1620,
   SshTunnelInfo: 1621,
   SshTunnelListResp: 1622,
-  AIStatsCleanupReq: 1657,
-  AIStatsCleanupResp: 1658,
-  SubmitReq: 1659,
-  SubmitResp: 1660,
-  GetReq: 1661,
-  listPluginsReq: 1662,
-  AgentSessionImportTurnsReq: 1665,
   Account: 1680,
   AccountView: 1681,
   AuthRegisterReq: 1682,
@@ -591,7 +586,6 @@ export const SchemaIDs = {
   AgentToolsRefreshNotifyResp: 1732,
   readSnapshotReq: 1733,
   readSnapshotResp: 1734,
-  eventStatsReq: 1743,
   VoiceAccountView: 1745,
   VoiceAccountListReq: 1746,
   VoiceAccountListResp: 1747,
@@ -617,14 +611,22 @@ export const SchemaIDs = {
   VoiceCloneResp: 1768,
   VoiceDesignReq: 1769,
   VoiceDesignResp: 1770,
-  eventStatsResp: 1771,
-  cellStatsReq: 1772,
+  eventStatsReq: 1771,
+  eventStatsResp: 1772,
+  cellStatsReq: 1773,
   LoginDoneReq: 1779,
   ListPluginsResp: 1781,
   setPermissionModeReq: 1783,
   AgentSessionExportRangeReq: 1784,
   AgentSessionExportRangeResp: 1785,
   AgentSessionImportTurnsResp: 1786,
+  AIStatsCleanupReq: 1797,
+  AIStatsCleanupResp: 1798,
+  SubmitReq: 1799,
+  SubmitResp: 1800,
+  GetReq: 1801,
+  listPluginsReq: 1802,
+  AgentSessionImportTurnsReq: 1806,
   ProjectMount: 1808,
   ProjectRef: 1809,
   WorkspaceMountReq: 1810,
@@ -1048,13 +1050,15 @@ export const SchemaIDs = {
   McpConnectResp: 4193,
   McpDisconnectReq: 4194,
   McpDisconnectResp: 4195,
-  McpToolContent: 4196,
-  McpCallToolReq: 4197,
-  McpCallToolResp: 4198,
-  McpServerStatusEvent: 4199,
-  McpToolView: 4200,
-  McpServerTools: 4201,
-  McpDiscoverToolsResp: 4203,
+  McpReconnectReq: 4196,
+  McpReconnectResp: 4197,
+  McpToolContent: 4198,
+  McpCallToolReq: 4199,
+  McpCallToolResp: 4200,
+  McpServerStatusEvent: 4201,
+  McpToolView: 4202,
+  McpServerTools: 4203,
+  McpDiscoverToolsResp: 4205,
   BrowserCrawlStartReq: 4240,
   BrowserCrawlStartResp: 4241,
   BrowserCrawlStatusReq: 4242,
@@ -3564,6 +3568,56 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
+    schemaId: 174,
+    name: "eventStatsRing",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "eventStatsRing",
+      className: "eventStatsRing",
+      classId: 174
+    },
+    object: {
+      kind: "struct",
+      name: "eventStatsRing",
+      fields: [
+        {
+          name: "actorId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "len",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          }
+        },
+        {
+          name: "capacity",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          }
+        },
+        {
+          name: "evicted",
+          type: {
+            kind: "scalar",
+            name: "ulong",
+            typeId: 9
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
     schemaId: 175,
     name: "GoalSummary",
     visibility: "public",
@@ -3798,6 +3852,61 @@ export const schemaEntries: SchemaEntry[] = [
         },
         {
           name: "SkippedCount",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 188,
+    name: "eventStatsStoreSub",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "eventStatsStoreSub",
+      className: "eventStatsStoreSub",
+      classId: 188
+    },
+    object: {
+      kind: "struct",
+      name: "eventStatsStoreSub",
+      fields: [
+        {
+          name: "actorId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "kinds",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          },
+          optional: true
+        },
+        {
+          name: "dropped",
+          type: {
+            kind: "scalar",
+            name: "ulong",
+            typeId: 9
+          }
+        },
+        {
+          name: "bufferCap",
           type: {
             kind: "scalar",
             name: "int",
@@ -30021,293 +30130,6 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1657,
-    name: "AIStatsCleanupReq",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "AIStatsCleanupReq",
-      className: "AIStatsCleanupReq",
-      classId: 1657
-    },
-    object: {
-      kind: "struct",
-      name: "AIStatsCleanupReq",
-      fields: [
-        {
-          name: "dryRun",
-          type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1658,
-    name: "AIStatsCleanupResp",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "AIStatsCleanupResp",
-      className: "AIStatsCleanupResp",
-      classId: 1658
-    },
-    object: {
-      kind: "struct",
-      name: "AIStatsCleanupResp",
-      fields: [
-        {
-          name: "found",
-          type: {
-            kind: "scalar",
-            name: "long",
-            typeId: 8
-          }
-        },
-        {
-          name: "deleted",
-          type: {
-            kind: "scalar",
-            name: "long",
-            typeId: 8
-          }
-        },
-        {
-          name: "remaining",
-          type: {
-            kind: "scalar",
-            name: "long",
-            typeId: 8
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1659,
-    name: "SubmitReq",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "SubmitReq",
-      className: "SubmitReq",
-      classId: 1659
-    },
-    object: {
-      kind: "struct",
-      name: "SubmitReq",
-      fields: [
-        {
-          name: "config",
-          type: {
-            kind: "struct",
-            name: "struct",
-            className: "Config"
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1660,
-    name: "SubmitResp",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "SubmitResp",
-      className: "SubmitResp",
-      classId: 1660
-    },
-    object: {
-      kind: "struct",
-      name: "SubmitResp",
-      fields: [
-        {
-          name: "task",
-          type: {
-            kind: "struct",
-            name: "struct",
-            className: "Task"
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1661,
-    name: "GetReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "GetReq",
-      className: "GetReq",
-      classId: 1661
-    },
-    object: {
-      kind: "struct",
-      name: "GetReq",
-      fields: [
-        {
-          name: "id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1662,
-    name: "listPluginsReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "listPluginsReq",
-      className: "listPluginsReq",
-      classId: 1662
-    },
-    object: {
-      kind: "struct",
-      name: "listPluginsReq",
-      fields: []
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1665,
-    name: "AgentSessionImportTurnsReq",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "AgentSessionImportTurnsReq",
-      className: "AgentSessionImportTurnsReq",
-      classId: 1665
-    },
-    object: {
-      kind: "struct",
-      name: "AgentSessionImportTurnsReq",
-      fields: [
-        {
-          name: "Turns",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "struct",
-              name: "struct",
-              className: "Turn"
-            }
-          },
-          optional: true
-        },
-        {
-          name: "Steps",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "struct",
-              name: "struct",
-              className: "Step"
-            }
-          },
-          optional: true
-        },
-        {
-          name: "SummarySegments",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "struct",
-              name: "struct",
-              className: "SummarySegment"
-            }
-          },
-          optional: true
-        },
-        {
-          name: "ExploreResults",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "struct",
-              name: "struct",
-              className: "ExploreResult"
-            }
-          },
-          optional: true
-        },
-        {
-          name: "IsFinal",
-          type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
-          },
-          optional: true
-        },
-        {
-          name: "SourceAgentId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "SourceTotalTurns",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          },
-          optional: true
-        },
-        {
-          name: "NextSeq",
-          type: {
-            kind: "scalar",
-            name: "long",
-            typeId: 8
-          },
-          optional: true
-        },
-        {
-          name: "NextTurnOrder",
-          type: {
-            kind: "scalar",
-            name: "long",
-            typeId: 8
-          },
-          optional: true
-        },
-        {
-          name: "NextIdx",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
     schemaId: 1680,
     name: "Account",
     visibility: "admin",
@@ -31690,23 +31512,6 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1743,
-    name: "eventStatsReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "eventStatsReq",
-      className: "eventStatsReq",
-      classId: 1743
-    },
-    object: {
-      kind: "struct",
-      name: "eventStatsReq",
-      fields: []
-    }
-  },
-  {
-    namespace: "system",
     schemaId: 1745,
     name: "VoiceAccountView",
     visibility: "public",
@@ -32924,13 +32729,30 @@ export const schemaEntries: SchemaEntry[] = [
   {
     namespace: "system",
     schemaId: 1771,
+    name: "eventStatsReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "eventStatsReq",
+      className: "eventStatsReq",
+      classId: 1771
+    },
+    object: {
+      kind: "struct",
+      name: "eventStatsReq",
+      fields: []
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1772,
     name: "eventStatsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "eventStatsResp",
       className: "eventStatsResp",
-      classId: 1771
+      classId: 1772
     },
     object: {
       kind: "struct",
@@ -32947,20 +32769,44 @@ export const schemaEntries: SchemaEntry[] = [
               className: "eventStatsSub"
             }
           }
+        },
+        {
+          name: "rings",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "eventStatsRing"
+            }
+          }
+        },
+        {
+          name: "storeSubs",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "eventStatsStoreSub"
+            }
+          }
         }
       ]
     }
   },
   {
     namespace: "system",
-    schemaId: 1772,
+    schemaId: 1773,
     name: "cellStatsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "cellStatsReq",
       className: "cellStatsReq",
-      classId: 1772
+      classId: 1773
     },
     object: {
       kind: "struct",
@@ -33240,6 +33086,293 @@ export const schemaEntries: SchemaEntry[] = [
             name: "int",
             typeId: 6
           }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1797,
+    name: "AIStatsCleanupReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "AIStatsCleanupReq",
+      className: "AIStatsCleanupReq",
+      classId: 1797
+    },
+    object: {
+      kind: "struct",
+      name: "AIStatsCleanupReq",
+      fields: [
+        {
+          name: "dryRun",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1798,
+    name: "AIStatsCleanupResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "AIStatsCleanupResp",
+      className: "AIStatsCleanupResp",
+      classId: 1798
+    },
+    object: {
+      kind: "struct",
+      name: "AIStatsCleanupResp",
+      fields: [
+        {
+          name: "found",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          }
+        },
+        {
+          name: "deleted",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          }
+        },
+        {
+          name: "remaining",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1799,
+    name: "SubmitReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "SubmitReq",
+      className: "SubmitReq",
+      classId: 1799
+    },
+    object: {
+      kind: "struct",
+      name: "SubmitReq",
+      fields: [
+        {
+          name: "config",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "Config"
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1800,
+    name: "SubmitResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "SubmitResp",
+      className: "SubmitResp",
+      classId: 1800
+    },
+    object: {
+      kind: "struct",
+      name: "SubmitResp",
+      fields: [
+        {
+          name: "task",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "Task"
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1801,
+    name: "GetReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "GetReq",
+      className: "GetReq",
+      classId: 1801
+    },
+    object: {
+      kind: "struct",
+      name: "GetReq",
+      fields: [
+        {
+          name: "id",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1802,
+    name: "listPluginsReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "listPluginsReq",
+      className: "listPluginsReq",
+      classId: 1802
+    },
+    object: {
+      kind: "struct",
+      name: "listPluginsReq",
+      fields: []
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1806,
+    name: "AgentSessionImportTurnsReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "AgentSessionImportTurnsReq",
+      className: "AgentSessionImportTurnsReq",
+      classId: 1806
+    },
+    object: {
+      kind: "struct",
+      name: "AgentSessionImportTurnsReq",
+      fields: [
+        {
+          name: "Turns",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "Turn"
+            }
+          },
+          optional: true
+        },
+        {
+          name: "Steps",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "Step"
+            }
+          },
+          optional: true
+        },
+        {
+          name: "SummarySegments",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "SummarySegment"
+            }
+          },
+          optional: true
+        },
+        {
+          name: "ExploreResults",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "ExploreResult"
+            }
+          },
+          optional: true
+        },
+        {
+          name: "IsFinal",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          },
+          optional: true
+        },
+        {
+          name: "SourceAgentId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "SourceTotalTurns",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          },
+          optional: true
+        },
+        {
+          name: "NextSeq",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          },
+          optional: true
+        },
+        {
+          name: "NextTurnOrder",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          },
+          optional: true
+        },
+        {
+          name: "NextIdx",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          },
+          optional: true
         }
       ]
     }
@@ -56333,13 +56466,65 @@ export const schemaEntries: SchemaEntry[] = [
   {
     namespace: "system",
     schemaId: 4196,
+    name: "McpReconnectReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "McpReconnectReq",
+      className: "McpReconnectReq",
+      classId: 4196
+    },
+    object: {
+      kind: "struct",
+      name: "McpReconnectReq",
+      fields: [
+        {
+          name: "Id",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 4197,
+    name: "McpReconnectResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "McpReconnectResp",
+      className: "McpReconnectResp",
+      classId: 4197
+    },
+    object: {
+      kind: "struct",
+      name: "McpReconnectResp",
+      fields: [
+        {
+          name: "Status",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "McpServerStatus"
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 4198,
     name: "McpToolContent",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpToolContent",
       className: "McpToolContent",
-      classId: 4196
+      classId: 4198
     },
     object: {
       kind: "struct",
@@ -56384,14 +56569,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4197,
+    schemaId: 4199,
     name: "McpCallToolReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpCallToolReq",
       className: "McpCallToolReq",
-      classId: 4197
+      classId: 4199
     },
     object: {
       kind: "struct",
@@ -56435,14 +56620,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4198,
+    schemaId: 4200,
     name: "McpCallToolResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpCallToolResp",
       className: "McpCallToolResp",
-      classId: 4198
+      classId: 4200
     },
     object: {
       kind: "struct",
@@ -56483,14 +56668,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4199,
+    schemaId: 4201,
     name: "McpServerStatusEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "McpServerStatusEvent",
       className: "McpServerStatusEvent",
-      classId: 4199
+      classId: 4201
     },
     object: {
       kind: "struct",
@@ -56509,14 +56694,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4200,
+    schemaId: 4202,
     name: "McpToolView",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpToolView",
       className: "McpToolView",
-      classId: 4200
+      classId: 4202
     },
     object: {
       kind: "struct",
@@ -56551,14 +56736,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4201,
+    schemaId: 4203,
     name: "McpServerTools",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpServerTools",
       className: "McpServerTools",
-      classId: 4201
+      classId: 4203
     },
     object: {
       kind: "struct",
@@ -56597,14 +56782,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4203,
+    schemaId: 4205,
     name: "McpDiscoverToolsResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpDiscoverToolsResp",
       className: "McpDiscoverToolsResp",
-      classId: 4203
+      classId: 4205
     },
     object: {
       kind: "struct",
@@ -68589,6 +68774,15 @@ export const schemaEntries: SchemaEntry[] = [
             className: "ComponentVisual"
           },
           optional: true
+        },
+        {
+          name: "Mode",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
         }
       ]
     }
@@ -68861,6 +69055,15 @@ export const schemaEntries: SchemaEntry[] = [
             kind: "scalar",
             name: "double",
             typeId: 11
+          },
+          optional: true
+        },
+        {
+          name: "Mode",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
           },
           optional: true
         }

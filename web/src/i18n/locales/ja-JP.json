@@ -1645,6 +1645,7 @@
   "settings.keymap.unbound": "未割り当て",
   "settings.mcp.action.connect": "接続",
   "settings.mcp.action.delete": "削除",
+  "settings.mcp.action.reconnect": "再接続",
   "settings.mcp.action.disconnect": "切断",
   "settings.mcp.addServer": "サーバーを追加",
   "settings.mcp.desc": "Model Context Protocol サーバー接続を設定します。",

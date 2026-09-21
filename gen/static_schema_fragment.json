@@ -54012,6 +54012,45 @@
     {
       "namespace": "system",
       "schemaId": 4196,
+      "name": "McpReconnectReq",
+      "object": {
+        "kind": "struct",
+        "name": "McpReconnectReq",
+        "fields": [
+          {
+            "name": "Id",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          }
+        ],
+        "schemaId": 4196
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 4197,
+      "name": "McpReconnectResp",
+      "object": {
+        "kind": "struct",
+        "name": "McpReconnectResp",
+        "fields": [
+          {
+            "name": "Status",
+            "type": {
+              "kind": "struct",
+              "name": "McpServerStatus",
+              "className": "McpServerStatus"
+            }
+          }
+        ],
+        "schemaId": 4197
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 4198,
       "name": "McpToolContent",
       "object": {
         "kind": "struct",
@@ -54048,12 +54087,12 @@
             "optional": true
           }
         ],
-        "schemaId": 4196
+        "schemaId": 4198
       }
     },
     {
       "namespace": "system",
-      "schemaId": 4197,
+      "schemaId": 4199,
       "name": "McpCallToolReq",
       "object": {
         "kind": "struct",
@@ -54088,12 +54127,12 @@
             }
           }
         ],
-        "schemaId": 4197
+        "schemaId": 4199
       }
     },
     {
       "namespace": "system",
-      "schemaId": 4198,
+      "schemaId": 4200,
       "name": "McpCallToolResp",
       "object": {
         "kind": "struct",
@@ -54127,12 +54166,12 @@
             "optional": true
           }
         ],
-        "schemaId": 4198
+        "schemaId": 4200
       }
     },
     {
       "namespace": "system",
-      "schemaId": 4199,
+      "schemaId": 4201,
       "name": "McpServerStatusEvent",
       "object": {
         "kind": "struct",
@@ -54147,12 +54186,12 @@
             }
           }
         ],
-        "schemaId": 4199
+        "schemaId": 4201
       }
     },
     {
       "namespace": "system",
-      "schemaId": 4200,
+      "schemaId": 4202,
       "name": "McpToolView",
       "object": {
         "kind": "struct",
@@ -54180,12 +54219,12 @@
             }
           }
         ],
-        "schemaId": 4200
+        "schemaId": 4202
       }
     },
     {
       "namespace": "system",
-      "schemaId": 4201,
+      "schemaId": 4203,
       "name": "McpServerTools",
       "object": {
         "kind": "struct",
@@ -54217,23 +54256,23 @@
             }
           }
         ],
-        "schemaId": 4201
+        "schemaId": 4203
       }
     },
     {
       "namespace": "system",
-      "schemaId": 4202,
+      "schemaId": 4204,
       "name": "McpDiscoverToolsReq",
       "object": {
         "kind": "struct",
         "name": "McpDiscoverToolsReq",
         "fields": [],
-        "schemaId": 4202
+        "schemaId": 4204
       }
     },
     {
       "namespace": "system",
-      "schemaId": 4203,
+      "schemaId": 4205,
       "name": "McpDiscoverToolsResp",
       "object": {
         "kind": "struct",
@@ -54251,7 +54290,7 @@
             }
           }
         ],
-        "schemaId": 4203
+        "schemaId": 4205
       }
     },
     {
@@ -65219,6 +65258,14 @@
               "className": "ComponentVisual"
             },
             "optional": true
+          },
+          {
+            "name": "Mode",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
           }
         ],
         "schemaId": 6400
@@ -65439,6 +65486,14 @@
               "name": "double"
             },
             "optional": true
+          },
+          {
+            "name": "Mode",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
           }
         ],
         "schemaId": 6406
@@ -65562,6 +65617,76 @@
           }
         ],
         "schemaId": 6450
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6451,
+      "name": "WorkbenchAgentModeInfo",
+      "object": {
+        "kind": "struct",
+        "name": "WorkbenchAgentModeInfo",
+        "fields": [
+          {
+            "name": "ActorId",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Kind",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "DisplayName",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "WorkflowActive",
+            "type": {
+              "kind": "scalar",
+              "name": "bool"
+            }
+          },
+          {
+            "name": "BoundTask",
+            "type": {
+              "kind": "scalar",
+              "name": "bool"
+            }
+          }
+        ],
+        "schemaId": 6451
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6452,
+      "name": "WorkbenchAgentListIngestReq",
+      "object": {
+        "kind": "struct",
+        "name": "WorkbenchAgentListIngestReq",
+        "fields": [
+          {
+            "name": "Items",
+            "type": {
+              "kind": "array",
+              "element": {
+                "kind": "struct",
+                "name": "WorkbenchAgentModeInfo",
+                "className": "WorkbenchAgentModeInfo"
+              }
+            }
+          }
+        ],
+        "schemaId": 6452
       }
     },
     {

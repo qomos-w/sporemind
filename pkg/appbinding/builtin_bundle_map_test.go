@@ -145,6 +145,7 @@ var builtinBundleNotPluginReachable = map[string]string{
 	"open_global_browser":                 "浏览器面（browser-tools bundle），不经插件宿主 host call",
 	"mcp.add_server":                      "MCP 管理面（bundle-use bundle），不经插件宿主 host call",
 	"mcp.list_servers":                    "MCP 管理面（bundle-use bundle），不经插件宿主 host call",
+	"mcp.reconnect":                       "MCP 管理面（bundle-use bundle），不经插件宿主 host call",
 	"coordinator_wearable_call":           "穿戴协调面（coordinator-wearable bundle），不经插件宿主 host call",
 	"coordinator_wearable_notify":         "穿戴协调面（coordinator-wearable bundle），不经插件宿主 host call",
 	"image_generate":                      "媒体生成（image-gen bundle）；SDK 侧为 image.generate（callID 名不同，按名判定豁免）",

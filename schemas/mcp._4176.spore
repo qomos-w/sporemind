@@ -3,7 +3,7 @@
 //
 // Sources of truth for:
 //   - mcp.list_servers / add_server / update_server / remove_server
-//   - mcp.connect / disconnect / call_tool
+//   - mcp.connect / disconnect / reconnect / call_tool
 //   - mcp.discover_tools (agent tool injection: connected servers + tool list)
 //   - mcpinstance.tools (per-child cached tool list, Internal)
 //   - mcp.server_status event
@@ -22,12 +22,14 @@
 //   - All responses use the safe views McpServerView / McpStdioTransportView /
 //     McpHttpTransportView, which expose only env/header KEY NAMES plus a
 //     Configured flag — never values.
-//   - mcp.* callables must not be exposed to the anonymous role. Two
-//     agent-facing callables (mcp.discover_tools, mcp.call_tool) additionally
-//     accept internal callers — the agent turn engine routing
-//     mcp.<server>.<tool> tool calls arrives with the manager's own "system"
-//     role (service-ref default caller role) or zero identity on raw internal
-//     invokes; the CRUD/lifecycle callables remain strictly human-only.
+//   - mcp.* callables must not be exposed to the anonymous role. Three
+//     agent-facing callables (mcp.discover_tools, mcp.call_tool,
+//     mcp.reconnect) additionally accept internal callers — the agent turn
+//     engine routing mcp.<server>.<tool> tool calls arrives with the
+//     manager's own "system" role (service-ref default caller role) or zero
+//     identity on raw internal invokes; mcp.reconnect lets a mounted agent
+//     self-heal a dropped MCP server. The CRUD/lifecycle callables remain
+//     strictly human-only.
 
 struct McpStdioTransport {
     Command: string
@@ -147,6 +149,16 @@ struct McpDisconnectReq {
 
 
 struct McpDisconnectResp {
+    Status: McpServerStatus
+}
+
+
+struct McpReconnectReq {
+    Id: string
+}
+
+
+struct McpReconnectResp {
     Status: McpServerStatus
 }
 

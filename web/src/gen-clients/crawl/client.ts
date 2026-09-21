@@ -15,13 +15,13 @@ export const cancel_meta = {
 } as const;
 
 export async function get(client: GosporeClient, req: systemTypes.GetReq, opts?: InvokeOptions): Promise<systemTypes.Task> {
-  return client.invoke<systemTypes.GetReq, systemTypes.Task>("crawl.get", req, { reqSchemaId: 1661, resSchemaId: 139, ...opts });
+  return client.invoke<systemTypes.GetReq, systemTypes.Task>("crawl.get", req, { reqSchemaId: 1801, resSchemaId: 139, ...opts });
 }
 
 export const get_meta = {
   callable: "crawl.get",
   name: "get",
-  reqSchemaId: 1661,
+  reqSchemaId: 1801,
   resSchemaId: 139,
 } as const;
 
@@ -85,13 +85,13 @@ export const status_meta = {
 } as const;
 
 export async function submit(client: GosporeClient, req: systemTypes.SubmitReq, opts?: InvokeOptions): Promise<systemTypes.SubmitResp> {
-  return client.invoke<systemTypes.SubmitReq, systemTypes.SubmitResp>("crawl.submit", req, { reqSchemaId: 1659, resSchemaId: 1660, ...opts });
+  return client.invoke<systemTypes.SubmitReq, systemTypes.SubmitResp>("crawl.submit", req, { reqSchemaId: 1799, resSchemaId: 1800, ...opts });
 }
 
 export const submit_meta = {
   callable: "crawl.submit",
   name: "submit",
-  reqSchemaId: 1659,
-  resSchemaId: 1660,
+  reqSchemaId: 1799,
+  resSchemaId: 1800,
 } as const;
 

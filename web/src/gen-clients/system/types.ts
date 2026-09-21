@@ -4416,6 +4416,14 @@ export interface McpListServersResp {
   Items: McpServerView[];
 }
 
+export interface McpReconnectReq {
+  Id: string;
+}
+
+export interface McpReconnectResp {
+  Status: McpServerStatus;
+}
+
 export interface McpRemoveServerReq {
   Id: string;
 }
@@ -8170,6 +8178,7 @@ export interface WorkbenchCardState {
   StatusText?: string | undefined;
   Why?: string | undefined;
   Visual?: ComponentVisual | undefined;
+  Mode?: string | undefined;
 }
 
 export interface WorkbenchSetFrozenReq {
@@ -8212,6 +8221,7 @@ export interface WorkbenchUpsertCardReq {
   Visual?: ComponentVisual | undefined;
   Hidden?: boolean | undefined;
   Score?: number | undefined;
+  Mode?: string | undefined;
 }
 
 export interface WorkspaceAIShellState {
@@ -8920,6 +8930,22 @@ export interface eventStatsReq {
 
 export interface eventStatsResp {
   subscriptions: eventStatsSub[];
+  rings: eventStatsRing[];
+  storeSubs: eventStatsStoreSub[];
+}
+
+export interface eventStatsRing {
+  actorId: string;
+  len: number;
+  capacity: number;
+  evicted: number;
+}
+
+export interface eventStatsStoreSub {
+  actorId: string;
+  kinds?: string[] | undefined;
+  dropped: number;
+  bufferCap: number;
 }
 
 export interface eventStatsSub {

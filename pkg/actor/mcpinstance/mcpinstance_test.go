@@ -1554,6 +1554,129 @@ func TestReconnectLoop_ExplicitDisconnectCancels(t *testing.T) {
 	}
 }
 
+// TestHandleReconnect_ForceReconnectsLiveSession verifies reconnect tears down
+// a healthy live session and establishes a fresh one (unlike connect, which
+// short-circuits while connected) — the wedge-recovery path.
+func TestHandleReconnect_ForceReconnectsLiveSession(t *testing.T) {
+	dt1 := newEchoTransport(t, "echo")
+	dt2 := newEchoTransport(t, "echo2")
+
+	script := &transportScript{items: []transportStep{{transport: dt1}, {transport: dt2}}}
+	a := freshInstance(t, "srv-force")
+	a.reconnect = fastReconnectPolicy(3, 2*time.Millisecond)
+	a.buildTransportFn = script.build
+
+	ctx := testutil.HumanCtx(testutil.GenActorID())
+	if err := a.OnStart(ctx); err != nil {
+		t.Fatal(err)
+	}
+	defer a.disconnectLocked(ctx)
+
+	if connected, tools, _ := a.snapshotForTest(); !connected || len(tools) != 1 || tools[0].Name != "echo" {
+		t.Fatalf("initial connect = connected:%v tools:%v", connected, tools)
+	}
+
+	status, err := a.handleReconnect(ctx)
+	if err != nil {
+		t.Fatalf("handleReconnect: %v", err)
+	}
+	if !status.Connected || status.ToolCount != 1 {
+		t.Fatalf("reconnect status = %+v, want connected with 1 tool", status)
+	}
+	if connected, tools, _ := a.snapshotForTest(); !connected || len(tools) != 1 || tools[0].Name != "echo2" {
+		t.Fatalf("reconnect = connected:%v tools:%v, want the echo2 server", connected, tools)
+	}
+	if got := script.callCount(); got != 2 {
+		t.Errorf("expected exactly 2 transport builds (initial + reconnect), got %d", got)
+	}
+}
+
+// TestHandleReconnect_AfterExplicitDisconnectReenablesAutoReconnect verifies a
+// reconnect following an explicit user disconnect clears reconnectDisabled, so
+// the instance returns to automatic supervision on later unexpected drops.
+func TestHandleReconnect_AfterExplicitDisconnectReenablesAutoReconnect(t *testing.T) {
+	dt1 := newEchoTransport(t, "echo")
+	dt2 := newEchoTransport(t, "echo2")
+	dt3 := newEchoTransport(t, "echo3")
+
+	script := &transportScript{items: []transportStep{
+		{transport: dt1},
+		{transport: dt2},
+		{transport: dt3},
+	}}
+	a := freshInstance(t, "srv-reenable")
+	a.reconnect = fastReconnectPolicy(3, 2*time.Millisecond)
+	a.buildTransportFn = script.build
+
+	ctx := testutil.HumanCtx(testutil.GenActorID())
+	if err := a.OnStart(ctx); err != nil {
+		t.Fatal(err)
+	}
+	defer a.disconnectLocked(ctx)
+
+	// Explicit disconnect pins the instance offline.
+	a.handleDisconnect(ctx)
+	a.mu.Lock()
+	disabled := a.reconnectDisabled
+	a.mu.Unlock()
+	if !disabled {
+		t.Fatal("explicit disconnect must set reconnectDisabled before reconnect")
+	}
+
+	if _, err := a.handleReconnect(ctx); err != nil {
+		t.Fatalf("handleReconnect after explicit disconnect: %v", err)
+	}
+	a.mu.Lock()
+	disabled = a.reconnectDisabled
+	attempts := a.reconnectAttempts
+	a.mu.Unlock()
+	if disabled {
+		t.Error("reconnect must clear reconnectDisabled")
+	}
+	if attempts != 0 {
+		t.Errorf("reconnect must reset the budget, got reconnectAttempts=%d", attempts)
+	}
+
+	// A later unexpected drop must auto-reconnect again (no manual help).
+	dt2.drop()
+	waitFor(t, 3*time.Second, "auto-reconnect to the echo3 server", func() bool {
+		connected, tools, _ := a.snapshotForTest()
+		return connected && len(tools) == 1 && tools[0].Name == "echo3"
+	})
+}
+
+// TestHandleReconnect_FailureStartsReconnectLoop verifies that when the
+// immediate connect fails, the error is surfaced to the caller AND the
+// background reconnect loop keeps retrying until the server comes back.
+func TestHandleReconnect_FailureStartsReconnectLoop(t *testing.T) {
+	dt1 := newEchoTransport(t, "echo")
+
+	script := &transportScript{items: []transportStep{
+		{transport: dt1},
+		{err: errors.New("dial refused")},
+		{err: errors.New("dial refused")},
+		{transport: newEchoTransport(t, "echo-back")},
+	}}
+	a := freshInstance(t, "srv-retry")
+	a.reconnect = fastReconnectPolicy(5, 2*time.Millisecond)
+	a.buildTransportFn = script.build
+
+	ctx := testutil.HumanCtx(testutil.GenActorID())
+	if err := a.OnStart(ctx); err != nil {
+		t.Fatal(err)
+	}
+	defer a.disconnectLocked(ctx)
+
+	a.handleDisconnect(ctx) // pin offline so only the reconnect path dials
+	if _, err := a.handleReconnect(ctx); err == nil {
+		t.Fatal("expected the immediate reconnect failure to surface as an error")
+	}
+	waitFor(t, 3*time.Second, "background reconnect loop to reach the echo-back server", func() bool {
+		connected, tools, _ := a.snapshotForTest()
+		return connected && len(tools) == 1 && tools[0].Name == "echo-back"
+	})
+}
+
 // TestWatchSession_StabilityWindowResetsReconnectBudget verifies a session that
 // outlived the stability window earns a fresh reconnect budget (attempts reset
 // to 0) when it finally drops.

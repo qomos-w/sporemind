@@ -434,13 +434,13 @@ export const sessionImport_meta = {
 } as const;
 
 export async function sessionImportTurns(client: GosporeClient, req: systemTypes.AgentSessionImportTurnsReq, opts?: InvokeOptions): Promise<systemTypes.AgentSessionImportTurnsResp> {
-  return client.invoke<systemTypes.AgentSessionImportTurnsReq, systemTypes.AgentSessionImportTurnsResp>("session_import_turns", req, { reqSchemaId: 1665, resSchemaId: 1786, ...opts });
+  return client.invoke<systemTypes.AgentSessionImportTurnsReq, systemTypes.AgentSessionImportTurnsResp>("session_import_turns", req, { reqSchemaId: 1806, resSchemaId: 1786, ...opts });
 }
 
 export const sessionImportTurns_meta = {
   callable: "session_import_turns",
   name: "session_import_turns",
-  reqSchemaId: 1665,
+  reqSchemaId: 1806,
   resSchemaId: 1786,
 } as const;
 

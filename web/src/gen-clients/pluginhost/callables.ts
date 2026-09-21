@@ -211,7 +211,7 @@ export const callableEntries: CallableEntry[] = [
     name: "list_plugins",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1662,
+    reqSchemaId: 1802,
     finalSchemaId: 1781,
     req: {
       kind: "struct",

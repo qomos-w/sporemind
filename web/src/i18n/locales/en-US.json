@@ -2361,6 +2361,7 @@
   "settings.lsp.title": "Code Analysis",
   "settings.mcp.action.connect": "Connect",
   "settings.mcp.action.delete": "Delete",
+  "settings.mcp.action.reconnect": "Reconnect",
   "settings.mcp.action.disconnect": "Disconnect",
   "settings.mcp.addServer": "Add server",
   "settings.mcp.desc": "Configure Model Context Protocol server connections.",

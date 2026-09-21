@@ -2361,6 +2361,7 @@
   "settings.lsp.title": "代码分析",
   "settings.mcp.action.connect": "连接",
   "settings.mcp.action.delete": "删除",
+  "settings.mcp.action.reconnect": "重连",
   "settings.mcp.action.disconnect": "断开",
   "settings.mcp.addServer": "添加服务器",
   "settings.mcp.desc": "配置 Model Context Protocol 服务器连接。",

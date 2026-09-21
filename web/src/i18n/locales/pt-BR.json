@@ -1643,6 +1643,7 @@
   "settings.keymap.unbound": "Não atribuído",
   "settings.mcp.action.connect": "Conectar",
   "settings.mcp.action.delete": "Excluir",
+  "settings.mcp.action.reconnect": "Reconectar",
   "settings.mcp.action.disconnect": "Desconectar",
   "settings.mcp.addServer": "Adicionar servidor",
   "settings.mcp.desc": "Configure as conexões com servidores Model Context Protocol.",
