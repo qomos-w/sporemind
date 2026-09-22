@@ -7,7 +7,7 @@ info:
   description: "sporemind desktop"
   copyright: "Copyright (C) 2024-2026 qomos-w. Licensed under AGPL-3.0."
   comments: ""
-  version: "13.19"
+  version: "13.21"
 
 dev_mode:
   root_path: .

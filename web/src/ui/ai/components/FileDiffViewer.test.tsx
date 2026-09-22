@@ -128,3 +128,44 @@ describe('FileDiffViewer project-scoped reads', () => {
     act(() => { root.unmount(); document.body.removeChild(container) })
   })
 })
+
+describe('FileDiffViewer HTML preview', () => {
+  beforeEach(() => {
+    readMock.mockReset()
+    writeMock.mockReset()
+    onFileChangedMock.mockReset()
+    watchFileMock.mockReset()
+
+    readMock.mockImplementation(async (_c: unknown, req: { Path: string }) => {
+      if (req.Path === 'page/index.html') {
+        return { Content: '<html><head><link rel="stylesheet" href="style.css"></head><body><script src="app.js"></script></body></html>' }
+      }
+      if (req.Path === 'page/style.css') return { Content: 'body{color:red}' }
+      if (req.Path === 'page/app.js') return { Content: 'console.log(1)' }
+      throw new Error(`unexpected read: ${req.Path}`)
+    })
+    onFileChangedMock.mockReturnValue(() => {})
+    watchFileMock.mockResolvedValue(undefined)
+  })
+
+  it('runs scripts (allow-scripts sandbox) and inlines relative subresources as data: URLs', async () => {
+    const { container, unmount } = renderFDV({ filePath: 'page/index.html' })
+    await flush()
+
+    const previewBtn = container.querySelectorAll<HTMLButtonElement>('.fdv-mode-switch button')[2]
+    expect(previewBtn?.textContent).toBe('Preview')
+    act(() => { previewBtn?.click() })
+    await flush()
+
+    const iframe = container.querySelector('iframe.fdv-html-preview')
+    expect(iframe).toBeTruthy()
+    expect(iframe?.getAttribute('sandbox')).toBe('allow-scripts')
+    const doc = iframe?.getAttribute('srcdoc') ?? ''
+    expect(doc).toContain('data:text/css;base64,')
+    expect(doc).toContain('data:text/javascript;base64,')
+    // Sibling assets were read through the owning project actor.
+    expect(readMock).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ Path: 'page/style.css' }), expect.anything())
+    expect(readMock).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ Path: 'page/app.js' }), expect.anything())
+    unmount()
+  })
+})

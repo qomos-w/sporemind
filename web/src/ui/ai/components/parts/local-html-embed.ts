@@ -1,4 +1,5 @@
 import * as filesystemClient from '../../../../gen-clients/filesystem/client'
+import * as projectClient from '../../../../gen-clients/project/client'
 import { client } from '../../../../application/generated-client'
 import { base64ToBytes } from '../ImageViewer.tsx'
 
@@ -209,4 +210,17 @@ export async function materializeHtml(
 export const fsAssetIO: HtmlAssetIO = {
   readText: async path => (await filesystemClient.read(client, { Path: path })).Content ?? '',
   readBase64: async path => (await filesystemClient.readBase64(client, { Path: path })).Content ?? '',
+}
+
+/**
+ * Project-aware asset IO: sibling files of a project-scoped preview must be
+ * read through the owning project actor (same routing as the viewer's own
+ * reads); without a project the global filesystem actor serves the paths.
+ */
+export function assetIOFor(projectId?: string): HtmlAssetIO {
+  if (!projectId) return fsAssetIO
+  return {
+    readText: async path => (await projectClient.read(client, { Path: path }, { target: projectId })).Content ?? '',
+    readBase64: async path => (await projectClient.readBase64(client, { Path: path }, { target: projectId })).Content ?? '',
+  }
 }

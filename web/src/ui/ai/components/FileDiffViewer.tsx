@@ -3,6 +3,7 @@ import { File, FileText, FileCode, FileImage, FileJson, FileTerminal, FileSpread
 import Markdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { DiffBlock } from './parts/DiffBlock.tsx'
+import { materializeHtml, assetIOFor } from './parts/local-html-embed.ts'
 import { CodeMirrorViewer } from './CodeMirrorViewer.tsx'
 import { HexViewer } from '../../editor/HexViewer'
 import { client } from '../../../application/generated-client'
@@ -289,6 +290,22 @@ export const FileDiffViewer: React.FC<FileDiffViewerProps> = ({
   const showSource = viewMode === 'source'
   const showPreview = viewMode === 'preview'
 
+  // HTML preview: rewrite relative subresources (css/js/img) to data: URLs and
+  // run page scripts. srcDoc has no base URL, so without materialization every
+  // relative reference 404s; allow-scripts keeps the iframe opaque-origin so
+  // scripts execute without gaining app-origin access.
+  const [previewHtml, setPreviewHtml] = useState('')
+  useEffect(() => {
+    if (!showPreview || !html || source === undefined) return
+    let cancelled = false
+    const norm = filePath.replace(/\\/g, '/')
+    const idx = norm.lastIndexOf('/')
+    materializeHtml(source, idx < 0 ? '' : norm.slice(0, idx), assetIOFor(projectId))
+      .then(res => { if (!cancelled) setPreviewHtml(res.html) })
+      .catch(() => { if (!cancelled) setPreviewHtml(source) })
+    return () => { cancelled = true }
+  }, [showPreview, html, source, filePath, projectId])
+
   return (
     <div className="fdv-container">
       <div className="fdv-toolbar">
@@ -381,8 +398,7 @@ export const FileDiffViewer: React.FC<FileDiffViewerProps> = ({
         ) : showPreview ? (
           source !== undefined ? (
             html ? (
-              // sandbox 不带 allow-scripts：预览只渲染静态 DOM，隔离页面脚本。
-              <iframe className="fdv-html-preview" sandbox="" srcDoc={source} title={filePath} />
+              <iframe className="fdv-html-preview" sandbox="allow-scripts" srcDoc={previewHtml} title={filePath} />
             ) : (
             <div className="fdv-preview">
               {svg ? (
