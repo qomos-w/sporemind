@@ -247,6 +247,47 @@ func (e *turnEngine) phaseExecute(ctx actor.Context, turnID string) error {
 		return nil
 	}
 
+	// 如果 batch 里有 agent_wait，先执行同批其他调用（通常含 async fork
+	// 的 spawn），再进入收割等待。agent_wait 是 async fork 的收割端点，
+	// 必须排在同批 spawn 之后。
+	if waitIdx := findAgentWait(batch); waitIdx >= 0 {
+		waitCall := &batch.calls[waitIdx]
+		otherCalls := make([]pendingToolCall, 0, len(batch.calls)-1)
+		otherSteps := make([]domain.TurnAction, 0, len(batch.calls)-1)
+		for i, c := range batch.calls {
+			if i == waitIdx {
+				continue
+			}
+			otherCalls = append(otherCalls, c)
+			otherSteps = append(otherSteps, e.batchSteps[i])
+		}
+		if len(otherCalls) > 0 {
+			otherBatch := toolExecutionBatch{calls: otherCalls}
+			results := e.executeToolBatch(ctx, otherBatch)
+			e.trackForkChildren(ctx, otherBatch, results)
+			if err := e.processBatchResults(ctx, turnID, results, otherSteps); err != nil {
+				return err
+			}
+			if err := e.flushEvents(ctx); err != nil {
+				e.logger.Error("turnEngine: post-agent-wait-readonly flushEvents failed", "err", err)
+			}
+			if err := e.flushTurnEvents(ctx); err != nil {
+				e.logger.Error("turnEngine: post-agent-wait-readonly flushTurnEvents failed", "err", err)
+			}
+		}
+		// 同批其他 fork 若是同步的，也先等它们完成（agent_wait 只收割 async）。
+		if e.hasSyncPendingChildren() {
+			if err := e.executeWaitChildren(ctx, turnID); err != nil {
+				return err
+			}
+		}
+		if err := e.executeWaitAgents(ctx, turnID, waitCall); err != nil {
+			return err
+		}
+		e.advanceBatch(ctx, turnID)
+		return nil
+	}
+
 	// 否则先进行权限决策。
 	decision, reason := e.checkBatchPermission(ctx, batch)
 	switch decision {
@@ -299,8 +340,9 @@ func (e *turnEngine) phaseExecute(ctx actor.Context, turnID string) error {
 		e.logger.Error("turnEngine: post-batch flushTurnEvents failed", "err", err)
 	}
 
-	// 如果本轮产生了 fork_child，等待它们完成。
-	if len(e.pendingChildren) > 0 {
+	// 如果本轮产生了同步 fork_child，等待它们完成。Async 子 agent 不阻塞，
+	// 由 agent_wait 显式收割。
+	if e.hasSyncPendingChildren() {
 		if err := e.executeWaitChildren(ctx, turnID); err != nil {
 			return err
 		}
@@ -567,6 +609,285 @@ func (e *turnEngine) executeWaitChildren(ctx actor.Context, turnID string) error
 	return nil
 }
 
+// agent_wait 超时钳制：下限 10s，缺省 30s，硬顶 1h（超出直接报错，
+// 与 codex wait_agent 的三级钳制语义一致）。var 而非 const：单元测试
+// 需要临时压低下限验证超时路径，生产路径不得改动。
+var (
+	agentWaitMinTimeout     = 10 * time.Second
+	agentWaitDefaultTimeout = 30 * time.Second
+	agentWaitMaxTimeout     = time.Hour
+)
+
+type agentWaitInput struct {
+	AgentIds  []string `json:"AgentIds"`
+	TimeoutMs float64  `json:"TimeoutMs"`
+}
+
+// findAgentWait 返回 batch 中的 agent_wait 调用下标，无则 -1。
+func findAgentWait(batch toolExecutionBatch) int {
+	for i, call := range batch.calls {
+		if call.CallableID == "agent_wait" {
+			return i
+		}
+	}
+	return -1
+}
+
+// agentWaitOutcomeRow 是 agent_wait 工具结果中的一行子 agent 状态。
+type agentWaitOutcomeRow struct {
+	AgentID      string `json:"AgentId"`
+	ToolUseID    string `json:"ToolUseId,omitempty"`
+	Status       string `json:"Status"`
+	Summary      string `json:"Summary,omitempty"`
+	Iterations   int32  `json:"Iterations,omitempty"`
+	SearchCount  int32  `json:"SearchCount,omitempty"`
+	ReadCount    int32  `json:"ReadCount,omitempty"`
+	InputTokens  int32  `json:"InputTokens,omitempty"`
+	OutputTokens int32  `json:"OutputTokens,omitempty"`
+	Error        string `json:"Error,omitempty"`
+	Note         string `json:"Note,omitempty"`
+}
+
+type agentWaitOutput struct {
+	TimedOut bool                  `json:"TimedOut"`
+	Results  []agentWaitOutcomeRow `json:"Results"`
+}
+
+// executeWaitAgents 是 agent_wait 的收割循环：阻塞等待 async fork 子 agent
+// 完成（或超时），把每个目标的终态作为工具结果返回。
+//
+// 语义：
+//   - 目标为空 = 当前所有仍在运行的 async 子 agent
+//   - 显式 AgentIds 可命中：运行中（asyncPending）、本 turn 已完成
+//     （asyncChildResults）、历史完成（ExploreResults 回查，跨 turn 收割）
+//   - 超时不报错：返回部分结果 + TimedOut:true，仍在运行的列为 running
+//   - 取消（done / lifecycle）：中断等待返回 Canceled，子 agent 不受影响
+//   - 暂停：立即以当前状态收尾工具结果（协议平衡），随 turn 一起暂停
+func (e *turnEngine) executeWaitAgents(ctx actor.Context, turnID string, waitCall *pendingToolCall) error {
+	e.logger.Info("turnEngine: agent_wait", "turnID", turnID, "toolUseID", waitCall.ID, "input", waitCall.Input)
+
+	var input agentWaitInput
+	if err := json.Unmarshal([]byte(waitCall.Input), &input); err != nil {
+		e.finishAgentWait(ctx, turnID, waitCall, fmt.Sprintf("agent_wait: invalid arguments JSON: %v", err), true)
+		return nil
+	}
+	timeout := agentWaitDefaultTimeout
+	switch {
+	case input.TimeoutMs > 0 && input.TimeoutMs < float64(agentWaitMinTimeout.Milliseconds()):
+		timeout = agentWaitMinTimeout
+	case input.TimeoutMs == 0:
+		// default
+	case input.TimeoutMs > float64(agentWaitMaxTimeout.Milliseconds()):
+		e.finishAgentWait(ctx, turnID, waitCall, fmt.Sprintf("agent_wait: TimeoutMs %d exceeds the %s hard cap; resend with a smaller timeout", int64(input.TimeoutMs), agentWaitMaxTimeout), true)
+		return nil
+	default:
+		timeout = time.Duration(input.TimeoutMs * float64(time.Millisecond))
+	}
+
+	// 解析等待目标：仍在运行的进 pendingTargets。已完成的目标无需等待，
+	// collectAgentWaitRows 会按 asyncChildResults / ExploreResults 回查。
+	var pendingTargets []pendingChild
+	for _, pc := range e.asyncPending {
+		if len(input.AgentIds) > 0 && !agentWaitTargetsAgent(input.AgentIds, pc.AgentID) {
+			continue
+		}
+		pendingTargets = append(pendingTargets, pc)
+	}
+
+	timer := time.NewTimer(timeout)
+	defer timer.Stop()
+	timedOut := false
+waitLoop:
+	for len(pendingTargets) > 0 {
+		select {
+		case result := <-e.childDoneCh:
+			e.handleChildResult(ctx, turnID, result)
+			pendingTargets = dropPendingTarget(pendingTargets, result.ToolUseID)
+			if err := e.flushEvents(ctx); err != nil {
+				e.logger.Error("turnEngine: agent_wait child-result flush failed", "err", err)
+			}
+			if err := e.flushTurnEvents(ctx); err != nil {
+				e.logger.Error("turnEngine: agent_wait child-result turn-flush failed", "err", err)
+			}
+
+		case <-e.childProgressCh:
+			// 子 agent 进度心跳：保持等待。
+		case <-timer.C:
+			timedOut = true
+			break waitLoop
+
+		case <-e.pauseDone():
+			// 暂停：立即以当前状态收尾，保证 tool_use/tool_result 协议平衡。
+			e.finishAgentWaitPaused(ctx, turnID, waitCall)
+			return nil
+		case <-e.done:
+			return context.Canceled
+		case <-ctx.Lifecycle().Done():
+			return context.Canceled
+		}
+	}
+
+	output := agentWaitOutput{TimedOut: timedOut, Results: e.collectAgentWaitRows(input.AgentIds)}
+	e.finishAgentWait(ctx, turnID, waitCall, renderAgentWaitOutput(output), false)
+	return nil
+}
+
+func agentWaitTargetsAgent(ids []string, agentID string) bool {
+	for _, id := range ids {
+		if id == agentID {
+			return true
+		}
+	}
+	return false
+}
+
+func dropPendingTarget(pending []pendingChild, toolUseID string) []pendingChild {
+	for i, pc := range pending {
+		if pc.ToolUseID == toolUseID {
+			return append(pending[:i], pending[i+1:]...)
+		}
+	}
+	return pending
+}
+
+// lookupAsyncOutcomeByAgentID finds a finished-this-turn async child by agent ID.
+func (e *turnEngine) lookupAsyncOutcomeByAgentID(agentID string) (asyncChildOutcome, bool) {
+	if agentID == "" {
+		return asyncChildOutcome{}, false
+	}
+	for _, outcome := range e.asyncChildResults {
+		if outcome.AgentID == agentID {
+			return outcome, true
+		}
+	}
+	return asyncChildOutcome{}, false
+}
+
+// collectAgentWaitRows assembles the per-child outcome rows, resolving each
+// target live at snapshot time: still running (asyncPending), finished this
+// turn (asyncChildResults), finished in an earlier turn (ExploreResults
+// callback), else unknown. Explicit AgentIds keep the caller's order; an
+// empty list snapshots every async child of the turn.
+func (e *turnEngine) collectAgentWaitRows(agentIDs []string) []agentWaitOutcomeRow {
+	if len(agentIDs) > 0 {
+		rows := make([]agentWaitOutcomeRow, 0, len(agentIDs))
+		for _, id := range agentIDs {
+			if pc, ok := e.findAsyncPendingByAgentID(id); ok {
+				rows = append(rows, agentWaitOutcomeRow{AgentID: id, ToolUseID: pc.ToolUseID, Status: "running"})
+				continue
+			}
+			if outcome, ok := e.lookupAsyncOutcomeByAgentID(id); ok {
+				rows = append(rows, agentWaitOutcomeRowFrom(id, outcome))
+				continue
+			}
+			if e.onExploreResultLookup != nil {
+				if res, ok := e.onExploreResultLookup(id); ok {
+					rows = append(rows, agentWaitOutcomeRow{AgentID: id, Status: "completed", Summary: res.Summary, SearchCount: res.SearchCount, ReadCount: res.ReadCount, InputTokens: res.InputTokens, OutputTokens: res.OutputTokens})
+					continue
+				}
+			}
+			rows = append(rows, agentWaitOutcomeRow{AgentID: id, Status: "unknown", Note: "no fork child with this id; child agent ids come from Async=true fork responses"})
+		}
+		return rows
+	}
+	rows := make([]agentWaitOutcomeRow, 0, len(e.asyncPending)+len(e.asyncChildResults))
+	for _, pc := range e.asyncPending {
+		rows = append(rows, agentWaitOutcomeRow{AgentID: pc.AgentID, ToolUseID: pc.ToolUseID, Status: "running"})
+	}
+	for _, outcome := range e.asyncChildResults {
+		rows = append(rows, agentWaitOutcomeRowFrom(outcome.AgentID, outcome))
+	}
+	return rows
+}
+
+func (e *turnEngine) findAsyncPendingByAgentID(agentID string) (pendingChild, bool) {
+	for _, pc := range e.asyncPending {
+		if pc.AgentID == agentID {
+			return pc, true
+		}
+	}
+	return pendingChild{}, false
+}
+
+func agentWaitOutcomeRowFrom(agentID string, outcome asyncChildOutcome) agentWaitOutcomeRow {
+	row := agentWaitOutcomeRow{
+		AgentID:      agentID,
+		ToolUseID:    "",
+		Status:       outcome.Status,
+		Summary:      outcome.Result.Summary,
+		Iterations:   outcome.Result.Iterations,
+		SearchCount:  outcome.Result.SearchCount,
+		ReadCount:    outcome.Result.ReadCount,
+		InputTokens:  outcome.Result.InputTokens,
+		OutputTokens: outcome.Result.OutputTokens,
+		Error:        outcome.Err,
+	}
+	return row
+}
+
+func renderAgentWaitOutput(output agentWaitOutput) string {
+	b, err := json.Marshal(output)
+	if err != nil {
+		return `{"TimedOut":false,"Results":[]}`
+	}
+	return string(b)
+}
+
+// finishAgentWait writes the agent_wait tool_result (msg), closes its step,
+// and decrements openToolCalls — the single place that finalizes the call.
+func (e *turnEngine) finishAgentWait(ctx actor.Context, turnID string, waitCall *pendingToolCall, msg string, isErr bool) {
+	if e.openToolCalls > 0 {
+		e.openToolCalls--
+	}
+	e.appendMessage(domain.ChatMessage{
+		ID:      ctx.NewID().String(),
+		Role:    "tool",
+		Content: []domain.ContentBlock{{Type: domain.ContentBlockToolResult, ToolUseID: waitCall.ID, Text: msg, IsError: isErr}},
+	})
+	for i := range e.batchSteps {
+		step := e.batchSteps[i]
+		if step.ToolUseID != waitCall.ID {
+			continue
+		}
+		step.Output = msg
+		step.Text = msg
+		if isErr {
+			step.State = "failed"
+		} else {
+			step.State = "completed"
+		}
+		e.upsertStep(step)
+		e.actionCount++
+		e.emitStepEvent(domain.StepEvent{
+			Kind:   "block.appended",
+			StepID: step.ID,
+			TurnID: turnID,
+			Block: &domain.ContentBlock{
+				Type:      domain.ContentBlockToolResult,
+				ToolUseID: waitCall.ID,
+				Text:      msg,
+				IsError:   isErr,
+			},
+		})
+		if isErr {
+			e.emitStepEvent(domain.StepEvent{Kind: "step.error", StepID: step.ID, TurnID: turnID, Error: msg})
+		} else {
+			e.emitStepEvent(domain.StepEvent{Kind: "step.closed", StepID: step.ID, TurnID: turnID})
+		}
+		return
+	}
+	e.actionCount++
+}
+
+// finishAgentWaitPaused snapshots the current wait state as the tool result
+// when the turn pauses mid-wait, keeping the tool_use/tool_result protocol
+// balanced without killing the children.
+func (e *turnEngine) finishAgentWaitPaused(ctx actor.Context, turnID string, waitCall *pendingToolCall) {
+	output := agentWaitOutput{Results: e.collectAgentWaitRows(nil)}
+	msg := renderAgentWaitOutput(output) + "\n(wait interrupted by pause — children are unaffected; call agent_wait again after resume to re-collect)"
+	e.finishAgentWait(ctx, turnID, waitCall, msg, false)
+}
+
 // writeCancelledToolResults 为取消的 turn 写出 tool_result 消息，
 // 防止历史上出现孤儿 tool_use 块（assistant tool_use 已在 dispatch 时写入 history）。
 // 同时 emit step 事件，使被取消 tool_use 对应的 tool_call step 拿到 tool_result
@@ -782,6 +1103,7 @@ func (e *turnEngine) reportBypassDecision(ctx actor.Context, turnID string, batc
 
 // trackForkChildren 把成功的 fork_child 调用注册为 pending children，并通知
 // 父 agent 跟踪返回的 child ActorID（用于取消、心跳检查和结果路由）。
+// Async fork 走 asyncPending：step 立即以 spawn 应答收尾，结果由 agent_wait 收割。
 func (e *turnEngine) trackForkChildren(ctx actor.Context, batch toolExecutionBatch, results []toolExecutionResult) {
 	for i, call := range batch.calls {
 		if !isForkCallable(call.CallableID) || results[i].isErr {
@@ -791,24 +1113,45 @@ func (e *turnEngine) trackForkChildren(ctx actor.Context, batch toolExecutionBat
 		if i < len(e.batchSteps) {
 			stepID = e.batchSteps[i].ID
 		}
-		e.pendingChildren = append(e.pendingChildren, pendingChild{
+		child := pendingChild{
 			ToolUseID: call.ID,
 			StepID:    stepID,
 			Kind:      e.forkKindForLLMName(call.LLMName),
 			SpawnedAt: time.Now(),
-		})
-		if stepID != "" {
-			e.pendingChildSteps.Store(stepID, struct{}{})
+			Async:     call.ForkAsync,
 		}
 		// The workspace is the spawner; parse its response and register the
 		// returned child ActorID in the parent agent's activeChildren map.
-		if e.onChildTrack != nil && results[i].out != "" {
+		childAgentID := ""
+		if results[i].out != "" {
 			var resp domain.WorkspaceAgentSpawnByTypeResp
-			if err := json.Unmarshal([]byte(results[i].out), &resp); err == nil && resp.ChildActorID != "" {
-				e.onChildTrack(ctx, call.ID, resp.ChildActorID)
+			if err := json.Unmarshal([]byte(results[i].out), &resp); err == nil {
+				childAgentID = resp.ChildActorID
 			}
 		}
+		child.AgentID = childAgentID
+		if e.onChildTrack != nil && childAgentID != "" {
+			e.onChildTrack(ctx, call.ID, childAgentID)
+		}
+		if child.Async {
+			e.asyncPending = append(e.asyncPending, child)
+			results[i].out = asyncForkAckOutput(childAgentID, call.LLMName, child.Kind)
+			continue
+		}
+		e.pendingChildren = append(e.pendingChildren, child)
+		if stepID != "" {
+			e.pendingChildSteps.Store(stepID, struct{}{})
+		}
 	}
+}
+
+// asyncForkAckOutput is the immediate tool_result for an Async=true fork:
+// it names the child so the LLM can target it with agent_wait later.
+func asyncForkAckOutput(childAgentID, llmName, kind string) string {
+	if childAgentID == "" {
+		return "async fork spawned (" + llmName + "); spawn succeeded but workspace returned no child actor id — the result will still be delivered via agent_wait (omit AgentIds to wait for all children)"
+	}
+	return fmt.Sprintf(`{"AsyncSpawned":true,"ChildAgentID":%q,"Tool":"%s","Kind":"%s","NextStep":"call agent_wait (optionally with this ChildAgentID in AgentIds) when you are ready to collect the result; keep working until then"}`, childAgentID, llmName, kind)
 }
 
 // findAskUser 返回 batch 中的 ask_user 调用（如有）。
@@ -858,7 +1201,7 @@ func (e *turnEngine) executeBlockAskUser(ctx actor.Context, turnID string, askCa
 	if err := e.flushTurnEvents(ctx); err != nil {
 		e.logger.Error("turnEngine: block-ask_user flushTurnEvents failed", "err", err)
 	}
-	if len(e.pendingChildren) > 0 {
+	if e.hasSyncPendingChildren() {
 		if err := e.executeWaitChildren(ctx, turnID); err != nil {
 			return err
 		}
@@ -1840,6 +2183,18 @@ func (e *turnEngine) refreshChildLiveness(ctx actor.Context) {
 	e.pendingChildren = remaining
 }
 
+// hasSyncPendingChildren reports whether any non-async fork child is still
+// pending. Async children never hold the batch: phaseDispatch/phaseExecute
+// proceed while they run and the parent harvests them via agent_wait.
+func (e *turnEngine) hasSyncPendingChildren() bool {
+	for _, pc := range e.pendingChildren {
+		if !pc.Async {
+			return true
+		}
+	}
+	return false
+}
+
 // childLastActivity 返回指定子 agent 的最后活动时间。
 // 优先使用 childProgressAt 中记录的最后 progress/heartbeat 时间，否则 fallback 到 SpawnedAt。
 func (e *turnEngine) childLastActivity(pc pendingChild) time.Time {
@@ -1984,6 +2339,17 @@ func (e *turnEngine) handleChildResult(ctx actor.Context, turnID string, result 
 		}
 	}
 	if !found {
+		// Async 子 agent 终态：不重写历史占位符（spawn 应答已收尾 step），
+		// 记入 asyncChildResults 等 agent_wait 收割。
+		for i, pc := range e.asyncPending {
+			if pc.ToolUseID != result.ToolUseID {
+				continue
+			}
+			e.recordAsyncChildOutcome(turnID, pc, result)
+			e.asyncPending = append(e.asyncPending[:i], e.asyncPending[i+1:]...)
+			e.childProgressAt.Delete(pc.StepID)
+			return
+		}
 		e.logger.Warn("turnEngine: child result for unknown tool use", "toolUseID", result.ToolUseID)
 		return
 	}
@@ -2017,6 +2383,41 @@ func (e *turnEngine) handleChildResult(ctx actor.Context, turnID string, result 
 			}
 		}
 	}
+	e.actionCount++
+}
+
+// recordAsyncChildOutcome stores a finished async child's terminal state for a
+// later agent_wait harvest, merging its usage and file changes into the parent
+// turn immediately (billing and diff visibility must not wait on the harvest).
+func (e *turnEngine) recordAsyncChildOutcome(turnID string, pc pendingChild, result childResult) {
+	outcome := asyncChildOutcome{AgentID: pc.AgentID, Status: "completed"}
+	if result.Err != nil {
+		outcome.Status = "failed"
+		outcome.Err = result.Err.Error()
+	} else {
+		outcome.Result = result.Result
+		e.totalUsage = mergeUsage(e.totalUsage, &domain.UsageData{
+			InputTokens:              int64(result.Result.InputTokens),
+			OutputTokens:             int64(result.Result.OutputTokens),
+			CacheCreationInputTokens: int64(result.Result.CacheCreationInputTokens),
+			CacheReadInputTokens:     int64(result.Result.CacheReadInputTokens),
+		})
+		if len(result.Result.FileChanges) > 0 {
+			e.appendFileChanges(result.Result.FileChanges)
+			if pc.StepID != "" {
+				e.emitStepEvent(domain.StepEvent{
+					Kind:        "step.file_changes",
+					StepID:      pc.StepID,
+					TurnID:      turnID,
+					FileChanges: result.Result.FileChanges,
+				})
+			}
+		}
+	}
+	if e.asyncChildResults == nil {
+		e.asyncChildResults = make(map[string]asyncChildOutcome)
+	}
+	e.asyncChildResults[pc.ToolUseID] = outcome
 	e.actionCount++
 }
 
@@ -2310,6 +2711,7 @@ func (e *turnEngine) injectCallerAgentID(batch toolExecutionBatch) {
 		case "workspace.agent_spawn_assign", "workspace.agent_assign",
 			"workspace.agent_review", "workspace.agent_terminate",
 			"workspace.agent_spawn_by_type",
+			"workspace.agent_spawn_swarm",
 			"workspace.agent_pause", "workspace.agent_resume",
 			"workspace.agent_send_message", "workspace.agent_read_message",
 			"workspace.list_agents",
@@ -2362,6 +2764,8 @@ func (e *turnEngine) resolveServiceRefs(ctx actor.Context, batch toolExecutionBa
 
 // injectForkChildIDs 预先向 fork_child 请求中注入 stepID 和 toolUseID，
 // 这样子 agent 完成后可以通过这些信息路由回父 turn。
+// 同时提取 Async 标志：injectForkChildContext 的 JSON 往返会把它剥掉
+// （workspace 请求结构体没有该字段），所以必须在注入前读到 pendingToolCall 上。
 func (e *turnEngine) injectForkChildIDs(batch toolExecutionBatch) {
 	goal := e.resolveGoalCondition()
 	for i := range batch.calls {
@@ -2372,6 +2776,7 @@ func (e *turnEngine) injectForkChildIDs(batch toolExecutionBatch) {
 			continue
 		}
 		kind := e.forkKindForLLMName(batch.calls[i].LLMName)
+		batch.calls[i].ForkAsync = forkInputIsAsync(batch.calls[i].Input)
 		batch.calls[i].Input = injectForkChildContext(
 			batch.calls[i].Input,
 			e.batchSteps[i].ID,
@@ -2381,6 +2786,19 @@ func (e *turnEngine) injectForkChildIDs(batch toolExecutionBatch) {
 			goal,
 		)
 	}
+}
+
+// forkInputIsAsync reports whether a fork tool call set Async=true. Invalid
+// JSON simply yields false — the spawn still proceeds synchronously, which is
+// the safe default.
+func forkInputIsAsync(input string) bool {
+	var probe struct {
+		Async bool `json:"Async"`
+	}
+	if err := json.Unmarshal([]byte(input), &probe); err != nil {
+		return false
+	}
+	return probe.Async
 }
 
 // resolveGoalCondition returns the active session goal text, or "" when no
@@ -2977,10 +3395,13 @@ func (e *turnEngine) applySingleToolResult(ctx actor.Context, turnID string, res
 	})
 
 	isForkChild := isForkCallable(toolCallStep.CallableID)
+	// Async fork 的 step 立即以 spawn 应答收尾；只有同步 fork 保持
+	// running 等 resolveForkStep 关闭。
+	isSyncForkChild := isForkChild && !result.call.ForkAsync
 	switch {
 	case result.isErr:
 		toolCallStep = failStep(toolCallStep, msg)
-	case isForkChild:
+	case isSyncForkChild:
 		// 保持 running，resolveForkStep 会在子 agent 完成时关闭它。
 	default:
 		toolCallStep.State = "completed"
@@ -3011,7 +3432,7 @@ func (e *turnEngine) applySingleToolResult(ctx actor.Context, turnID string, res
 			TurnID: turnID,
 			Error:  msg,
 		})
-	case !isForkChild:
+	case !isSyncForkChild:
 		e.emitStepEvent(domain.StepEvent{
 			Kind:   "step.closed",
 			StepID: toolCallStep.ID,

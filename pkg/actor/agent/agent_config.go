@@ -559,9 +559,11 @@ func (a *Actor) buildPromptArtifactStateful(ctx actor.Context) domain.PromptArti
 	if a.child.Mode {
 		filtered := tools[:0]
 		for _, t := range tools {
-			if t.CallableID != "workspace.agent_spawn_by_type" {
-				filtered = append(filtered, t)
+			// Children cannot fork or wait: no nested spawns.
+			if t.CallableID == "workspace.agent_spawn_by_type" || t.CallableID == "agent_wait" {
+				continue
 			}
+			filtered = append(filtered, t)
 		}
 		tools = filtered
 	}

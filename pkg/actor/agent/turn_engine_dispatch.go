@@ -227,8 +227,9 @@ func (e *turnEngine) phaseDispatch(ctx actor.Context, turnID string) error {
 	default:
 	}
 
-	// 防御性：如果上一轮还有 fork_child 没回来，先等它们完成再发新一轮 LLM。
-	if len(e.pendingChildren) > 0 {
+	// 防御性：如果上一轮还有同步 fork_child 没回来，先等它们完成再发新一轮 LLM。
+	// Async 子 agent 不阻塞 dispatch，由 agent_wait 显式收割。
+	if e.hasSyncPendingChildren() {
 		if err := e.executeWaitChildren(ctx, turnID); err != nil {
 			return err
 		}

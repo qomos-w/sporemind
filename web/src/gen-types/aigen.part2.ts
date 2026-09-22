@@ -207,6 +207,7 @@ export interface ExploreResult {
   OutputTokens: number;
   Timestamp: string;
   StepId?: string | undefined;
+  AgentId?: string | undefined;
 }
 
 export interface Turn {

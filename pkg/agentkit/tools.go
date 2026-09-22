@@ -70,14 +70,33 @@ func ForkToolSpecsFromBundles(bundleIDs []string) []domain.ToolSpec {
 		}
 		out = append(out, forkToolSpec(asset.Fork))
 	}
+	if len(out) > 0 {
+		// Any kind that can fork must also be able to harvest: agent_wait is
+		// the collection counterpart of an Async=true fork spawn.
+		out = append(out, AgentWaitToolSpec())
+	}
 	return out
+}
+
+// AgentWaitToolSpec returns the LLM-facing spec for agent_wait, the harvest
+// counterpart of an async fork. The call is intercepted by the turn engine
+// (phaseExecute) before dispatch and never reaches a real callable.
+func AgentWaitToolSpec() domain.ToolSpec {
+	return domain.ToolSpec{
+		Name:        "agent_wait",
+		Description: "Block the current turn until forked child agents finish (or a timeout elapses), then return their results. Waits for async-forked children spawned earlier in this turn; children that already finished (this turn or a previous one) return immediately with their stored results. Timeout is clamped to a 10s minimum and a 1h hard cap; omitted means 30s. On timeout the call still succeeds, returning partial results with TimedOut=true and the still-running children listed as running — decide whether to wait again, keep working, or abandon them.",
+		InputSchema: `{"type":"object","properties":{"AgentIds":{"type":"array","items":{"type":"string"},"description":"Optional list of child agent IDs (as returned by the async fork call) to wait for. Omit to wait for all currently running fork children."},"TimeoutMs":{"type":"number","description":"How long to wait, in milliseconds. Minimum 10000, default 30000, hard cap 3600000."}},"required":[]}`,
+		EffectKind:  string(domain.EffectNone),
+		CallableID:  "agent_wait",
+		ServiceName: "agent",
+	}
 }
 
 // forkToolSpec builds a single fork ToolSpec from a bundle ForkDecl. The schema
 // differs by tool name: fork_review takes ReviewText/PlanEvidence; all others
-// take Description/Prompt/Model/MaxIterations.
+// take Description/Prompt/Model/MaxIterations/Async.
 func forkToolSpec(f *ForkDecl) domain.ToolSpec {
-	schema := `{"type":"object","properties":{"Description":{"type":"string","description":"Short 3-5 word task summary"},"Prompt":{"type":"string","description":"Detailed instructions for the sub-agent"},"Model":{"type":"string","description":"Optional model override"},"MaxIterations":{"type":"number","description":"Max LLM dispatch iterations (default 5)"}},"required":["Description","Prompt"]}`
+	schema := `{"type":"object","properties":{"Description":{"type":"string","description":"Short 3-5 word task summary"},"Prompt":{"type":"string","description":"Detailed instructions for the sub-agent"},"Model":{"type":"string","description":"Optional model override"},"MaxIterations":{"type":"number","description":"Max LLM dispatch iterations (default 5)"},"Async":{"type":"boolean","description":"Spawn without waiting for the child to finish. The call returns immediately with the child agent id; collect the child's result later with agent_wait. Use this when you want to keep working while the child runs and harvest results at a chosen point in the same turn."}},"required":["Description","Prompt"]}`
 	if f.ToolName == "fork_review" {
 		schema = `{"type":"object","properties":{"ReviewText":{"type":"string","description":"The text to review. Defaults to the active session goal if empty."},"PlanEvidence":{"type":"array","items":{"type":"string"},"description":"Optional plan card IDs to load as evidence."}},"required":[]}`
 	}

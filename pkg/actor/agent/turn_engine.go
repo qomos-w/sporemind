@@ -41,14 +41,14 @@ type childResult struct {
 type TurnLoopState int32
 
 const (
-	LoopDispatch  TurnLoopState = iota // 调用 LLM，解析模型输出
-	LoopAudit                          // 对工具调用进行分区、建 step、权限检查
-	LoopExecute                        // 执行工具调用批次，处理 ask_user/permission/fork_child 等待
-	LoopForcedDispatch                 // 回合终局强制 IO toolcall：ToolChoice 钉死的额外一次 LLM 往返
-	LoopPaused                         // 用户暂停：等待恢复信号
-	LoopCompleted                      // 正常结束
-	LoopFailed                         // 出错结束
-	LoopCancelled                      // 被取消
+	LoopDispatch       TurnLoopState = iota // 调用 LLM，解析模型输出
+	LoopAudit                               // 对工具调用进行分区、建 step、权限检查
+	LoopExecute                             // 执行工具调用批次，处理 ask_user/permission/fork_child 等待
+	LoopForcedDispatch                      // 回合终局强制 IO toolcall：ToolChoice 钉死的额外一次 LLM 往返
+	LoopPaused                              // 用户暂停：等待恢复信号
+	LoopCompleted                           // 正常结束
+	LoopFailed                              // 出错结束
+	LoopCancelled                           // 被取消
 )
 
 // unitSlotRetryBudget is the extra dispatch-retry budget granted when the
@@ -106,6 +106,21 @@ type pendingChild struct {
 	StepID    string    // 对应 TurnAction step 的 ID，用于 UI 路由
 	Kind      string    // 子 agent 的 kind（explorer / reviewer / general 等）
 	SpawnedAt time.Time // 用于子 agent 超时判定
+	// Async 标记 Async=true 的 fork：step 已立即以 spawn 应答收尾，
+	// batch 不为它扣留；结果由 agent_wait 收割（handleChildResult 落入
+	// asyncChildResults 而不是改写历史占位符）。
+	Async bool
+	// AgentID 是 workspace 返回的子 actor ID，agent_wait 按 ID 定向收割。
+	AgentID string
+}
+
+// asyncChildOutcome 记录一个已完成的 async fork 子 agent 的终态，
+// 供 agent_wait 在同一 turn 内晚到收割时读取。
+type asyncChildOutcome struct {
+	AgentID string
+	Status  string // completed | failed
+	Result  domain.ForkResult
+	Err     string
 }
 
 // turnEngine 承载一次 turn 的全部可变状态。
@@ -450,6 +465,20 @@ type turnEngine struct {
 
 	// childDoneCh 接收 fork 子 agent 的结果。
 	childDoneCh chan childResult
+
+	// asyncPending 跟踪 Async=true 的 fork 子 agent（不扣留 batch，
+	// 不参与 executeWaitChildren 的等待/超时/失联回收），由 agent_wait
+	// 显式收割。
+	asyncPending []pendingChild
+
+	// asyncChildResults 记录本 turn 内已完成的 async fork 子 agent 终态，
+	// 键为 ToolUseID。agent_wait 晚到收割时从这里读取。
+	asyncChildResults map[string]asyncChildOutcome
+
+	// onExploreResultLookup lets agent_wait resolve a child agent ID against
+	// the agent's persisted ExploreResults (cross-turn retrieval: an async
+	// child that finished after its parent turn ended).
+	onExploreResultLookup func(agentID string) (domain.ExploreResult, bool)
 
 	// resumeCh 在用户回答 permission 或 ask_user 问题时被触发。
 	// 带缓冲，保证答案处理 handler 不会阻塞。

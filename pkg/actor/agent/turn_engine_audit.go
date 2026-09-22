@@ -26,6 +26,9 @@ type pendingToolCall struct {
 	EffectKind    domain.EffectKind
 	ServiceName   string
 	RawToolCall   string
+	// ForkAsync marks a fork call with Async=true: the spawn returns
+	// immediately and the result is harvested later via agent_wait.
+	ForkAsync bool
 }
 
 // toolExecutionBatch 是一组共享同一个权限决策的工具调用。

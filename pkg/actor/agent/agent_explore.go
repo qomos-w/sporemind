@@ -121,6 +121,7 @@ func (a *Actor) deliverExploreComplete(ctx actor.Context, result domain.ForkResu
 		ParentTurnID: a.child.TurnRef,
 		ParentStepID: a.child.StepRef,
 		ToolUseID:    a.child.ToolUseID,
+		ChildAgentID: a.actorID,
 		Result:       result,
 	}
 	const maxAttempts = 3
@@ -310,9 +311,12 @@ func (a *Actor) handleExploreProgress(ctx actor.Context, progress domain.ForkChi
 
 // exploreCompleteReq is the internal request for agent.explore_complete.
 type exploreCompleteReq struct {
-	ParentTurnID string            `json:"ParentTurnID"`
-	ParentStepID string            `json:"ParentStepID"`
-	ToolUseID    string            `json:"ToolUseID"`
+	ParentTurnID string `json:"ParentTurnID"`
+	ParentStepID string `json:"ParentStepID"`
+	ToolUseID    string `json:"ToolUseID"`
+	// ChildAgentID is the child's own actor id; persisted into ExploreResult
+	// so agent_wait can retrieve cross-turn results by agent id.
+	ChildAgentID string            `json:"ChildAgentID,omitempty"`
 	Result       domain.ForkResult `json:"Result"`
 }
 
@@ -376,6 +380,9 @@ func (a *Actor) handleExploreComplete(ctx actor.Context, req exploreCompleteReq)
 			a.RawSession.ExploreResults[i].InputTokens = req.Result.InputTokens
 			a.RawSession.ExploreResults[i].OutputTokens = req.Result.OutputTokens
 			a.RawSession.ExploreResults[i].Timestamp = time.Now().UTC().Format(time.RFC3339)
+			if req.ChildAgentID != "" {
+				a.RawSession.ExploreResults[i].AgentID = req.ChildAgentID
+			}
 			found = true
 			break
 		}
@@ -384,6 +391,7 @@ func (a *Actor) handleExploreComplete(ctx actor.Context, req exploreCompleteReq)
 		a.RawSession.ExploreResults = append(a.RawSession.ExploreResults, domain.ExploreResult{
 			TurnID:       req.ParentTurnID,
 			StepID:       req.ParentStepID,
+			AgentID:      req.ChildAgentID,
 			Summary:      summary,
 			SearchCount:  req.Result.SearchCount,
 			ReadCount:    req.Result.ReadCount,
@@ -877,6 +885,18 @@ func (a *Actor) deliverChildResult(ctx actor.Context, req exploreCompleteReq) {
 		return
 	}
 	ctx.Logger().Warn("agent: no active inline turn for child result", "turnID", req.ParentTurnID)
+}
+
+// lookupExploreResultByAgentID resolves a child agent id against the persisted
+// ExploreResults (newest first) so agent_wait can harvest async children that
+// finished after their parent turn ended.
+func (a *Actor) lookupExploreResultByAgentID(agentID string) (domain.ExploreResult, bool) {
+	for i := len(a.RawSession.ExploreResults) - 1; i >= 0; i-- {
+		if a.RawSession.ExploreResults[i].AgentID == agentID {
+			return a.RawSession.ExploreResults[i], true
+		}
+	}
+	return domain.ExploreResult{}, false
 }
 
 // startFollowUpTurn creates a new turn seeded with the child agent's

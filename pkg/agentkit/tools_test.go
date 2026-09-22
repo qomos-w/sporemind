@@ -126,8 +126,9 @@ func TestForkToolSpecsFromBundles(t *testing.T) {
 		"builtin:bundle:fork-review",
 		"builtin:bundle:fork-general",
 	})
-	if len(specs) != 3 {
-		t.Fatalf("expected 3 fork tool specs, got %d", len(specs))
+	// 3 fork tools + the agent_wait harvest spec.
+	if len(specs) != 4 {
+		t.Fatalf("expected 4 tool specs, got %d", len(specs))
 	}
 	byName := map[string]domain.ToolSpec{}
 	for _, s := range specs {
@@ -156,6 +157,25 @@ func TestForkToolSpecsFromBundles(t *testing.T) {
 	}
 	if strings.Contains(byName["fork_explore"].InputSchema, "ReviewText") {
 		t.Errorf("fork_explore schema should not carry ReviewText")
+	}
+	// The generic fork schema carries Async; fork_review's synchronous
+	// verdict contract does not.
+	if !strings.Contains(byName["fork_explore"].InputSchema, "Async") {
+		t.Errorf("fork_explore schema missing Async")
+	}
+	if strings.Contains(review.InputSchema, "Async") {
+		t.Errorf("fork_review schema should not carry Async")
+	}
+	// agent_wait rides along whenever any fork tool is exposed.
+	wait, ok := byName["agent_wait"]
+	if !ok {
+		t.Fatalf("missing agent_wait spec alongside fork tools")
+	}
+	if wait.CallableID != "agent_wait" || wait.ServiceName != "agent" {
+		t.Errorf("agent_wait spec routing = %s/%s, want agent_wait/agent", wait.ServiceName, wait.CallableID)
+	}
+	if !strings.Contains(wait.InputSchema, "AgentIds") || !strings.Contains(wait.InputSchema, "TimeoutMs") {
+		t.Errorf("agent_wait schema missing AgentIds/TimeoutMs: %s", wait.InputSchema)
 	}
 }
 

@@ -294,6 +294,9 @@ struct ExploreResult {
     OutputTokens: int32
     Timestamp:    string
     optional StepId: string
+    // AgentId is the actor ID of the fork child that produced this result.
+    // Populated for async forks so agent_wait can retrieve results across turns.
+    optional AgentId: string
 }
 
 

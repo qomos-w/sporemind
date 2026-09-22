@@ -214,6 +214,7 @@ type ExploreResult struct {
 	OutputTokens int32  `json:"OutputTokens"`
 	Timestamp    string `json:"Timestamp"`
 	StepID       string `json:"StepId,omitempty"`
+	AgentID      string `json:"AgentId,omitempty"`
 }
 
 type GetThinkingRegistryResp struct {
