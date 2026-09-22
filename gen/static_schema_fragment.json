@@ -37178,6 +37178,67 @@
     },
     {
       "namespace": "system",
+      "schemaId": 1927,
+      "name": "WorkspaceHostCallReq",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceHostCallReq",
+        "fields": [
+          {
+            "name": "CallId",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Payload",
+            "type": {
+              "kind": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string"
+              },
+              "value": {
+                "kind": "scalar",
+                "name": "any"
+              }
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 1927
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1928,
+      "name": "WorkspaceHostCallResp",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceHostCallResp",
+        "fields": [
+          {
+            "name": "Result",
+            "type": {
+              "kind": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string"
+              },
+              "value": {
+                "kind": "scalar",
+                "name": "any"
+              }
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 1928
+      }
+    },
+    {
+      "namespace": "system",
       "schemaId": 1984,
       "name": "TimerSchedule",
       "object": {

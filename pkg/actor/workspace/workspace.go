@@ -1233,6 +1233,11 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	if err := ctx.Register("workspace.builtin_modes_list", a.handleListBuiltinModes, actor.Public()); err != nil {
 		return fmt.Errorf("workspace: register builtin.modes.list: %w", err)
 	}
+	if err := ctx.Register("workspace.host_call", a.handleHostCall, actor.AdminOnly(),
+		actor.WithDescription("Invoke any host actor callable by dotted ID (<service>.<callable>), e.g. \"workspace.slashcommands_list\". The payload must match the target callable's request schema; the target's own policy still applies. Exposed by the builtin:bundle:sporecall bundle."),
+	); err != nil {
+		return fmt.Errorf("workspace: register host_call: %w", err)
+	}
 	if err := ctx.Register("workspace.agent_status_update", a.handleAgentStatusUpdate, actor.Public()); err != nil {
 		return fmt.Errorf("workspace: register agent_status_update: %w", err)
 	}

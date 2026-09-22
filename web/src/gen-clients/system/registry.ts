@@ -743,6 +743,8 @@ export const SchemaIDs = {
   WikiStarredEntry: 1924,
   WikiListStarredReq: 1925,
   WikiListStarredResp: 1926,
+  WorkspaceHostCallReq: 1927,
+  WorkspaceHostCallResp: 1928,
   WorkspaceAgentSpawnSwarmReq: 1930,
   WorkspaceAgentSpawnSwarmResp: 1931,
   AppSchemaRef: 2032,
@@ -794,12 +796,6 @@ export const SchemaIDs = {
   WikiSearchCardContentResp: 2154,
   WikiWorkflowFilter: 2155,
   WikiCardTreeNode: 2156,
-  SporeAppReloadReq: 2194,
-  SporeAppReloadResp: 2195,
-  SporeAppStateReq: 2196,
-  SporeAppStateSetReq: 2197,
-  SporeAppInvokeReq: 2198,
-  SporeAppInvokeResp: 2199,
   PluginAbi: 2240,
   PluginInvokeReq: 2247,
   PluginInvokeResp: 2248,
@@ -40162,6 +40158,86 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
+    schemaId: 1927,
+    name: "WorkspaceHostCallReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "WorkspaceHostCallReq",
+      className: "WorkspaceHostCallReq",
+      classId: 1927
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceHostCallReq",
+      fields: [
+        {
+          name: "CallId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Payload",
+          type: {
+            kind: "map",
+            name: "map",
+            key: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            },
+            value: {
+              kind: "scalar",
+              name: "any",
+              typeId: 15
+            }
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1928,
+    name: "WorkspaceHostCallResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "WorkspaceHostCallResp",
+      className: "WorkspaceHostCallResp",
+      classId: 1928
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceHostCallResp",
+      fields: [
+        {
+          name: "Result",
+          type: {
+            kind: "map",
+            name: "map",
+            key: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            },
+            value: {
+              kind: "scalar",
+              name: "any",
+              typeId: 15
+            }
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
     schemaId: 1930,
     name: "WorkspaceAgentSpawnSwarmReq",
     visibility: "public",
@@ -43380,363 +43456,6 @@ export const schemaEntries: SchemaEntry[] = [
               name: "struct",
               className: "WikiCardTreeNode"
             }
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 2194,
-    name: "SporeAppReloadReq",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "SporeAppReloadReq",
-      className: "SporeAppReloadReq",
-      classId: 2194
-    },
-    object: {
-      kind: "struct",
-      name: "SporeAppReloadReq",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "EntryModule",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Modules",
-          type: {
-            kind: "map",
-            name: "map",
-            key: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            },
-            value: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          }
-        },
-        {
-          name: "Assets",
-          type: {
-            kind: "map",
-            name: "map",
-            key: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            },
-            value: {
-              kind: "scalar",
-              name: "bytes",
-              typeId: 13
-            }
-          },
-          optional: true
-        },
-        {
-          name: "SchemaDescriptors",
-          type: {
-            kind: "map",
-            name: "map",
-            key: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            },
-            value: {
-              kind: "struct",
-              name: "struct",
-              className: "AppObjectDescriptor"
-            }
-          },
-          optional: true
-        },
-        {
-          name: "PackageHash",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "ExpectedStateVersion",
-          type: {
-            kind: "scalar",
-            name: "long",
-            typeId: 8
-          },
-          optional: true
-        },
-        {
-          name: "MigratedState",
-          type: {
-            kind: "map",
-            name: "map",
-            key: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            },
-            value: {
-              kind: "scalar",
-              name: "any",
-              typeId: 15
-            }
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 2195,
-    name: "SporeAppReloadResp",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "SporeAppReloadResp",
-      className: "SporeAppReloadResp",
-      classId: 2195
-    },
-    object: {
-      kind: "struct",
-      name: "SporeAppReloadResp",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Version",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "StateVersion",
-          type: {
-            kind: "scalar",
-            name: "long",
-            typeId: 8
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 2196,
-    name: "SporeAppStateReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "SporeAppStateReq",
-      className: "SporeAppStateReq",
-      classId: 2196
-    },
-    object: {
-      kind: "struct",
-      name: "SporeAppStateReq",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 2197,
-    name: "SporeAppStateSetReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "SporeAppStateSetReq",
-      className: "SporeAppStateSetReq",
-      classId: 2197
-    },
-    object: {
-      kind: "struct",
-      name: "SporeAppStateSetReq",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "State",
-          type: {
-            kind: "map",
-            name: "map",
-            key: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            },
-            value: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 2198,
-    name: "SporeAppInvokeReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "SporeAppInvokeReq",
-      className: "SporeAppInvokeReq",
-      classId: 2198
-    },
-    object: {
-      kind: "struct",
-      name: "SporeAppInvokeReq",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Callable",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Payload",
-          type: {
-            kind: "scalar",
-            name: "bytes",
-            typeId: 13
-          }
-        },
-        {
-          name: "AgentId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Role",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "ProjectId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "RequestId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "RouteDepth",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          },
-          optional: true
-        },
-        {
-          name: "RouteToken",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 2199,
-    name: "SporeAppInvokeResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "SporeAppInvokeResp",
-      className: "SporeAppInvokeResp",
-      classId: 2199
-    },
-    object: {
-      kind: "struct",
-      name: "SporeAppInvokeResp",
-      fields: [
-        {
-          name: "Payload",
-          type: {
-            kind: "scalar",
-            name: "bytes",
-            typeId: 13
           }
         }
       ]

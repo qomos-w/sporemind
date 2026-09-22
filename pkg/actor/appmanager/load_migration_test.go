@@ -45,6 +45,13 @@ func TestOnInitPurgesLegacyBuiltinappRecords(t *testing.T) {
 	ps := persist.NewFSPersist(dir)
 
 	builtinBrowser, builtinSSH := legacyBuiltinManifests()
+	sporecallManifest := gen.AppManifest{
+		ID:        "builtin.sporecall",
+		Name:      "Sporecall",
+		Namespace: "sporeapp.builtin.sporecall",
+		Version:   "1.0.0",
+		Runtime:   "spore",
+	}
 	nativeManifest := gen.AppManifest{
 		ID:        "native.tool",
 		Name:      "Tool",
@@ -64,20 +71,23 @@ func TestOnInitPurgesLegacyBuiltinappRecords(t *testing.T) {
 		},
 	}
 
-	// Pre-migration persisted state: two legacy builtin records plus one
-	// healthy native and one healthy spore record.
+	// Pre-migration persisted state: two legacy builtin records, the retired
+	// builtin.sporecall spore app, plus one healthy native and one healthy
+	// spore record.
 	pre := &Actor{
 		Apps: map[string]gen.AppManifest{
-			"builtin.browser": builtinBrowser,
-			"builtin.ssh":     builtinSSH,
-			"native.tool":     nativeManifest,
-			"spore.app":       sporeManifest,
+			"builtin.browser":   builtinBrowser,
+			"builtin.ssh":       builtinSSH,
+			"builtin.sporecall": sporecallManifest,
+			"native.tool":       nativeManifest,
+			"spore.app":         sporeManifest,
 		},
 		Records: map[string]appRecord{
-			"builtin.browser": {Manifest: builtinBrowser, State: "running", PackageHash: "h-browser"},
-			"builtin.ssh":     {Manifest: builtinSSH, State: "running", PackageHash: "h-ssh"},
-			"native.tool":     {Manifest: nativeManifest, State: "running", PackageHash: "h-native", ArtifactPath: "a.so", ArtifactHash: "ah", Abi: &gen.PluginAbi{}},
-			"spore.app":       {Manifest: sporeManifest, State: "running", PackageHash: "h-spore", EntryModule: "main", Modules: map[string]string{"main": "export fun answer(): int = 42"}},
+			"builtin.browser":   {Manifest: builtinBrowser, State: "running", PackageHash: "h-browser"},
+			"builtin.ssh":       {Manifest: builtinSSH, State: "running", PackageHash: "h-ssh"},
+			"builtin.sporecall": {Manifest: sporecallManifest, State: "running", PackageHash: "h-sporecall"},
+			"native.tool":       {Manifest: nativeManifest, State: "running", PackageHash: "h-native", ArtifactPath: "a.so", ArtifactHash: "ah", Abi: &gen.PluginAbi{}},
+			"spore.app":         {Manifest: sporeManifest, State: "running", PackageHash: "h-spore", EntryModule: "main", Modules: map[string]string{"main": "export fun answer(): int = 42"}},
 		},
 	}
 	pre.actorID = testutil.GenActorID().String()
@@ -93,7 +103,7 @@ func TestOnInitPurgesLegacyBuiltinappRecords(t *testing.T) {
 		t.Fatalf("OnInit: %v", err)
 	}
 
-	for _, id := range []string{"builtin.browser", "builtin.ssh"} {
+	for _, id := range []string{"builtin.browser", "builtin.ssh", "builtin.sporecall"} {
 		if _, ok := a.Apps[id]; ok {
 			t.Errorf("legacy app %q still present in Apps after restore", id)
 		}
@@ -141,13 +151,13 @@ func TestOnInitPurgesLegacyBuiltinappRecords(t *testing.T) {
 	for _, r := range a.AuditRecords {
 		if r.Callable == "load_migration" {
 			audited[r.AppID] = true
-			if r.Runtime != "builtin" || !r.Allowed || r.Reason == "" {
+			if !r.Allowed || r.Reason == "" {
 				t.Errorf("unexpected migration audit record: %+v", r)
 			}
 		}
 	}
-	if !audited["builtin.browser"] || !audited["builtin.ssh"] {
-		t.Errorf("migration cleanup not audited for both legacy apps: %+v", audited)
+	if !audited["builtin.browser"] || !audited["builtin.ssh"] || !audited["builtin.sporecall"] {
+		t.Errorf("migration cleanup not audited for all legacy apps: %+v", audited)
 	}
 
 	// The purged state is persisted: a later restart must not see the ghosts.

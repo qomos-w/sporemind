@@ -9,7 +9,6 @@ import (
 
 	"github.com/qomos-w/gospore/actor"
 	"github.com/qomos-w/gospore/ref"
-	"github.com/qomos-w/sporemind/pkg/builtin/sporecall"
 	"github.com/qomos-w/sporemind/pkg/domain"
 	gen "github.com/qomos-w/sporemind/pkg/domain/gen"
 	"github.com/qomos-w/sporemind/pkg/testutil"
@@ -463,34 +462,26 @@ func TestAppToolSpecsFromCatalog(t *testing.T) {
 	}
 }
 
-// TestSporecallToolNamesPrefixFree locks the builtin.sporecall bundle's
-// LLM-facing names: its relay tools surface unprefixed (host_call / mcp_call
-// / app_call, the create_task-style ToolName override), never the mechanical
-// app-builtin-sporecall-* form, while routing CallableIDs stay dotted.
-func TestSporecallToolNamesPrefixFree(t *testing.T) {
-	resp := gen.AppManagerListResp{Items: []gen.AppStatus{{
-		ID:         sporecall.Manifest.ID,
-		State:      "running",
-		Runtime:    sporecall.Manifest.Runtime,
-		Callables:  sporecall.Manifest.Callables,
-		Entrypoints: sporecall.Manifest.Entrypoints,
-	}}}
-	specs := appToolSpecsFromCatalog(resp, allowAllAppCallables(resp))
-	names := map[string]string{} // llm name -> routing CallableID
-	for _, s := range specs {
-		names[s.Name] = s.CallableID
+// TestSporecallBundleCardDeclaresRelayTools locks the builtin:bundle:sporecall
+// system card: it must resolve from embedded assets to exactly the three relay
+// callable IDs (workspace.host_call / mcp.call_tool / appmanager.invoke) with
+// no app-manager app behind it.
+func TestSporecallBundleCardDeclaresRelayTools(t *testing.T) {
+	a := &Actor{}
+	ctx := testutil.AnonCtx(testutil.GenActorID())
+
+	got := a.resolveBundleCallableIDs(ctx, []string{"builtin:bundle:sporecall"})
+	want := []string{"workspace.host_call", "mcp.call_tool", "appmanager.invoke"}
+	if len(got) != len(want) {
+		t.Fatalf("resolveBundleCallableIDs(builtin:bundle:sporecall) = %v, want %v", got, want)
 	}
-	for _, want := range []string{"host_call", "mcp_call", "app_call"} {
-		if _, ok := names[want]; !ok {
-			t.Errorf("sporecall tool %q missing from specs %v", want, names)
-		}
+	seen := map[string]bool{}
+	for _, id := range got {
+		seen[id] = true
 	}
-	if id, ok := names["host_call"]; !ok || id != "app."+sporecall.Manifest.ID+".call" {
-		t.Errorf("host_call routing = %q (ok=%v), want app.%s.call", id, ok, sporecall.Manifest.ID)
-	}
-	for name := range names {
-		if strings.Contains(name, "app-builtin") || strings.Contains(name, "app."+sporecall.Manifest.ID) {
-			t.Errorf("sporecall tool %q still carries the app prefix", name)
+	for _, id := range want {
+		if !seen[id] {
+			t.Errorf("sporecall bundle missing relay callable %q; got %v", id, got)
 		}
 	}
 }

@@ -224,6 +224,14 @@ func (a *Actor) lockApp(id string) func() {
 
 var _ persist.Persistent = (*Actor)(nil)
 
+// legacyDroppedAppIDs lists retired builtin app IDs purged unconditionally
+// during restore. builtin.sporecall (removed 2026-09-23) became the
+// builtin:bundle:sporecall card + workspace.host_call relay; a persisted
+// record for it must not resurrect the app in appmanager.list.
+var legacyDroppedAppIDs = map[string]bool{
+	"builtin.sporecall": true,
+}
+
 // withMu runs fn under a.mu with a defer-protected unlock. A panic inside a
 // critical section (recovered upstream by the handler runtime) must never
 // orphan the mutex: the 2026-09-09 incident had every appmanager callable —
@@ -320,9 +328,14 @@ func (a *Actor) OnInit(ctx actor.Context) error {
 	// appmanager.list. Drop them from Apps/Records instead and audit the
 	// removal; every other record restores unchanged and nothing here may
 	// abort OnStart.
+	//
+	// The same purge drops builtin.sporecall (removed 2026-09-23: the relay is
+	// now the builtin:bundle:sporecall card + workspace.host_call, not a
+	// registered spore app); its runtime is valid so the drop keys on ID.
 	purged := false
 	for appID, record := range a.Records {
-		if runtime := record.Manifest.Runtime; runtime != "spore" && runtime != "native" {
+		runtime := record.Manifest.Runtime
+		if runtime != "spore" && runtime != "native" || legacyDroppedAppIDs[appID] {
 			delete(a.Apps, appID)
 			delete(a.Records, appID)
 			delete(a.children, appID)
@@ -332,9 +345,9 @@ func (a *Actor) OnInit(ctx actor.Context) error {
 				Runtime:  runtime,
 				Callable: "load_migration",
 				Allowed:  true,
-				Reason:   "appmanager: dropped legacy record with unsupported runtime during restore",
+				Reason:   "appmanager: dropped legacy app record during restore",
 			})
-			ctx.Logger().Info("appmanager: dropped legacy app record with unsupported runtime", "app", appID, "runtime", runtime)
+			ctx.Logger().Info("appmanager: dropped legacy app record during restore", "app", appID, "runtime", runtime)
 			purged = true
 			continue
 		}
@@ -707,10 +720,6 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	// their actors and bind state are re-established here (same lifecycle
 	// guarantee the spawn loop above gives the apps themselves).
 	a.recoverStep(ctx, "reconcilePluginAgentsOnStart", func() { a.reconcilePluginAgentsOnStart(ctx) })
-	// Builtin spore bundles (sporecall) register here — after restore, so a
-	// persisted record is never double-registered, and mount-gating stays the
-	// only path to their capability.
-	a.recoverStep(ctx, "ensureBuiltinSporeApps", func() { a.ensureBuiltinSporeApps(ctx) })
 	return nil
 }
 

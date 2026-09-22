@@ -6389,48 +6389,6 @@ export interface SlashCommand {
   ShortHelp: string;
 }
 
-export interface SporeAppInvokeReq {
-  Id: string;
-  Callable: string;
-  Payload: Uint8Array;
-  AgentId?: string | undefined;
-  Role?: string | undefined;
-  ProjectId?: string | undefined;
-  RequestId?: string | undefined;
-  RouteDepth?: number | undefined;
-  RouteToken?: string | undefined;
-}
-
-export interface SporeAppInvokeResp {
-  Payload: Uint8Array;
-}
-
-export interface SporeAppReloadReq {
-  Id: string;
-  EntryModule: string;
-  Modules: Record<string, string>;
-  Assets?: Record<string, Uint8Array> | undefined;
-  SchemaDescriptors?: Record<string, AppObjectDescriptor> | undefined;
-  PackageHash?: string | undefined;
-  ExpectedStateVersion?: number | undefined;
-  MigratedState?: Record<string, unknown> | undefined;
-}
-
-export interface SporeAppReloadResp {
-  Id: string;
-  Version: string;
-  StateVersion?: number | undefined;
-}
-
-export interface SporeAppStateReq {
-  Id: string;
-}
-
-export interface SporeAppStateSetReq {
-  Id: string;
-  State: Record<string, string>;
-}
-
 export interface SshArchiveExportReq {
   SessionId: string;
   Path: string;
@@ -8812,6 +8770,15 @@ export interface WorkspaceGitTagListReq {
 
 export interface WorkspaceGitTagListResp {
   Tags: GitTagInfo[];
+}
+
+export interface WorkspaceHostCallReq {
+  CallId: string;
+  Payload?: Record<string, unknown> | undefined;
+}
+
+export interface WorkspaceHostCallResp {
+  Result?: Record<string, unknown> | undefined;
 }
 
 export interface WorkspaceListAgentKindConfigsResp {

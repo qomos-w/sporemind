@@ -1090,6 +1090,60 @@ func TestResolveTools_DebugBundleExposesListAgents(t *testing.T) {
 	}
 }
 
+// TestResolveTools_SporecallBundleExposesRelayTools locks the sporecall
+// system bundle's mount gating: with builtin:bundle:sporecall mounted, its
+// three relay callables surface as tools; unmounted, none of them appear.
+func TestResolveTools_SporecallBundleExposesRelayTools(t *testing.T) {
+	a := &Actor{}
+	callables := map[string]domain.CallableInterface{
+		"workspace.host_call": {
+			Name:        "workspace.host_call",
+			Description: "Invoke a host callable by ID",
+			Params:      []domain.CallableParam{{Name: "CallID", Type: "string", Required: true}},
+		},
+		"mcp.call_tool": {
+			Name:        "mcp.call_tool",
+			Description: "Call an MCP tool",
+			Params:      []domain.CallableParam{{Name: "Id", Type: "string", Required: true}},
+		},
+		"appmanager.invoke": {
+			Name:        "appmanager.invoke",
+			Description: "Invoke an app callable",
+			Params:      []domain.CallableParam{{Name: "ID", Type: "string", Required: true}},
+		},
+	}
+	ctx := testutil.AnonCtx(testutil.GenActorID())
+	cfg := domain.AgentKindConfig{Kind: "coder"}
+
+	// Unmounted: no sporecall relay tool is on the surface.
+	tools := a.resolveTools(ctx, cfg, callables)
+	if len(tools) != 0 {
+		t.Fatalf("expected no tools without the sporecall bundle, got %+v", tools)
+	}
+
+	// Mounted via component snapshot: all three relay callables surface.
+	a.componentSnapshot.Store(&domain.AgentComponentSnapshot{
+		Tools: []domain.ComponentToolContribution{
+			{ID: "host_call", CardID: "builtin:bundle:sporecall", CallableID: "workspace.host_call"},
+			{ID: "mcp_call", CardID: "builtin:bundle:sporecall", CallableID: "mcp.call_tool"},
+			{ID: "app_call", CardID: "builtin:bundle:sporecall", CallableID: "appmanager.invoke"},
+		},
+	})
+	tools = a.resolveTools(ctx, cfg, callables)
+	names := make([]string, len(tools))
+	for i, tool := range tools {
+		names[i] = tool.Name
+	}
+	for _, want := range []string{"workspace-host_call", "mcp-call_tool", "appmanager-invoke"} {
+		if !slices.Contains(names, want) {
+			t.Errorf("sporecall tool %q missing from %v", want, names)
+		}
+	}
+	if len(tools) != 3 {
+		t.Fatalf("expected exactly 3 relay tools, got %d: %+v", len(tools), tools)
+	}
+}
+
 func TestDedupToolsByName(t *testing.T) {
 	a := &Actor{}
 	ctx := testutil.AnonCtx(testutil.GenActorID())

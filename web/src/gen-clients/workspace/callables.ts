@@ -1081,6 +1081,24 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "workspace",
+    name: "host_call",
+    visibility: "admin",
+    mode: "unary",
+    reqSchemaId: 1927,
+    finalSchemaId: 1928,
+    req: {
+      kind: "struct",
+      name: "WorkspaceHostCallReq",
+      className: "WorkspaceHostCallReq"
+    },
+    final: {
+      kind: "struct",
+      name: "WorkspaceHostCallResp",
+      className: "WorkspaceHostCallResp"
+    }
+  },
+  {
+    namespace: "workspace",
     name: "list_agent_kind_configs",
     visibility: "public",
     mode: "unary",

@@ -37,7 +37,6 @@ export * as puppet_revision from "./puppet.revision/index.js";
 export * as puppet_viewport from "./puppet.viewport/index.js";
 export * as runtime from "./runtime/index.js";
 export * as shell from "./shell/index.js";
-export * as sporeapp from "./sporeapp/index.js";
 export * as sshmanager from "./sshmanager/index.js";
 export * as storeclient from "./storeclient/index.js";
 export * as system from "./system/index.js";

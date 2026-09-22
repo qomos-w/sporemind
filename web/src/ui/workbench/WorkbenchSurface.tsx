@@ -191,9 +191,9 @@ export function WorkbenchSurface({
   const getApps = useCallback(() => appRegistry.getAll(), [])
   const appsAll = useSyncExternalStore(subscribeApps, getApps, getApps)
   // The launcher shows launchable apps only: entries with a view/panel
-  // entrypoint. Pure bundles (e.g. builtin.sporecall — callables only,
-  // registered for the mount catalog) stay off the board; they surface in the
-  // mount/bundle catalog instead.
+  // entrypoint. Pure bundles (callables only, registered for the mount
+  // catalog) stay off the board; they surface in the mount/bundle catalog
+  // instead.
   const apps = useMemo(
     () => appsAll.filter((a) => a.entrypoints.some((e) => e.kind === 'view' || e.kind === 'panel')),
     [appsAll],

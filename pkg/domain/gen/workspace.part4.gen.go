@@ -35,6 +35,8 @@ const (
 	WorkspaceGitTagDeleteReqSchemaID         uint64 = 1912
 	WorkspaceGitTagListReqSchemaID           uint64 = 1909
 	WorkspaceGitTagListRespSchemaID          uint64 = 1910
+	WorkspaceHostCallReqSchemaID             uint64 = 1927
+	WorkspaceHostCallRespSchemaID            uint64 = 1928
 	WorkspaceRemoveAppAgentReqSchemaID       uint64 = 1919
 )
 
@@ -63,6 +65,8 @@ func init() {
 	schema.RegisterStructType(WorkspaceGitTagDeleteReqSchemaID, reflect.TypeOf(WorkspaceGitTagDeleteReq{}))
 	schema.RegisterStructType(WorkspaceGitTagListReqSchemaID, reflect.TypeOf(WorkspaceGitTagListReq{}))
 	schema.RegisterStructType(WorkspaceGitTagListRespSchemaID, reflect.TypeOf(WorkspaceGitTagListResp{}))
+	schema.RegisterStructType(WorkspaceHostCallReqSchemaID, reflect.TypeOf(WorkspaceHostCallReq{}))
+	schema.RegisterStructType(WorkspaceHostCallRespSchemaID, reflect.TypeOf(WorkspaceHostCallResp{}))
 	schema.RegisterStructType(WorkspaceRemoveAppAgentReqSchemaID, reflect.TypeOf(WorkspaceRemoveAppAgentReq{}))
 }
 
@@ -215,6 +219,15 @@ type WorkspaceGitTagListReq struct {
 
 type WorkspaceGitTagListResp struct {
 	Tags []GitTagInfo `json:"Tags"`
+}
+
+type WorkspaceHostCallReq struct {
+	CallID  string         `json:"CallId"`
+	Payload map[string]any `json:"Payload,omitempty"`
+}
+
+type WorkspaceHostCallResp struct {
+	Result map[string]any `json:"Result,omitempty"`
 }
 
 type WorkspaceRemoveAppAgentReq struct {

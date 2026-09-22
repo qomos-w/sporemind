@@ -68,6 +68,7 @@ var BuiltinCards = []BuiltinCard{
 	{Title: "builtin:bundle:swarm"},
 	{Title: "builtin:bundle:workspace-tools"},
 	{Title: "builtin:bundle:app-tools"},
+	{Title: "builtin:bundle:sporecall"},
 	{Title: "builtin:bundle:interface-controls"},
 	{Title: "builtin:bundle:tutor"},
 	{Title: "builtin:bundle:browser-tools"},

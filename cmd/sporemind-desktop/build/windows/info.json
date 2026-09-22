@@ -1,10 +1,10 @@
 {
 	"fixed": {
-		"file_version": "13.24"
+		"file_version": "13.26"
 	},
 	"info": {
 		"0000": {
-			"ProductVersion": "13.24",
+			"ProductVersion": "13.26",
 			"CompanyName": "qomos-w",
 			"FileDescription": "sporemind",
 			"LegalCopyright": "Copyright (C) 2024-2026 qomos-w. Licensed under AGPL-3.0.",

@@ -165,7 +165,9 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	); err != nil {
 		return fmt.Errorf("mcpmanager: register reconnect: %w", err)
 	}
-	if err := ctx.Register("mcp.call_tool", a.handleCallTool, actor.AdminOnly()); err != nil {
+	if err := ctx.Register("mcp.call_tool", a.handleCallTool, actor.AdminOnly(),
+		actor.WithDescription("Invoke a tool on a configured MCP server: Id selects the server, Tool the tool name, Arguments carries the JSON arguments. Exposed by the builtin:bundle:sporecall bundle."),
+	); err != nil {
 		return fmt.Errorf("mcpmanager: register call_tool: %w", err)
 	}
 	if err := ctx.Register("mcp.discover_tools", a.handleDiscoverTools, actor.AdminOnly()); err != nil {

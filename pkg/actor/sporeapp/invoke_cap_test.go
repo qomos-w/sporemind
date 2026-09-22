@@ -12,11 +12,45 @@ import (
 	"github.com/qomos-w/gospore/id"
 	"github.com/qomos-w/gospore/invoke"
 	"github.com/qomos-w/gospore/ref"
-	"github.com/qomos-w/sporemind/pkg/builtin/sporecall"
 	gen "github.com/qomos-w/sporemind/pkg/domain/gen"
 	"github.com/qomos-w/sporemind/pkg/sporebridge"
 	"github.com/qomos-w/sporemind/pkg/testutil"
 )
+
+// The spore.invoke capability is load-time machinery shared by every spore
+// app that declares it (sporecall retired 2026-09-23; any app may relay via
+// host.invoke / host.invoke_app). These tests use a synthetic manifest to
+// lock the capability's enforcement and relay mechanics.
+
+var relayManifest = gen.AppManifest{
+	ID:      "test.relay",
+	Name:    "Relay",
+	Version: "1.0.0",
+	Runtime: "spore",
+	Callables: []gen.AppCallableDescriptor{
+		{ID: "ping"},
+		{ID: "call"},
+		{ID: "call_app"},
+	},
+}
+
+const relayEntryModule = "main"
+
+const relayMainModule = `import { invoke, invoke_app } from "host"
+
+export fun ping(): string = "pong"
+
+export fun call(callId: string, payload: any): any {
+	var res: any = invoke(callId, payload)
+	return res
+}
+
+export fun call_app(appId: string, callable: string, payload: any, agentId: string): any {
+	var res: any = invoke_app(appId, callable, payload, agentId)
+	return res
+}`
+
+var relayModules = map[string]string{"main": relayMainModule}
 
 // --- minimal fakes: a ServiceHost seam plus a ref that answers every
 // Invoke with one raw JSON frame and records the calls it saw. ---
@@ -80,16 +114,16 @@ func (s *rawStream) RecvRaw() ([]byte, error) {
 }
 func (*rawStream) Close() error { return nil }
 
-func newSporecallActor(t *testing.T, seams sporebridge.ServiceHost) *Actor {
+func newRelayActor(t *testing.T, seams sporebridge.ServiceHost) *Actor {
 	t.Helper()
 	a := &Actor{
-		Manifest:          sporecall.Manifest,
-		EntryModule:       sporecall.EntryModule,
-		Modules:           sporecall.Modules,
+		Manifest:            relayManifest,
+		EntryModule:         relayEntryModule,
+		Modules:             relayModules,
 		allowedCapabilities: map[string]struct{}{"spore.invoke": {}},
-		State:             map[string]any{},
-		codec:             codec.NewBinary(),
-		hostSeams:         seams,
+		State:               map[string]any{},
+		codec:               codec.NewBinary(),
+		hostSeams:           seams,
 	}
 	if err := a.loadRuntime(); err != nil {
 		t.Fatalf("loadRuntime: %v", err)
@@ -102,21 +136,21 @@ func newSporecallActor(t *testing.T, seams sporebridge.ServiceHost) *Actor {
 	return a
 }
 
-func callSporecall(t *testing.T, a *Actor, callable string, argsJSON string) (gen.SporeAppInvokeResp, error) {
+func callRelay(t *testing.T, a *Actor, callable string, argsJSON string) (gen.SporeAppInvokeResp, error) {
 	t.Helper()
 	return a.handleInvoke(testutil.HumanCtx(testutil.GenActorID()), gen.SporeAppInvokeReq{
-		ID: sporecall.Manifest.ID, Callable: callable, Payload: []byte(argsJSON),
+		ID: relayManifest.ID, Callable: callable, Payload: []byte(argsJSON),
 	})
 }
 
-// TestSporecallRequiresInvokeCapability verifies enforcement by structural
-// absence: without the "spore.invoke" capability the host namespace is
-// unbound and the module fails to load.
-func TestSporecallRequiresInvokeCapability(t *testing.T) {
+// TestInvokeCapabilityRequired verifies enforcement by structural absence:
+// without the "spore.invoke" capability the host namespace is unbound and the
+// module fails to load.
+func TestInvokeCapabilityRequired(t *testing.T) {
 	a := &Actor{
-		Manifest:            sporecall.Manifest,
-		EntryModule:         sporecall.EntryModule,
-		Modules:             sporecall.Modules,
+		Manifest:            relayManifest,
+		EntryModule:         relayEntryModule,
+		Modules:             relayModules,
 		allowedCapabilities: map[string]struct{}{},
 		State:               map[string]any{},
 	}
@@ -125,10 +159,10 @@ func TestSporecallRequiresInvokeCapability(t *testing.T) {
 	}
 }
 
-// TestSporecallPing exercises the bundle without any host call.
-func TestSporecallPing(t *testing.T) {
-	a := newSporecallActor(t, fakeSeams{})
-	resp, err := callSporecall(t, a, "ping", `[]`)
+// TestRelayPing exercises the bundle without any host call.
+func TestRelayPing(t *testing.T) {
+	a := newRelayActor(t, fakeSeams{})
+	resp, err := callRelay(t, a, "ping", `[]`)
 	if err != nil {
 		t.Fatalf("ping: %v", err)
 	}
@@ -137,14 +171,14 @@ func TestSporecallPing(t *testing.T) {
 	}
 }
 
-// TestSporecallCallRelaysToService drives the generic relay end to end:
+// TestRelayCallRelaysToService drives the generic relay end to end:
 // script call(callId, payload) → host.invoke → service ref, with the
 // response map decoded back onto the wire.
-func TestSporecallCallRelaysToService(t *testing.T) {
+func TestRelayCallRelaysToService(t *testing.T) {
 	probe := &capturingRef{id: testutil.GenActorID(), body: []byte(`{"Echo":"hi"}`)}
-	a := newSporecallActor(t, fakeSeams{services: map[string]ref.Ref{"probe": probe}})
+	a := newRelayActor(t, fakeSeams{services: map[string]ref.Ref{"probe": probe}})
 
-	resp, err := callSporecall(t, a, "call", `["probe.echo", {"Text":"hi"}]`)
+	resp, err := callRelay(t, a, "call", `["probe.echo", {"Text":"hi"}]`)
 	if err != nil {
 		t.Fatalf("call: %v", err)
 	}
@@ -164,15 +198,15 @@ func TestSporecallCallRelaysToService(t *testing.T) {
 	}
 }
 
-// TestSporecallNamedObjectPayload mirrors the agent tool path: the turn
-// engine forwards the LLM's arguments as a JSON object, so a schema-less
-// callable must accept {"callId": ..., "payload": ...} named after the script
-// signature parameters — and reject unknown keys loudly.
-func TestSporecallNamedObjectPayload(t *testing.T) {
+// TestRelayNamedObjectPayload mirrors the agent tool path: the turn engine
+// forwards the LLM's arguments as a JSON object, so a schema-less callable
+// must accept {"callId": ..., "payload": ...} named after the script signature
+// parameters — and reject unknown keys loudly.
+func TestRelayNamedObjectPayload(t *testing.T) {
 	probe := &capturingRef{id: testutil.GenActorID(), body: []byte(`{"Echo":"hi"}`)}
-	a := newSporecallActor(t, fakeSeams{services: map[string]ref.Ref{"probe": probe}})
+	a := newRelayActor(t, fakeSeams{services: map[string]ref.Ref{"probe": probe}})
 
-	resp, err := callSporecall(t, a, "call", `{"callId": "probe.echo", "payload": {"Text": "hi"}}`)
+	resp, err := callRelay(t, a, "call", `{"callId": "probe.echo", "payload": {"Text": "hi"}}`)
 	if err != nil {
 		t.Fatalf("named-object call: %v", err)
 	}
@@ -185,26 +219,26 @@ func TestSporecallNamedObjectPayload(t *testing.T) {
 	}
 
 	// Empty object = zero args (the no-argument tool-call shape).
-	if _, err := callSporecall(t, a, "ping", `{}`); err != nil {
+	if _, err := callRelay(t, a, "ping", `{}`); err != nil {
 		t.Fatalf("ping via empty object: %v", err)
 	}
 
 	// Unknown key must fail loudly, not silently drop the argument.
-	if _, err := callSporecall(t, a, "call", `{"callID": "probe.echo"}`); err == nil {
+	if _, err := callRelay(t, a, "call", `{"callID": "probe.echo"}`); err == nil {
 		t.Fatal("unknown key accepted, want explicit error")
 	} else if !strings.Contains(err.Error(), "unknown argument") {
 		t.Fatalf("error = %v, want unknown argument diagnostic", err)
 	}
 }
 
-// TestSporecallCallAppWrapsAppManagerInvoke drives host.invoke_app: the
-// appmanager.invoke wire (bytes payload + agent identity) is assembled on
-// the Go side and the response payload decoded back to a map.
-func TestSporecallCallAppWrapsAppManagerInvoke(t *testing.T) {
+// TestRelayCallAppWrapsAppManagerInvoke drives host.invoke_app: the
+// appmanager.invoke wire (bytes payload + agent identity) is assembled on the
+// Go side and the response payload decoded back to a map.
+func TestRelayCallAppWrapsAppManagerInvoke(t *testing.T) {
 	appmgr := &capturingRef{id: testutil.GenActorID(), body: mustJSONT(t, gen.AppManagerInvokeResp{Payload: []byte(`{"ok":true}`)})}
-	a := newSporecallActor(t, fakeSeams{services: map[string]ref.Ref{"appmanager": appmgr}})
+	a := newRelayActor(t, fakeSeams{services: map[string]ref.Ref{"appmanager": appmgr}})
 
-	resp, err := callSporecall(t, a, "call_app", `["builtin.demo", "twice", [21], "agent-1"]`)
+	resp, err := callRelay(t, a, "call_app", `["builtin.demo", "twice", [21], "agent-1"]`)
 	if err != nil {
 		t.Fatalf("call_app: %v", err)
 	}
@@ -231,11 +265,11 @@ func TestSporecallCallAppWrapsAppManagerInvoke(t *testing.T) {
 	}
 }
 
-// TestSporecallCallUnknownService asserts the failure mode is an explicit
-// error surfaced to the caller, not a silent empty result.
-func TestSporecallCallUnknownService(t *testing.T) {
-	a := newSporecallActor(t, fakeSeams{})
-	_, err := callSporecall(t, a, "call", `["missing.echo", {}]`)
+// TestRelayCallUnknownService asserts the failure mode is an explicit error
+// surfaced to the caller, not a silent empty result.
+func TestRelayCallUnknownService(t *testing.T) {
+	a := newRelayActor(t, fakeSeams{})
+	_, err := callRelay(t, a, "call", `["missing.echo", {}]`)
 	if err == nil {
 		t.Fatal("expected error for unknown service")
 	}

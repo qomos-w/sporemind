@@ -225,3 +225,19 @@ struct WikiListStarredReq {
 struct WikiListStarredResp {
     Items: array<WikiStarredEntry>  // projects in mount order, cards newest-first
 }
+
+// ---- workspace.host_call (builtin:bundle:sporecall bridge) ----
+//
+// Generic host-callable relay for agents: resolves CallId's service prefix,
+// forwards Payload, and returns the decoded JSON response. Mounting the
+// builtin:bundle:sporecall bundle is the only gate on the agent side; the
+// target callable's own policy ladder still applies to every relayed call.
+
+struct WorkspaceHostCallReq {
+    CallId:  string                 // dotted callable ID "<service>.<callable>"
+    optional Payload: map<string, any>  // target callable request body; nil for zero-arg callables
+}
+
+struct WorkspaceHostCallResp {
+    optional Result: map<string, any>  // decoded JSON response; nil for void/tell-style callables
+}

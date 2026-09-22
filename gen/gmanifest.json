@@ -47543,7 +47543,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1927,
+      "schemaId": 1932,
       "name": "ResolveChildSlotResp",
       "visibility": "internal",
       "object": {
@@ -49538,327 +49538,6 @@
               "kind": "scalar",
               "name": "string",
               "typeId": 12
-            }
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 2198,
-      "name": "SporeAppInvokeReq",
-      "visibility": "public",
-      "object": {
-        "kind": "struct",
-        "name": "SporeAppInvokeReq",
-        "fields": [
-          {
-            "name": "Id",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            }
-          },
-          {
-            "name": "Callable",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            }
-          },
-          {
-            "name": "Payload",
-            "type": {
-              "kind": "scalar",
-              "name": "bytes",
-              "typeId": 13
-            }
-          },
-          {
-            "name": "AgentId",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            },
-            "optional": true
-          },
-          {
-            "name": "Role",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            },
-            "optional": true
-          },
-          {
-            "name": "ProjectId",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            },
-            "optional": true
-          },
-          {
-            "name": "RequestId",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            },
-            "optional": true
-          },
-          {
-            "name": "RouteDepth",
-            "type": {
-              "kind": "scalar",
-              "name": "int",
-              "typeId": 6
-            },
-            "optional": true
-          },
-          {
-            "name": "RouteToken",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            },
-            "optional": true
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 2199,
-      "name": "SporeAppInvokeResp",
-      "visibility": "public",
-      "object": {
-        "kind": "struct",
-        "name": "SporeAppInvokeResp",
-        "fields": [
-          {
-            "name": "Payload",
-            "type": {
-              "kind": "scalar",
-              "name": "bytes",
-              "typeId": 13
-            }
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 2194,
-      "name": "SporeAppReloadReq",
-      "visibility": "admin",
-      "object": {
-        "kind": "struct",
-        "name": "SporeAppReloadReq",
-        "fields": [
-          {
-            "name": "Id",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            }
-          },
-          {
-            "name": "EntryModule",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            }
-          },
-          {
-            "name": "Modules",
-            "type": {
-              "kind": "map",
-              "name": "map",
-              "key": {
-                "kind": "scalar",
-                "name": "string",
-                "typeId": 12
-              },
-              "value": {
-                "kind": "scalar",
-                "name": "string",
-                "typeId": 12
-              }
-            }
-          },
-          {
-            "name": "Assets",
-            "type": {
-              "kind": "map",
-              "name": "map",
-              "key": {
-                "kind": "scalar",
-                "name": "string",
-                "typeId": 12
-              },
-              "value": {
-                "kind": "scalar",
-                "name": "bytes",
-                "typeId": 13
-              }
-            },
-            "optional": true
-          },
-          {
-            "name": "SchemaDescriptors",
-            "type": {
-              "kind": "map",
-              "name": "map",
-              "key": {
-                "kind": "scalar",
-                "name": "string",
-                "typeId": 12
-              },
-              "value": {
-                "kind": "struct",
-                "name": "struct",
-                "className": "AppObjectDescriptor"
-              }
-            },
-            "optional": true
-          },
-          {
-            "name": "PackageHash",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            },
-            "optional": true
-          },
-          {
-            "name": "ExpectedStateVersion",
-            "type": {
-              "kind": "scalar",
-              "name": "long",
-              "typeId": 8
-            },
-            "optional": true
-          },
-          {
-            "name": "MigratedState",
-            "type": {
-              "kind": "map",
-              "name": "map",
-              "key": {
-                "kind": "scalar",
-                "name": "string",
-                "typeId": 12
-              },
-              "value": {
-                "kind": "scalar",
-                "name": "any",
-                "typeId": 15
-              }
-            },
-            "optional": true
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 2195,
-      "name": "SporeAppReloadResp",
-      "visibility": "admin",
-      "object": {
-        "kind": "struct",
-        "name": "SporeAppReloadResp",
-        "fields": [
-          {
-            "name": "Id",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            }
-          },
-          {
-            "name": "Version",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            }
-          },
-          {
-            "name": "StateVersion",
-            "type": {
-              "kind": "scalar",
-              "name": "long",
-              "typeId": 8
-            },
-            "optional": true
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 2196,
-      "name": "SporeAppStateReq",
-      "visibility": "public",
-      "object": {
-        "kind": "struct",
-        "name": "SporeAppStateReq",
-        "fields": [
-          {
-            "name": "Id",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            }
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 2197,
-      "name": "SporeAppStateSetReq",
-      "visibility": "public",
-      "object": {
-        "kind": "struct",
-        "name": "SporeAppStateSetReq",
-        "fields": [
-          {
-            "name": "Id",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            }
-          },
-          {
-            "name": "State",
-            "type": {
-              "kind": "map",
-              "name": "map",
-              "key": {
-                "kind": "scalar",
-                "name": "string",
-                "typeId": 12
-              },
-              "value": {
-                "kind": "scalar",
-                "name": "string",
-                "typeId": 12
-              }
             }
           }
         ]
@@ -66440,6 +66119,74 @@
     },
     {
       "namespace": "system",
+      "schemaId": 1927,
+      "name": "WorkspaceHostCallReq",
+      "visibility": "admin",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceHostCallReq",
+        "fields": [
+          {
+            "name": "CallId",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Payload",
+            "type": {
+              "kind": "map",
+              "name": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string",
+                "typeId": 12
+              },
+              "value": {
+                "kind": "scalar",
+                "name": "any",
+                "typeId": 15
+              }
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1928,
+      "name": "WorkspaceHostCallResp",
+      "visibility": "admin",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceHostCallResp",
+        "fields": [
+          {
+            "name": "Result",
+            "type": {
+              "kind": "map",
+              "name": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string",
+                "typeId": 12
+              },
+              "value": {
+                "kind": "scalar",
+                "name": "any",
+                "typeId": 15
+              }
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
       "schemaId": 1836,
       "name": "WorkspaceListAgentKindConfigsResp",
       "visibility": "public",
@@ -68301,7 +68048,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1928,
+      "schemaId": 1933,
       "name": "exploreCompleteReq",
       "visibility": "internal",
       "object": {
@@ -69453,7 +69200,7 @@
       "actorType": "agent",
       "visibility": "internal",
       "mode": "unary",
-      "reqSchemaId": 1928,
+      "reqSchemaId": 1933,
       "finalSchemaId": 0,
       "req": {
         "kind": "struct",
@@ -70081,7 +69828,7 @@
       "visibility": "internal",
       "mode": "unary",
       "reqSchemaId": 1807,
-      "finalSchemaId": 1927,
+      "finalSchemaId": 1932,
       "req": {
         "kind": "struct",
         "name": "ResolveChildSlotReq",
@@ -75951,6 +75698,7 @@
       "namespace": "mcp",
       "name": "call_tool",
       "actorType": "mcpmanager",
+      "description": "Invoke a tool on a configured MCP server: Id selects the server, Tool the tool name, Arguments carries the JSON arguments. Exposed by the builtin:bundle:sporecall bundle.",
       "visibility": "admin",
       "mode": "unary",
       "service": "mcp",
@@ -80133,100 +79881,6 @@
       }
     },
     {
-      "namespace": "sporeapp",
-      "name": "invoke",
-      "actorType": "sporeapp",
-      "visibility": "public",
-      "mode": "unary",
-      "reqSchemaId": 2198,
-      "finalSchemaId": 2199,
-      "req": {
-        "kind": "struct",
-        "name": "SporeAppInvokeReq",
-        "className": "SporeAppInvokeReq"
-      },
-      "final": {
-        "kind": "struct",
-        "name": "SporeAppInvokeResp",
-        "className": "SporeAppInvokeResp"
-      }
-    },
-    {
-      "namespace": "sporeapp",
-      "name": "reload",
-      "actorType": "sporeapp",
-      "visibility": "admin",
-      "mode": "unary",
-      "reqSchemaId": 2194,
-      "finalSchemaId": 2195,
-      "req": {
-        "kind": "struct",
-        "name": "SporeAppReloadReq",
-        "className": "SporeAppReloadReq"
-      },
-      "final": {
-        "kind": "struct",
-        "name": "SporeAppReloadResp",
-        "className": "SporeAppReloadResp"
-      }
-    },
-    {
-      "namespace": "sporeapp",
-      "name": "state",
-      "actorType": "sporeapp",
-      "visibility": "public",
-      "mode": "unary",
-      "reqSchemaId": 2196,
-      "finalSchemaId": 0,
-      "req": {
-        "kind": "struct",
-        "name": "SporeAppStateReq",
-        "className": "SporeAppStateReq"
-      },
-      "final": {
-        "kind": "map",
-        "name": "map",
-        "key": {
-          "kind": "scalar",
-          "name": "string",
-          "typeId": 12
-        },
-        "value": {
-          "kind": "scalar",
-          "name": "any",
-          "typeId": 15
-        }
-      }
-    },
-    {
-      "namespace": "sporeapp",
-      "name": "state_set",
-      "actorType": "sporeapp",
-      "visibility": "public",
-      "mode": "unary",
-      "reqSchemaId": 2197,
-      "finalSchemaId": 0,
-      "req": {
-        "kind": "struct",
-        "name": "SporeAppStateSetReq",
-        "className": "SporeAppStateSetReq"
-      },
-      "final": {
-        "kind": "map",
-        "name": "map",
-        "key": {
-          "kind": "scalar",
-          "name": "string",
-          "typeId": 12
-        },
-        "value": {
-          "kind": "scalar",
-          "name": "any",
-          "typeId": 15
-        }
-      }
-    },
-    {
       "namespace": "sshmanager",
       "name": "archive_export",
       "actorType": "sshmanager",
@@ -83621,6 +83275,27 @@
     },
     {
       "namespace": "workspace",
+      "name": "host_call",
+      "actorType": "workspace",
+      "description": "Invoke any host actor callable by dotted ID (\u003cservice\u003e.\u003ccallable\u003e), e.g. \"workspace.slashcommands_list\". The payload must match the target callable's request schema; the target's own policy still applies. Exposed by the builtin:bundle:sporecall bundle.",
+      "visibility": "admin",
+      "mode": "unary",
+      "service": "workspace",
+      "reqSchemaId": 1927,
+      "finalSchemaId": 1928,
+      "req": {
+        "kind": "struct",
+        "name": "WorkspaceHostCallReq",
+        "className": "WorkspaceHostCallReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "WorkspaceHostCallResp",
+        "className": "WorkspaceHostCallResp"
+      }
+    },
+    {
+      "namespace": "workspace",
       "name": "internal_deletion_finalize",
       "actorType": "workspace",
       "visibility": "internal",
@@ -84775,168 +84450,6 @@
       },
       "mode": "full",
       "visibility": "public"
-    },
-    {
-      "namespace": "sporeapp",
-      "actorPath": "sporeapp",
-      "component": "Assets",
-      "schemaId": 0,
-      "schemaName": "map",
-      "type": {
-        "kind": "map",
-        "name": "map",
-        "key": {
-          "kind": "scalar",
-          "name": "string",
-          "typeId": 12
-        },
-        "value": {
-          "kind": "scalar",
-          "name": "bytes",
-          "typeId": 13
-        }
-      },
-      "mode": "full",
-      "visibility": "admin"
-    },
-    {
-      "namespace": "sporeapp",
-      "actorPath": "sporeapp",
-      "component": "EntryModule",
-      "schemaId": 0,
-      "schemaName": "string",
-      "type": {
-        "kind": "scalar",
-        "name": "string",
-        "typeId": 12
-      },
-      "mode": "full",
-      "visibility": "admin"
-    },
-    {
-      "namespace": "sporeapp",
-      "actorPath": "sporeapp",
-      "component": "Manifest",
-      "schemaId": 2049,
-      "schemaName": "AppManifest",
-      "type": {
-        "kind": "struct",
-        "name": "AppManifest",
-        "className": "AppManifest"
-      },
-      "mode": "full",
-      "visibility": "admin"
-    },
-    {
-      "namespace": "sporeapp",
-      "actorPath": "sporeapp",
-      "component": "MigrationVersion",
-      "schemaId": 0,
-      "schemaName": "int",
-      "type": {
-        "kind": "scalar",
-        "name": "int",
-        "typeId": 6
-      },
-      "mode": "full",
-      "visibility": "admin"
-    },
-    {
-      "namespace": "sporeapp",
-      "actorPath": "sporeapp",
-      "component": "Modules",
-      "schemaId": 0,
-      "schemaName": "map",
-      "type": {
-        "kind": "map",
-        "name": "map",
-        "key": {
-          "kind": "scalar",
-          "name": "string",
-          "typeId": 12
-        },
-        "value": {
-          "kind": "scalar",
-          "name": "string",
-          "typeId": 12
-        }
-      },
-      "mode": "full",
-      "visibility": "admin"
-    },
-    {
-      "namespace": "sporeapp",
-      "actorPath": "sporeapp",
-      "component": "PackageHash",
-      "schemaId": 0,
-      "schemaName": "string",
-      "type": {
-        "kind": "scalar",
-        "name": "string",
-        "typeId": 12
-      },
-      "mode": "full",
-      "visibility": "admin"
-    },
-    {
-      "namespace": "sporeapp",
-      "actorPath": "sporeapp",
-      "component": "SchemaDescriptors",
-      "schemaId": 0,
-      "schemaName": "map",
-      "type": {
-        "kind": "map",
-        "name": "map",
-        "key": {
-          "kind": "scalar",
-          "name": "string",
-          "typeId": 12
-        },
-        "value": {
-          "kind": "struct",
-          "name": "struct",
-          "className": "AppObjectDescriptor"
-        }
-      },
-      "mode": "full",
-      "visibility": "admin"
-    },
-    {
-      "namespace": "sporeapp",
-      "actorPath": "sporeapp",
-      "component": "State",
-      "schemaId": 0,
-      "schemaName": "map",
-      "type": {
-        "kind": "map",
-        "name": "map",
-        "key": {
-          "kind": "scalar",
-          "name": "string",
-          "typeId": 12
-        },
-        "value": {
-          "kind": "scalar",
-          "name": "any",
-          "typeId": 15
-        }
-      },
-      "mode": "full",
-      "visibility": "admin"
-    },
-    {
-      "namespace": "sporeapp",
-      "actorPath": "sporeapp",
-      "component": "StateVersion",
-      "schemaId": 0,
-      "schemaName": "int",
-      "type": {
-        "kind": "scalar",
-        "name": "int",
-        "typeId": 6
-      },
-      "mode": "full",
-      "visibility": "admin"
     },
     {
       "namespace": "sshmanager",

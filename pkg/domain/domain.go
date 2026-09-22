@@ -1349,6 +1349,11 @@ type GitTagInfo = gen.GitTagInfo
 type WorkspaceAgentSpawnSchedulerReq = gen.WorkspaceAgentSpawnSchedulerReq
 type WorkspaceAgentSpawnSchedulerResp = gen.WorkspaceAgentSpawnSchedulerResp
 
+// WorkspaceHostCallReq/Resp are the protocol for workspace.host_call, the
+// generic host-callable relay behind the builtin:bundle:sporecall bundle.
+type WorkspaceHostCallReq = gen.WorkspaceHostCallReq
+type WorkspaceHostCallResp = gen.WorkspaceHostCallResp
+
 // AgentSchedulerBindReq/Resp + AgentSchedulerUnbindReq/Resp are the protocol
 // for the agent-side scheduler binding lifecycle callables
 // (agent.scheduler_bind / agent.scheduler_unbind, registered flat as

@@ -616,6 +616,17 @@ export const gitTagList_meta = {
   resSchemaId: 1910,
 } as const;
 
+export async function hostCall(client: GosporeClient, req: systemTypes.WorkspaceHostCallReq, opts?: InvokeOptions): Promise<systemTypes.WorkspaceHostCallResp> {
+  return client.invoke<systemTypes.WorkspaceHostCallReq, systemTypes.WorkspaceHostCallResp>("workspace.host_call", req, { reqSchemaId: 1927, resSchemaId: 1928, ...opts });
+}
+
+export const hostCall_meta = {
+  callable: "workspace.host_call",
+  name: "host_call",
+  reqSchemaId: 1927,
+  resSchemaId: 1928,
+} as const;
+
 export async function listAgentKindConfigs(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.WorkspaceListAgentKindConfigsResp> {
   return client.invoke<void, systemTypes.WorkspaceListAgentKindConfigsResp>("workspace.list_agent_kind_configs", undefined, { resSchemaId: 1836, ...opts });
 }
