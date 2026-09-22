@@ -26,6 +26,7 @@ import (
 	"fmt"
 	"reflect"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/qomos-w/gospore/actor"
@@ -154,6 +155,12 @@ type Actor struct {
 	lifecycle  context.Context
 	cancelSubs []func()
 	driftDone  chan struct{}
+	// judge (小脑) loop state: policy-round goroutine handle, in-flight guard,
+	// and the per-card overlay currently applied on scores (in-memory only —
+	// each round resets and re-applies, so restart just waits one interval).
+	judgeDone     chan struct{}
+	judgeInFlight atomic.Bool
+	judgeBumps    map[string]float64
 }
 
 // NewActor returns an actor constructor for the global workbench actor.
@@ -170,6 +177,7 @@ func (a *Actor) OnInit(ctx actor.Context) error {
 	a.self = ctx.Self()
 	a.lifecycle = ctx.Lifecycle()
 	a.cards = make(map[string]*cardState)
+	a.judgeBumps = make(map[string]float64)
 
 	store, err := persist.New(config.PersistConfig(domainName))
 	if err != nil {
@@ -215,6 +223,9 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	}
 	if err := ctx.Register(callDriftTick, a.handleDriftTick, actor.Internal(), actor.WithLoop(laneScore)); err != nil {
 		return fmt.Errorf("workbench: register %s: %w", callDriftTick, err)
+	}
+	if err := ctx.Register(callJudgeIngest, a.handleJudgeIngest, actor.Internal(), actor.WithLoop(laneScore)); err != nil {
+		return fmt.Errorf("workbench: register %s: %w", callJudgeIngest, err)
 	}
 
 	// Read: PureContext (forked goroutine, never the owner lane).
@@ -274,6 +285,7 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 		return err
 	}
 	a.startDriftLoop(ctx)
+	a.startJudgeLoop(ctx)
 	return nil
 }
 
@@ -284,6 +296,7 @@ func (a *Actor) OnStop(_ actor.Context) error {
 	}
 	a.cancelSubs = nil
 	a.stopDriftLoop()
+	a.stopJudgeLoop()
 	a.mu.Lock()
 	defer a.mu.Unlock()
 	return a.saveLocked()

@@ -1,0 +1,105 @@
+// policy namespace — 统一策略判断抽象接口（"小脑"）。
+// @ts-export
+//
+// Sources of truth for:
+//   - policy.decide   — evaluate typed questions (Choice/Score/Noul) against a
+//     state and return typed answers with probabilities + confidence + backend
+//     provenance. Question semantics mirror the Jev System One primitives.
+//   - policy.status   — effective backend configuration (secrets redacted)
+//   - policy.configure — backend selection (auto/jev/llm), Jev credential,
+//     LLM fallback unit
+//
+// Backends:
+//   - jev: direct POST {endpoint} (default https://api.typesafe.ai/v1/systemone),
+//     one call evaluates every question in parallel. Cheapest, calibrated
+//     probabilities (RLCD-trained).
+//   - llm: prompt + structured JSON output via aiaggregator.dispatch with the
+//     configured ModelUnit. Availability fallback only — self-reported
+//     probabilities are NOT calibrated; answers carry Calibrated=false so
+//     consumers can weight them differently.
+//
+// Degradation policy: failover triggers on availability faults only
+// (network error / 429 / 5xx / missing key). Low confidence is a legitimate
+// answer, never a failover trigger.
+
+// PolicyQuestion — one typed question. Type selects the primitive:
+//   "choice": pick one option from Choices (map of option id → description)
+//   "score":  rate the state against ordered Levels (level 0..n-1, answer may
+//             be fractional)
+//   "noul":   yes/no probability; Instructions states the proposition
+struct PolicyQuestion {
+    Type:         string
+    Instructions: string
+    optional Choices: map<string, string>  // choice: option id → description
+    optional Levels:  array<string>        // score: ordered level descriptions
+}
+
+// PolicyDecideReq — judge State with a batch of independent questions.
+// All questions are evaluated against the same state in one backend call.
+struct PolicyDecideReq {
+    State:     string
+    Questions: map<string, PolicyQuestion>  // key → question; keys echo back in Answers
+    optional Backend: string                // per-call override: "jev" | "llm" (default: configured mode)
+}
+
+// PolicyAnswer — typed answer with provenance. Exactly one of Choice / Score /
+// Noul is meaningful depending on Type; Probabilities is the distribution over
+// options (choice) or levels (score, keys are level indexes as strings).
+struct PolicyAnswer {
+    Type:    string  // echoes the question type
+    optional Choice: string
+    optional Score:  double
+    optional Noul:   double
+    optional Probabilities: map<string, double>
+    optional Confidence:    double   // backend-reported; absent = not reported
+    Backend:    string                 // "jev" | "llm"
+    Calibrated: bool                   // true = calibrated probabilities; false = LLM self-report
+}
+
+struct PolicyDecideResp {
+    Answers: map<string, PolicyAnswer>
+    Backend: string   // backend that actually answered
+    // Degraded=true means the primary backend faulted and the other one
+    // answered (or both faulted and Answers is empty, see Error).
+    Degraded: bool
+    LatencyMs: long
+    optional FailoverReason: string  // short diagnostic when Degraded=true
+    optional Error:           string  // non-fatal: set when every backend failed; Answers is empty then
+}
+
+// PolicyJevConfig — Jev credential + endpoint. ApiKey is a secret persisted in
+// the policy namespace and never returned by policy.status; an empty ApiKey in
+// policy.configure preserves the stored key (redacted edit flow).
+struct PolicyJevConfig {
+    optional ApiKey:    string
+    optional Model:     string  // default "jev-latest"
+    optional Endpoint:  string  // default https://api.typesafe.ai/v1/systemone
+}
+
+// PolicyLLMConfig — fallback unit. Empty Unit = not configured; the llm
+// backend is skipped in auto mode then.
+struct PolicyLLMConfig {
+    optional Unit: ModelUnit
+}
+
+struct PolicyConfigureReq {
+    optional Backend: string          // "auto" | "jev" | "llm"
+    optional Jev:    PolicyJevConfig
+    optional LLM:    PolicyLLMConfig
+}
+
+struct PolicyConfigureResp {
+    Status: PolicyStatusResp
+}
+
+struct PolicyStatusReq {}
+
+// PolicyStatusResp — redacted projection: has-key flags instead of secrets.
+struct PolicyStatusResp {
+    Backend:      string  // effective mode: "auto" | "jev" | "llm"
+    JevConfigured: bool   // Jev API key present
+    LLMConfigured:  bool  // fallback unit present
+    optional LLMUnit: ModelUnit
+    optional JevModel:  string
+    optional JevEndpoint: string
+}

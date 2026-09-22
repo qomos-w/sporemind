@@ -42,3 +42,19 @@ struct WorkbenchAgentModeInfo {
 struct WorkbenchAgentListIngestReq {
     Items: array<WorkbenchAgentModeInfo>
 }
+
+// WorkbenchJudgeScore is one policy-judge verdict for a card: the rubric level
+// (0=quiet..3=urgent), which backend answered (jev | llm), and whether its
+// probabilities are calibrated. Uncalibrated verdicts are weighted down.
+struct WorkbenchJudgeScore {
+    Level:      int
+    Backend:    string
+    Calibrated: bool
+}
+
+// WorkbenchJudgeIngestReq carries one policy.decide round back to the score
+// lane. Scores: card id → verdict; cards absent from the round simply keep
+// their pre-judge score (the overlay reset happens in the lane handler).
+struct WorkbenchJudgeIngestReq {
+    Scores: map<string, WorkbenchJudgeScore>
+}

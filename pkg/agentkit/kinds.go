@@ -71,6 +71,7 @@ func BaseKindConfigs() []domain.AgentKindConfig {
 		"builtin:bundle:fork-explore",
 		"builtin:bundle:fork-review",
 		"builtin:bundle:fork-general",
+		"builtin:bundle:swarm",
 	}
 	coder.AutoAllowTools = []string{
 		"project.write", "project.edit",
@@ -126,6 +127,7 @@ func BaseKindConfigs() []domain.AgentKindConfig {
 		"builtin:bundle:workspace-tools",
 		"builtin:bundle:planning",
 		"builtin:bundle:web-search",
+		"builtin:bundle:swarm",
 	}
 	general.AutoAllowTools = []string{
 		"project.write", "project.edit",
@@ -226,10 +228,10 @@ func BaseKindConfigs() []domain.AgentKindConfig {
 			AutoAllowTools:   general.AutoAllowTools,
 		},
 		{
-			Kind:          dreamer.Kind,
-			DisplayName:   "Dreamer",
-			UserCreatable: false,
-			SystemManaged: true,
+			Kind:             dreamer.Kind,
+			DisplayName:      "Dreamer",
+			UserCreatable:    false,
+			SystemManaged:    true,
 			DefaultBundleIDs: dreamer.DefaultBundleIDs,
 		},
 		{
@@ -253,6 +255,7 @@ func BaseKindConfigs() []domain.AgentKindConfig {
 				"builtin:bundle:git-tools",
 				"builtin:bundle:fork-explore",
 				"builtin:bundle:web-search",
+				"builtin:bundle:swarm",
 			},
 			MaxTurns: 200,
 		},

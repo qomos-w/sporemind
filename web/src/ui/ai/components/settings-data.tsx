@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   Settings,
+  Shield,
   Server,
   Puzzle,
   Terminal,
@@ -70,6 +71,7 @@ import { StorageSettingsSection } from './StorageSettings'
 import { ShellLspSettings } from './ShellLspSettings'
 import { ShellEnvSettings } from './ShellEnvSettings'
 import { WebSearchSettingsPanel } from './WebSearchSettingsPanel'
+import { PolicySettingsPanel } from './PolicySettingsPanel'
 import { ImSettingsPanel } from './ImSettingsPanel'
 import { ShellGitSettings } from './ShellGitSettings'
 import { ShellNoGitModeSettings } from './ShellNoGitModeSettings'
@@ -504,6 +506,7 @@ export const categories: SettingsCategory[] = [
   { id: 'agent', labelKey: 'settings.agent.title', icon: <Bot size={16} /> },
   { id: 'prompts', labelKey: 'settings.prompts.title', icon: <FileCode size={16} /> },
   { id: 'skills', labelKey: 'settings.skills.title', icon: <Wrench size={16} /> },
+  { id: 'policy', labelKey: 'settings.policy.title', icon: <Shield size={16} /> },
   { id: 'voice', labelKey: 'settings.voice.title', icon: <Mic size={16} /> },
   { id: 'media', labelKey: 'settings.media.title', icon: <Image size={16} /> },
   { id: 'websearch', labelKey: 'settings.websearch.title', icon: <Search size={16} /> },
@@ -549,6 +552,7 @@ export const settingsGroups: SettingsGroup[] = [
       { id: 'agent', labelKey: 'settings.agent.title' as I18nKey, icon: <Bot size={16} /> },
       { id: 'prompts', labelKey: 'settings.prompts.title' as I18nKey, icon: <FileCode size={16} /> },
       { id: 'skills', labelKey: 'settings.skills.title' as I18nKey, icon: <Wrench size={16} /> },
+      { id: 'policy', labelKey: 'settings.policy.title' as I18nKey, icon: <Shield size={16} /> },
     ],
   },
   {
@@ -699,6 +703,8 @@ export function renderSettingsContent(
       return <AgentSettingsCategory />
     case 'skills':
       return <ShellSkillSettings />
+    case 'policy':
+      return <PolicySettingsPanel />
     case 'prompts':
       return <ShellPromptSettings />
     case 'frp':

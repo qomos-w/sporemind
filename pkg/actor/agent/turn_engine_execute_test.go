@@ -577,6 +577,18 @@ func TestInjectCallerAgentID(t *testing.T) {
 			wantAgentID: agentID,
 		},
 		{
+			name:        "workspace.agent_spawn_swarm injects caller agent id",
+			callableID:  "workspace.agent_spawn_swarm",
+			input:       `{"Description":"Scan deps","Prompt":"p"}`,
+			wantAgentID: agentID,
+		},
+		{
+			name:        "workspace.agent_spawn_swarm forged caller agent id overwritten",
+			callableID:  "workspace.agent_spawn_swarm",
+			input:       `{"Description":"Scan deps","CallerAgentId":"forged-parent"}`,
+			wantAgentID: agentID,
+		},
+		{
 			name:        "appmanager.dev_gate forged caller agent id overwritten",
 			callableID:  "appmanager.dev_gate",
 			input:       `{"ProjectId":"019fd32f831b00000000000000000123","CallerAgentId":"forged-agent"}`,

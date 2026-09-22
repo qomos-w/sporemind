@@ -13,6 +13,8 @@ import (
 const (
 	WorkbenchAgentListIngestReqSchemaID uint64 = 6452
 	WorkbenchAgentModeInfoSchemaID      uint64 = 6451
+	WorkbenchJudgeIngestReqSchemaID     uint64 = 6454
+	WorkbenchJudgeScoreSchemaID         uint64 = 6453
 	WorkbenchLifecycleIngestReqSchemaID uint64 = 6448
 	WorkbenchStepIngestReqSchemaID      uint64 = 6449
 	WorkbenchTurnIngestReqSchemaID      uint64 = 6450
@@ -21,6 +23,8 @@ const (
 func init() {
 	schema.RegisterStructType(WorkbenchAgentListIngestReqSchemaID, reflect.TypeOf(WorkbenchAgentListIngestReq{}))
 	schema.RegisterStructType(WorkbenchAgentModeInfoSchemaID, reflect.TypeOf(WorkbenchAgentModeInfo{}))
+	schema.RegisterStructType(WorkbenchJudgeIngestReqSchemaID, reflect.TypeOf(WorkbenchJudgeIngestReq{}))
+	schema.RegisterStructType(WorkbenchJudgeScoreSchemaID, reflect.TypeOf(WorkbenchJudgeScore{}))
 	schema.RegisterStructType(WorkbenchLifecycleIngestReqSchemaID, reflect.TypeOf(WorkbenchLifecycleIngestReq{}))
 	schema.RegisterStructType(WorkbenchStepIngestReqSchemaID, reflect.TypeOf(WorkbenchStepIngestReq{}))
 	schema.RegisterStructType(WorkbenchTurnIngestReqSchemaID, reflect.TypeOf(WorkbenchTurnIngestReq{}))
@@ -36,6 +40,16 @@ type WorkbenchAgentModeInfo struct {
 	DisplayName    string `json:"DisplayName"`
 	WorkflowActive bool   `json:"WorkflowActive"`
 	BoundTask      bool   `json:"BoundTask"`
+}
+
+type WorkbenchJudgeIngestReq struct {
+	Scores map[string]WorkbenchJudgeScore `json:"Scores"`
+}
+
+type WorkbenchJudgeScore struct {
+	Level      int32  `json:"Level"`
+	Backend    string `json:"Backend"`
+	Calibrated bool   `json:"Calibrated"`
 }
 
 type WorkbenchLifecycleIngestReq struct {

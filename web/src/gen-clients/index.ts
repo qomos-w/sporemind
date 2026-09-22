@@ -27,6 +27,7 @@ export * as mcp from "./mcp/index.js";
 export * as media from "./media/index.js";
 export * as oracle from "./oracle/index.js";
 export * as pluginhost from "./pluginhost/index.js";
+export * as policy from "./policy/index.js";
 export * as project from "./project/index.js";
 export * as puppet from "./puppet/index.js";
 export * as puppet_asset from "./puppet.asset/index.js";

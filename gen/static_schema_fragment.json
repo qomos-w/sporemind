@@ -6958,6 +6958,14 @@
               "name": "string"
             },
             "optional": true
+          },
+          {
+            "name": "AgentId",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
           }
         ],
         "schemaId": 375
@@ -65691,6 +65699,66 @@
     },
     {
       "namespace": "system",
+      "schemaId": 6453,
+      "name": "WorkbenchJudgeScore",
+      "object": {
+        "kind": "struct",
+        "name": "WorkbenchJudgeScore",
+        "fields": [
+          {
+            "name": "Level",
+            "type": {
+              "kind": "scalar",
+              "name": "int"
+            }
+          },
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Calibrated",
+            "type": {
+              "kind": "scalar",
+              "name": "bool"
+            }
+          }
+        ],
+        "schemaId": 6453
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6454,
+      "name": "WorkbenchJudgeIngestReq",
+      "object": {
+        "kind": "struct",
+        "name": "WorkbenchJudgeIngestReq",
+        "fields": [
+          {
+            "name": "Scores",
+            "type": {
+              "kind": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string"
+              },
+              "value": {
+                "kind": "struct",
+                "name": "WorkbenchJudgeScore",
+                "className": "WorkbenchJudgeScore"
+              }
+            }
+          }
+        ],
+        "schemaId": 6454
+      }
+    },
+    {
+      "namespace": "system",
       "schemaId": 6496,
       "name": "WorkbenchAttentionEvent",
       "object": {
@@ -66405,6 +66473,428 @@
           }
         ],
         "schemaId": 6668
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6688,
+      "name": "PolicyQuestion",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyQuestion",
+        "fields": [
+          {
+            "name": "Type",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Instructions",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Choices",
+            "type": {
+              "kind": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string"
+              },
+              "value": {
+                "kind": "scalar",
+                "name": "string"
+              }
+            },
+            "optional": true
+          },
+          {
+            "name": "Levels",
+            "type": {
+              "kind": "array",
+              "element": {
+                "kind": "scalar",
+                "name": "string"
+              }
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 6688
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6689,
+      "name": "PolicyDecideReq",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyDecideReq",
+        "fields": [
+          {
+            "name": "State",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Questions",
+            "type": {
+              "kind": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string"
+              },
+              "value": {
+                "kind": "struct",
+                "name": "PolicyQuestion",
+                "className": "PolicyQuestion"
+              }
+            }
+          },
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 6689
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6690,
+      "name": "PolicyAnswer",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyAnswer",
+        "fields": [
+          {
+            "name": "Type",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Choice",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          },
+          {
+            "name": "Score",
+            "type": {
+              "kind": "scalar",
+              "name": "double"
+            },
+            "optional": true
+          },
+          {
+            "name": "Noul",
+            "type": {
+              "kind": "scalar",
+              "name": "double"
+            },
+            "optional": true
+          },
+          {
+            "name": "Probabilities",
+            "type": {
+              "kind": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string"
+              },
+              "value": {
+                "kind": "scalar",
+                "name": "double"
+              }
+            },
+            "optional": true
+          },
+          {
+            "name": "Confidence",
+            "type": {
+              "kind": "scalar",
+              "name": "double"
+            },
+            "optional": true
+          },
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Calibrated",
+            "type": {
+              "kind": "scalar",
+              "name": "bool"
+            }
+          }
+        ],
+        "schemaId": 6690
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6691,
+      "name": "PolicyDecideResp",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyDecideResp",
+        "fields": [
+          {
+            "name": "Answers",
+            "type": {
+              "kind": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string"
+              },
+              "value": {
+                "kind": "struct",
+                "name": "PolicyAnswer",
+                "className": "PolicyAnswer"
+              }
+            }
+          },
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Degraded",
+            "type": {
+              "kind": "scalar",
+              "name": "bool"
+            }
+          },
+          {
+            "name": "LatencyMs",
+            "type": {
+              "kind": "scalar",
+              "name": "long"
+            }
+          },
+          {
+            "name": "FailoverReason",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          },
+          {
+            "name": "Error",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 6691
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6692,
+      "name": "PolicyJevConfig",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyJevConfig",
+        "fields": [
+          {
+            "name": "ApiKey",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          },
+          {
+            "name": "Model",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          },
+          {
+            "name": "Endpoint",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 6692
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6693,
+      "name": "PolicyLLMConfig",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyLLMConfig",
+        "fields": [
+          {
+            "name": "Unit",
+            "type": {
+              "kind": "class",
+              "name": "ModelUnit",
+              "className": "ModelUnit"
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 6693
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6694,
+      "name": "PolicyConfigureReq",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyConfigureReq",
+        "fields": [
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          },
+          {
+            "name": "Jev",
+            "type": {
+              "kind": "struct",
+              "name": "PolicyJevConfig",
+              "className": "PolicyJevConfig"
+            },
+            "optional": true
+          },
+          {
+            "name": "LLM",
+            "type": {
+              "kind": "struct",
+              "name": "PolicyLLMConfig",
+              "className": "PolicyLLMConfig"
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 6694
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6695,
+      "name": "PolicyConfigureResp",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyConfigureResp",
+        "fields": [
+          {
+            "name": "Status",
+            "type": {
+              "kind": "struct",
+              "name": "PolicyStatusResp",
+              "className": "PolicyStatusResp"
+            }
+          }
+        ],
+        "schemaId": 6695
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6696,
+      "name": "PolicyStatusReq",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyStatusReq",
+        "fields": [],
+        "schemaId": 6696
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6697,
+      "name": "PolicyStatusResp",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyStatusResp",
+        "fields": [
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "JevConfigured",
+            "type": {
+              "kind": "scalar",
+              "name": "bool"
+            }
+          },
+          {
+            "name": "LLMConfigured",
+            "type": {
+              "kind": "scalar",
+              "name": "bool"
+            }
+          },
+          {
+            "name": "LLMUnit",
+            "type": {
+              "kind": "class",
+              "name": "ModelUnit",
+              "className": "ModelUnit"
+            },
+            "optional": true
+          },
+          {
+            "name": "JevModel",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          },
+          {
+            "name": "JevEndpoint",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 6697
       }
     }
   ]

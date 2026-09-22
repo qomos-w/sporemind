@@ -743,6 +743,8 @@ export const SchemaIDs = {
   WikiStarredEntry: 1924,
   WikiListStarredReq: 1925,
   WikiListStarredResp: 1926,
+  WorkspaceAgentSpawnSwarmReq: 1930,
+  WorkspaceAgentSpawnSwarmResp: 1931,
   AppSchemaRef: 2032,
   AppTypeDescriptor: 2033,
   AppFieldDescriptor: 2034,
@@ -1356,6 +1358,16 @@ export const SchemaIDs = {
   StoreCommunityView: 6666,
   StoreInstallReq: 6667,
   StoreInstallResp: 6668,
+  PolicyQuestion: 6688,
+  PolicyDecideReq: 6689,
+  PolicyAnswer: 6690,
+  PolicyDecideResp: 6691,
+  PolicyJevConfig: 6692,
+  PolicyLLMConfig: 6693,
+  PolicyConfigureReq: 6694,
+  PolicyConfigureResp: 6695,
+  PolicyStatusReq: 6696,
+  PolicyStatusResp: 6697,
 } as const;
 
 export const schemaEntries: SchemaEntry[] = [
@@ -8249,6 +8261,15 @@ export const schemaEntries: SchemaEntry[] = [
         },
         {
           name: "StepId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "AgentId",
           type: {
             kind: "scalar",
             name: "string",
@@ -40141,6 +40162,128 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
+    schemaId: 1930,
+    name: "WorkspaceAgentSpawnSwarmReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "WorkspaceAgentSpawnSwarmReq",
+      className: "WorkspaceAgentSpawnSwarmReq",
+      classId: 1930
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceAgentSpawnSwarmReq",
+      fields: [
+        {
+          name: "Description",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Prompt",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "AgentKind",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "MaxTurns",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          },
+          optional: true
+        },
+        {
+          name: "Unit",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "ModelUnit"
+          },
+          optional: true
+        },
+        {
+          name: "ProjectId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "CallerAgentId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1931,
+    name: "WorkspaceAgentSpawnSwarmResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "WorkspaceAgentSpawnSwarmResp",
+      className: "WorkspaceAgentSpawnSwarmResp",
+      classId: 1931
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceAgentSpawnSwarmResp",
+      fields: [
+        {
+          name: "ChildActorId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "DisplayName",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Depth",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
     schemaId: 2032,
     name: "AppSchemaRef",
     visibility: "public",
@@ -69926,6 +70069,525 @@ export const schemaEntries: SchemaEntry[] = [
             name: "string",
             typeId: 12
           }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 6688,
+    name: "PolicyQuestion",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "PolicyQuestion",
+      className: "PolicyQuestion",
+      classId: 6688
+    },
+    object: {
+      kind: "struct",
+      name: "PolicyQuestion",
+      fields: [
+        {
+          name: "Type",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Instructions",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Choices",
+          type: {
+            kind: "map",
+            name: "map",
+            key: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            },
+            value: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          },
+          optional: true
+        },
+        {
+          name: "Levels",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 6689,
+    name: "PolicyDecideReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "PolicyDecideReq",
+      className: "PolicyDecideReq",
+      classId: 6689
+    },
+    object: {
+      kind: "struct",
+      name: "PolicyDecideReq",
+      fields: [
+        {
+          name: "State",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Questions",
+          type: {
+            kind: "map",
+            name: "map",
+            key: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            },
+            value: {
+              kind: "struct",
+              name: "struct",
+              className: "PolicyQuestion"
+            }
+          }
+        },
+        {
+          name: "Backend",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 6690,
+    name: "PolicyAnswer",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "PolicyAnswer",
+      className: "PolicyAnswer",
+      classId: 6690
+    },
+    object: {
+      kind: "struct",
+      name: "PolicyAnswer",
+      fields: [
+        {
+          name: "Type",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Choice",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Score",
+          type: {
+            kind: "scalar",
+            name: "double",
+            typeId: 11
+          },
+          optional: true
+        },
+        {
+          name: "Noul",
+          type: {
+            kind: "scalar",
+            name: "double",
+            typeId: 11
+          },
+          optional: true
+        },
+        {
+          name: "Probabilities",
+          type: {
+            kind: "map",
+            name: "map",
+            key: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            },
+            value: {
+              kind: "scalar",
+              name: "double",
+              typeId: 11
+            }
+          },
+          optional: true
+        },
+        {
+          name: "Confidence",
+          type: {
+            kind: "scalar",
+            name: "double",
+            typeId: 11
+          },
+          optional: true
+        },
+        {
+          name: "Backend",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Calibrated",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 6691,
+    name: "PolicyDecideResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "PolicyDecideResp",
+      className: "PolicyDecideResp",
+      classId: 6691
+    },
+    object: {
+      kind: "struct",
+      name: "PolicyDecideResp",
+      fields: [
+        {
+          name: "Answers",
+          type: {
+            kind: "map",
+            name: "map",
+            key: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            },
+            value: {
+              kind: "struct",
+              name: "struct",
+              className: "PolicyAnswer"
+            }
+          }
+        },
+        {
+          name: "Backend",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Degraded",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "LatencyMs",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          }
+        },
+        {
+          name: "FailoverReason",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Error",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 6692,
+    name: "PolicyJevConfig",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "PolicyJevConfig",
+      className: "PolicyJevConfig",
+      classId: 6692
+    },
+    object: {
+      kind: "struct",
+      name: "PolicyJevConfig",
+      fields: [
+        {
+          name: "ApiKey",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Model",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Endpoint",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 6693,
+    name: "PolicyLLMConfig",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "PolicyLLMConfig",
+      className: "PolicyLLMConfig",
+      classId: 6693
+    },
+    object: {
+      kind: "struct",
+      name: "PolicyLLMConfig",
+      fields: [
+        {
+          name: "Unit",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "ModelUnit"
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 6694,
+    name: "PolicyConfigureReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "PolicyConfigureReq",
+      className: "PolicyConfigureReq",
+      classId: 6694
+    },
+    object: {
+      kind: "struct",
+      name: "PolicyConfigureReq",
+      fields: [
+        {
+          name: "Backend",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Jev",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "PolicyJevConfig"
+          },
+          optional: true
+        },
+        {
+          name: "LLM",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "PolicyLLMConfig"
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 6695,
+    name: "PolicyConfigureResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "PolicyConfigureResp",
+      className: "PolicyConfigureResp",
+      classId: 6695
+    },
+    object: {
+      kind: "struct",
+      name: "PolicyConfigureResp",
+      fields: [
+        {
+          name: "Status",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "PolicyStatusResp"
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 6696,
+    name: "PolicyStatusReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "PolicyStatusReq",
+      className: "PolicyStatusReq",
+      classId: 6696
+    },
+    object: {
+      kind: "struct",
+      name: "PolicyStatusReq",
+      fields: []
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 6697,
+    name: "PolicyStatusResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "PolicyStatusResp",
+      className: "PolicyStatusResp",
+      classId: 6697
+    },
+    object: {
+      kind: "struct",
+      name: "PolicyStatusResp",
+      fields: [
+        {
+          name: "Backend",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "JevConfigured",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "LLMConfigured",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "LLMUnit",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "ModelUnit"
+          },
+          optional: true
+        },
+        {
+          name: "JevModel",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "JevEndpoint",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
         }
       ]
     }

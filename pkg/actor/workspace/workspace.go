@@ -1696,6 +1696,11 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	); err != nil {
 		return fmt.Errorf("workspace: register agent.spawn_by_type: %w", err)
 	}
+	if err := ctx.Register("workspace.agent_spawn_swarm", a.handleAgentSpawnSwarm, actor.Public(),
+		actor.WithDescription("Spawn a persistent, card-free swarm sub-agent under the calling agent: the child self-assigns Description/Prompt as its goal, runs autonomously like a workflow worker (no task card needed), reports back via workspace.agent_send_message when done, and stays alive until terminated by the parent. The child mounts the swarm bundle itself and may spawn its own sub-agents (recursion capped at 3 levels, 8 live children per parent). Required: Description, Prompt. Optional: AgentKind (default general; read-only kinds and worker are rejected), MaxTurns, ProjectId. Returns ChildActorId, DisplayName, Depth."),
+	); err != nil {
+		return fmt.Errorf("workspace: register agent.spawn_swarm: %w", err)
+	}
 	if err := ctx.Register("workspace.agent_assign", a.handleAgentAssign, actor.Public(),
 		actor.WithDescription("Assign a claimed task card to an existing agent: CAS backlog/todo -> doing, then hand the goal to the agent."),
 	); err != nil {

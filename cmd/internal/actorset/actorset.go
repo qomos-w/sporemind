@@ -25,6 +25,7 @@ import (
 	"github.com/qomos-w/sporemind/pkg/actor/media"
 	"github.com/qomos-w/sporemind/pkg/actor/oracle"
 	"github.com/qomos-w/sporemind/pkg/actor/pluginhost"
+	"github.com/qomos-w/sporemind/pkg/actor/policy"
 	"github.com/qomos-w/sporemind/pkg/actor/puppeteditor"
 	"github.com/qomos-w/sporemind/pkg/actor/scheduler"
 	"github.com/qomos-w/sporemind/pkg/actor/shell"
@@ -62,6 +63,10 @@ func defaultSet(noSystemProject bool) []runtime.ChildSpec {
 		{Name: "lspserver", Factory: func() actor.Actor { return &lspserver.Actor{} }, RequirePersistent: false, Role: "system", DependsOn: []string{"filesystem"}},
 		{Name: "aimanager", Factory: func() actor.Actor { return &aimanager.Actor{} }, RequirePersistent: true, Role: "system", DependsOn: []string{"filesystem"}},
 		{Name: "aistats", Factory: aistats.NewActor(), RequirePersistent: true, Role: "system", DependsOn: []string{"aimanager"}},
+		// policy resolves its LLM fallback unit through the aiaggregator
+		// service (exposed by aimanager's child); DependsOn aimanager keeps it
+		// after the aggregator exists.
+		{Name: "policy", Factory: func() actor.Actor { return &policy.Actor{} }, RequirePersistent: true, Role: "system", DependsOn: []string{"aimanager"}},
 		{Name: "appmanager", Factory: func() actor.Actor { return appmanager.NewActor() }, RequirePersistent: true, Role: "system", Planner: true, DependsOn: []string{"aistats"}},
 		{Name: "workbench", Factory: workbench.NewActor(), RequirePersistent: true, Role: "system", DependsOn: []string{"workspace", "appmanager"}},
 		{Name: "browsermanager", Factory: func() actor.Actor { return &browsermanager.Actor{} }, RequirePersistent: true, Role: "system", Planner: true, DependsOn: []string{"appmanager"}},

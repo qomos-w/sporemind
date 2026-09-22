@@ -255,6 +255,24 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "workspace",
+    name: "agent_spawn_swarm",
+    visibility: "public",
+    mode: "unary",
+    reqSchemaId: 1930,
+    finalSchemaId: 1931,
+    req: {
+      kind: "struct",
+      name: "WorkspaceAgentSpawnSwarmReq",
+      className: "WorkspaceAgentSpawnSwarmReq"
+    },
+    final: {
+      kind: "struct",
+      name: "WorkspaceAgentSpawnSwarmResp",
+      className: "WorkspaceAgentSpawnSwarmResp"
+    }
+  },
+  {
+    namespace: "workspace",
     name: "agent_status_update",
     visibility: "public",
     mode: "unary",

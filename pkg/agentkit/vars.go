@@ -38,6 +38,12 @@ var (
 // it to agents spawned in a dev-app project (see spawnAgentViaProject).
 const PluginDevBundleID = "builtin:bundle:plugin-dev"
 
+// SwarmBundleID is the tool-usage bundle exposing the agent-to-agent swarm
+// surface (workspace.agent_spawn_swarm and its observation/termination
+// companions). Kind configs list it in DefaultBundleIDs, and the swarm spawn
+// handler re-attaches it to every spawned child so recursion works.
+const SwarmBundleID = "builtin:bundle:swarm"
+
 // BuiltinCards is the complete list of builtin component cards.
 var BuiltinCards = []BuiltinCard{
 	{Title: "builtin:bundle:project-wiki"},
@@ -59,6 +65,7 @@ var BuiltinCards = []BuiltinCard{
 	{Title: "builtin:bundle:fork-review"},
 	{Title: "builtin:bundle:fork-general"},
 	{Title: "builtin:bundle:fork-dream"},
+	{Title: "builtin:bundle:swarm"},
 	{Title: "builtin:bundle:workspace-tools"},
 	{Title: "builtin:bundle:app-tools"},
 	{Title: "builtin:bundle:interface-controls"},
@@ -82,7 +89,7 @@ var BuiltinCards = []BuiltinCard{
 // agents persisted before a rename can migrate their mounts on startup.
 var BuiltinCardRenames = map[string]string{
 	"builtin:bundle:omnibox":      "builtin:bundle:interface-controls",
-	"builtin:prompt:debug":         "builtin:bundle:debug",
+	"builtin:prompt:debug":        "builtin:bundle:debug",
 	"skill:frontdesign":           "builtin:bundle:interface-controls",
 	"builtin:bundle:wiremark":     "builtin:bundle:interface-controls",
 	"builtin:bundle:front-design": "builtin:bundle:interface-controls",

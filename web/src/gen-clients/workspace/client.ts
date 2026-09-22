@@ -143,6 +143,17 @@ export const agentSpawnScheduler_meta = {
   resSchemaId: 1916,
 } as const;
 
+export async function agentSpawnSwarm(client: GosporeClient, req: systemTypes.WorkspaceAgentSpawnSwarmReq, opts?: InvokeOptions): Promise<systemTypes.WorkspaceAgentSpawnSwarmResp> {
+  return client.invoke<systemTypes.WorkspaceAgentSpawnSwarmReq, systemTypes.WorkspaceAgentSpawnSwarmResp>("workspace.agent_spawn_swarm", req, { reqSchemaId: 1930, resSchemaId: 1931, ...opts });
+}
+
+export const agentSpawnSwarm_meta = {
+  callable: "workspace.agent_spawn_swarm",
+  name: "agent_spawn_swarm",
+  reqSchemaId: 1930,
+  resSchemaId: 1931,
+} as const;
+
 export async function agentStatusUpdate(client: GosporeClient, req: systemTypes.WorkspaceAgentStatusUpdateReq, opts?: InvokeOptions): Promise<systemTypes.WorkspaceAgentListState> {
   return client.invoke<systemTypes.WorkspaceAgentStatusUpdateReq, systemTypes.WorkspaceAgentListState>("workspace.agent_status_update", req, { reqSchemaId: 1820, resSchemaId: 1818, ...opts });
 }

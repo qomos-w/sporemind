@@ -1440,6 +1440,16 @@ export const SchemaIDs = {
   StoreCommunityView: 6666,
   StoreInstallReq: 6667,
   StoreInstallResp: 6668,
+  PolicyQuestion: 6688,
+  PolicyDecideReq: 6689,
+  PolicyAnswer: 6690,
+  PolicyDecideResp: 6691,
+  PolicyJevConfig: 6692,
+  PolicyLLMConfig: 6693,
+  PolicyConfigureReq: 6694,
+  PolicyConfigureResp: 6695,
+  PolicyStatusReq: 6696,
+  PolicyStatusResp: 6697,
 } as const;
 
 export type SchemaName = keyof typeof SchemaIDs;
@@ -2883,4 +2893,14 @@ export const SchemaIDToName: Record<number, SchemaName> = {
   6666: 'StoreCommunityView',
   6667: 'StoreInstallReq',
   6668: 'StoreInstallResp',
+  6688: 'PolicyQuestion',
+  6689: 'PolicyDecideReq',
+  6690: 'PolicyAnswer',
+  6691: 'PolicyDecideResp',
+  6692: 'PolicyJevConfig',
+  6693: 'PolicyLLMConfig',
+  6694: 'PolicyConfigureReq',
+  6695: 'PolicyConfigureResp',
+  6696: 'PolicyStatusReq',
+  6697: 'PolicyStatusResp',
 };

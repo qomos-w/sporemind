@@ -24175,6 +24175,15 @@
               "typeId": 12
             },
             "optional": true
+          },
+          {
+            "name": "AgentId",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
           }
         ]
       }
@@ -39580,6 +39589,465 @@
         "kind": "struct",
         "name": "PluginStateSetResp",
         "fields": []
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6690,
+      "name": "PolicyAnswer",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyAnswer",
+        "fields": [
+          {
+            "name": "Type",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Choice",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          },
+          {
+            "name": "Score",
+            "type": {
+              "kind": "scalar",
+              "name": "double",
+              "typeId": 11
+            },
+            "optional": true
+          },
+          {
+            "name": "Noul",
+            "type": {
+              "kind": "scalar",
+              "name": "double",
+              "typeId": 11
+            },
+            "optional": true
+          },
+          {
+            "name": "Probabilities",
+            "type": {
+              "kind": "map",
+              "name": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string",
+                "typeId": 12
+              },
+              "value": {
+                "kind": "scalar",
+                "name": "double",
+                "typeId": 11
+              }
+            },
+            "optional": true
+          },
+          {
+            "name": "Confidence",
+            "type": {
+              "kind": "scalar",
+              "name": "double",
+              "typeId": 11
+            },
+            "optional": true
+          },
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Calibrated",
+            "type": {
+              "kind": "scalar",
+              "name": "bool",
+              "typeId": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6694,
+      "name": "PolicyConfigureReq",
+      "visibility": "admin",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyConfigureReq",
+        "fields": [
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          },
+          {
+            "name": "Jev",
+            "type": {
+              "kind": "struct",
+              "name": "struct",
+              "className": "PolicyJevConfig"
+            },
+            "optional": true
+          },
+          {
+            "name": "LLM",
+            "type": {
+              "kind": "struct",
+              "name": "struct",
+              "className": "PolicyLLMConfig"
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6695,
+      "name": "PolicyConfigureResp",
+      "visibility": "admin",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyConfigureResp",
+        "fields": [
+          {
+            "name": "Status",
+            "type": {
+              "kind": "struct",
+              "name": "struct",
+              "className": "PolicyStatusResp"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6689,
+      "name": "PolicyDecideReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyDecideReq",
+        "fields": [
+          {
+            "name": "State",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Questions",
+            "type": {
+              "kind": "map",
+              "name": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string",
+                "typeId": 12
+              },
+              "value": {
+                "kind": "struct",
+                "name": "struct",
+                "className": "PolicyQuestion"
+              }
+            }
+          },
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6691,
+      "name": "PolicyDecideResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyDecideResp",
+        "fields": [
+          {
+            "name": "Answers",
+            "type": {
+              "kind": "map",
+              "name": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string",
+                "typeId": 12
+              },
+              "value": {
+                "kind": "struct",
+                "name": "struct",
+                "className": "PolicyAnswer"
+              }
+            }
+          },
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Degraded",
+            "type": {
+              "kind": "scalar",
+              "name": "bool",
+              "typeId": 2
+            }
+          },
+          {
+            "name": "LatencyMs",
+            "type": {
+              "kind": "scalar",
+              "name": "long",
+              "typeId": 8
+            }
+          },
+          {
+            "name": "FailoverReason",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          },
+          {
+            "name": "Error",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6692,
+      "name": "PolicyJevConfig",
+      "visibility": "admin",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyJevConfig",
+        "fields": [
+          {
+            "name": "ApiKey",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          },
+          {
+            "name": "Model",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          },
+          {
+            "name": "Endpoint",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6693,
+      "name": "PolicyLLMConfig",
+      "visibility": "admin",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyLLMConfig",
+        "fields": [
+          {
+            "name": "Unit",
+            "type": {
+              "kind": "struct",
+              "name": "struct",
+              "className": "ModelUnit"
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6688,
+      "name": "PolicyQuestion",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyQuestion",
+        "fields": [
+          {
+            "name": "Type",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Instructions",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Choices",
+            "type": {
+              "kind": "map",
+              "name": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string",
+                "typeId": 12
+              },
+              "value": {
+                "kind": "scalar",
+                "name": "string",
+                "typeId": 12
+              }
+            },
+            "optional": true
+          },
+          {
+            "name": "Levels",
+            "type": {
+              "kind": "array",
+              "name": "array",
+              "element": {
+                "kind": "scalar",
+                "name": "string",
+                "typeId": 12
+              }
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6696,
+      "name": "PolicyStatusReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyStatusReq",
+        "fields": []
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6697,
+      "name": "PolicyStatusResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "PolicyStatusResp",
+        "fields": [
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "JevConfigured",
+            "type": {
+              "kind": "scalar",
+              "name": "bool",
+              "typeId": 2
+            }
+          },
+          {
+            "name": "LLMConfigured",
+            "type": {
+              "kind": "scalar",
+              "name": "bool",
+              "typeId": 2
+            }
+          },
+          {
+            "name": "LLMUnit",
+            "type": {
+              "kind": "struct",
+              "name": "struct",
+              "className": "ModelUnit"
+            },
+            "optional": true
+          },
+          {
+            "name": "JevModel",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          },
+          {
+            "name": "JevEndpoint",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          }
+        ]
       }
     },
     {
@@ -61883,6 +62351,71 @@
     },
     {
       "namespace": "system",
+      "schemaId": 6454,
+      "name": "WorkbenchJudgeIngestReq",
+      "visibility": "internal",
+      "object": {
+        "kind": "struct",
+        "name": "WorkbenchJudgeIngestReq",
+        "fields": [
+          {
+            "name": "Scores",
+            "type": {
+              "kind": "map",
+              "name": "map",
+              "key": {
+                "kind": "scalar",
+                "name": "string",
+                "typeId": 12
+              },
+              "value": {
+                "kind": "struct",
+                "name": "struct",
+                "className": "WorkbenchJudgeScore"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 6453,
+      "name": "WorkbenchJudgeScore",
+      "visibility": "internal",
+      "object": {
+        "kind": "struct",
+        "name": "WorkbenchJudgeScore",
+        "fields": [
+          {
+            "name": "Level",
+            "type": {
+              "kind": "scalar",
+              "name": "int",
+              "typeId": 6
+            }
+          },
+          {
+            "name": "Backend",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Calibrated",
+            "type": {
+              "kind": "scalar",
+              "name": "bool",
+              "typeId": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
       "schemaId": 6448,
       "name": "WorkbenchLifecycleIngestReq",
       "visibility": "internal",
@@ -63121,6 +63654,116 @@
               "kind": "scalar",
               "name": "string",
               "typeId": 12
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1930,
+      "name": "WorkspaceAgentSpawnSwarmReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceAgentSpawnSwarmReq",
+        "fields": [
+          {
+            "name": "Description",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Prompt",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          },
+          {
+            "name": "AgentKind",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          },
+          {
+            "name": "MaxTurns",
+            "type": {
+              "kind": "scalar",
+              "name": "int",
+              "typeId": 6
+            },
+            "optional": true
+          },
+          {
+            "name": "Unit",
+            "type": {
+              "kind": "struct",
+              "name": "struct",
+              "className": "ModelUnit"
+            },
+            "optional": true
+          },
+          {
+            "name": "ProjectId",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          },
+          {
+            "name": "CallerAgentId",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1931,
+      "name": "WorkspaceAgentSpawnSwarmResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceAgentSpawnSwarmResp",
+        "fields": [
+          {
+            "name": "ChildActorId",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "DisplayName",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Depth",
+            "type": {
+              "kind": "scalar",
+              "name": "int",
+              "typeId": 6
             }
           }
         ]
@@ -67688,6 +68331,15 @@
               "name": "string",
               "typeId": 12
             }
+          },
+          {
+            "name": "ChildAgentID",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
           },
           {
             "name": "Result",
@@ -76359,6 +77011,68 @@
       }
     },
     {
+      "namespace": "policy",
+      "name": "configure",
+      "actorType": "policy",
+      "description": "Configure the policy judge: backend mode (auto | jev | llm), Jev API key/model/endpoint, and the LLM fallback ModelUnit. Jev.ApiKey empty preserves the stored key (redacted edit flow).",
+      "visibility": "admin",
+      "mode": "unary",
+      "service": "policy",
+      "reqSchemaId": 6694,
+      "finalSchemaId": 6695,
+      "req": {
+        "kind": "struct",
+        "name": "PolicyConfigureReq",
+        "className": "PolicyConfigureReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "PolicyConfigureResp",
+        "className": "PolicyConfigureResp"
+      }
+    },
+    {
+      "namespace": "policy",
+      "name": "decide",
+      "actorType": "policy",
+      "description": "Evaluate typed questions (Choice/Score/Noul) against a text state and return typed answers with probabilities, confidence, and backend provenance (jev | llm; llm answers are marked Calibrated=false). All questions are evaluated in one batch. Failover between backends happens on availability faults only; when all backends fail the response carries Error with empty Answers — fall back to your own rules then.",
+      "visibility": "public",
+      "mode": "unary",
+      "service": "policy",
+      "reqSchemaId": 6689,
+      "finalSchemaId": 6691,
+      "req": {
+        "kind": "struct",
+        "name": "PolicyDecideReq",
+        "className": "PolicyDecideReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "PolicyDecideResp",
+        "className": "PolicyDecideResp"
+      }
+    },
+    {
+      "namespace": "policy",
+      "name": "status",
+      "actorType": "policy",
+      "visibility": "public",
+      "mode": "unary",
+      "service": "policy",
+      "reqSchemaId": 6696,
+      "finalSchemaId": 6697,
+      "req": {
+        "kind": "struct",
+        "name": "PolicyStatusReq",
+        "className": "PolicyStatusReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "PolicyStatusResp",
+        "className": "PolicyStatusResp"
+      }
+    },
+    {
       "namespace": "project",
       "name": "archive_export",
       "actorType": "project",
@@ -81437,6 +82151,25 @@
     },
     {
       "namespace": "workbench",
+      "name": "judge_ingest",
+      "actorType": "workbench",
+      "visibility": "internal",
+      "mode": "unary",
+      "service": "workbench",
+      "reqSchemaId": 6454,
+      "finalSchemaId": 0,
+      "req": {
+        "kind": "struct",
+        "name": "WorkbenchJudgeIngestReq",
+        "className": "WorkbenchJudgeIngestReq"
+      },
+      "final": {
+        "kind": "void",
+        "name": "void"
+      }
+    },
+    {
+      "namespace": "workbench",
       "name": "promote",
       "actorType": "workbench",
       "description": "Promote a workbench card to the top of the attention ordering (user click / explicit promotion). Score becomes max + HYSTERESIS + 1.",
@@ -81878,6 +82611,27 @@
         "kind": "struct",
         "name": "WorkspaceAgentSpawnSchedulerResp",
         "className": "WorkspaceAgentSpawnSchedulerResp"
+      }
+    },
+    {
+      "namespace": "workspace",
+      "name": "agent_spawn_swarm",
+      "actorType": "workspace",
+      "description": "Spawn a persistent, card-free swarm sub-agent under the calling agent: the child self-assigns Description/Prompt as its goal, runs autonomously like a workflow worker (no task card needed), reports back via workspace.agent_send_message when done, and stays alive until terminated by the parent. The child mounts the swarm bundle itself and may spawn its own sub-agents (recursion capped at 3 levels, 8 live children per parent). Required: Description, Prompt. Optional: AgentKind (default general; read-only kinds and worker are rejected), MaxTurns, ProjectId. Returns ChildActorId, DisplayName, Depth.",
+      "visibility": "public",
+      "mode": "unary",
+      "service": "workspace",
+      "reqSchemaId": 1930,
+      "finalSchemaId": 1931,
+      "req": {
+        "kind": "struct",
+        "name": "WorkspaceAgentSpawnSwarmReq",
+        "className": "WorkspaceAgentSpawnSwarmReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "WorkspaceAgentSpawnSwarmResp",
+        "className": "WorkspaceAgentSpawnSwarmResp"
       }
     },
     {
