@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { trimBufferHead, takeFlushBatch, applySummaryToState, isTransientError, shouldFlushStepEventImmediately, AgentEventLayer, requestReconnectLadder, resetReconnectThrottleForTest, RECONNECT_SUMMARY_CONCURRENCY, STREAM_SILENCE_TIMEOUT_MS } from './event-layer'
+import { trimBufferHead, takeFlushBatch, applySummaryToState, isTransientError, shouldFlushStepEventImmediately, hasLegitimateSilence, AgentEventLayer, requestReconnectLadder, resetReconnectThrottleForTest, RECONNECT_SUMMARY_CONCURRENCY, STREAM_SILENCE_TIMEOUT_MS } from './event-layer'
 import { AgentSession } from './agent-session'
 import type { AgentSessionSummaryResp, Turn, Step } from '../../../gen-types/aigen'
 
 const mockSubscribe = vi.fn()
+const mockAgentStatus = vi.fn()
 
 vi.mock('../../../application/generated-client', () => ({
   client: {
@@ -13,6 +14,10 @@ vi.mock('../../../application/generated-client', () => ({
     },
   },
   waitForClientReady: vi.fn(async () => undefined),
+}))
+
+vi.mock('../../../gen-clients/local/client', () => ({
+  agentStatus: (...args: unknown[]) => mockAgentStatus(...args),
 }))
 
 function makeTurn(overrides?: Partial<Turn>): Turn {
@@ -436,6 +441,35 @@ describe('AgentEventLayer reconnect sinceSeqNo', () => {
     session.release()
   })
 
+  it('keeps a populated timeline mounted during reconnect (no loading swap)', async () => {
+    // Regression: the reconnect handshake used to setLoading(true) uncondit-
+    // ionally, which unmounts every envelope slot — scroll position and the
+    // open ask-user form's local state — every time the silence watchdog or a
+    // transport blip forced a reconnect ("stream flickers, selection resets").
+    const session = new AgentSession('a1')
+    session.setHistoryEnvelopes([{ id: 'e1', role: 'assistant', frames: [] } as any], false)
+    const setLoadingSpy = vi.spyOn(session, 'setLoading')
+    const layer = new AgentEventLayer(session, () => {}, () => {})
+
+    mockSubscribe.mockImplementation(() => ({
+      async *[Symbol.asyncIterator]() {
+        // no events
+      },
+    }))
+
+    const signal = new AbortController().signal
+    const resetBackoff = vi.fn()
+    const backoff = vi.fn(async () => undefined)
+    const waitForClient = vi.fn(async () => undefined)
+
+    await (layer as any)._step.onReconnect(waitForClient, signal, resetBackoff, backoff, session)
+
+    expect(setLoadingSpy).not.toHaveBeenCalled()
+    expect(session.getSnapshot().loading).toBe(false)
+
+    session.release()
+  })
+
   it('step-slot reconnect delegates to the bounded reconcile ladder (B2)', async () => {
     const session = new AgentSession('a1')
     const ladderSpy = vi.fn(async () => undefined)
@@ -521,6 +555,110 @@ describe('AgentEventLayer — watchdog re-arm on session notify', () => {
     // the stream must NOT be force-reconnected.
     await vi.advanceTimersByTimeAsync(3 * STREAM_SILENCE_TIMEOUT_MS)
     expect(mockSubscribe).toHaveBeenCalledTimes(2)
+
+    layer.abort()
+    session.release()
+  })
+})
+
+describe('AgentEventLayer — watchdog legitimate-silence probe', () => {
+  /** Iterator whose next() never settles — a silently-dead subscription. */
+  const deadIterable = () => ({
+    [Symbol.asyncIterator]: () => ({
+      next: () => new Promise<IteratorResult<unknown>>(() => {}),
+      return: async () => ({ value: undefined, done: true as const }),
+    }),
+  })
+
+  beforeEach(() => {
+    mockSubscribe.mockReset()
+    mockAgentStatus.mockReset()
+    mockSubscribe.mockImplementation(() => deadIterable())
+    vi.useFakeTimers()
+  })
+  afterEach(() => {
+    vi.useRealTimers()
+    vi.restoreAllMocks()
+  })
+
+  it('hasLegitimateSilence: pending interaction, in-flight tool and execution count; closed/resolved do not', () => {
+    const mk = (over: Partial<Step>) => ({
+      Id: 's', Role: 'assistant', Type: 'text', Content: [], Closed: false,
+      Timestamp: new Date().toISOString(), TurnId: 't1',
+      ContentStatus: 'stable', ExecutionStatus: 'idle', InteractionStatus: 'none', Seq: 1, ...over,
+    })
+    const session = new AgentSession('a1')
+    expect(hasLegitimateSilence({ steps: [mk({ InteractionStatus: 'pending' })] } as any)).toBe(true)
+    expect(hasLegitimateSilence({ steps: [mk({ Type: 'tool_call' })] } as any)).toBe(true)
+    expect(hasLegitimateSilence({ steps: [mk({ ExecutionStatus: 'in_progress' })] } as any)).toBe(true)
+    expect(hasLegitimateSilence({ steps: [mk({})] } as any)).toBe(false)
+    // Closed steps never count, whatever their status fields say.
+    expect(hasLegitimateSilence({ steps: [mk({ Type: 'tool_call', Closed: true })] } as any)).toBe(false)
+    expect(hasLegitimateSilence({ steps: [mk({ InteractionStatus: 'pending', Closed: true })] } as any)).toBe(false)
+    expect(hasLegitimateSilence({ steps: [] } as any)).toBe(false)
+    session.release()
+  })
+
+  it('pending ask_user silence probes the backend and keeps the stream when it answers', async () => {
+    mockAgentStatus.mockResolvedValue({})
+    const session = new AgentSession('a1')
+    const layer = new AgentEventLayer(session, () => {}, () => {})
+    layer.start()
+    await vi.advanceTimersByTimeAsync(10)
+
+    // Turn running + a pending interaction step: backend is parked waiting
+    // for the user's answer — silence is legitimate.
+    session.seedActiveTurn('turn-1')
+    session.applyStepEvents([{ Kind: 'step.interaction_requested', StepId: 'ask-1', TurnId: 'turn-1', InteractionType: 'ask_user' } as any])
+    await vi.advanceTimersByTimeAsync(0)
+
+    // Several watchdog budgets of silence: probe answers each time, the
+    // stream is never torn down (no resubscribe beyond the initial two).
+    await vi.advanceTimersByTimeAsync(3 * STREAM_SILENCE_TIMEOUT_MS)
+    expect(mockAgentStatus.mock.calls.length).toBeGreaterThanOrEqual(3)
+    expect(mockAgentStatus.mock.calls[0]![1]).toMatchObject({ target: 'a1' })
+    expect(mockSubscribe).toHaveBeenCalledTimes(2)
+
+    layer.abort()
+    session.release()
+  })
+
+  it('in-flight tool_call silence is probed too, and a failed probe still forces reconnect', async () => {
+    mockAgentStatus.mockRejectedValue(new Error('backend gone'))
+    const session = new AgentSession('a1')
+    const layer = new AgentEventLayer(session, () => {}, () => {})
+    layer.start()
+    await vi.advanceTimersByTimeAsync(10)
+
+    session.seedActiveTurn('turn-1')
+    session.applyStepEvents([{ Kind: 'step.opened', StepId: 'tool-1', TurnId: 'turn-1', StepType: 'tool_call', Role: 'assistant' } as any])
+    await vi.advanceTimersByTimeAsync(0)
+
+    // Watchdog fires into the probe path; the probe rejects → forced
+    // reconnect (step slot resubscribes).
+    await vi.advanceTimersByTimeAsync(STREAM_SILENCE_TIMEOUT_MS)
+    await vi.advanceTimersByTimeAsync(0)
+    expect(mockAgentStatus).toHaveBeenCalled()
+    expect(mockSubscribe.mock.calls.length).toBeGreaterThanOrEqual(3)
+
+    layer.abort()
+    session.release()
+  })
+
+  it('streaming silence with no legitimate state still reconnects without probing', async () => {
+    const session = new AgentSession('a1')
+    const layer = new AgentEventLayer(session, () => {}, () => {})
+    layer.start()
+    await vi.advanceTimersByTimeAsync(10)
+
+    session.seedActiveTurn('turn-1')
+    await vi.advanceTimersByTimeAsync(0)
+
+    await vi.advanceTimersByTimeAsync(STREAM_SILENCE_TIMEOUT_MS)
+    await vi.advanceTimersByTimeAsync(0)
+    // No pending interaction / open tool: plain watchdog path, no probe.
+    expect(mockAgentStatus).not.toHaveBeenCalled()
+    expect(mockSubscribe.mock.calls.length).toBeGreaterThanOrEqual(3)
 
     layer.abort()
     session.release()

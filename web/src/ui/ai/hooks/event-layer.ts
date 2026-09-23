@@ -1,5 +1,6 @@
 import type { StepEvent, TurnEvent, AgentSessionSummaryResp } from '../../../gen-types/aigen'
 import { client, waitForClientReady } from '../../../application/generated-client'
+import { agentStatus } from '../../../gen-clients/local/client'
 import { sessionTurnsToEnvelopes, turnStatusToEnvelope } from '../model/session-adapter'
 import type { TurnEnvelope } from '../model/frame-types'
 import { sameEnvelopeRender } from '../components/MessageStream'
@@ -117,9 +118,6 @@ export async function applySummaryToState(
   // only merges new turnIds (existing entries preserved), so the state after
   // a skipped write is identical to the state after a performed one.
   const historyChanged = !sameHistoryEnvelopes(state.historyEnvelopes, historyEnvs)
-  // [jitter-diag] temporary instrumentation: reconcile-driven wholesale state
-  // replacement is the suspected cause of the "whole stream refreshed" flash.
-  console.info(`[jitter-diag] summary-apply histChanged=${historyChanged} serverSteps=${summary.Steps?.length ?? 0} missingSteps=${summary.MissingSteps?.length ?? 0} turns=${summary.Turns?.length ?? 0} activeTurn=${summary.ActiveTurn?.Turn?.Id ?? ''}`)
   if (historyChanged) {
     state.setHistoryEnvelopes(historyEnvs, false)
     // Reconcile _activeTurnStates against the authoritative summary records by
@@ -212,6 +210,44 @@ export async function applySummaryToState(
  *  timeline heals within a minute instead of staying stuck until the user
  *  sends another message. */
 export const STREAM_SILENCE_TIMEOUT_MS = 45_000
+
+/** Budget for the watchdog's backend liveness probe when the timeline is in
+ *  a legitimately-silent state (see hasLegitimateSilence). Well below the
+ *  silence timeout so a dead backend is still detected within roughly one
+ *  watchdog cycle instead of tearing the stream down blind. */
+export const STREAM_PROBE_TIMEOUT_MS = 10_000
+
+/** Turn states whose event silence is EXPECTED, not a dead-stream symptom:
+ *  - pending interaction (ask_user / plan approval): the backend parks the
+ *    turn until the user answers and emits nothing while waiting;
+ *  - in-flight tool call (open tool_call step) or execution
+ *    (ExecutionStatus in_progress): a build/test can run silent for minutes.
+ *  The watchdog must not declare such silence dead on its own — it probes
+ *  the backend instead (probeBackendAlive). */
+export function hasLegitimateSilence(state: AgentSession): boolean {
+  return state.steps.some(s => !s.Closed && (
+    s.InteractionStatus === 'pending' ||
+    s.ExecutionStatus === 'in_progress' ||
+    s.Type === 'tool_call'
+  ))
+}
+
+/** Cheap unary liveness probe (agent_status routed to the same actor the
+ *  stream is subscribed to). The watchdog calls it before tearing down a
+ *  stream that is silent in a legitimate state: probe answers → the backend
+ *  and the actor are alive, the silence is real quiet, keep the stream;
+ *  probe fails → the stream (or the backend) is genuinely gone. A blanket
+ *  silence exemption would freeze detection forever when the stream dies
+ *  mid-tool: the tool's step.closed would never arrive to clear the
+ *  exemption, so the probe is what eventually breaks the tie. */
+async function probeBackendAlive(agentActorId: string): Promise<boolean> {
+  try {
+    await agentStatus(client, { target: agentActorId, timeoutMs: STREAM_PROBE_TIMEOUT_MS })
+    return true
+  } catch {
+    return false
+  }
+}
 
 interface StreamSlot<TEvent> {
   tag: string
@@ -428,17 +464,35 @@ function createStreamLoop<TEvent>(
             racers.push(new Promise<'streaming-wake'>(r => { streamingWakeResolve = () => r('streaming-wake') }))
           }
           if (streaming) {
-            // Re-check isStreaming at fire time: the turn may have converged
-            // while this timer was pending (the race was armed by a wake just
-            // before the summary completed). Firing a reconnect on a now-idle
-            // silent stream violates the idle-no-reconnect rule.
-            racers.push(new Promise<'watchdog' | 'idle-again'>(r => {
-              setTimeout(() => { r(state.isStreaming ? 'watchdog' : 'idle-again') }, STREAM_SILENCE_TIMEOUT_MS)
+            // Re-check isStreaming AND legitimacy at fire time: the turn may
+            // have converged while this timer was pending (the race was armed
+            // by a wake just before the summary completed) — firing a
+            // reconnect on a now-idle silent stream violates the
+            // idle-no-reconnect rule. Or the turn may be parked in a state
+            // whose silence is expected (pending ask_user interaction,
+            // in-flight tool call) — handled by the liveness probe below,
+            // not by tearing the stream down.
+            racers.push(new Promise<'watchdog' | 'probe' | 'idle-again'>(r => {
+              setTimeout(() => {
+                if (!state.isStreaming) r('idle-again')
+                else if (hasLegitimateSilence(state)) r('probe')
+                else r('watchdog')
+              }, STREAM_SILENCE_TIMEOUT_MS)
             }))
           }
           const result = await Promise.race(racers).catch(() => undefined)
           if (result === 'streaming-wake' || result === 'idle-again') continue
           if (result === undefined) break
+          if (result === 'probe') {
+            // Legitimately-silent timeline (blocked interaction / running
+            // tool). Verify the backend is reachable before declaring the
+            // stream dead; on success simply re-enter the race — the next
+            // watchdog cycle re-evaluates, so a stream that dies later is
+            // still caught within one cycle.
+            if (await probeBackendAlive(agentActorId)) continue
+            console.warn(`[${slot.tag}] stream silent for ${STREAM_SILENCE_TIMEOUT_MS}ms, liveness probe failed — forcing reconnect (lastSeqNo=${slot.lastSeqNo})`)
+            break
+          }
           if (result === 'watchdog') {
             console.warn(`[${slot.tag}] stream silent for ${STREAM_SILENCE_TIMEOUT_MS}ms — forcing reconnect (lastSeqNo=${slot.lastSeqNo})`)
             break
@@ -639,12 +693,20 @@ export class AgentEventLayer {
     // AUDIT 9.1: re-subscribe BEFORE fetch so events emitted between the
     // summary snapshot and the new subscription landing are not lost.
     this._step.onReconnect = async (waitForClient, signal, resetBackoff, backoff, _state) => {
+      // Only surface the loading skeleton when there is nothing to render.
+      // A reconnect on a populated timeline must keep the existing stream
+      // mounted — the summary reconciler merges in place. Swapping to the
+      // skeleton unmounts every envelope slot (scroll position, open
+      // ask-user form state) on every reconnect, which is exactly the
+      // "message stream flickers and the selection resets to the first
+      // option" failure mode.
+      const showSkeleton = state.getSnapshot().envelopes.length === 0
       try {
         await waitForClient()
         if (signal.aborted) return
-        // Show a transient loading state while the reconnect handshake runs so
-        // the user does not stare at stale history while the summary catches up.
-        state.setLoading(true)
+        // Show a transient loading state only for the empty timeline so the
+        // user does not stare at a blank pane while the summary catches up.
+        if (showSkeleton) state.setLoading(true)
         if (!this._step.iter) {
           subscribeStream(this._step, state.agentActorId)
         }
@@ -674,7 +736,7 @@ export class AgentEventLayer {
         if (signal.aborted) return
         await backoff()
       } finally {
-        if (!signal.aborted) {
+        if (!signal.aborted && showSkeleton) {
           state.setLoading(false)
         }
       }
