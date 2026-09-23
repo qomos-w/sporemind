@@ -140,7 +140,11 @@ export const MiniComposer: React.FC<MiniComposerProps> = ({
       if (resp.Idx != null && resp.Idx > 0 && resp.MessageId) tl.updateUserMessageIdx(resp.MessageId, resp.Idx)
       tl.reconcile()
     } catch {
-      // The optimistic user envelope stays; the reconciler surfaces backend state.
+      // Orphaned-turn recovery: the timeout may be client-side only — the
+      // server may have accepted the submit. Reconcile pulls the summary so
+      // a created turn's user step confirms the pending message; otherwise
+      // the optimistic entry stays and TTL eventually marks it failed.
+      tl.reconcile()
     } finally {
       setSending(false)
     }

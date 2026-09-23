@@ -2,7 +2,7 @@ import type { TurnEnvelope, LocalInteractionResponse, TaskEntry, Frame, FileChan
 import type { Step, StepEvent, TurnEvent, ModelUnit } from '../../../gen-types/aigen'
 import type { TimelineState, LocalEvent } from './timeline-manager'
 import { stepReducerBatch } from './step-reducer'
-import { computeEnvelopes, isTurnStale, latestStepMs, mergeSteps, type ProjectionCacheRef, compareOptionalSeq, isTerminalTurnState, isValidTurnState, type TurnState } from './projection'
+import { computeEnvelopes, isTurnStale, latestStepMs, mergeSteps, type ProjectionCacheRef, compareOptionalSeq, isTerminalTurnState, isValidTurnState, STALE_PENDING_TURN_MS, type TurnState } from './projection'
 import { hasDiscardedSteps } from './steps-to-envelopes'
 import { PendingMessageQueue, type PendingEntry } from './pending-message-queue'
 import { iconFromPath } from './tool-parsers'
@@ -97,6 +97,14 @@ export class AgentSession {
   private _agentState: string | undefined
   private _localInteractionResponses = new Map<string, LocalInteractionResponse>()
   private _activeTurnStates = new Map<string, TurnStateEntry>()
+  /** TurnIds force-reaped as stuck (wedged backend never sent the terminal
+   *  event). Guards against summary-driven recreation: without this marker a
+   *  reconnect's summary fetch (which still reports the turn as 'running')
+   *  would recreate the deleted _activeTurnStates entry via
+   *  reconcileActiveTurnStatesFromHistory and re-pin isStreaming forever.
+   *  Cleared when a real lifecycle event (turn.completed / turn.started with
+   *  a newer revision) arrives for the turn. */
+  private _forceReapedTurns = new Set<string>()
   /** TurnIds for which the missing-terminal-event reconcile sweep already
    *  requested a summary fetch (one-shot per turnId per session). */
   private _canonicalReconcileRequested = new Set<string>()
@@ -175,9 +183,13 @@ export class AgentSession {
     }
     // No live turn state yet (e.g. after summary load / reconnect). Fall back
     // to the history envelope metadata, which is the backend snapshot.
+    // Force-reaped turns are excluded: their history envelope still says
+    // 'running' (the wedged backend never rewrote it), which would re-pin
+    // isStreaming right after the reap cleared it.
     return this._historyEnvelopes.some(e =>
       e.role === 'assistant' &&
-      e.metadata?.turnState === 'running',
+      e.metadata?.turnState === 'running' &&
+      !this._forceReapedTurns.has(e.metadata?.turnId ?? ''),
     )
   }
 
@@ -488,6 +500,11 @@ export class AgentSession {
   ): boolean {
     const prev = this._activeTurnStates.get(turnId)
     if (!shouldApplyLifecycleEvent(eventRevision, prev?.revision)) return false
+    // A genuine lifecycle event (revision-monotonic) supersedes any
+    // force-reap marker: the turn really finished or really restarted.
+    if (this._forceReapedTurns.has(turnId)) {
+      this._forceReapedTurns.delete(turnId)
+    }
     const next = new Map(this._activeTurnStates)
     const built = build(prev)
     next.set(turnId, {
@@ -739,7 +756,7 @@ export class AgentSession {
    *  getSnapshot (which must stay side-effect-free for useSyncExternalStore)
    *  and NOT from applyTurnEvent — normal turn.completed still flows through
    *  _closeOpenStepsInTurn without interference. */
-  private _reapStaleOpenSteps(nowMs: number = Date.now()): void {
+  private _reapStaleOpenSteps(nowMs: number = Date.now(), thresholdMs: number = STALE_PENDING_TURN_MS): void {
     const turnIds = new Set<string>()
     for (const s of this._steps) {
       if (!s.Closed && s.TurnId) turnIds.add(s.TurnId)
@@ -762,15 +779,63 @@ export class AgentSession {
       if (steps.some(s => !s.Closed && s.InteractionStatus === 'pending')) {
         continue
       }
-      if (isTurnStale(steps, nowMs)) {
+      if (isTurnStale(steps, nowMs, thresholdMs)) {
         const hasOpen = steps.some(s => !s.Closed)
         if (hasOpen) {
           this._closeOpenStepsInTurn(turnId)
           changed = true
         }
+        // Also clear the running active-turn entry: isStreaming reads
+        // _activeTurnStates (not step Closed flags), so closing steps alone
+        // leaves the spinner pinned forever when the wedged backend never
+        // sends the terminal event. The _forceReapedTurns marker prevents
+        // summary-driven recreation from re-pinning it.
+        const entry = this._activeTurnStates.get(turnId)
+        if (entry && entry.state === 'running' && !this._forceReapedTurns.has(turnId)) {
+          const next = new Map(this._activeTurnStates)
+          next.delete(turnId)
+          this._activeTurnStates = next
+          this._forceReapedTurns.add(turnId)
+          changed = true
+        }
       }
     }
     if (changed) this._notify()
+  }
+
+  /** Reap running active-turn entries whose turn has NO steps at all (the
+   *  turn started but the engine never emitted a step — crash before first
+   *  step, or a completely wedged dispatch). _reapStaleOpenSteps only
+   *  processes turns with open steps, so these entries would otherwise
+   *  survive forever. Uses the entry's startedAt as the staleness clock. */
+  private _reapSteplessActiveTurns(nowMs: number, thresholdMs: number): void {
+    let changed = false
+    for (const [turnId, entry] of this._activeTurnStates) {
+      if (entry.state !== 'running') continue
+      if (this._forceReapedTurns.has(turnId)) continue
+      const steps = this._steps.filter(s => s.TurnId === turnId)
+      if (steps.length > 0) continue // handled by _reapStaleOpenSteps
+      const startedAt = entry.startedAt ? Date.parse(entry.startedAt) : NaN
+      if (!Number.isFinite(startedAt)) continue
+      if ((nowMs - startedAt) <= thresholdMs) continue
+      const next = new Map(this._activeTurnStates)
+      next.delete(turnId)
+      this._activeTurnStates = next
+      this._forceReapedTurns.add(turnId)
+      changed = true
+    }
+    if (changed) this._notify()
+  }
+
+  /** Force-reap stuck turns at the given threshold: closes stale open steps
+   *  and clears stale running active-turn entries (both step-backed and
+   *  stepless). Called from the event-layer watchdog when the SSE silence
+   *  probe budget is exhausted — a turn whose tool_call step never closes
+   *  AND whose backend actor keeps answering liveness probes is wedged, not
+   *  legitimately silent. Pending interactions are never force-reaped. */
+  reapStuckTurns(thresholdMs: number, nowMs: number = Date.now()): void {
+    this._reapStaleOpenSteps(nowMs, thresholdMs)
+    this._reapSteplessActiveTurns(nowMs, thresholdMs)
   }
 
   /** Missing-terminal-event reconcile sweep. When a turn's terminal lifecycle
@@ -802,6 +867,7 @@ export class AgentSession {
     for (const [turnId, steps] of byTurn) {
       if (this._activeTurnStates.has(turnId)) continue
       if (this._canonicalReconcileRequested.has(turnId)) continue
+      if (this._forceReapedTurns.has(turnId)) continue
       // Live turns (any open step) are not terminal candidates.
       if (steps.some(s => !s.Closed)) continue
       const hist = this._historyEnvelopes.find(e =>
@@ -830,6 +896,7 @@ export class AgentSession {
    *  stale open steps whose turn terminal event was permanently lost. */
   reapStaleOpenSteps(nowMs: number = Date.now()): void {
     this._reapStaleOpenSteps(nowMs)
+    this._reapSteplessActiveTurns(nowMs, STALE_PENDING_TURN_MS)
     this._reconcileMissingTerminalTurns(nowMs)
   }
 
@@ -866,6 +933,7 @@ export class AgentSession {
     this._importedSnapshot = true
     this._localInteractionResponses = new Map()
     this._activeTurnStates.clear()
+    this._forceReapedTurns.clear()
     this._pendingPause = false
     this._currentGoal = goal
     // Wholesale replace _turnTasks (importHistory semantics). _syncTurnTasksFromEnvelopes
@@ -901,7 +969,11 @@ export class AgentSession {
     if (terminalTurnIds.size === 0) return
     const next = new Map<string, TurnStateEntry>()
     for (const [k, v] of this._activeTurnStates) {
-      if (terminalTurnIds.has(k)) continue
+      if (terminalTurnIds.has(k)) {
+        // Authoritative terminal: the force-reap marker is obsolete.
+        this._forceReapedTurns.delete(k)
+        continue
+      }
       next.set(k, v)
     }
     this._activeTurnStates = next
@@ -919,6 +991,10 @@ export class AgentSession {
       if (env.role !== 'assistant') continue
       const turnId = env.metadata?.turnId
       if (!turnId) continue
+      // Force-reaped (stuck) turns must not be resurrected by a summary that
+      // still reports them as 'running' — the wedged backend never sends the
+      // terminal event, so the summary is the same stale snapshot forever.
+      if (this._forceReapedTurns.has(turnId)) continue
       const active = next.get(turnId)
       const histRevision = env.metadata?.revision
       const activeRevision = active?.revision
@@ -954,6 +1030,9 @@ export class AgentSession {
    *  (live turn.started or a prior seed takes precedence). */
   seedActiveTurn(turnId: string, startedAt?: string, turnOrder?: number, revision?: number): void {
     if (this._activeTurnStates.has(turnId)) return
+    // A force-reaped turn must not be reseeded (the same wedged turn
+    // re-entering the active map would re-pin isStreaming).
+    if (this._forceReapedTurns.has(turnId)) return
     const next = new Map(this._activeTurnStates)
     next.set(turnId, {
       state: 'running',
@@ -1219,6 +1298,7 @@ export class AgentSession {
     this._historyEnvelopes = []
     this._localInteractionResponses = new Map()
     this._activeTurnStates.clear()
+    this._forceReapedTurns.clear()
     this._turnTasks.clear()
     this._turnFileChanges.clear()
     this._turnContextBudgets.clear()
@@ -1253,6 +1333,7 @@ export class AgentSession {
     this._historyEnvelopes = []
     this._localInteractionResponses = new Map()
     this._activeTurnStates.clear()
+    this._forceReapedTurns.clear()
     this._turnTasks.clear()
     this._turnFileChanges.clear()
     this._turnContextBudgets.clear()

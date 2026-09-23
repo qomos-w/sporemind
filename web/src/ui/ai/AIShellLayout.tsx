@@ -115,7 +115,7 @@ import { openInSystem } from './components/file-ops'
 import { agentDisplayName } from './lib/agent-avatar'
 import { randomWelcome } from './lib/greetingPhrases'
 import { truncateLabel } from './components/timeline'
-import { applyParentChildOrder } from './lib/agent-order'
+import { applyAgentOrder, orderedAgentIds } from './lib/agent-order'
 import { DeleteConfirmModal } from './components/parts/DeleteConfirmModal'
 import { ConfirmDialog } from '../components/ConfirmDialog'
 import { InstallPreviewDialog } from '../components/InstallPreviewDialog'
@@ -401,51 +401,6 @@ function orderedProjectIds(projects: ProjectSnapshot[], state: ProjectUIState): 
   const knownOrder = state.sidebarOrder.filter(id => ids.has(id) && !systemSet.has(id))
   const unseen = userProjects.map(project => project.ProjectID).filter(id => !knownOrder.includes(id))
   return [...systemIds, ...knownOrder, ...unseen]
-}
-
-function orderedAgentIds(
-  agents: AgentInfo[],
-  agentOrder: string[] | undefined,
-  projectOrder: string[] | undefined,
-): string[] {
-  const safeAgentOrder = agentOrder ?? []
-  const safeProjectOrder = projectOrder ?? []
-
-  const byProject = new Map<string, AgentInfo[]>()
-  for (const agent of agents) {
-    const list = byProject.get(agent.ProjectId) ?? []
-    list.push(agent)
-    byProject.set(agent.ProjectId, list)
-  }
-
-  const sortedByProject = new Map<string, string[]>()
-  for (const [projectId, projectAgents] of byProject) {
-    const ids = new Set(projectAgents.map(agent => agent.Id))
-    const known = safeAgentOrder.filter(id => ids.has(id))
-    const unseen = projectAgents.map(agent => agent.Id).filter(id => !known.includes(id))
-    sortedByProject.set(projectId, [...known, ...unseen])
-  }
-
-  const knownProjectIds = new Set(agents.map(agent => agent.ProjectId))
-  const orderedProjectIds = [
-    ...safeProjectOrder.filter(id => knownProjectIds.has(id)),
-    ...[...knownProjectIds].filter(id => !safeProjectOrder.includes(id)),
-  ]
-
-  return orderedProjectIds.flatMap(projectId => sortedByProject.get(projectId) ?? [])
-}
-
-function applyAgentOrder(
-  agents: AgentInfo[],
-  agentOrder: string[] | undefined,
-  projectOrder: string[] | undefined,
-): AgentInfo[] {
-  const byId = new Map(agents.map(agent => [agent.Id, agent]))
-  const order = orderedAgentIds(agents, agentOrder, projectOrder)
-  const ordered = order.map(id => byId.get(id)).filter((agent): agent is AgentInfo => Boolean(agent))
-  // Flatten the parent-child tree depth-first so the avatar bar matches the
-  // sidebar: each agent's whole subtree follows it before the next root.
-  return applyParentChildOrder(ordered)
 }
 
 function orderedSidebarProjects(projects: ProjectSnapshot[], state: ProjectUIState): ProjectSnapshot[] {
@@ -2571,6 +2526,12 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
       getTimelineManager().reconcile(targetAgentId)
     } catch (err) {
       setContextError(err instanceof Error ? err.message : 'Failed to send message')
+      // Orphaned-turn recovery: a client-side timeout does not mean the server
+      // rejected the submit. Fetch the summary — if the turn was created,
+      // _confirmPendingUserMessagesFromSteps clears the pending entry and the
+      // real user step envelope replaces the optimistic one, so the user sees
+      // success instead of resending (which would duplicate the turn).
+      getTimelineManager().reconcile(activeAgent.ActorId)
     }
   }, [shellVariant, activeAgent, state.composerValue, providerContext.providers, providerContext.activeRoute, providerContext.activeThinkingLevel])
 
@@ -3316,6 +3277,8 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
       })
       .catch(err => {
         setContextError(err instanceof Error ? err.message : 'Failed to send message')
+        // Orphaned-turn recovery — see the main composer's catch for rationale.
+        getTimelineManager().reconcile(targetAgentId)
       })
   }, [pendingFirstMessage, activeAgent, source])
 
@@ -5916,6 +5879,8 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
           cards={monoState.cards}
           projectId={activeProject?.ProjectID}
           projects={projects}
+          agentOrder={projectUIState.agentOrder}
+          sidebarOrder={projectUIState.sidebarOrder}
           onLocateMap={openWorkflowAndLocate}
           onOpenCard={(cardId, pid) => {
             if (scheduledOpts(pid)) handleOpenCardTab(cardId, cardId, { edit: true, projectId: pid })

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
-import { trimBufferHead, takeFlushBatch, applySummaryToState, isTransientError, shouldFlushStepEventImmediately, hasLegitimateSilence, AgentEventLayer, requestReconnectLadder, resetReconnectThrottleForTest, RECONNECT_SUMMARY_CONCURRENCY, STREAM_SILENCE_TIMEOUT_MS } from './event-layer'
+import { trimBufferHead, takeFlushBatch, applySummaryToState, isTransientError, shouldFlushStepEventImmediately, hasLegitimateSilence, findInteriorHoleCursor, MAX_TOOL_PROBE_CYCLES, AgentEventLayer, requestReconnectLadder, resetReconnectThrottleForTest, RECONNECT_SUMMARY_CONCURRENCY, STREAM_SILENCE_TIMEOUT_MS } from './event-layer'
 import { AgentSession } from './agent-session'
 import type { AgentSessionSummaryResp, Turn, Step } from '../../../gen-types/aigen'
 
@@ -359,6 +359,60 @@ describe('applySummaryToState — revision convergence', () => {
   })
 })
 
+describe('findInteriorHoleCursor — middle-gap detection', () => {
+  function seqStep(seq: number, turnId: string): Step {
+    return {
+      Id: `s-${seq}`,
+      Role: 'assistant',
+      Type: 'text',
+      Content: [],
+      Closed: true,
+      Timestamp: new Date().toISOString(),
+      TurnId: turnId,
+      Seq: seq,
+    } as any
+  }
+
+  it('returns undefined for contiguous steps', () => {
+    expect(findInteriorHoleCursor([seqStep(1, 't1'), seqStep(2, 't1'), seqStep(3, 't2')], false)).toBeUndefined()
+  })
+
+  it('returns the newer side TurnId of the first interior hole', () => {
+    // Client has turns 1-2 (seqs 1-3) + turns 11-12 (seqs 11-12); gap 4-10.
+    // Anchoring loadOlderTurns on the oldest envelope (t1) would page before
+    // t1 forever — the cursor must be the hole's newer side (t11).
+    const steps = [
+      seqStep(1, 't1'), seqStep(2, 't1'), seqStep(3, 't2'),
+      seqStep(11, 't11'), seqStep(12, 't11'),
+    ]
+    expect(findInteriorHoleCursor(steps, false)).toBe('t11')
+  })
+
+  it('skips detection when the discarded boundary is set (compaction holes are legitimate)', () => {
+    const steps = [seqStep(1, 't1'), seqStep(11, 't11')]
+    expect(findInteriorHoleCursor(steps, true)).toBeUndefined()
+  })
+
+  it('returns undefined with fewer than two seq steps', () => {
+    expect(findInteriorHoleCursor([], false)).toBeUndefined()
+    expect(findInteriorHoleCursor([seqStep(5, 't1')], false)).toBeUndefined()
+  })
+
+  it('ignores steps without Seq or TurnId', () => {
+    const steps = [
+      seqStep(1, 't1'),
+      { Id: 's-0', Seq: 0, TurnId: '' } as any,
+      seqStep(2, 't1'),
+    ]
+    expect(findInteriorHoleCursor(steps, false)).toBeUndefined()
+  })
+
+  it('works with unsorted input', () => {
+    const steps = [seqStep(12, 't11'), seqStep(1, 't1'), seqStep(11, 't11'), seqStep(2, 't1')]
+    expect(findInteriorHoleCursor(steps, false)).toBe('t11')
+  })
+})
+
 describe('AgentEventLayer reconnect sinceSeqNo', () => {
   beforeEach(() => {
     mockSubscribe.mockReset()
@@ -659,6 +713,57 @@ describe('AgentEventLayer — watchdog legitimate-silence probe', () => {
     // No pending interaction / open tool: plain watchdog path, no probe.
     expect(mockAgentStatus).not.toHaveBeenCalled()
     expect(mockSubscribe.mock.calls.length).toBeGreaterThanOrEqual(3)
+
+    layer.abort()
+    session.release()
+  })
+
+  it('tool_call silence exhausts the probe budget, force-reaps the stuck turn, and reconnects', async () => {
+    mockAgentStatus.mockResolvedValue({})
+    const session = new AgentSession('a1')
+    const layer = new AgentEventLayer(session, () => {}, () => {})
+    layer.start()
+    await vi.advanceTimersByTimeAsync(10)
+
+    session.seedActiveTurn('turn-1')
+    session.applyStepEvents([{ Kind: 'step.opened', StepId: 'tool-1', TurnId: 'turn-1', StepType: 'tool_call', Role: 'assistant' } as any])
+    await vi.advanceTimersByTimeAsync(0)
+    expect(session.isStreaming).toBe(true)
+
+    // Advance past the full probe budget: each cycle probes the (alive)
+    // backend; the MAX_TOOL_PROBE_CYCLES+1-th cycle exhausts the budget,
+    // force-reaps the turn, and forces a reconnect.
+    await vi.advanceTimersByTimeAsync((MAX_TOOL_PROBE_CYCLES + 2) * STREAM_SILENCE_TIMEOUT_MS)
+    await vi.advanceTimersByTimeAsync(0)
+
+    expect(mockAgentStatus.mock.calls.length).toBeGreaterThanOrEqual(MAX_TOOL_PROBE_CYCLES)
+    // The stuck turn was force-reaped: the running active-turn entry is gone
+    // and isStreaming no longer pins the spinner.
+    expect(session.isStreaming).toBe(false)
+    // A reconnect was forced beyond the initial two subscriptions.
+    expect(mockSubscribe.mock.calls.length).toBeGreaterThanOrEqual(3)
+
+    layer.abort()
+    session.release()
+  })
+
+  it('pending interaction silence stays uncapped past the tool probe budget', async () => {
+    mockAgentStatus.mockResolvedValue({})
+    const session = new AgentSession('a1')
+    const layer = new AgentEventLayer(session, () => {}, () => {})
+    layer.start()
+    await vi.advanceTimersByTimeAsync(10)
+
+    session.seedActiveTurn('turn-1')
+    session.applyStepEvents([{ Kind: 'step.interaction_requested', StepId: 'ask-1', TurnId: 'turn-1', InteractionType: 'ask_user' } as any])
+    await vi.advanceTimersByTimeAsync(0)
+
+    // Advance well past the tool probe budget: pending interactions are user
+    // gates and never get force-reaped, the stream keeps probing.
+    await vi.advanceTimersByTimeAsync((MAX_TOOL_PROBE_CYCLES + 3) * STREAM_SILENCE_TIMEOUT_MS)
+    expect(mockAgentStatus.mock.calls.length).toBeGreaterThanOrEqual(MAX_TOOL_PROBE_CYCLES)
+    expect(session.isStreaming).toBe(true)
+    expect(mockSubscribe).toHaveBeenCalledTimes(2)
 
     layer.abort()
     session.release()

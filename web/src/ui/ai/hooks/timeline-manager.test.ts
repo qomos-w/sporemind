@@ -2511,6 +2511,86 @@ describe('TimelineManager — transport reconnect reconcile', () => {
     expect(new Set(callTargets).size).toBe(agents.length)
     expect(maxInFlight).toBeLessThanOrEqual(RECONNECT_SUMMARY_CONCURRENCY)
   })
+
+  it('interior seq hole after a long-disconnect reconnect fills from the hole cursor, not the oldest envelope', async () => {
+    const mkStep = (seq: number, turnId: string): Step => ({
+      Id: `s-${seq}`,
+      Role: 'assistant',
+      Type: 'text',
+      Content: [{ Type: 'text', Text: `body-${seq}` }],
+      Closed: true,
+      Timestamp: new Date(Date.now() + seq).toISOString(),
+      TurnId: turnId,
+      Seq: seq,
+    } as any)
+    const mkTurn = (id: string) => ({ Id: id, Role: 'assistant', State: 'completed' })
+
+    // Before the disconnect the client streamed turns t1-t2 (seqs 1-3).
+    const oldSummary: AgentSessionSummaryResp = {
+      Turns: [mkTurn('t1'), mkTurn('t2')],
+      Steps: [mkStep(1, 't1'), mkStep(2, 't2'), mkStep(3, 't2')],
+      ActiveTurn: {} as any,
+      ActiveTurnEvents: [],
+      TotalTurns: 2,
+      HasMoreHistory: true,
+    }
+    // A disconnect longer than the backend's 50-turn reconnect window: the
+    // reconnect summary carries only the newest turns (seqs 11-12). The
+    // global watermark check cannot see the middle hole (NextSeq-1 == 12 ==
+    // merged maxLocalSeq) — only findInteriorHoleCursor catches it.
+    const newSummary: AgentSessionSummaryResp = {
+      Turns: [mkTurn('t11'), mkTurn('t12')],
+      Steps: [mkStep(11, 't11'), mkStep(12, 't12')],
+      ActiveTurn: {} as any,
+      ActiveTurnEvents: [],
+      TotalTurns: 12,
+      HasMoreHistory: true,
+      NextSeq: 13,
+    }
+
+    vi.mocked(agentSessionClient.sessionSummary)
+      .mockResolvedValueOnce(oldSummary) // init fetch
+      .mockResolvedValue(newSummary)     // reconnect rungs
+    // Round 1 (anchored on the hole's newer side t11): partial fill, seqs
+    // 8-10 — the hole shrinks to 3→8. Round 2 (anchored on t9, the new
+    // hole's newer side): seqs 4-7 — the hole closes and the loop stops.
+    vi.mocked(agentSessionClient.turnsList).mockReset()
+    vi.mocked(agentSessionClient.turnsList)
+      .mockResolvedValueOnce({
+        Turns: [mkTurn('t9'), mkTurn('t10')],
+        Steps: [mkStep(8, 't9'), mkStep(9, 't10'), mkStep(10, 't10')],
+        HasMore: true,
+      })
+      .mockResolvedValue({
+        Turns: [mkTurn('t4'), mkTurn('t5')],
+        Steps: [mkStep(4, 't4'), mkStep(5, 't5'), mkStep(6, 't5'), mkStep(7, 't5')],
+        HasMore: true,
+      })
+
+    const manager = createTimelineManager()
+    manager.select('agent-a')
+    await vi.waitFor(() => {
+      expect(vi.mocked(agentSessionClient.sessionSummary).mock.calls.length).toBeGreaterThanOrEqual(1)
+    })
+
+    fireReconnect(true)
+
+    // Both gap-fill rounds must anchor on the hole's newer side (t11, then
+    // t9) — never on the oldest envelope (t1), which would page before t1
+    // forever and never fill the middle hole.
+    await vi.waitFor(() => {
+      expect(vi.mocked(agentSessionClient.turnsList)).toHaveBeenCalledTimes(2)
+    })
+    expect(vi.mocked(agentSessionClient.turnsList).mock.calls[0]![1]).toMatchObject({ BeforeTurnId: 't11' })
+    expect(vi.mocked(agentSessionClient.turnsList).mock.calls[1]![1]).toMatchObject({ BeforeTurnId: 't9' })
+
+    // Hole closed (seqs 1-12 contiguous) — no further rounds even after
+    // settling.
+    await new Promise((r) => setTimeout(r, 50))
+    expect(vi.mocked(agentSessionClient.turnsList)).toHaveBeenCalledTimes(2)
+
+    manager.release('agent-a')
+  })
 })
 
 

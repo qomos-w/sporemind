@@ -1084,6 +1084,95 @@ describe('AgentSession', () => {
     session.release()
   })
 
+  // ── reapStuckTurns clears wedged running turns ──
+
+  it('reapStuckTurns closes stale open steps AND clears the running active-turn entry', () => {
+    const session = new AgentSession('a1')
+    const oldTs = new Date(Date.now() - 10 * 60 * 1000).toISOString() // 10 min ago
+    session.seedActiveTurn('t-stuck', oldTs)
+    session.setSteps([makeStep({ Id: 's1', TurnId: 't-stuck', Type: 'tool_call', Closed: false, Timestamp: oldTs })], false)
+    expect(session.isStreaming).toBe(true)
+
+    session.reapStuckTurns(3 * 60 * 1000) // 3-min threshold
+    expect(session.isStreaming).toBe(false)
+    expect(session.steps[0]!.Closed).toBe(true)
+    session.release()
+  })
+
+  it('reapStuckTurns reaps stepless running turns via startedAt', () => {
+    const session = new AgentSession('a1')
+    const oldTs = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+    session.seedActiveTurn('t-no-steps', oldTs)
+    expect(session.isStreaming).toBe(true)
+
+    session.reapStuckTurns(3 * 60 * 1000)
+    expect(session.isStreaming).toBe(false)
+    session.release()
+  })
+
+  it('reapStuckTurns never reaps pending interactions', () => {
+    const session = new AgentSession('a1')
+    const oldTs = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+    session.seedActiveTurn('t-gate', oldTs)
+    session.setSteps([makeStep({ Id: 's1', TurnId: 't-gate', InteractionStatus: 'pending', Closed: false, Timestamp: oldTs })], false)
+    expect(session.isStreaming).toBe(true)
+
+    session.reapStuckTurns(3 * 60 * 1000)
+    expect(session.isStreaming).toBe(true)
+    expect(session.steps[0]!.Closed).toBe(false)
+    session.release()
+  })
+
+  it('force-reaped turns are not resurrected by running history envelopes', () => {
+    const session = new AgentSession('a1')
+    const oldTs = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+    session.seedActiveTurn('t-stuck', oldTs)
+    session.reapStuckTurns(3 * 60 * 1000)
+    expect(session.isStreaming).toBe(false)
+
+    // A summary fetch landing after the reap still reports the turn running —
+    // the marker must suppress the resurrection.
+    session.reconcileActiveTurnStatesFromHistory([
+      makeHistoryEnv({ id: 'stuck-env', role: 'assistant', completed: false, metadata: { turnId: 't-stuck', turnState: 'running' } }),
+    ])
+    expect(session.isStreaming).toBe(false)
+
+    // The isStreaming history fallback is guarded too.
+    session.setHistoryEnvelopes([
+      makeHistoryEnv({ id: 'stuck-env', role: 'assistant', completed: false, metadata: { turnId: 't-stuck', turnState: 'running' } }),
+    ], false)
+    expect(session.isStreaming).toBe(false)
+    session.release()
+  })
+
+  it('force-reaped turns are not reseeded by seedActiveTurn', () => {
+    const session = new AgentSession('a1')
+    const oldTs = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+    session.seedActiveTurn('t-stuck', oldTs)
+    session.reapStuckTurns(3 * 60 * 1000)
+    expect(session.isStreaming).toBe(false)
+
+    session.seedActiveTurn('t-stuck')
+    expect(session.isStreaming).toBe(false)
+    session.release()
+  })
+
+  it('a genuine turn.completed lifecycle event clears the force-reap marker', () => {
+    const session = new AgentSession('a1')
+    const oldTs = new Date(Date.now() - 10 * 60 * 1000).toISOString()
+    session.seedActiveTurn('t-stuck', oldTs)
+    session.reapStuckTurns(3 * 60 * 1000)
+    expect((session as any)._forceReapedTurns.has('t-stuck')).toBe(true)
+    expect(session.isStreaming).toBe(false)
+
+    // Backend finally sends the terminal event — the marker clears and the
+    // entry records the terminal state normally.
+    session.applyTurnEvent({ Kind: 'turn.completed', TurnId: 't-stuck', Payload: { completedAt: new Date().toISOString() } } as any)
+    expect((session as any)._forceReapedTurns.has('t-stuck')).toBe(false)
+    expect(session.isStreaming).toBe(false)
+    session.release()
+  })
+
   it('turn.resumed with state=resumed flips old crash-recovery turn back to running', () => {
     const session = new AgentSession('a1')
     session.initFromLoad([], [

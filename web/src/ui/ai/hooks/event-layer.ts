@@ -1,4 +1,4 @@
-import type { StepEvent, TurnEvent, AgentSessionSummaryResp } from '../../../gen-types/aigen'
+import type { Step, StepEvent, TurnEvent, AgentSessionSummaryResp } from '../../../gen-types/aigen'
 import { client, waitForClientReady } from '../../../application/generated-client'
 import { agentStatus } from '../../../gen-clients/local/client'
 import { sessionTurnsToEnvelopes, turnStatusToEnvelope } from '../model/session-adapter'
@@ -76,6 +76,29 @@ function sameHistoryEnvelopes(a: TurnEnvelope[], b: TurnEnvelope[]): boolean {
     if (!sameEnvelopeRender(a[i]!, b[i]!)) return false
   }
   return true
+}
+
+/** Find the first interior step-seq hole in the merged step set. Returns the
+ *  TurnId of the newer side of the hole — the correct backward-walk cursor
+ *  for turns_list. When the client holds steps on both sides of a hole
+ *  (e.g. turns 1-5 from before a long disconnect + turns 11-15 from the
+ *  summary window, gap at 6-10), anchoring on the oldest envelope would load
+ *  turns *before* turn 1 and never fill the middle gap. The global watermark
+ *  check (hasGap in applySummaryToState) is blind to this: the summary's
+ *  steps push maxLocalSeq up to NextSeq-1, so the hole in the middle stays
+ *  invisible. Steps on the discarded side of a compaction boundary create
+ *  legitimate holes — pass hasDiscarded=true to skip detection there. */
+export function findInteriorHoleCursor(steps: readonly Step[], hasDiscarded: boolean): string | undefined {
+  if (hasDiscarded) return undefined
+  const withSeq = steps.filter(s => Number(s.Seq ?? 0) > 0 && s.TurnId)
+  if (withSeq.length < 2) return undefined
+  withSeq.sort((a, b) => Number(a.Seq) - Number(b.Seq))
+  for (let i = 0; i < withSeq.length - 1; i++) {
+    const cur = Number(withSeq[i]!.Seq)
+    const next = Number(withSeq[i + 1]!.Seq)
+    if (next > cur + 1) return withSeq[i + 1]!.TurnId!
+  }
+  return undefined
 }
 
 /** Merge a fresh summary into state: refresh history envelopes, pull in any
@@ -231,6 +254,27 @@ export function hasLegitimateSilence(state: AgentSession): boolean {
     s.Type === 'tool_call'
   ))
 }
+
+/** Pending-interaction-only silence (ask_user / plan approval). These are
+ *  user-input gates: the user may take arbitrarily long to answer, so the
+ *  probe loop for them is uncapped. Contrast with tool_call silence, whose
+ *  probe budget is capped by MAX_TOOL_PROBE_CYCLES. */
+export function hasPendingInteraction(state: AgentSession): boolean {
+  return state.steps.some(s => !s.Closed && s.InteractionStatus === 'pending')
+}
+
+/** Consecutive successful silence probes (each STREAM_SILENCE_TIMEOUT_MS
+ *  apart) tolerated for a legitimately-silent tool_call / execution before
+ *  the watchdog declares the turn wedged and force-reaps it. 4 × 45s ≈ 3min
+ *  — below the backend ToolCallTimeout (5min) so a tool about to be killed
+ *  by its own timeout is not falsely reaped, above any legitimate silent
+ *  window of a healthy stream. Pending interactions are exempt (uncapped). */
+export const MAX_TOOL_PROBE_CYCLES = 4
+
+/** Staleness threshold for the force-reap triggered when the tool probe
+ *  budget is exhausted (reapStuckTurns). Derived from the same budget so a
+ *  turn that has been silent the full probe window always qualifies. */
+export const STUCK_TURN_SILENCE_MS = MAX_TOOL_PROBE_CYCLES * STREAM_SILENCE_TIMEOUT_MS
 
 /** Cheap unary liveness probe (agent_status routed to the same actor the
  *  stream is subscribed to). The watchdog calls it before tearing down a
@@ -440,6 +484,11 @@ function createStreamLoop<TEvent>(
       slot.buffer = []
       slot.rafId = 0
       slot.rafKind = undefined
+      // Consecutive successful liveness probes during tool-call silence.
+      // Reset on every real event (the turn is progressing) and on every
+      // reconnect (new subscription — silence counters start from scratch).
+      // Exhausted → reapStuckTurns + forced reconnect (see capped-probe).
+      let consecutiveProbes = 0
 
       try {
         while (iter) {
@@ -472,10 +521,18 @@ function createStreamLoop<TEvent>(
             // whose silence is expected (pending ask_user interaction,
             // in-flight tool call) — handled by the liveness probe below,
             // not by tearing the stream down.
-            racers.push(new Promise<'watchdog' | 'probe' | 'idle-again'>(r => {
+            racers.push(new Promise<'watchdog' | 'probe' | 'capped-probe' | 'idle-again'>(r => {
               setTimeout(() => {
                 if (!state.isStreaming) r('idle-again')
-                else if (hasLegitimateSilence(state)) r('probe')
+                else if (hasLegitimateSilence(state)) {
+                  // Pending interactions are user gates — probe uncapped.
+                  // Tool calls / executions have a bounded probe budget
+                  // (MAX_TOOL_PROBE_CYCLES): a wedged backend keeps answering
+                  // liveness probes while the turn never progresses, so probe
+                  // success alone must not exempt silence forever.
+                  if (hasPendingInteraction(state)) r('probe')
+                  else r('capped-probe')
+                }
                 else r('watchdog')
               }, STREAM_SILENCE_TIMEOUT_MS)
             }))
@@ -484,11 +541,29 @@ function createStreamLoop<TEvent>(
           if (result === 'streaming-wake' || result === 'idle-again') continue
           if (result === undefined) break
           if (result === 'probe') {
-            // Legitimately-silent timeline (blocked interaction / running
-            // tool). Verify the backend is reachable before declaring the
-            // stream dead; on success simply re-enter the race — the next
-            // watchdog cycle re-evaluates, so a stream that dies later is
-            // still caught within one cycle.
+            // Legitimately-silent timeline (blocked interaction). Verify the
+            // backend is reachable before declaring the stream dead; on
+            // success simply re-enter the race — the next watchdog cycle
+            // re-evaluates, so a stream that dies later is still caught
+            // within one cycle.
+            if (await probeBackendAlive(agentActorId)) continue
+            console.warn(`[${slot.tag}] stream silent for ${STREAM_SILENCE_TIMEOUT_MS}ms, liveness probe failed — forcing reconnect (lastSeqNo=${slot.lastSeqNo})`)
+            break
+          }
+          if (result === 'capped-probe') {
+            consecutiveProbes++
+            if (consecutiveProbes > MAX_TOOL_PROBE_CYCLES) {
+              // Probe budget exhausted: the tool_call step has been open and
+              // completely silent for MAX_TOOL_PROBE_CYCLES × 45s while the
+              // backend actor keeps answering — the turn is wedged, not slow.
+              // Force-reap it (closes open steps + clears the running
+              // active-turn state so the spinner stops) and reconnect so the
+              // summary ladder can still recover an authoritative terminal
+              // state if one exists.
+              console.warn(`[${slot.tag}] tool-silence probe budget exhausted after ${MAX_TOOL_PROBE_CYCLES} cycles — force-reaping stuck turn + reconnecting (lastSeqNo=${slot.lastSeqNo})`)
+              state.reapStuckTurns(STUCK_TURN_SILENCE_MS)
+              break
+            }
             if (await probeBackendAlive(agentActorId)) continue
             console.warn(`[${slot.tag}] stream silent for ${STREAM_SILENCE_TIMEOUT_MS}ms, liveness probe failed — forcing reconnect (lastSeqNo=${slot.lastSeqNo})`)
             break
@@ -498,6 +573,9 @@ function createStreamLoop<TEvent>(
             break
           }
           if ((result as IteratorResult<unknown>).done || signal.aborted) break
+          // A real event arrived: reset the tool-silence probe budget — the
+          // turn is making progress, silence counters start from scratch.
+          consecutiveProbes = 0
           const raw = (result as IteratorResult<unknown>).value
           // With withSeqNo: true the transport yields { seqNo, payload } objects.
           // Fall back to treating the raw value as the event itself for callers

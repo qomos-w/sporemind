@@ -4,7 +4,7 @@ import { waitForBackendReady } from '../../../application/backend-ready'
 import { sessionTurnsToEnvelopes, turnStatusToEnvelope } from '../model/session-adapter'
 
 import { AgentSession } from './agent-session'
-import { AgentEventLayer, mergeSteps, applySummaryToState, isTransientError, requestReconnectLadder } from './event-layer'
+import { AgentEventLayer, mergeSteps, applySummaryToState, findInteriorHoleCursor, isTransientError, requestReconnectLadder } from './event-layer'
 import { SummaryReconciler } from './summary-reconciler'
 import type { PendingEntry } from './pending-message-queue'
 import * as agentTurnsClient from '../../../gen-clients/local/client'
@@ -82,6 +82,13 @@ export interface AgentTimeline {
  *  eviction so re-selecting an evicted agent renders immediately from cached
  *  envelopes while a fresh load reconciles in the background. */
 const MAX_TRACKED_AGENTS = 8
+
+/** Bound on automatic interior-gap fill rounds (each loads Limit=20 turns via
+ *  turns_list). A disconnect longer than the backend's 50-turn reconnect
+ *  window leaves a middle seq hole; the fill loop walks backwards from the
+ *  hole's newer side until it closes. 10 rounds × 20 = 200 turns of coverage
+ *  — deeper gaps fall back to the manual "Load more" button. */
+const MAX_GAP_FILL_ROUNDS = 10
 
 const timelines = new Map<string, AgentTimeline>()
 const globalListeners = new Set<() => void>()
@@ -247,7 +254,7 @@ export interface TimelineManager {
   pause: (actorId?: string) => void
   pauseAll: (actorId?: string) => void
   resume: (actorId?: string) => void
-  loadOlderTurns: (actorId?: string) => void
+  loadOlderTurns: (actorId?: string, gapCursorTurnId?: string, gapFillRound?: number) => void
   /** Proactively backfill missing steps/history for an agent (e.g. after send). */
   reconcile: (actorId?: string) => void
   /** Seed a running turn in active state before turn.started SSE arrives,
@@ -509,7 +516,20 @@ export function createTimelineManager(): TimelineManager {
             )
           } else {
             void applySummaryToState(layer, summary).then(hasGap => {
-              if (hasGap && summary?.HasMoreHistory) {
+              if (!summary?.HasMoreHistory) return
+              // Interior-hole detection first: a middle gap (client holds steps
+              // on both sides of a seq hole, e.g. after a disconnect longer
+              // than the backend's 50-turn reconnect window) is invisible to
+              // the global watermark check. Anchor the backward walk on the
+              // hole's newer side so turns_list fills the gap instead of
+              // paging before the client's oldest turn.
+              const holeCursor = findInteriorHoleCursor(layer.steps, layer.getSnapshot().discardedBoundary)
+              if (holeCursor) {
+                console.debug(`[timeline] interior step-seq hole detected, filling from cursor=${holeCursor}`)
+                this.loadOlderTurns(agentActorId, holeCursor)
+                return
+              }
+              if (hasGap) {
                 console.debug(`[timeline] step seq gap detected (local max < ${summary.NextSeq! - 1}), loading older turns`)
                 this.loadOlderTurns(agentActorId)
               }
@@ -708,7 +728,14 @@ export function createTimelineManager(): TimelineManager {
       tl.layer.seedActiveTurn(turnActorId)
     },
 
-    loadOlderTurns(actorId?: string) {
+    /** Backward history walk. The anchor (BeforeTurnId) is normally the
+     *  oldest loaded assistant turn, but a middle gap (interior seq hole
+     *  after a disconnect longer than the backend's reconnect window)
+     *  requires anchoring on the hole's newer side instead — otherwise the
+     *  walk pages before the client's oldest turn and never fills the gap.
+     *  When filling a gap, each completed round re-checks for a remaining
+     *  hole and continues (bounded by MAX_GAP_FILL_ROUNDS × Limit=20 turns). */
+    loadOlderTurns(actorId?: string, gapCursorTurnId?: string, gapFillRound = 0) {
       const tl = actorId ? getTimelineLRU(actorId) : getSelectedOrThrow()
       if (!tl) {
         if (actorId) return
@@ -721,10 +748,10 @@ export function createTimelineManager(): TimelineManager {
       // steps with Seq=0). Fall back to the plain oldest assistant if none match.
       const oldest = envelopes.find(e => e.role === 'assistant' && e.metadata?.turnId && e.turnSeq != null)
         ?? envelopes.find(e => e.role === 'assistant' && e.metadata?.turnId)
-      const beforeTurnId = oldest?.metadata?.turnId
+      const beforeTurnId = gapCursorTurnId ?? oldest?.metadata?.turnId
       if (!beforeTurnId) return
 
-      console.debug(`[timeline] loadOlderTurns: beforeTurnId=${beforeTurnId}`)
+      console.debug(`[timeline] loadOlderTurns: beforeTurnId=${beforeTurnId}${gapCursorTurnId ? ` (gap fill round ${gapFillRound})` : ''}`)
       tl.layer.setLoadingMore(true)
 
       void agentTurnsClient.turnsList(client, { BeforeTurnId: beforeTurnId, Limit: 20 }, { target: agentActorId, timeoutMs: 60_000 }).then(resp => {
@@ -747,6 +774,19 @@ export function createTimelineManager(): TimelineManager {
           tl.layer.setError('History anchor is not available yet')
         } else {
           tl.layer.appendOlderHistory(olderEnvelopes, resp.HasMore, resp.Steps, false)
+          // Continue the gap fill: the 20-turn window may have only partially
+          // covered the hole. Re-detect the remaining interior hole and walk
+          // again until it closes, HasMore goes false, or the round bound is
+          // exhausted (MAX_GAP_FILL_ROUNDS × 20 turns; deeper gaps fall back
+          // to the manual "Load more" button).
+          if (gapCursorTurnId && gapFillRound < MAX_GAP_FILL_ROUNDS && tl.layer.hasMoreHistory) {
+            const nextHole = findInteriorHoleCursor(tl.layer.steps, tl.layer.getSnapshot().discardedBoundary)
+            if (nextHole) {
+              tl.layer.setLoadingMore(false)
+              this.loadOlderTurns(agentActorId, nextHole, gapFillRound + 1)
+              return
+            }
+          }
         }
         scheduleNotifyFor(agentActorId)
       }).catch((err: unknown) => {

@@ -30,6 +30,29 @@ export function isSummaryConverged(summary: AgentSessionSummaryResp | null): boo
   return active.State !== 'running'
 }
 
+/** Largest step Seq currently held by the session. Used by the reconcile
+ *  ladder's live-progress guard: when the live stream delivers steps beyond
+ *  what the last summary carried (Seq ≥ summary.NextSeq), the turn is
+ *  genuinely running and the stream is healthy — the lost-terminal race the
+ *  ladder covers cannot be happening, so the remaining (large) summary
+ *  refetches are skipped. */
+function maxStepSeq(session: AgentSession): number {
+  let max = 0
+  for (const s of session.steps) {
+    if (s.Seq != null && !Number.isNaN(s.Seq) && s.Seq > max) max = s.Seq
+  }
+  return max
+}
+
+/** Server-side step-seq watermark carried by a summary: every step in the
+ *  summary has Seq < NextSeq, so a session step at Seq ≥ NextSeq-1+1 must
+ *  have arrived via the live stream after that fetch. Race-free baseline
+ *  (onApply merges asynchronously — sampling the session directly races). */
+function summaryWatermark(summary: AgentSessionSummaryResp | null): number {
+  if (!summary?.NextSeq || summary.NextSeq <= 1) return 0
+  return summary.NextSeq - 1
+}
+
 /** Hard cap on the number of steps sent via knownStepEventSeqs. Per the
  *  research conclusion ([[锁定 KnownStepEventSeqs 裁剪语义]]): the backend only
  *  consumes the map's max Seq as the reconnect watermark
@@ -271,12 +294,13 @@ export class SummaryReconciler {
     return this.runFetch(mode).then((first) => {
       if (!first.applied) return
       if (isSummaryConverged(first.summary)) return
-      void this.ladderSteps(gen, sleepCtrl, mode)
+      void this.ladderSteps(gen, sleepCtrl, mode, summaryWatermark(first.summary))
     })
   }
 
-  private async ladderSteps(gen: number, sleepCtrl: AbortController, mode: ReconcileMode): Promise<void> {
+  private async ladderSteps(gen: number, sleepCtrl: AbortController, mode: ReconcileMode, baselineSeq: number): Promise<void> {
     try {
+      let lastSeq = baselineSeq
       for (let i = 0; i < LADDER_DELAYS_MS.length; i++) {
         if (gen !== this.ladderGeneration || sleepCtrl.signal.aborted) return
         try {
@@ -285,9 +309,18 @@ export class SummaryReconciler {
           return // aborted by a newer ladder or abort()
         }
         if (gen !== this.ladderGeneration || sleepCtrl.signal.aborted) return
+        // Live-progress guard: the summary still says 'running', but if the
+        // session already holds steps at/above the last summary's NextSeq
+        // watermark, the live stream delivered them after that fetch — the
+        // stream is healthy and the turn is genuinely executing. The
+        // lost-terminal race this ladder exists for cannot be happening;
+        // stop burning the (multi-hundred-KB) summary refetches and leave
+        // completion to the live stream.
+        if (lastSeq > 0 && maxStepSeq(this.session) > lastSeq) return
         const res = await this.runFetch(mode)
         if (!res.applied) return // superseded / aborted / error → stop laddering
         if (isSummaryConverged(res.summary)) return
+        lastSeq = Math.max(lastSeq, summaryWatermark(res.summary))
       }
     } finally {
       if (gen === this.ladderGeneration && this.ladderSleepCtrl === sleepCtrl) {

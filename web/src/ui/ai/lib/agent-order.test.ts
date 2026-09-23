@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import type { AgentInfo } from '../hooks/agentInfoStore'
-import { applyParentChildOrder } from './agent-order'
+import { applyAgentOrder, applyParentChildOrder, orderedAgentIds, type SidebarOrderableAgent } from './agent-order'
 
 function makeAgent(partial: Partial<AgentInfo>): AgentInfo {
   return {
@@ -131,5 +131,39 @@ describe('applyParentChildOrder', () => {
     const a = makeAgent({ Id: 'a', ActorId: 'A', ParentAgentId: 'A' })
     const b = makeAgent({ Id: 'b', ActorId: 'B' })
     expect(ids(applyParentChildOrder([a, b]))).toEqual(['a', 'b'])
+  })
+})
+
+describe('orderedAgentIds / applyAgentOrder', () => {
+  // Minimal AgentListItem-shaped fixtures prove the helpers are generic over
+  // any SidebarOrderableAgent, not just AgentInfo.
+  const li = (id: string, projectId: string): SidebarOrderableAgent =>
+    ({ Id: id, ActorId: `actor-${id}`, ProjectId: projectId })
+
+  it('groups by projectOrder and orders agents within each project by agentOrder', () => {
+    const agents = [li('b1', 'p1'), li('a2', 'p2'), li('a1', 'p1'), li('b2', 'p2')]
+    const order = orderedAgentIds(agents, ['a1', 'b1'], ['p2', 'p1'])
+    expect(order).toEqual(['a2', 'b2', 'a1', 'b1'])
+  })
+
+  it('appends unknown projects and unseen agents in input order', () => {
+    const agents = [li('x', 'p1'), li('y', 'p9'), li('z', 'p1')]
+    const order = orderedAgentIds(agents, [], ['p1'])
+    expect(order).toEqual(['x', 'z', 'y'])
+  })
+
+  it('returns agents (not just ids) via applyAgentOrder, preserving objects', () => {
+    const agents = [li('b', 'p1'), li('a', 'p1')]
+    const ordered = applyAgentOrder(agents, ['a', 'b'], [])
+    expect(ordered.map(a => a.Id)).toEqual(['a', 'b'])
+    expect(ordered[0]).toBe(agents[1])
+  })
+
+  it('flattens the parent-child tree depth-first inside the sidebar order', () => {
+    const parent = { ...li('parent', 'p1') }
+    const child = { ...li('child', 'p1'), ParentAgentId: 'actor-parent' }
+    const other = { ...li('other', 'p1') }
+    const ordered = applyAgentOrder([child, other, parent], ['parent', 'other'], [])
+    expect(ordered.map(a => a.Id)).toEqual(['parent', 'child', 'other'])
   })
 })

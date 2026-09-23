@@ -207,6 +207,39 @@ func TestHandleAgentUnload_AllowsInternalZeroIdentity(t *testing.T) {
 	}
 }
 
+// TestHandleAgentUnload_AllowsSystemRole mirrors the production scheduler
+// path: the project fire-and-forget to workspace.agent_unload crosses the
+// workspace service ref and arrives stamped role "system" (the workspace
+// cell's own Props role). The old zero-identity-only carve-out rejected it;
+// it must now be allowed.
+func TestHandleAgentUnload_AllowsSystemRole(t *testing.T) {
+	ps := persist.NewFSPersist(t.TempDir())
+	config.SetDataDirForTest(t.TempDir())
+	t.Cleanup(config.ResetForTest)
+	a := &Actor{store: ps}
+	ctx := testutil.AnonCtx(testutil.GenActorID())
+	ctx.Identity_ = id.Identity{Kind: id.IdentityToken, Role: "system"} // service-ref-stamped internal call
+	ctx.SpawnFn = noOpSpawn
+	ctx.LookupIDFn = func(id.ActorID) (ref.Ref, bool) { return nil, false }
+	ctx.DestroyFn = func(ref.Ref) error { return nil }
+	if err := a.OnInit(ctx); err != nil {
+		t.Fatal(err)
+	}
+	if err := a.OnStart(ctx); err != nil {
+		t.Fatal(err)
+	}
+	actorID := genID()
+	a.Agents = []domain.AgentRef{{ID: "W#1", ActorID: actorID, LoadState: "loaded"}}
+
+	resp, err := a.handleAgentUnload(ctx, gen.AgentUnloadReq{AgentID: "W#1"})
+	if err != nil {
+		t.Fatalf("system-role internal unload must be allowed: %v", err)
+	}
+	if !resp.Unloaded {
+		t.Fatal("Unloaded = false")
+	}
+}
+
 // TestHandleAgentUnload_DeniesExternalNonHuman models an external caller with
 // a non-human role: the call must be rejected by the admin/owner gate.
 func TestHandleAgentUnload_DeniesExternalNonHuman(t *testing.T) {

@@ -21,6 +21,7 @@ import {
   type AgentActionItem,
 } from './scheduledTasks'
 import './ScheduledView.css'
+import { applyAgentOrder } from '../lib/agent-order'
 import { ScheduleCronEditor } from './ScheduleCronEditor'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { useClickOutside } from '../hooks/useClickOutside'
@@ -99,6 +100,12 @@ interface ScheduledViewProps {
    *  dropdowns (the agent list spans multiple projects) and to power the
    *  scope picker (全局 / per-project browsing). */
   projects?: { ProjectID: string; Name: string; System?: boolean }[]
+  /** Per-project agent drag order — mirrors the sidebar so every agent
+   *  picker in this view lists agents in the same order the user sees them. */
+  agentOrder?: string[]
+  /** Cross-project sidebar order — same source as the sidebar's project
+   *  grouping, applied to the agent pickers. */
+  sidebarOrder?: string[]
 }
 
 const PREFIX = 'scheduler:'
@@ -213,6 +220,8 @@ export function ScheduledView({
   onUpdateTemplateBinding,
   onUpdateTitle,
   projects,
+  agentOrder,
+  sidebarOrder,
 }: ScheduledViewProps) {
   const { t } = useI18n()
   const [timers, setTimers] = useState<{ timer: WikiTimerListItem; projectId: string }[]>([])
@@ -263,7 +272,13 @@ export function ScheduledView({
 
   // Agent list subscription for the executor picker dropdown.
   useSyncExternalStore(subscribeAgentListStore, getAgentListItems)
-  const agentItems = getAgentListItems()
+  // Sidebar-ordered agent list — every picker below mirrors the sidebar's
+  // agent order (per-project drag order + cross-project sidebar order +
+  // parent-child depth-first flattening) instead of the raw store order.
+  const agentItems = useMemo(
+    () => applyAgentOrder(getAgentListItems(), agentOrder, sidebarOrder),
+    [agentOrder, sidebarOrder],
+  )
 
   // Project ID → display name lookup for agent dropdowns.
   const projectNameOf = useMemo(() => {
@@ -406,6 +421,13 @@ export function ScheduledView({
   const projectAgents = useMemo(
     () => coderAgentsOf(selectedProjectId),
     [coderAgentsOf, selectedProjectId],
+  )
+  // Executor/bound-agent pickers only offer loaded agents — firing at an
+  // unloaded one has no live actor to receive the task. The unfiltered
+  // projectAgents stays authoritative for displaying the current selection.
+  const pickableAgents = useMemo(
+    () => projectAgents.filter(a => a.LoadState === 'loaded'),
+    [projectAgents],
   )
   const selectedProjectOpts = selectedProjectId && selectedProjectId !== projectId ? selectedProjectId : undefined
 
@@ -1247,7 +1269,7 @@ export function ScheduledView({
                             </SelectValue>
                           </SelectTrigger>
                           <SelectContent>
-                            {agentKinds.length === 0 && projectAgents.length === 0 && (
+                            {agentKinds.length === 0 && pickableAgents.length === 0 && (
                               <SelectItem value="__empty__" disabled>
                                 <SelectItemText>{t('scheduled.agent.noKinds')}</SelectItemText>
                               </SelectItem>
@@ -1257,23 +1279,20 @@ export function ScheduledView({
                                 <SelectItemText>{k.DisplayName || k.Kind}</SelectItemText>
                               </SelectItem>
                             ))}
-                            {projectAgents.length > 0 && (
+                            {pickableAgents.length > 0 && (
                               <>
                                 <SelectSeparator />
                                 <SelectItem value="__existing_header__" disabled>
                                   <SelectItemText>{t('scheduled.agent.existingGroup')}</SelectItemText>
                                 </SelectItem>
-                                {projectAgents.map(ag => (
+                                {pickableAgents.map(ag => (
                                   <SelectItem key={ag.Id} value={`agent:${ag.Id}`} data-guide-id={`scheduled-agent-existing-${ag.Id}`}>
                                     <SelectItemText>
-                                      <span className={cn('flex flex-col', ag.LoadState !== 'loaded' && 'text-muted-foreground')}>
+                                      <span className="flex flex-col">
                                         <span className="flex items-center gap-1">
                                           {ag.DisplayName || ag.Id}
                                           {ag.Title && <span className="text-xs text-muted-foreground">{ag.Title}</span>}
                                         </span>
-                                        {ag.LoadState !== 'loaded' && (
-                                          <span className="text-xs text-muted-foreground">{t('scheduled.mode.agentUnloaded')}</span>
-                                        )}
                                       </span>
                                     </SelectItemText>
                                   </SelectItem>
@@ -1317,17 +1336,14 @@ export function ScheduledView({
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
-                          {projectAgents.map(ag => (
+                          {pickableAgents.map(ag => (
                             <SelectItem key={ag.Id} value={`agent:${ag.Id}`}>
                               <SelectItemText>
-                                <span className={cn('flex flex-col', ag.LoadState !== 'loaded' && 'text-muted-foreground')}>
+                                <span className="flex flex-col">
                                   <span className="flex items-center gap-1">
                                     {ag.DisplayName || ag.Id}
                                     {ag.Title && <span className="text-xs text-muted-foreground">{ag.Title}</span>}
                                   </span>
-                                  {ag.LoadState !== 'loaded' && (
-                                    <span className="text-xs text-muted-foreground">{t('scheduled.mode.agentUnloaded')}</span>
-                                  )}
                                 </span>
                               </SelectItemText>
                             </SelectItem>
@@ -1598,16 +1614,32 @@ function AgentActionsEditor({ selected, agentItems, projectNameOf, projectOpts, 
   }, [actions, selected, onUpdateAgentActions, loadTimers, t])
 
   const targetOptions = useCallback((current: string) => {
-    const existing = new Set(agentItems.map(a => `agent:${a.Id}`))
-    const opts = agentItems.map(a => ({
+    // Only loaded agents are pickable — a pause/resume timer firing at an
+    // unloaded agent has no live actor to act on. The current value is kept
+    // even when its agent is (now) unloaded so an existing rule stays
+    // visible and editable instead of silently vanishing.
+    const pickable = agentItems.filter(a => a.LoadState === 'loaded')
+    const existing = new Set(pickable.map(a => `agent:${a.Id}`))
+    const opts = pickable.map(a => ({
       value: `agent:${a.Id}`,
       label: a.DisplayName || a.Id,
       title: a.Title,
       projectName: projectNameOf(a.ProjectId),
-      loaded: a.LoadState === 'loaded',
+      loaded: true,
     }))
     if (current && !existing.has(current) && current !== `agent:${current}`) {
       opts.unshift({ value: current, label: agentRefId(current), title: undefined, projectName: '', loaded: false })
+    } else {
+      const currentAgent = agentItems.find(a => `agent:${a.Id}` === current)
+      if (currentAgent && currentAgent.LoadState !== 'loaded') {
+        opts.unshift({
+          value: current,
+          label: currentAgent.DisplayName || currentAgent.Id,
+          title: currentAgent.Title,
+          projectName: projectNameOf(currentAgent.ProjectId),
+          loaded: false,
+        })
+      }
     }
     return opts
   }, [agentItems, projectNameOf])

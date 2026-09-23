@@ -33,7 +33,9 @@ import (
 // Auth: external callers must be admin (owner); internal actor-to-actor
 // calls (e.g. the project scheduler loop fire-and-forgeting
 // workspace.agent_unload after an ephemeral agent finishes, per the R3
-// research) arrive with a zero identity and are trusted without a role check.
+// research) are trusted via policy.RequireAdminOrInternal — the service-ref
+// call arrives stamped with the workspace cell's "system" role, which the
+// old zero-identity-only carve-out rejected.
 //
 // Deadlock: this handler runs stateless (PureContext) and never synchronously
 // invokes a project callable — cancel/destroy only talk to the target agent
@@ -42,10 +44,8 @@ import (
 // cannot re-occur here.
 func (a *Actor) handleAgentUnload(ctx actor.PureContext, req gen.AgentUnloadReq) (gen.AgentUnloadResp, error) {
 	return panicprobe.Guard(ctx, "workspace.agent_unload", req, func() (gen.AgentUnloadResp, error) {
-		if !ctx.Identity().IsZero() {
-			if err := policy.RequireAdmin(ctx.Identity().Role); err != nil {
-				return gen.AgentUnloadResp{}, err
-			}
+		if err := policy.RequireAdminOrInternal(ctx.Identity().Role); err != nil {
+			return gen.AgentUnloadResp{}, err
 		}
 		idx := -1
 		for i, ag := range a.agentSnapshot() {

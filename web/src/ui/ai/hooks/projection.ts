@@ -242,13 +242,15 @@ export function latestStepMs(steps: Step[]): number {
 }
 
 /** Check if a turn's steps have been inactive long enough to be considered
- *  stale. Uses the latest step Timestamp + STALE_PENDING_TURN_MS threshold.
- *  Semantically identical to the stale check inside deriveTurnState.
- *  Exported so agent-session.ts can reap open steps for stale turns without
- *  duplicating the threshold or timestamp logic. */
-export function isTurnStale(steps: Step[], nowMs: number): boolean {
+ *  stale. Uses the latest step Timestamp + thresholdMs (default
+ *  STALE_PENDING_TURN_MS). Semantically identical to the stale check inside
+ *  deriveTurnState. Exported so agent-session.ts can reap open steps for stale
+ *  turns without duplicating the threshold or timestamp logic. The thresholdMs
+ *  parameter lets the event-layer watchdog reap with a shorter budget when
+ *  the SSE silence probe budget is exhausted. */
+export function isTurnStale(steps: Step[], nowMs: number, thresholdMs: number = STALE_PENDING_TURN_MS): boolean {
   const latest = latestStepMs(steps)
-  return latest > 0 && (nowMs - latest) > STALE_PENDING_TURN_MS
+  return latest > 0 && (nowMs - latest) > thresholdMs
 }
 
 /** Derive Turn.State from the steps belonging to a single turn.

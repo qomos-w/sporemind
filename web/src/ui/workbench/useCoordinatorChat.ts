@@ -119,6 +119,11 @@ export function useCoordinatorChat() {
       // The optimistic user envelope stays; surface the failure instead of
       // failing silently (the dock has no other error channel).
       setSubmitError(err instanceof Error ? err.message : String(err))
+      // Orphaned-turn recovery: a client-side timeout does not mean the server
+      // rejected the submit. Reconcile fetches the summary — a created turn's
+      // user step confirms the pending message instead of the user resending
+      // and duplicating the turn.
+      timeline.reconcile()
       return false
     }
   }, [actorId, timeline])

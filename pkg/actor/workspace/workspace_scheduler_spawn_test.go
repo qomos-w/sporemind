@@ -89,6 +89,33 @@ func TestHandleAgentSpawnScheduler_RejectsExternalNonAdmin(t *testing.T) {
 	}
 }
 
+// TestHandleAgentSpawnScheduler_AllowsSystemRole reproduces the production
+// failure: the project scheduler loop reaches this handler through the
+// workspace service ref, which gospore stamps with the workspace cell's own
+// "system" role. The old zero-identity-only carve-out rejected it with
+// `requires admin role, got "system"`, breaking every timer fire. A
+// system-stamped internal call must now succeed.
+func TestHandleAgentSpawnScheduler_AllowsSystemRole(t *testing.T) {
+	a, _, projectID := schedulerSpawnFixture(t)
+	ctx := testutil.AnonCtx(testutil.GenActorID())
+	ctx.Identity_ = id.Identity{Kind: id.IdentityToken, Role: "system"} // service-ref-stamped internal call
+	ctx.SpawnFn = noOpSpawn
+	ctx.LookupIDFn = lookupOK
+
+	resp, err := a.handleAgentSpawnScheduler(ctx, gen.WorkspaceAgentSpawnSchedulerReq{
+		ProjectID: projectID, AgentKind: string(domain.AgentKindCoder),
+	})
+	if err != nil {
+		t.Fatalf("system-role internal call: %v", err)
+	}
+	if resp.AgentID == "" {
+		t.Fatalf("AgentID empty on system-role success")
+	}
+	if len(a.Agents) != 1 || a.Agents[0].LifecycleScope != "scheduler" {
+		t.Fatalf("registry = %+v, want 1 scheduler-scoped entry", a.Agents)
+	}
+}
+
 // TestHandleAgentSpawnScheduler_ValidatesInput verifies the guard rails:
 // missing project, unknown kind, and system projects are rejected.
 func TestHandleAgentSpawnScheduler_ValidatesInput(t *testing.T) {

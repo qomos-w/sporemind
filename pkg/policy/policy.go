@@ -45,6 +45,30 @@ func RequireAdmin(role id.Role) error {
 	return fmt.Errorf("forbidden: requires admin role, got %q", role)
 }
 
+// RequireAdminOrInternal allows admin callers plus trusted internal
+// actor-to-actor callers:
+//   - "admin" — external session callers (gateway token auth)
+//   - "" — zero-identity internal calls (plain refs carry no caller_role
+//     header)
+//   - "system" — the role gospore stamps on service-ref calls: a service ref
+//     forwards its owning cell's Props role, and every sporemind top-level
+//     actor is spawned with Role "system" (cmd/internal/actorset). Project
+//     cells inherit it too (buildSpawn role inheritance), so internal
+//     project→workspace calls such as the scheduler timer-fire path arrive
+//     stamped "system" — see the sibling note on RequireAgentOrHuman.
+//
+// External non-admin roles (anonymous/guest/glass/peer) are denied. Used by
+// callables that are admin-gated for the UI but must also be reachable from
+// internal actors (e.g. workspace.agent_spawn_scheduler from the project
+// timer execution loop).
+func RequireAdminOrInternal(role id.Role) error {
+	switch role {
+	case "admin", "system", "":
+		return nil
+	}
+	return fmt.Errorf("forbidden: requires admin role, got %q", role)
+}
+
 // RequireDeveloper allows admin and developer.
 func RequireDeveloper(role id.Role) error {
 	switch role {

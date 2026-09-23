@@ -75,7 +75,7 @@ let root: Root
 function renderView(
   cards: MonoCardListItem[],
   projectId?: string,
-  props?: { onLocateMap?: (mapId: string) => void; onOpenCard?: (cardId: string, projectId?: string) => void; onCreateScheduler?: (templateCardId: string | null) => Promise<string | null>; onUpdateScheduleCron?: (cardId: string, cron: string, projectId?: string) => Promise<boolean>; onUpdateCardBody?: (cardId: string, body: string, projectId?: string) => Promise<boolean>; onDeleteTimer?: (cardId: string, projectId?: string) => Promise<boolean>; onUpdateAgentActions?: (cardId: string, actions: { action: 'pause' | 'resume'; targetAgent: string }[], projectId?: string) => Promise<boolean>; onUpdateExecutor?: (cardId: string, executor: string, projectId?: string) => Promise<boolean>; onUpdateAgentKind?: (cardId: string, kind: string, projectId?: string) => Promise<boolean>; onUpdateBoundAgent?: (cardId: string, agentRef: string, projectId?: string) => Promise<boolean>; onUpdateTitle?: (cardId: string, title: string, projectId?: string) => Promise<boolean>; isMobile?: boolean; projects?: { ProjectID: string; Name: string; System?: boolean }[] },
+  props?: { onLocateMap?: (mapId: string) => void; onOpenCard?: (cardId: string, projectId?: string) => void; onCreateScheduler?: (templateCardId: string | null) => Promise<string | null>; onUpdateScheduleCron?: (cardId: string, cron: string, projectId?: string) => Promise<boolean>; onUpdateCardBody?: (cardId: string, body: string, projectId?: string) => Promise<boolean>; onDeleteTimer?: (cardId: string, projectId?: string) => Promise<boolean>; onUpdateAgentActions?: (cardId: string, actions: { action: 'pause' | 'resume'; targetAgent: string }[], projectId?: string) => Promise<boolean>; onUpdateExecutor?: (cardId: string, executor: string, projectId?: string) => Promise<boolean>; onUpdateAgentKind?: (cardId: string, kind: string, projectId?: string) => Promise<boolean>; onUpdateBoundAgent?: (cardId: string, agentRef: string, projectId?: string) => Promise<boolean>; onUpdateTitle?: (cardId: string, title: string, projectId?: string) => Promise<boolean>; isMobile?: boolean; projects?: { ProjectID: string; Name: string; System?: boolean }[]; agentOrder?: string[]; sidebarOrder?: string[] },
 ) {
   container = document.createElement('div')
   document.body.appendChild(container)
@@ -803,6 +803,53 @@ describe('ScheduledView', () => {
     // Selecting an existing agent from the second group writes the bound contract.
     await selectOption('scheduled-agent-kind-trigger', 'scheduled-agent-existing-id-驻留')
     expect(onUpdateBoundAgent).toHaveBeenCalledWith('scheduler:每日简报', 'agent:id-驻留')
+  })
+
+  it('agent pickers follow the sidebar agent order from agentOrder', async () => {
+    projectMocks.wikiListTimers.mockResolvedValue({ Timers: [mkTimer('scheduler:排序', true)] })
+    agentStore.agents = [
+      { Id: 'id-b', ActorId: 'actor-b', DisplayName: 'AgentB', ProjectId: 'proj-1', AgentKind: 'coder', LoadState: 'loaded' },
+      { Id: 'id-c', ActorId: 'actor-c', DisplayName: 'AgentC', ProjectId: 'proj-1', AgentKind: 'coder', LoadState: 'loaded' },
+      { Id: 'id-a', ActorId: 'actor-a', DisplayName: 'AgentA', ProjectId: 'proj-1', AgentKind: 'coder', LoadState: 'loaded' },
+    ] as never
+    renderView(
+      [mkSchedulerCard('scheduler:排序', { cron: '0 8 * * *' })],
+      'proj-1',
+      { onUpdateBoundAgent: vi.fn().mockResolvedValue(true), agentOrder: ['id-a', 'id-b', 'id-c'] },
+    )
+    await flush()
+    await flush()
+
+    // Dropdown content renders in a body portal — query document, not container.
+    await act(async () => {
+      await userEvent.click(container.querySelector('[data-guide-id="scheduled-agent-kind-trigger"]')!)
+    })
+    const ids = [...document.querySelectorAll('[data-guide-id^="scheduled-agent-existing-"]')]
+      .map(el => (el as HTMLElement).dataset.guideId!.replace('scheduled-agent-existing-', ''))
+    expect(ids).toEqual(['id-a', 'id-b', 'id-c'])
+  })
+
+  it('agent pickers exclude unloaded agents', async () => {
+    projectMocks.wikiListTimers.mockResolvedValue({ Timers: [mkTimer('scheduler:过滤', true)] })
+    agentStore.agents = [
+      { Id: 'id-驻留', ActorId: 'actor-驻留', DisplayName: '驻留Agent', ProjectId: 'proj-1', AgentKind: 'coder', LoadState: 'loaded' },
+      { Id: 'id-休眠', ActorId: 'actor-休眠', DisplayName: '休眠Agent', ProjectId: 'proj-1', AgentKind: 'coder', LoadState: 'unloaded' },
+    ] as never
+    renderView(
+      [mkSchedulerCard('scheduler:过滤', { cron: '0 8 * * *' })],
+      'proj-1',
+      { onUpdateBoundAgent: vi.fn().mockResolvedValue(true) },
+    )
+    await flush()
+    await flush()
+
+    await act(async () => {
+      await userEvent.click(container.querySelector('[data-guide-id="scheduled-agent-kind-trigger"]')!)
+    })
+    const ids = [...document.querySelectorAll('[data-guide-id^="scheduled-agent-existing-"]')]
+      .map(el => (el as HTMLElement).dataset.guideId!.replace('scheduled-agent-existing-', ''))
+    expect(ids).toEqual(['id-驻留'])
+    expect(document.body.textContent).not.toContain('休眠Agent')
   })
 
   it('bound prompt task shows the bound agent name and bound hint', async () => {

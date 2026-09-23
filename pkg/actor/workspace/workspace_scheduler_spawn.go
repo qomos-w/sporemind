@@ -25,9 +25,12 @@ import (
 // reader restricts on it, and separating scopes keeps the sidebar projection
 // honest for agents that are unloaded after each ephemeral run.
 //
-// Auth: external callers must be admin; internal actor-to-actor calls
-// (the project scheduler loop at timer fire time) arrive with a zero identity
-// and are trusted — same carve-out as workspace.agent_unload.
+// Auth: external callers must be admin; internal actor-to-actor calls are
+// trusted (policy.RequireAdminOrInternal) — the project scheduler loop's
+// fire path reaches this handler through the workspace service ref, which
+// gospore stamps with the workspace cell's own "system" role, so the old
+// zero-identity-only carve-out never matched and every timer fire failed
+// with `requires admin role, got "system"`.
 //
 // Deadlock: this handler never synchronously invokes a project callable, so it
 // is safe to call synchronously from the project owner loop.
@@ -40,10 +43,8 @@ import (
 // path.
 func (a *Actor) handleAgentSpawnScheduler(ctx actor.PureContext, req gen.WorkspaceAgentSpawnSchedulerReq) (gen.WorkspaceAgentSpawnSchedulerResp, error) {
 	return panicprobe.Guard(ctx, "workspace.agent_spawn_scheduler", req, func() (gen.WorkspaceAgentSpawnSchedulerResp, error) {
-		if !ctx.Identity().IsZero() {
-			if err := policy.RequireAdmin(ctx.Identity().Role); err != nil {
-				return gen.WorkspaceAgentSpawnSchedulerResp{}, err
-			}
+		if err := policy.RequireAdminOrInternal(ctx.Identity().Role); err != nil {
+			return gen.WorkspaceAgentSpawnSchedulerResp{}, err
 		}
 		if req.ProjectID == "" {
 			return gen.WorkspaceAgentSpawnSchedulerResp{}, fmt.Errorf("workspace.agent_spawn_scheduler: ProjectId is required")

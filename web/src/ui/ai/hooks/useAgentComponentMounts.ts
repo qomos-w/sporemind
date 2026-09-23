@@ -45,6 +45,26 @@ export function isInsiderOnlyBundleCard(card: MonoCardListItem): boolean {
   return card.Id === 'builtin:bundle:browser-crawl'
 }
 
+/** Content equality for component mounts. The 2s componentList poll returns a
+ *  fresh array on every tick even when nothing changed; a new `mounts`
+ *  reference would refire the [agentActorId, mounts] effect below and
+ *  refetch the ~100KB list_callables registry + component snapshot on every
+ *  poll — the recurring SLOW wails.onmessage batches (50-85ms jank every
+ *  2s per mounted hook instance). Comparing by value keeps the reference
+ *  stable across no-op polls. */
+function mountsEqual(a: AgentComponentMount[], b: AgentComponentMount[]): boolean {
+  if (a === b) return true
+  if (a.length !== b.length) return false
+  const key = (m: AgentComponentMount) =>
+    `${m.MountId}\u0000${m.CardId}\u0000${m.Kind ?? ''}\u0000${m.Enabled ? 1 : 0}\u0000${m.Order ?? 0}\u0000${m.Scope ?? ''}\u0000${m.Title ?? ''}\u0000${m.Icon ?? ''}\u0000${m.Version ?? 0}\u0000${m.UpdatedAt ?? ''}`
+  const ka = a.map(key).sort()
+  const kb = b.map(key).sort()
+  for (let i = 0; i < ka.length; i++) {
+    if (ka[i] !== kb[i]) return false
+  }
+  return true
+}
+
 export function useAgentComponentMounts(agentActorId: string | null | undefined, projectId?: string | null) {
   const [mounts, setMounts] = useState<AgentComponentMount[]>([])
   const [allComponentCards, setAllComponentCards] = useState<MonoCardListItem[]>([])
@@ -66,7 +86,12 @@ export function useAgentComponentMounts(agentActorId: string | null | undefined,
     setLoading(true)
     try {
       const resp = await agentComponentClient.componentList(client, {}, { target: agentActorId })
-      setMounts(resp.Items ?? [])
+      const next = resp.Items ?? []
+      // Reference-stable update: a fresh array per poll must not count as a
+      // change — see mountsEqual. Keeps the [agentActorId, mounts] effect
+      // (list_callables + componentSnapshot refetch) from firing on every
+      // no-op poll tick.
+      setMounts(prev => (mountsEqual(prev, next) ? prev : next))
       setError(null)
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
