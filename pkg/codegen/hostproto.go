@@ -295,7 +295,12 @@ func EmitHostProtocolGo(pkgName string, calls map[string]HostCallSpec, listens [
 				needsJSON = true
 				needsFmt = true
 			}
-			if c.Streaming {
+			// Only the typed LLMChunk stream callers use context (the
+			// Stream*Ctx wrappers); generic raw-envelope streaming callers
+			// do not, so they must not force the import (unused-import
+			// build break for apps whose only streaming call is e.g.
+			// shell.bash).
+			if c.Streaming && c.StreamChunkKind == "LLMChunk" {
 				needsCtx = true
 			}
 		}
