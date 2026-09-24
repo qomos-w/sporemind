@@ -105,20 +105,21 @@ func RightColText(id, content string) gen.GlassSceneElement {
 
 // IdleFrame is the resting UI driven by real workspace state. Layout is
 // intentionally minimal to fit glasses with small line budgets:
-//   - top:    time + battery bar
+//   - top:    time (the device HUD bar has no clock, so time stays in-frame;
+//     battery/connection are HUD-bar-only and deliberately not duplicated)
 //   - middle: active agents (Title preferred, prefixed with ·)
-//   - bottom: connection glyph + coordinator status
+//   - bottom: coordinator status
 // The right column only appears when there is recent history; no title, no
 // empty-state placeholder.
-func IdleFrame(now time.Time, mon *agentMonitor, batteryBar, conn string) gen.GlassRenderFrame {
+func IdleFrame(now time.Time, mon *agentMonitor) gen.GlassRenderFrame {
 	if mon == nil {
 		return FrameFromElements(0, []gen.GlassSceneElement{
-			LeftColText("idle-left", now.Format("15:04")+" "+batteryBar+"\n"+conn+" 等待数据"),
+			LeftColText("idle-left", now.Format("15:04")+"\n等待数据"),
 		})
 	}
 
-	// Top: time + battery bar.
-	left := now.Format("15:04") + " " + batteryBar
+	// Top: time only (battery/conn live in the device HUD bar).
+	left := now.Format("15:04")
 
 	// Middle: active agents on the second row / onward.
 	active := mon.active()
@@ -135,12 +136,12 @@ func IdleFrame(now time.Time, mon *agentMonitor, batteryBar, conn string) gen.Gl
 		left += "\n\u00b7 " + name + task
 	}
 
-	// Bottom: connection glyph + coordinator status.
+	// Bottom: coordinator status.
 	coordName := mon.coordinatorDisplayName()
 	if mon.coordinatorIdle() {
-		left += "\n" + conn + " " + coordName + " 空闲"
+		left += "\n" + coordName + " 空闲"
 	} else {
-		left += "\n" + conn + " " + coordName + " 工作中"
+		left += "\n" + coordName + " 工作中"
 	}
 
 	// Right column: history entries only, no title, omitted entirely when empty.

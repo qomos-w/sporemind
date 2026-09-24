@@ -474,7 +474,7 @@ func (a *Actor) OnInit(ctx actor.Context) error {
 	a.deliveryLog = newDeliveryLog()
 	a.hud = newHudManager()
 	a.agentMon = newAgentMonitor()
-	a.displayFrame = IdleFrame(a.now(), a.agentMon, a.hud.batteryBar(), a.hud.connectionGlyph())
+	a.displayFrame = IdleFrame(a.now(), a.agentMon)
 	a.displayMode = frameModeIdle
 	if err := a.Load(); err != nil {
 		ctx.Logger().Error("glassinteract: load durable state failed", "err", err)
@@ -694,7 +694,7 @@ func (a *Actor) scheduleIdleRenderTick(ctx actor.PureContext) {
 func (a *Actor) handleIdleRenderTick(ctx actor.PureContext) error {
 	if a.getDisplayMode() == frameModeIdle {
 		now := a.now()
-		frame := IdleFrame(now, a.agentMon, a.hud.batteryBar(), a.hud.connectionGlyph())
+		frame := IdleFrame(now, a.agentMon)
 		a.setDisplayFrame(frame, frameModeIdle)
 		a.debug.record(debugKindRender, renderDetail(frame), now)
 		if emitErr := ctx.EmitEvent(eventRender, gen.GlassRenderEvent{
@@ -774,7 +774,7 @@ func (a *Actor) handleAgentPollApply(ctx actor.Context, state gen.WorkspaceAgent
 	a.agentMon.update(state, now)
 
 	if a.getDisplayMode() == frameModeIdle {
-		frame := IdleFrame(now, a.agentMon, a.hud.batteryBar(), a.hud.connectionGlyph())
+		frame := IdleFrame(now, a.agentMon)
 		a.setDisplayFrame(frame, frameModeIdle)
 		a.debug.record(debugKindRender, renderDetail(frame), now)
 		if emitErr := ctx.EmitEvent(eventRender, gen.GlassRenderEvent{
@@ -937,7 +937,7 @@ func (a *Actor) handleClaim(ctx actor.Context, req gen.GlassSessionClaimReq) (ge
 		display := a.getDisplayFrame()
 		if a.getDisplayMode() == frameModeIdle {
 			// Make sure the seeded idle frame uses the current time/agent state.
-			display = IdleFrame(a.now(), a.agentMon, a.hud.batteryBar(), a.hud.connectionGlyph())
+			display = IdleFrame(a.now(), a.agentMon)
 			a.setDisplayFrame(display, frameModeIdle)
 		}
 		a.sess.setFrame(display)

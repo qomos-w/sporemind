@@ -162,7 +162,8 @@ func TestHandleTelemetryReport(t *testing.T) {
 		t.Fatal("glass.hud.update event not emitted")
 	}
 
-	// Same telemetry — should not emit again
+	// Same telemetry — still emits: the device HUD bar is freshness-driven,
+	// so every receipt refreshes the stream even without a value change.
 	evCount := len(ctx.EmittedEvents)
 	a.handleTelemetryReport(ctx, gen.GlassTelemetryReq{
 		SessionID:    "gs_aaa",
@@ -170,8 +171,8 @@ func TestHandleTelemetryReport(t *testing.T) {
 		BatteryLevel: 72,
 		Charging:     true,
 	})
-	if len(ctx.EmittedEvents) != evCount {
-		t.Fatalf("expected no new events for identical telemetry, got %d → %d", evCount, len(ctx.EmittedEvents))
+	if len(ctx.EmittedEvents) != evCount+1 {
+		t.Fatalf("expected a freshness re-emit for identical telemetry, got %d → %d", evCount, len(ctx.EmittedEvents))
 	}
 }
 

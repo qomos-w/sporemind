@@ -141,15 +141,15 @@ func TestIdleFrameRealData(t *testing.T) {
 		},
 	}, now.Add(time.Second))
 
-	frame := IdleFrame(now.Add(time.Second), m, "████░", "\u25cf")
+	frame := IdleFrame(now.Add(time.Second), m)
 	if frame.Scene == nil || len(frame.Scene.Elements) != 2 {
 		t.Fatalf("frame elements = %d, want 2", len(frame.Scene.Elements))
 	}
 	left := frame.Scene.Elements[0].Text
 	right := frame.Scene.Elements[1].Text
 
-	if !strings.Contains(left, "\u25cf 管家 空闲") {
-		t.Fatalf("left missing bottom connection+coordinator: %s", left)
+	if !strings.Contains(left, "管家 空闲") {
+		t.Fatalf("left missing bottom coordinator status: %s", left)
 	}
 	if !strings.Contains(left, "\u00b7 编码助手") {
 		t.Fatalf("left missing active agent Title: %s", left)

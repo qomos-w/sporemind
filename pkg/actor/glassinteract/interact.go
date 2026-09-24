@@ -417,13 +417,15 @@ func renderDetail(f gen.GlassRenderFrame) string {
 // handleTelemetryReport accepts client-reported device telemetry (battery,
 // charging). Glass-authenticated like every device frame path (role=glass,
 // token subject = session id). The handler is stateless: it mutates only the
-// hudManager, which is mutex-guarded, and emits a HUD update only on change.
+// hudManager, which is mutex-guarded. The HUD update is emitted on EVERY
+// receipt (not only on change): the device HUD bar treats the
+// glass.hud.update stream as freshness-driven, and a slowly-draining battery
+// would otherwise go stale between changes.
 func (a *Actor) handleTelemetryReport(ctx actor.PureContext, req gen.GlassTelemetryReq) (gen.GlassTelemetryResp, error) {
 	if err := a.authorizeGlassFrame(ctx, req.SessionID, req.Generation); err != nil {
 		return gen.GlassTelemetryResp{}, fmt.Errorf("%s: %w", callableTelemetry, err)
 	}
-	if a.hud.setBattery(int(req.BatteryLevel), req.Charging, true) {
-		a.emitHudUpdate(ctx)
-	}
+	a.hud.setBattery(int(req.BatteryLevel), req.Charging, true)
+	a.emitHudUpdate(ctx)
 	return gen.GlassTelemetryResp{Accepted: true}, nil
 }

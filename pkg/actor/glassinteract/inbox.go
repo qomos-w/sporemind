@@ -693,36 +693,6 @@ func (h *hudManager) setBattery(level int, charging bool, reported bool) bool {
 	return true
 }
 
-// batteryBar returns a 5-segment battery bar for the idle frame. Unknown
-// battery renders as five empty segments.
-func (h *hudManager) batteryBar() string {
-	h.mu.Lock()
-	defer h.mu.Unlock()
-	const segments = 5
-	if !h.batterySet || h.batteryLevel < 0 {
-		return strings.Repeat("░", segments)
-	}
-	filled := (h.batteryLevel * segments) / 100
-	if filled < 1 && h.batteryLevel > 0 {
-		filled = 1
-	}
-	bar := strings.Repeat("█", filled) + strings.Repeat("░", segments-filled)
-	if h.charging {
-		bar += "+"
-	}
-	return bar
-}
-
-// connectionGlyph returns a small online/offline indicator.
-func (h *hudManager) connectionGlyph() string {
-	h.mu.Lock()
-	defer h.mu.Unlock()
-	if h.connection == hudConnectionOnline {
-		return "\u25cf"
-	}
-	return "\u25cb"
-}
-
 // setAgent updates agent status. Derives outcome from running→stopped
 // transitions: running→error = "failed", running→idle = "completed".
 // Returns changed.

@@ -25,7 +25,7 @@ func (a *Actor) handleDebugSimulate(ctx actor.PureContext, req gen.GlassDebugSim
 	cmd := strings.ToLower(strings.TrimSpace(req.Command))
 	switch cmd {
 	case "render_idle":
-		frame := IdleFrame(a.now(), a.agentMon, a.hud.batteryBar(), a.hud.connectionGlyph())
+		frame := IdleFrame(a.now(), a.agentMon)
 		a.setDisplayFrame(frame, frameModeIdle)
 		a.debug.record(debugKindRender, renderDetail(frame), now)
 		emitDebugRender(ctx, frame, now)
