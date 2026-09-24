@@ -93,11 +93,6 @@ func ButtonEl(id string, x, y, w, h int, label string) gen.GlassSceneElement {
 
 // --- Column layout helpers ---
 
-func hudLine() string {
-	now := time.Now().Format("15:04")
-	return fmt.Sprintf("%s  \u25cf  %d%%", now, 87) // placeholder battery; HUD composited by client in production
-}
-
 func LeftColText(id, content string) gen.GlassSceneElement {
 	return TextEl(id, colLeftX, 0, colLeftW, CanvasG2Height, content)
 }
@@ -211,10 +206,12 @@ func formatTimeAgo(now, t time.Time) string {
 // NotificationFrame renders a passive information card. The left column shows
 // the source and relative time; the right column shows the body text. No title
 // banner, no borders — the column split provides enough visual structure.
+// (HUD time/battery is device-drawn from glass.hud.update; the frame no
+// longer embeds it.)
 func NotificationFrame(body, source, timeAgo string) gen.GlassRenderFrame {
-	left := hudLine()
+	left := ""
 	if source != "" || timeAgo != "" {
-		left += "\n\n" + source
+		left = source
 		if timeAgo != "" {
 			left += "\n" + timeAgo
 		}
@@ -226,14 +223,12 @@ func NotificationFrame(body, source, timeAgo string) gen.GlassRenderFrame {
 }
 
 // AskUserFrame renders an interactive choice prompt. The left column carries
-// the HUD and a compact context label; the right column shows the question
-// followed by selectable options. The selected option is marked with a leading
+// a compact context label (HUD is device-drawn); the right column shows the
+// question followed by selectable options. The selected option is marked with
+// a leading
 // \u25b6 (▶) in the rendered list; the device side may further highlight it.
 func AskUserFrame(context, question string, options []string, selectedIdx int) gen.GlassRenderFrame {
-	left := hudLine()
-	if context != "" {
-		left += "\n\n" + context
-	}
+	left := context
 	opts := make([]gen.GlassSceneOption, len(options))
 	for i, o := range options {
 		opts[i] = gen.GlassSceneOption{ID: fmt.Sprintf("opt-%d", i), Text: o}
@@ -259,7 +254,7 @@ func AskUserFrame(context, question string, options []string, selectedIdx int) g
 // TranscriptFrame renders live STT transcription in progress. The left column
 // shows a listening indicator; the right column shows the partial text.
 func TranscriptFrame(text string, remainingSeconds int) gen.GlassRenderFrame {
-	left := hudLine() + fmt.Sprintf("\n\n聆听中\n%ds", remainingSeconds)
+	left := fmt.Sprintf("聆听中\n%ds", remainingSeconds)
 	return FrameFromElements(0, []gen.GlassSceneElement{
 		LeftColText("transcript-left", left),
 		RightColText("transcript-right", text),

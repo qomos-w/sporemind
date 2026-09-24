@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef, memo } from 'react'
 import type { GlassRenderFrame, GlassSceneElement } from '../../gen-clients/system/types'
+import { G2_PROFILE } from './render-spec/profiles/g2'
+import { TextMeasurer } from './render-spec/measurer/TextMeasurer'
+import { TextWrapper } from './render-spec/wrapper/TextWrapper'
+import type { BreakMode } from './render-spec/wrapper/types'
 
 /**
  * GlassScenePreview — DOM-based debug preview of the Glass display.
@@ -20,7 +24,8 @@ const FONT_SIZE_PX = 26
 // 6 elements total and the HUD occupies slots in front of the scene.
 const HUD_HEIGHT_PX = 40
 const DEVICE_TEXT_POOL = 6
-const HUD_POOL_COST = 3
+const HUD_POOL_COST = 4
+const DEVICE_IMAGE_POOL = 4
 const VERTICAL_PADDING_PX = 7
 const HORIZONTAL_PADDING_PX = 4
 const PREVIEW_FONT = '"GlassesMirror", "Cascadia Code", "Consolas", "Courier New", monospace'
@@ -36,6 +41,34 @@ const focusOutline = (focused: boolean): React.CSSProperties =>
 
 const overBudgetStyle = (over: boolean): React.CSSProperties =>
   over ? { opacity: 0.25, outline: '2px dashed #f43f5e', outlineOffset: 1 } : {}
+
+// Phone-side text pipeline (verbatim port under ./render-spec): the device
+// receives PRE-WRAPPED text, so wrap points here are exact per the glyph
+// table — only the displayed font shape remains approximate.
+const measurer = new TextMeasurer(G2_PROFILE)
+const textWrapper = new TextWrapper(measurer)
+
+function pipelineLines(
+  text: string,
+  widthPx: number,
+  heightPx: number,
+  breakMode?: string,
+  overflow?: string,
+): string[] {
+  const maxLines = Math.max(1, Math.floor(heightPx / LINE_HEIGHT_PX))
+  const mode: BreakMode =
+    breakMode === 'character' || breakMode === 'word' ? breakMode : 'character-no-hyphen'
+  const res = textWrapper.wrap(text, { maxWidthPx: widthPx, maxLines, breakMode: mode })
+  const lines = res.lines.slice()
+  if (overflow === 'ellipsis' && res.truncated && lines.length > 0) {
+    let last = lines[lines.length - 1] ?? ''
+    while (last.length > 0 && measurer.measureText(last + '…') > widthPx) {
+      last = last.slice(0, -1)
+    }
+    lines[lines.length - 1] = last + '…'
+  }
+  return lines
+}
 
 function renderElement(
   el: GlassSceneElement,
@@ -74,7 +107,14 @@ function renderElement(
         )
 
     case 'text':
-    case 'button':
+    case 'button': {
+      const lines = pipelineLines(
+        el.Text ?? el.Label ?? '',
+        el.Box.W,
+        el.Box.H,
+        el.BreakMode,
+        el.Overflow,
+      )
       return (
         <div
           key={el.Id || index}
@@ -88,9 +128,8 @@ function renderElement(
             lineHeight: `${LINE_HEIGHT_PX * scale}px`,
             fontFamily: PREVIEW_FONT,
             textAlign: 'left',
-            whiteSpace: 'pre-wrap',
+            whiteSpace: 'pre',
             overflow: 'hidden',
-            wordBreak: 'break-word',
             padding: `${VERTICAL_PADDING_PX * scale}px ${HORIZONTAL_PADDING_PX * scale}px`,
             outline: '1px dashed rgba(74, 222, 128, 0.35)',
             background: 'rgba(74, 222, 128, 0.04)',
@@ -100,12 +139,19 @@ function renderElement(
             ...focusOutline(focused),
           }}
         >
-          {el.Text ?? el.Label ?? ''}
+          {lines.join('\n')}
         </div>
       )
+    }
 
     case 'list': {
       const options = el.Options ?? []
+      // The device folds a list into a single text element (1 pool slot):
+      // selected item prefixed '> ', others two spaces; selection starts at 0.
+      const folded = options
+        .map((opt, i) => (i === 0 && el.Selected ? '> ' : '  ') + opt.Text)
+        .join('\n')
+      const lines = pipelineLines(folded, el.Box.W, el.Box.H, el.BreakMode, el.Overflow)
       return (
         <div
           key={el.Id || index}
@@ -115,6 +161,7 @@ function renderElement(
             fontSize: FONT_SIZE_PX * scale,
             lineHeight: `${LINE_HEIGHT_PX * scale}px`,
             fontFamily: PREVIEW_FONT,
+            whiteSpace: 'pre',
             overflow: 'hidden',
             padding: `${VERTICAL_PADDING_PX * scale}px ${HORIZONTAL_PADDING_PX * scale}px`,
             outline: '1px dashed rgba(74, 222, 128, 0.35)',
@@ -125,18 +172,7 @@ function renderElement(
             ...focusOutline(focused),
           }}
         >
-          {options.map((opt, i) => (
-            <div
-              key={opt.Id || i}
-              style={{
-                color: i === 0 && el.Selected ? '#0f0' : '#080',
-                fontWeight: i === 0 && el.Selected ? 'bold' : 'normal',
-              }}
-            >
-              {i === 0 && el.Selected ? '> ' : '  '}
-              {opt.Text}
-            </div>
-          ))}
+          {lines.join('\n')}
         </div>
       )
     }
@@ -176,16 +212,33 @@ export const GlassScenePreview = memo(function GlassScenePreview({
   const sorted = elements ? [...elements].sort((a, b) => (a.Z ?? 0) - (b.Z ?? 0)) : []
   const [showDeviceHUD, setShowDeviceHUD] = useState(true)
 
-  // Device text-container pool: the HUD bar occupies slots in front of the
-  // scene, and elements beyond the pool are silently dropped on the device.
+  // Device text-container pool: 6 slots shared by text/rect/list/button
+  // (a whole list folds into ONE text slot); images use a separate pool of 4.
+  // The HUD bar (3 text + 1 separator rect) consumes 4 slots in front of the
+  // scene. Budget consumption follows Z-ascending order, so the TOPMOST-Z
+  // elements drop first; Visible=false skips counting entirely.
   const sceneBudget = showDeviceHUD ? DEVICE_TEXT_POOL - HUD_POOL_COST : DEVICE_TEXT_POOL
   const overBudgetIds = new Set<string>()
   if (elements) {
-    let used = 0
-    for (const el of elements) {
+    const byZ = [...elements].sort((a, b) => (a.Z ?? 0) - (b.Z ?? 0))
+    let textUsed = 0
+    let imageUsed = 0
+    for (const el of byZ) {
       if (el.Visible === false) continue
-      used++
-      if (used > sceneBudget) overBudgetIds.add(el.Id)
+      if (el.Type === 'image') {
+        // Image boxes are never scaled to fit: a box the canvas would clamp is
+        // dropped whole on the device.
+        const clamped =
+          el.Box.X < 0 ||
+          el.Box.Y < 0 ||
+          el.Box.X + el.Box.W > CANVAS_W ||
+          el.Box.Y + el.Box.H > CANVAS_H
+        imageUsed++
+        if (clamped || imageUsed > DEVICE_IMAGE_POOL) overBudgetIds.add(el.Id)
+      } else {
+        textUsed++
+        if (textUsed > sceneBudget) overBudgetIds.add(el.Id)
+      }
     }
   }
   const yOffset = showDeviceHUD ? HUD_HEIGHT_PX : 0
@@ -237,7 +290,7 @@ export const GlassScenePreview = memo(function GlassScenePreview({
           <span
             className="glass-preview-scale"
             style={{ color: '#f43f5e' }}
-            title="Elements beyond the firmware text-container pool (6 slots; HUD uses 3). The device drops them silently — shown ghosted here."          >
+            title="Elements beyond the firmware pools (6 text slots, HUD uses 4; images separate pool of 4). The device drops them silently — shown ghosted here."          >
             {overBudgetIds.size} over budget
           </span>
         ) : null}
@@ -249,7 +302,7 @@ export const GlassScenePreview = memo(function GlassScenePreview({
         <button
           className={`glass-preview-toggle ${showDeviceHUD ? 'active' : ''}`}
           onClick={() => setShowDeviceHUD(v => !v)}
-          title="Device-drawn HUD bar (glass.hud.update): reserves top 40px, shifts scene down, and consumes 3 of the 6 text-container slots. Values are placeholders except connection."
+          title="Device-drawn HUD bar (glass.hud.update): reserves top 40px, shifts scene down, and consumes 4 of the 6 text-container slots. Values are placeholders except connection."
         >
           HUD
         </button>
@@ -290,11 +343,11 @@ export const GlassScenePreview = memo(function GlassScenePreview({
               fontSize: FONT_SIZE_PX * scale,
               lineHeight: `${LINE_HEIGHT_PX * scale}px`,
               fontFamily: PREVIEW_FONT,
-              whiteSpace: 'pre-wrap',
+              whiteSpace: 'pre',
               overflow: 'hidden',
             }}
           >
-            {frame.Text}
+            {pipelineLines(frame.Text, CANVAS_W, CANVAS_H).join('\n')}
           </div>
         ) : (
           <div
