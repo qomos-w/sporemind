@@ -287,7 +287,10 @@ type Actor struct {
 
 	// usedSkills tracks skill IDs invoked via agent.skill.use in the current
 	// session so duplicate calls can return a warning while refreshing the body.
-	usedSkills map[string]struct{}
+	// Guarded by usedSkillsMu: skill_use runs on the agent_exec loop lane while
+	// the slash path (synthesizeSkillMount) writes from turn lanes.
+	usedSkills   map[string]struct{}
+	usedSkillsMu sync.Mutex
 
 	actorID       string // own canonical ID for persistence key
 	workspaceID   string // parent workspace actor id for aistats routing
@@ -1112,7 +1115,11 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 		return fmt.Errorf("agent: register thinking_set_level: %w", err)
 	}
 
+	// skill_use rides the agent_exec loop lane (same as skill_mount): a
+	// runtime:spore skill may run its script for seconds, and that must not
+	// block the owner lane.
 	if err := ctx.Register("skill_use", a.handleSkillUse, actor.Public(),
+		actor.WithLoop("agent_exec"),
 		actor.WithDescription("Invoke a mounted skill by skillId and receive its workflow instructions. The skill must be mounted first; each skill can be used at most once per session."),
 	); err != nil {
 		return fmt.Errorf("agent: register skill_use: %w", err)

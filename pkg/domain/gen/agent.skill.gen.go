@@ -32,4 +32,5 @@ type AgentSkillUseResp struct {
 	Body    string `json:"Body,omitempty"`
 	SkillID string `json:"SkillId,omitempty"`
 	Warning string `json:"Warning,omitempty"`
+	Result  string `json:"Result,omitempty"`
 }

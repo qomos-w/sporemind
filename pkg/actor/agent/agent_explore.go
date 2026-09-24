@@ -861,6 +861,7 @@ func (a *Actor) onStartChild(ctx actor.Context) error {
 	a.notifyWorkspaceStatus(ctx)
 	a.seedBuiltinComponentMounts(ctx)
 	if err := ctx.Register("skill_use", a.handleSkillUse, actor.Public(),
+		actor.WithLoop("agent_exec"),
 		actor.WithDescription("Invoke a mounted skill by skillId and receive its workflow instructions. The skill must be mounted first; each skill can be used at most once per session."),
 	); err != nil {
 		return fmt.Errorf("agent: register child skill.use: %w", err)

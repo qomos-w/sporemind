@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
@@ -70,6 +71,14 @@ func skillMountTitle(cardID string) string {
 type projectSkillCard struct {
 	ID, Name, Description, Body, ProjectID string
 	Tags, Tools                            []string
+	// Runtime marks an executable skill. Empty (default) keeps the
+	// prompt-fragment contract; "spore" runs the body's first ```spore
+	// fence through the spore VM on agent_skill_use.
+	Runtime string
+	// SporeBudget carries the optional frontmatter budget overrides
+	// (max_duration_sec / max_instructions / max_output_bytes). Only
+	// meaningful when Runtime == "spore".
+	SporeBudget sporeSkillBudget
 }
 
 func (a *Actor) getProjectSkillCard(ctx actor.Context, skillID string) (projectSkillCard, error) {
@@ -103,6 +112,20 @@ func (a *Actor) getProjectSkillCard(ctx actor.Context, skillID string) (projectS
 					result.Tools = strings.Split(value, ",")
 				case "projectId", "projectID":
 					result.ProjectID = value
+				case "runtime":
+					result.Runtime = value
+				case "max_duration_sec":
+					if n, perr := strconv.Atoi(value); perr == nil {
+						result.SporeBudget.MaxDurationSec = n
+					}
+				case "max_instructions":
+					if n, perr := strconv.Atoi(value); perr == nil {
+						result.SporeBudget.MaxInstructions = n
+					}
+				case "max_output_bytes":
+					if n, perr := strconv.Atoi(value); perr == nil {
+						result.SporeBudget.MaxOutputBytes = n
+					}
 				}
 			}
 		}
@@ -209,11 +232,34 @@ func (a *Actor) mountSkill(ctx actor.Context, skillID string) string {
 	return mountID
 }
 
+// skillAlreadyUsed reports whether the skill was already invoked this
+// session. See usedSkillsMu for the locking rationale.
+func (a *Actor) skillAlreadyUsed(skillID string) bool {
+	a.usedSkillsMu.Lock()
+	defer a.usedSkillsMu.Unlock()
+	_, used := a.usedSkills[skillID]
+	return used
+}
+
+// markSkillUsed records the skill as invoked this session.
+func (a *Actor) markSkillUsed(skillID string) {
+	a.usedSkillsMu.Lock()
+	defer a.usedSkillsMu.Unlock()
+	if a.usedSkills == nil {
+		a.usedSkills = make(map[string]struct{})
+	}
+	a.usedSkills[skillID] = struct{}{}
+}
+
 // handleSkillUse enforces the mount-before-use constraint: the skill must be
 // present in ComponentMounts and enabled. If the skill is not mounted or is
 // disabled, it returns an error instructing the caller to mount the skill
 // first. The slash path (synthesizeSkillMount) bypasses this check because it
 // is a user-initiated shortcut that auto-mounts on demand.
+//
+// runtime:spore skills branch away from the prompt contract: the body's first
+// ```spore fence is executed and the JSON-encoded return value rides in
+// AgentSkillUseResp.Result instead of Body.
 func (a *Actor) handleSkillUse(ctx actor.Context, req domain.AgentSkillUseReq) (domain.AgentSkillUseResp, error) {
 	if req.SkillID == "" {
 		return domain.AgentSkillUseResp{}, fmt.Errorf("agent.skill.use: skillId is required")
@@ -221,16 +267,22 @@ func (a *Actor) handleSkillUse(ctx actor.Context, req domain.AgentSkillUseReq) (
 	if !a.isSkillMounted(req.SkillID) {
 		return domain.AgentSkillUseResp{}, fmt.Errorf("agent.skill.use: skill %q is not mounted; mount the skill component before using it", req.SkillID)
 	}
-	if a.usedSkills == nil {
-		a.usedSkills = make(map[string]struct{})
+	used := a.skillAlreadyUsed(req.SkillID)
+	var result domain.AgentSkillUseResp
+	if card, err := a.getProjectSkillCard(ctx, req.SkillID); err == nil && card.Runtime == "spore" {
+		encoded, runErr := runSporeSkillBody(ctx.Lifecycle(), card.Body, req.Args, card.SporeBudget)
+		if runErr != nil {
+			return domain.AgentSkillUseResp{}, runErr
+		}
+		result = domain.AgentSkillUseResp{MountID: a.mountSkill(ctx, card.ID), SkillID: card.ID, Result: encoded}
+	} else {
+		resp, err := a.handleSkillInject(ctx, domain.AgentSkillMountReq{SkillID: req.SkillID, Args: req.Args, Context: req.Context, TurnID: req.TurnID})
+		if err != nil {
+			return domain.AgentSkillUseResp{}, err
+		}
+		result = domain.AgentSkillUseResp{MountID: resp.MountID, Body: resp.Body, SkillID: resp.SkillID}
 	}
-	_, used := a.usedSkills[req.SkillID]
-	resp, err := a.handleSkillInject(ctx, domain.AgentSkillMountReq{SkillID: req.SkillID, Args: req.Args, Context: req.Context, TurnID: req.TurnID})
-	if err != nil {
-		return domain.AgentSkillUseResp{}, err
-	}
-	a.usedSkills[req.SkillID] = struct{}{}
-	result := domain.AgentSkillUseResp{MountID: resp.MountID, Body: resp.Body, SkillID: resp.SkillID}
+	a.markSkillUsed(req.SkillID)
 	if used {
 		result.Warning = fmt.Sprintf("agent.skill.use: skill %q has already been used in this session", req.SkillID)
 		ctx.Logger().Warn("agent.skill.use: duplicate use", "skill_id", req.SkillID)
@@ -303,10 +355,7 @@ func (a *Actor) synthesizeSkillMount(ctx actor.Context, turnName, userTurnID, sk
 		isErr = true
 	} else {
 		resultText = resp.Body
-		if a.usedSkills == nil {
-			a.usedSkills = make(map[string]struct{})
-		}
-		a.usedSkills[skillID] = struct{}{}
+		a.markSkillUsed(skillID)
 	}
 
 	step := domain.Step{
