@@ -367,7 +367,34 @@ func formatLogTail(entries []gateway.LogEntry, n int) []string {
 // call appendCrashError from any goroutine right before os.Exit.
 var crashErrorsMu sync.Mutex
 
+// benignWailsErrorPrefixes lists wails-internal error reports that describe
+// handled degradation, not crash evidence. Recording them in errors.log
+// floods the boot crash report with non-fatal noise.
+var benignWailsErrorPrefixes = []string{
+	// Windows request cancellation (wails v3 PR #6100): WebView2 answers the
+	// per-worker CDP handshake with ERROR_INVALID_PARAMETER for worker sessions
+	// it cannot address (worker terminated mid-handshake, or a domain the
+	// target type does not support). The worker is always released afterwards
+	// via Runtime.runIfWaitingForDebugger; only per-worker request-abort
+	// tracking is lost.
+	"Worker request cancellation setup: ",
+	"Resuming attached WebView target: ",
+}
+
+func isBenignWailsError(err error) bool {
+	msg := err.Error()
+	for _, prefix := range benignWailsErrorPrefixes {
+		if strings.HasPrefix(msg, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
 func appendCrashError(dir string, err error, now time.Time) {
+	if isBenignWailsError(err) {
+		return
+	}
 	if err := os.MkdirAll(dir, 0o755); err != nil {
 		return
 	}

@@ -401,13 +401,6 @@
   line-height: 1.4;
 }
 
-.ai-composer-permission-confirm-body {
-  margin: 0;
-  font-size: var(--text-xs);
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
-
 .ai-composer-delete-confirm-actions {
   display: flex;
   justify-content: flex-end;

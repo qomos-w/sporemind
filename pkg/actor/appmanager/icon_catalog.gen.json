@@ -778,6 +778,16 @@
     "Category": "collaboration"
   },
   {
+    "Name": "phone-forwarded",
+    "Label": "Phone forwarded",
+    "Keywords": [
+      "call",
+      "relay",
+      "bridge"
+    ],
+    "Category": "collaboration"
+  },
+  {
     "Name": "video",
     "Label": "Video",
     "Keywords": [

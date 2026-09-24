@@ -100,6 +100,7 @@ export const CARD_ICON_CATALOG: CardIconCatalogTuple[] = [
   ['link-2', 'Link alt', ['attach'], 'collaboration'],
   ['share-2', 'Share', ['publish'], 'collaboration'],
   ['phone', 'Phone', ['call'], 'collaboration'],
+  ['phone-forwarded', 'Phone forwarded', ['call', 'relay', 'bridge'], 'collaboration'],
   ['video', 'Video', ['meeting', 'camera'], 'collaboration'],
   ['graduation-cap', 'Graduation cap', ['learn', 'teach', 'tutorial', 'education'], 'collaboration'],
   // System

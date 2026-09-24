@@ -212,6 +212,21 @@ func TestAppendCrashErrorAndTail(t *testing.T) {
 }
 
 // TestErrorsTailAckAdvances covers the errors.log acknowledge offset: the
+func TestAppendCrashErrorSkipsBenignWailsNoise(t *testing.T) {
+	dir := t.TempDir()
+	appendCrashError(dir, fmt.Errorf("Worker request cancellation setup: The parameter is incorrect."), time.Now())
+	appendCrashError(dir, fmt.Errorf("Resuming attached WebView target: The parameter is incorrect."), time.Now())
+	if lines := crashErrorsTailLines(dir, 10); len(lines) != 0 {
+		t.Fatalf("benign wails noise recorded: %v", lines)
+	}
+
+	appendCrashError(dir, fmt.Errorf("real failure"), time.Now())
+	lines := crashErrorsTailLines(dir, 10)
+	if len(lines) != 1 || !strings.Contains(lines[0], "real failure") {
+		t.Fatalf("real error lost: %v", lines)
+	}
+}
+
 // surfaced tail must disappear after a dismiss and only freshly appended
 // entries may reappear on a later fetch.
 func TestErrorsTailAckAdvances(t *testing.T) {

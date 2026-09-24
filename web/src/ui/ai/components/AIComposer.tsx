@@ -28,6 +28,7 @@ import { CardIcon } from './CardIcon'
 import { skillLabel } from './omniboxLabels'
 import type { SlotRoute } from '../hooks/modelSlot'
 import { CooldownProviderOption, DispatchActivityBadge } from './CooldownProviderOption'
+import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { isCoolingDown, isDisabled, formatCountdown, healthReasonLabelKey } from '../hooks/healthStatus'
 import { AIShellContext } from '../context/AIShellContext'
 import { ProviderSlotMenu } from './ProviderSlotMenu'
@@ -809,7 +810,7 @@ export const AIComposer: React.FC<AIComposerProps> = ({
     return () => clearTimeout(timer)
   }, [matchedModeCardId, enterMatchedMode, agentActorId])
 
-  useBrowserOverlay(addMenuOpen || providerOpen || permissionOpen || historyOpen || slashMenuOpen || mentionMenuOpen || fileMentionMenuOpen || agentMentionMenuOpen || browserMentionMenuOpen || deleteConfirmOpen || permissionConfirm !== null || slotMenuOpen)
+  useBrowserOverlay(addMenuOpen || providerOpen || permissionOpen || historyOpen || slashMenuOpen || mentionMenuOpen || fileMentionMenuOpen || agentMentionMenuOpen || browserMentionMenuOpen || deleteConfirmOpen || slotMenuOpen)
   const viewportMode = useViewportMode()
   const isMobile = isMobileProp ?? viewportMode === 'mobile'
   const [avatarBarVisible, setAvatarBarVisible] = useState(() => {
@@ -1995,32 +1996,26 @@ export const AIComposer: React.FC<AIComposerProps> = ({
                 </div>
               </>
             )}
-            {permissionConfirm && (
-              <>
-                <div className="ai-composer-add-backdrop" onClick={() => setPermissionConfirm(null)} />
-                <div className="ai-composer-delete-confirm">
-                  <p className="ai-composer-delete-confirm-title">
-                    {t('composer.permission.confirmTitle', { mode: permissionModes.find(m => m.id === permissionConfirm.mode)?.label ?? permissionConfirm.mode })}
-                  </p>
-                  <p className="ai-composer-permission-confirm-body">{t('composer.permission.confirmBody')}</p>
-                  <div className="ai-composer-delete-confirm-actions">
-                    <button type="button" className="ai-composer-delete-confirm-cancel" onClick={() => setPermissionConfirm(null)}>
-                      {t('composer.cancel')}
-                    </button>
-                    <button
-                      type="button"
-                      className="ai-composer-delete-confirm-confirm"
-                      onClick={() => {
-                        const pending = permissionConfirm
-                        setPermissionConfirm(null)
-                        pending.apply()
-                      }}
-                    >
-                      {t('composer.permission.confirmOk')}
-                    </button>
-                  </div>
-                </div>
-              </>
+            {/* Portaled so the dialog is centered on the viewport — the
+                composer root is a size container, which would trap any
+                position:fixed descendant inside the composer box. */}
+            {permissionConfirm && createPortal(
+              <ConfirmDialog
+                open
+                danger
+                confirmOnEnter={false}
+                title={t('composer.permission.confirmTitle', { mode: permissionModes.find(m => m.id === permissionConfirm.mode)?.label ?? permissionConfirm.mode })}
+                description={t('composer.permission.confirmBody')}
+                confirmLabel={t('composer.permission.confirmOk')}
+                cancelLabel={t('composer.cancel')}
+                onConfirm={() => {
+                  const pending = permissionConfirm
+                  setPermissionConfirm(null)
+                  pending.apply()
+                }}
+                onCancel={() => setPermissionConfirm(null)}
+              />,
+              document.body
             )}
             <button
               className="ai-composer-add-btn"

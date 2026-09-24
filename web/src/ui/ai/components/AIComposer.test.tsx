@@ -958,12 +958,12 @@ describe('AIComposer permission dropdown tabs', () => {
     expect(yoloItem).not.toBeNull()
     await act(async () => { yoloItem.click() })
 
-    // Confirmation dialog appears and the change is not applied yet.
-    const confirmEl = container.querySelector('.ai-composer-delete-confirm') as HTMLElement
+    // Confirmation dialog appears (portaled to body) and the change is not applied yet.
+    const confirmEl = document.querySelector('.confirm-dialog') as HTMLElement
     expect(confirmEl).not.toBeNull()
     expect(onPermissionModeChange).not.toHaveBeenCalled()
 
-    const confirmBtn = confirmEl.querySelector('.ai-composer-delete-confirm-confirm') as HTMLElement
+    const confirmBtn = confirmEl.querySelector('.confirm-dialog-btn.confirm') as HTMLElement
     await act(async () => { confirmBtn.click() })
     expect(onPermissionModeChange).toHaveBeenCalledWith('yolo')
   })
@@ -992,7 +992,7 @@ describe('AIComposer permission dropdown tabs', () => {
     expect(autopilotItem).not.toBeNull()
     await act(async () => { autopilotItem.click() })
 
-    expect(container.querySelector('.ai-composer-delete-confirm')).toBeNull()
+    expect(document.querySelector('.confirm-dialog')).toBeNull()
     expect(onPermissionModeChange).toHaveBeenCalledWith('autopilot')
   })
 
@@ -1005,12 +1005,12 @@ describe('AIComposer permission dropdown tabs', () => {
     expect(allowAllItem).not.toBeNull()
     await act(async () => { allowAllItem.click() })
 
-    const confirmEl = container.querySelector('.ai-composer-delete-confirm') as HTMLElement
+    const confirmEl = document.querySelector('.confirm-dialog') as HTMLElement
     expect(confirmEl).not.toBeNull()
-    const cancelBtn = confirmEl.querySelector('.ai-composer-delete-confirm-cancel') as HTMLElement
+    const cancelBtn = confirmEl.querySelector('.confirm-dialog-btn.cancel') as HTMLElement
     await act(async () => { cancelBtn.click() })
     expect(onPermissionModeChange).not.toHaveBeenCalled()
-    expect(container.querySelector('.ai-composer-delete-confirm')).toBeNull()
+    expect(document.querySelector('.confirm-dialog')).toBeNull()
   })
 
   it('switching to a dangerous mode on Global tab requires confirmation', async () => {
@@ -1043,11 +1043,11 @@ describe('AIComposer permission dropdown tabs', () => {
     expect(yoloItem).not.toBeNull()
     await act(async () => { yoloItem.click() })
 
-    const confirmEl = container.querySelector('.ai-composer-delete-confirm') as HTMLElement
+    const confirmEl = document.querySelector('.confirm-dialog') as HTMLElement
     expect(confirmEl).not.toBeNull()
     expect(onGlobalPermissionModeChange).not.toHaveBeenCalled()
 
-    const confirmBtn = confirmEl.querySelector('.ai-composer-delete-confirm-confirm') as HTMLElement
+    const confirmBtn = confirmEl.querySelector('.confirm-dialog-btn.confirm') as HTMLElement
     await act(async () => { confirmBtn.click() })
     expect(onGlobalPermissionModeChange).toHaveBeenCalledWith('yolo')
   })

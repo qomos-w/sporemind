@@ -1225,7 +1225,7 @@ describe('AIShellLayout permission mode snapshot', () => {
   }
 
   const confirmDangerousPermissionSwitch = async () => {
-    const confirmBtn = container.querySelector('.ai-composer-delete-confirm-confirm') as HTMLButtonElement
+    const confirmBtn = document.querySelector('.confirm-dialog-btn.confirm') as HTMLButtonElement
     expect(confirmBtn).toBeTruthy()
     await act(async () => {
       confirmBtn.click()
@@ -1270,7 +1270,7 @@ describe('AIShellLayout permission mode snapshot', () => {
     await switchToGlobalTab()
     // Click "yolo" (index 0 in permissionModes array) — dangerous, so the
     // confirmation dialog must appear before anything is applied.
-    const confirmEl = () => container.querySelector('.ai-composer-delete-confirm')
+    const confirmEl = () => document.querySelector('.confirm-dialog')
     await clickPermissionItem(0)
     expect(confirmEl()).toBeTruthy()
     await confirmDangerousPermissionSwitch()
