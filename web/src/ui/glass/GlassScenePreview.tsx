@@ -22,8 +22,13 @@ function px(v: number, scale: number): number {
   return Math.round(v * scale)
 }
 
-function renderElement(el: GlassSceneElement, index: number, scale: number) {
+// Focus ring for the element the device would route gestures to (Scene.FocusId).
+const focusOutline = (focused: boolean): React.CSSProperties =>
+  focused ? { outline: '2px dashed #22d3ee', outlineOffset: 1 } : {}
+
+function renderElement(el: GlassSceneElement, index: number, scale: number, focusId?: string) {
   if (el.Visible === false) return null
+  const focused = focusId !== undefined && el.Id === focusId
 
   const baseStyle: React.CSSProperties = {
     position: 'absolute',
@@ -36,17 +41,18 @@ function renderElement(el: GlassSceneElement, index: number, scale: number) {
   }
 
   switch (el.Type) {
-    case 'rect':
-      return (
-        <div
-          key={el.Id || index}
-          style={{
-            ...baseStyle,
-            border: `${Math.max(1, (el.Border ?? 1) * scale)}px solid #0f0`,
-            borderRadius: el.Radius ? px(el.Radius, scale) : undefined,
-          }}
-        />
-      )
+      case 'rect':
+        return (
+          <div
+            key={el.Id || index}
+            style={{
+              ...baseStyle,
+              border: `${Math.max(1, (el.Border ?? 1) * scale)}px solid #0f0`,
+              borderRadius: el.Radius ? px(el.Radius, scale) : undefined,
+              ...focusOutline(focused),
+            }}
+          />
+        )
 
     case 'text':
     case 'button':
@@ -72,6 +78,7 @@ function renderElement(el: GlassSceneElement, index: number, scale: number) {
             ...(el.Border
               ? { border: `${el.Border * scale}px solid #0f0`, borderRadius: el.Radius ? px(el.Radius, scale) : undefined }
               : {}),
+            ...focusOutline(focused),
           }}
         >
           {el.Text ?? el.Label ?? ''}
@@ -96,6 +103,7 @@ function renderElement(el: GlassSceneElement, index: number, scale: number) {
             ...(el.Border
               ? { border: `${el.Border * scale}px solid #0f0`, borderRadius: el.Radius ? px(el.Radius, scale) : undefined }
               : {}),
+            ...focusOutline(focused),
           }}
         >
           {options.map((opt, i) => (
@@ -184,6 +192,11 @@ export const GlassScenePreview = memo(function GlassScenePreview({
           Display preview (G2 firmware style)
         </span>
         <span className="glass-preview-scale">{CANVAS_W}×{CANVAS_H} @ {scale}x</span>
+        {frame?.Scene?.FocusId ? (
+          <span className="glass-preview-scale" title="Scene.FocusId — element the device routes gestures to">
+            focus: {frame.Scene.FocusId}
+          </span>
+        ) : null}
         <div className="glass-preview-zoom">
           <button className="glass-preview-zoom-btn" onClick={zoomOut} title="Zoom out">-</button>
           <button className="glass-preview-zoom-btn" onClick={zoomFit} title="Fit to width">fit</button>
@@ -211,7 +224,7 @@ export const GlassScenePreview = memo(function GlassScenePreview({
       >
         {showGrid ? <GlassesGrid scale={scale} /> : null}
         {sorted.length > 0 ? (
-          sorted.map((el, i) => renderElement(el, i, scale))
+          sorted.map((el, i) => renderElement(el, i, scale, frame?.Scene?.FocusId))
         ) : frame?.Text ? (
           <div
             style={{
