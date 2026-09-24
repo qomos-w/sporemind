@@ -282,6 +282,47 @@ func TestHandleCoordinatorWearableCall_RendersPromptFrame(t *testing.T) {
 	}
 }
 
+// TestWearableReplyLoop closes the coordinator_wearable_call contract: the
+// pending record carries the prompt frame's scene element ids, a confirmed
+// interaction report on one of those ids resolves the record exactly once, and
+// unmatched reports leave the pending set untouched.
+func TestWearableReplyLoop(t *testing.T) {
+	a := &Actor{}
+	frame := gen.GlassRenderFrame{Scene: &gen.GlassScene{
+		Elements: []gen.GlassSceneElement{{ID: "opt0"}, {ID: "opt1"}},
+	}}
+	id := a.recordWearableInteraction("是否继续？", "wm_1", &frame)
+	records := a.wearableInteractionsSnapshot()
+	if len(records) != 1 || len(records[0].ElementIDs) != 2 || records[0].ElementIDs[0] != "opt0" {
+		t.Fatalf("pending record = %+v, want element ids opt0/opt1", records[0])
+	}
+
+	reply := a.resolveWearableInteractionReply(gen.GlassInteractionEvent{ElementID: "opt1", Action: "select", Value: "继续"})
+	if !strings.Contains(reply, id) || !strings.Contains(reply, "是否继续？") || !strings.Contains(reply, "继续") {
+		t.Fatalf("reply text = %q, want interaction id + prompt + value", reply)
+	}
+	if got := a.wearableInteractionsSnapshot(); len(got) != 0 {
+		t.Fatalf("resolved interaction not removed: %+v", got)
+	}
+	// The pending record is single-use: a replayed report matches nothing.
+	if again := a.resolveWearableInteractionReply(gen.GlassInteractionEvent{ElementID: "opt1", Action: "select"}); again != "" {
+		t.Fatalf("replayed reply resolved again: %q", again)
+	}
+}
+
+func TestHandleCoordinatorGlassReply_UnmatchedIsInert(t *testing.T) {
+	a := &Actor{}
+	ctx := testutil.HumanCtx(testutil.GenActorID())
+	// No pending interactions: an unmatched report is not an error.
+	if err := a.handleCoordinatorGlassReply(ctx, gen.GlassInteractionEvent{ElementID: "opt0", Action: "select"}); err != nil {
+		t.Fatalf("unmatched reply err = %v", err)
+	}
+	// Element id is required.
+	if err := a.handleCoordinatorGlassReply(ctx, gen.GlassInteractionEvent{Action: "select"}); err == nil {
+		t.Fatal("reply without element id accepted")
+	}
+}
+
 // TestCoordinatorWearableToolSpecs verifies the LLM-facing tool assembly: the
 // Coordinator bundle's allowlist resolves to exactly the two high-level tools,
 // named coordinator_wearable_notify / coordinator_wearable_call (flat callables

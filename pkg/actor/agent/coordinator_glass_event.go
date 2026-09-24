@@ -32,6 +32,25 @@ func (a *Actor) handleCoordinatorGlassTranscript(ctx actor.Context, transcript g
 	return a.startCoordinatorInputTurn(ctx, domain.TurnInput{Text: transcript.Text, Meta: "via=glass"})
 }
 
+// handleCoordinatorGlassReply closes the coordinator_wearable_call loop: Glass
+// Interact delivers a confirmed interaction report, the intake correlates it
+// with a pending wi_* interaction by scene element id, and the resolved reply
+// starts a Coordinator user turn so the LLM that issued wearable.call receives
+// the user's answer. Unmatched reports (no pending interaction carries the
+// element id) are inert observations, not errors.
+func (a *Actor) handleCoordinatorGlassReply(ctx actor.Context, ev gen.GlassInteractionEvent) error {
+	if strings.TrimSpace(ev.ElementID) == "" {
+		return fmt.Errorf("%s: element id is required", coordinatorGlassReplyIntake)
+	}
+	reply := a.resolveWearableInteractionReply(ev)
+	if reply == "" {
+		ctx.Logger().Info("coordinator: glass interaction report matched no pending interaction", "element", ev.ElementID, "action", ev.Action)
+		return nil
+	}
+	ctx.Logger().Info("coordinator: glass interaction reply resolved", "element", ev.ElementID, "action", ev.Action)
+	return a.startCoordinatorInputTurn(ctx, domain.TurnInput{Text: reply, Meta: "via=glass_interaction"})
+}
+
 func (a *Actor) startCoordinatorInputTurn(ctx actor.Context, turnInput domain.TurnInput) error {
 	_, _, _ = a.createUserTurn(ctx, turnInput)
 	turnName := fmt.Sprintf("turn-%d", a.nextTurnOrder())

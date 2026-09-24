@@ -37,6 +37,11 @@ const (
 	coordinatorWearableNotifyCallable = "coordinator_wearable_notify"
 	coordinatorWearableCallCallable   = "coordinator_wearable_call"
 
+	// coordinatorGlassReplyIntake is the internal callable Glass Interact
+	// delivers a confirmed interaction report to. It must match the
+	// glassinteract-side constant in pkg/actor/glassinteract/interact.go.
+	coordinatorGlassReplyIntake = "coordinator_ingest_glass_reply"
+
 	// glassSpeakCallable and glassRenderCallable are the only high-level
 	// Glass Interact output callables the wearable tools may invoke.
 	glassSpeakCallable  = "glass_interact.speak"
@@ -49,10 +54,14 @@ const (
 
 // coordWearableInteraction is one pending interaction record kept by the
 // Coordinator so a later wearable reply can be correlated with the prompt.
+// ElementIDs are the stable scene element ids of the rendered prompt frame
+// (glass.scene schema: "stable id for diffing + interaction routing"); a
+// confirmed interaction report on one of these ids resolves the interaction.
 type coordWearableInteraction struct {
 	InteractionID string
 	Prompt        string
 	MessageID     string
+	ElementIDs    []string
 }
 
 // handleCoordinatorWearableNotify fires high-level speech and/or display for
@@ -155,7 +164,7 @@ func (a *Actor) handleCoordinatorWearableCall(ctx actor.PureContext, req gen.Coo
 			return gen.CoordinatorWearableCallResp{}, fmt.Errorf("%s: render prompt frame: %w", coordinatorWearableCallCallable, err)
 		}
 	}
-	interactionID := a.recordWearableInteraction(req.Prompt, messageID)
+	interactionID := a.recordWearableInteraction(req.Prompt, messageID, req.Frame)
 	return gen.CoordinatorWearableCallResp{
 		InteractionID: interactionID,
 		SessionID:     speakResp.SessionID,
@@ -228,8 +237,18 @@ func decodeGlassResp[T any](result any, callable string) (T, error) {
 }
 
 // recordWearableInteraction appends one pending interaction to the bounded
-// Coordinator-only runtime record and returns its generated id.
-func (a *Actor) recordWearableInteraction(prompt, messageID string) string {
+// Coordinator-only runtime record and returns its generated id. The element
+// ids of the rendered prompt frame are recorded so a later confirmed
+// interaction report can be correlated back to this interaction.
+func (a *Actor) recordWearableInteraction(prompt, messageID string, frame *gen.GlassRenderFrame) string {
+	var elementIDs []string
+	if frame != nil && frame.Scene != nil {
+		for _, el := range frame.Scene.Elements {
+			if id := strings.TrimSpace(el.ID); id != "" {
+				elementIDs = append(elementIDs, id)
+			}
+		}
+	}
 	a.wearableInteractionsMu.Lock()
 	defer a.wearableInteractionsMu.Unlock()
 	id := newWearableID("wi_")
@@ -237,11 +256,34 @@ func (a *Actor) recordWearableInteraction(prompt, messageID string) string {
 		InteractionID: id,
 		Prompt:        prompt,
 		MessageID:     messageID,
+		ElementIDs:    elementIDs,
 	})
 	if len(a.wearableInteractions) > coordinatorWearableInteractionsMax {
 		a.wearableInteractions = a.wearableInteractions[len(a.wearableInteractions)-coordinatorWearableInteractionsMax:]
 	}
 	return id
+}
+
+// resolveWearableInteractionReply matches a confirmed interaction report
+// against the pending interactions by element id, removes the matched record,
+// and returns the reply turn text (empty when nothing matched).
+func (a *Actor) resolveWearableInteractionReply(ev gen.GlassInteractionEvent) string {
+	a.wearableInteractionsMu.Lock()
+	defer a.wearableInteractionsMu.Unlock()
+	for i, wi := range a.wearableInteractions {
+		for _, id := range wi.ElementIDs {
+			if id != ev.ElementID {
+				continue
+			}
+			a.wearableInteractions = append(a.wearableInteractions[:i], a.wearableInteractions[i+1:]...)
+			reply := strings.TrimSpace(ev.Value)
+			if reply == "" {
+				reply = ev.Action
+			}
+			return fmt.Sprintf("眼镜交互回复（%s，提示：%s）：%s", wi.InteractionID, wi.Prompt, reply)
+		}
+	}
+	return ""
 }
 
 // wearableInteractionsSnapshot returns a copy of the bounded pending

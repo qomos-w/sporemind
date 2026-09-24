@@ -529,3 +529,28 @@ func TestSpeechHandlersRequireGlassIdentity(t *testing.T) {
 		t.Fatal("speech.end from non-glass caller accepted")
 	}
 }
+
+// TestInteractionAndTelemetryRequireGlassIdentity pins the device-frame auth
+// contract for interaction_report / telemetry_report: like speech.*, they
+// authenticate the caller as the active glass session (role=glass, token
+// subject = session id). An anonymous caller with an empty session id must not
+// slide through by matching the active session.
+func TestInteractionAndTelemetryRequireGlassIdentity(t *testing.T) {
+	a := claimedSpeechActor(t)
+	anonCtx := testutil.AnonCtx(testutil.GenActorID())
+	if _, err := a.handleInteractionReport(anonCtx, gen.GlassInteractionReportReq{SessionID: "gs_aaa", Generation: 1, ElementID: "opt0", Action: "select"}); err == nil {
+		t.Fatal("interaction.report from anonymous caller accepted")
+	}
+	if _, err := a.handleInteractionReport(anonCtx, gen.GlassInteractionReportReq{ElementID: "opt0", Action: "select"}); err == nil {
+		t.Fatal("interaction.report with empty session from anonymous caller accepted")
+	}
+	if _, err := a.handleTelemetryReport(anonCtx, gen.GlassTelemetryReq{SessionID: "gs_aaa", Generation: 1, BatteryLevel: 80}); err == nil {
+		t.Fatal("telemetry.report from anonymous caller accepted")
+	}
+	// The glass-authenticated device is accepted.
+	glassCtx := testutil.AnonCtx(testutil.GenActorID())
+	glassCtx.Identity_ = id.Identity{Role: "glass", Subject: "gs_aaa"}
+	if _, err := a.handleTelemetryReport(glassCtx, gen.GlassTelemetryReq{SessionID: "gs_aaa", Generation: 1, BatteryLevel: 80}); err != nil {
+		t.Fatalf("telemetry.report from glass session rejected: %v", err)
+	}
+}

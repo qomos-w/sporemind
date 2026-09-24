@@ -16,7 +16,6 @@ data:
   placement: tool_guidance
   protected: true
   settingsVisible: true
-  devOnly: true
   tools:
     - coordinator_wearable_notify
     - coordinator_wearable_call

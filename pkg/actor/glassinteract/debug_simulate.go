@@ -8,6 +8,7 @@ import (
 	"github.com/qomos-w/gospore/actor"
 
 	gen "github.com/qomos-w/sporemind/pkg/domain/gen"
+	"github.com/qomos-w/sporemind/pkg/policy"
 )
 
 const callableDebugSimulate = "glass_interact.debug_simulate"
@@ -17,6 +18,9 @@ const callableDebugSimulate = "glass_interact.debug_simulate"
 // without requiring an active glass session. It lets the web debug panel render
 // prefab frames, trigger speak, enqueue events, and simulate telemetry/HUD.
 func (a *Actor) handleDebugSimulate(ctx actor.PureContext, req gen.GlassDebugSimulateReq) (gen.GlassDebugSimulateResp, error) {
+	if err := policy.RequireDeveloper(ctx.Identity().Role); err != nil {
+		return gen.GlassDebugSimulateResp{}, fmt.Errorf("%s: %w", callableDebugSimulate, err)
+	}
 	now := a.now()
 	cmd := strings.ToLower(strings.TrimSpace(req.Command))
 	switch cmd {

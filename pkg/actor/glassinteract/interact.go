@@ -11,6 +11,7 @@
 package glassinteract
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"sync"
@@ -18,7 +19,9 @@ import (
 
 	"github.com/qomos-w/gospore/actor"
 
+	"github.com/qomos-w/sporemind/pkg/domain"
 	gen "github.com/qomos-w/sporemind/pkg/domain/gen"
+	"github.com/qomos-w/sporemind/pkg/policy"
 )
 
 const (
@@ -297,7 +300,13 @@ func (a *Actor) handleCapabilities(_ actor.PureContext, _ gen.GlassCapabilitiesR
 // handleDebugState assembles the secret-free debug projection: session,
 // capabilities, current frame, current audio ack, bounded stats and timeline,
 // plus the inbox snapshot, HUD whitelist projection and delivery log.
-func (a *Actor) handleDebugState(_ actor.PureContext, _ gen.GlassDebugReq) (gen.GlassDebugResp, error) {
+// Developer-gated: the projection carries inbox payload text and frame content
+// that must not be readable by anonymous / glass-role callers. In-process
+// system callers (service refs) are trusted readers like the developer panel.
+func (a *Actor) handleDebugState(ctx actor.PureContext, _ gen.GlassDebugReq) (gen.GlassDebugResp, error) {
+	if err := policy.RequireDeveloperOrManager(ctx.Identity().Role); err != nil {
+		return gen.GlassDebugResp{}, fmt.Errorf("%s: %w", callableDebugState, err)
+	}
 	stats, timeline := a.debug.snapshot()
 	state := gen.GlassDebugState{Stats: stats, Timeline: timeline}
 	if active, st := a.sess.snapshot(); active {
@@ -316,32 +325,75 @@ func (a *Actor) handleDebugState(_ actor.PureContext, _ gen.GlassDebugReq) (gen.
 }
 
 // handleInteractionReport accepts a confirmed user interaction from MentraOS.
-// It validates the session, emits a glass.interaction event for the Coordinator,
-// and records a debug entry.
-func (a *Actor) handleInteractionReport(ctx actor.PureContext, req gen.GlassInteractionReportReq) (gen.GlassInteractionReportResp, error) {
-	sid, genID, err := a.sess.authorizeTarget(req.SessionID, req.Generation)
-	if err != nil {
+// It authenticates the caller as the active glass session (role=glass, token
+// subject = session id), emits a glass.interaction event, and hands the reply
+// to the Coordinator intake so a pending coordinator_wearable interaction can
+// be correlated. The handler runs on the glass_updater lane: the coordinator
+// round-trip is the same shape as the updater's delivery work and must not
+// occupy the pure pool.
+func (a *Actor) handleInteractionReport(ctx actor.Context, req gen.GlassInteractionReportReq) (gen.GlassInteractionReportResp, error) {
+	if err := a.authorizeGlassFrame(ctx, req.SessionID, req.Generation); err != nil {
 		a.debug.record(debugKindError, "interaction: "+err.Error(), a.now())
 		return gen.GlassInteractionReportResp{}, fmt.Errorf("%s: %w", callableInteractionReport, err)
 	}
 	now := a.now()
 	a.debug.record(debugKindRender, fmt.Sprintf("interaction %s action=%s value=%s tick=%d", req.ElementID, req.Action, req.Value, req.Tick), now)
-	if emitErr := ctx.EmitEvent(eventInteraction, gen.GlassInteractionEvent{
-		SessionID:  sid,
-		Generation: int64(genID),
+	ev := gen.GlassInteractionEvent{
+		SessionID:  req.SessionID,
+		Generation: req.Generation,
 		Tick:       req.Tick,
 		ElementID:  req.ElementID,
 		Action:     req.Action,
 		Value:      req.Value,
 		Timestamp:  formatTime(now),
-	}); emitErr != nil {
+	}
+	if emitErr := ctx.EmitEvent(eventInteraction, ev); emitErr != nil {
 		ctx.Logger().Error("glassinteract: emit interaction event", "err", emitErr)
 	}
+	a.deliverInteractionToCoordinator(ctx, ev)
 	return gen.GlassInteractionReportResp{
-		SessionID:    sid,
-		Generation:   int64(genID),
+		SessionID:    req.SessionID,
+		Generation:   req.Generation,
 		Acknowledged: true,
 	}, nil
+}
+
+// deliverInteractionToCoordinator hands one confirmed interaction to the
+// process-unique Coordinator so a pending coordinator_wearable interaction can
+// be resolved. Runs on the glass_updater lane; failures are logged and the
+// reply is dropped (the device does not retry, and unmatched interactions are
+// inert on the Coordinator side).
+func (a *Actor) deliverInteractionToCoordinator(ctx actor.Context, ev gen.GlassInteractionEvent) {
+	wsRef, ok := ctx.LookupService("workspace")
+	if !ok {
+		ctx.Logger().Error("glassinteract: workspace service unavailable for interaction delivery")
+		return
+	}
+	planner := ctx.Planner()
+	if planner == nil {
+		ctx.Logger().Error("glassinteract: planner unavailable for interaction delivery")
+		return
+	}
+	callCtx, cancel := context.WithTimeout(ctx.Lifecycle(), domain.DefaultInvokeTimeout)
+	defer cancel()
+	result, err := planner.Call(callCtx, wsRef, "workspace.coordinator_peek", nil).Await()
+	if err != nil {
+		ctx.Logger().Error("glassinteract: lookup coordinator for interaction delivery", "err", err)
+		return
+	}
+	lookup, ok := decodeCoordinatorLookup(result)
+	if !ok || !lookup.Found || lookup.ActorID == "" {
+		ctx.Logger().Error("glassinteract: coordinator unavailable for interaction delivery")
+		return
+	}
+	coordRef, ok := lookupCoordinatorRef(ctx, lookup.ActorID)
+	if !ok {
+		ctx.Logger().Error("glassinteract: coordinator actor unavailable for interaction delivery", "actorID", lookup.ActorID)
+		return
+	}
+	if _, err := planner.Call(callCtx, coordRef, "coordinator_ingest_glass_reply", ev).Await(); err != nil {
+		ctx.Logger().Error("glassinteract: deliver interaction reply to coordinator", "err", err)
+	}
 }
 
 // renderDetail builds a compact debug detail for a rendered frame.
@@ -363,14 +415,13 @@ func renderDetail(f gen.GlassRenderFrame) string {
 }
 
 // handleTelemetryReport accepts client-reported device telemetry (battery,
-// charging). The handler is stateless: it mutates only the hudManager, which
-// is mutex-guarded, and emits a HUD update only on change.
+// charging). Glass-authenticated like every device frame path (role=glass,
+// token subject = session id). The handler is stateless: it mutates only the
+// hudManager, which is mutex-guarded, and emits a HUD update only on change.
 func (a *Actor) handleTelemetryReport(ctx actor.PureContext, req gen.GlassTelemetryReq) (gen.GlassTelemetryResp, error) {
-	sid, _, err := a.sess.authorizeTarget(req.SessionID, req.Generation)
-	if err != nil {
+	if err := a.authorizeGlassFrame(ctx, req.SessionID, req.Generation); err != nil {
 		return gen.GlassTelemetryResp{}, fmt.Errorf("%s: %w", callableTelemetry, err)
 	}
-	_ = sid
 	if a.hud.setBattery(int(req.BatteryLevel), req.Charging, true) {
 		a.emitHudUpdate(ctx)
 	}

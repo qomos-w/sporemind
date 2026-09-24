@@ -7,6 +7,7 @@ import (
 	"time"
 
 	gen "github.com/qomos-w/sporemind/pkg/domain/gen"
+	"github.com/qomos-w/gospore/id"
 	"github.com/qomos-w/sporemind/pkg/testutil"
 )
 
@@ -338,7 +339,10 @@ func TestHandleDebugStateProjection(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	resp, err := a.handleDebugState(nil, gen.GlassDebugReq{})
+	// debug_state is developer-gated; call it with a developer identity.
+	devCtx := testutil.AnonCtx(testutil.GenActorID())
+	devCtx.Identity_ = id.Identity{Role: "developer"}
+	resp, err := a.handleDebugState(devCtx, gen.GlassDebugReq{})
 	if err != nil {
 		t.Fatalf("debug state: %v", err)
 	}
@@ -370,7 +374,9 @@ func TestHandleDebugStateProjection(t *testing.T) {
 
 func TestHandleDebugStateNoSession(t *testing.T) {
 	a, _ := freshTestActor(t)
-	resp, err := a.handleDebugState(nil, gen.GlassDebugReq{})
+	devCtx := testutil.AnonCtx(testutil.GenActorID())
+	devCtx.Identity_ = id.Identity{Role: "developer"}
+	resp, err := a.handleDebugState(devCtx, gen.GlassDebugReq{})
 	if err != nil {
 		t.Fatalf("debug state: %v", err)
 	}

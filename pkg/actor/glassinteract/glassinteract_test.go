@@ -226,12 +226,18 @@ func TestClaimFirstSessionAndGetState(t *testing.T) {
 		t.Fatalf("first claim flags = reconnected=%v replaced=%v, want false", resp.Reconnected, resp.Replaced)
 	}
 
-	state, err := a.handleGetState(nil, gen.GlassGetStateReq{})
+	state, err := a.handleGetState(ctx, gen.GlassGetStateReq{})
 	if err != nil {
 		t.Fatalf("get_state: %v", err)
 	}
 	if !state.Active || state.Session == nil || state.Session.SessionID != sessionID {
 		t.Fatalf("get_state = %+v, want active session %s", state, sessionID)
+	}
+
+	// get_state is glass-only: anonymous callers are rejected.
+	anonCtx := testutil.AnonCtx(testutil.GenActorID())
+	if _, err := a.handleGetState(anonCtx, gen.GlassGetStateReq{}); err == nil {
+		t.Fatal("get_state from anonymous caller accepted")
 	}
 }
 
@@ -364,7 +370,7 @@ func TestOnInitLoadsPersistedSession(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	state, err := a2.handleGetState(nil, gen.GlassGetStateReq{})
+	state, err := a2.handleGetState(glassCtx(testutil.GenActorID(), sessionID), gen.GlassGetStateReq{})
 	if err != nil {
 		t.Fatal(err)
 	}

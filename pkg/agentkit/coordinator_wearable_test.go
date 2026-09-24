@@ -4,7 +4,6 @@ import (
 	"sort"
 	"testing"
 
-	"github.com/qomos-w/sporemind/pkg/buildinfo"
 	"github.com/qomos-w/sporemind/pkg/domain"
 )
 
@@ -107,44 +106,31 @@ func TestCoordinatorWearableBundleMountedOnlyOnCoordinator(t *testing.T) {
 	}
 }
 
-// TestCoordinatorWearableExcludedOutsideDev guards the dev-build gate: outside
-// dev builds the coordinator kind defaults must not list the wearable bundle,
-// and IsDevOnlyBundle must classify it (used by the agent seeding/reconcile
-// filters so persisted kind configs cannot reintroduce it).
-func TestCoordinatorWearableExcludedOutsideDev(t *testing.T) {
-	if !IsDevOnlyBundle("builtin:bundle:coordinator-wearable") {
-		t.Fatal("IsDevOnlyBundle must classify coordinator-wearable")
+// TestCoordinatorWearableNotDevOnly guards the production enablement: the
+// wearable bundle is mounted on the coordinator kind defaults in every build
+// type, and IsDevOnlyBundle no longer classifies it.
+func TestCoordinatorWearableNotDevOnly(t *testing.T) {
+	if IsDevOnlyBundle("builtin:bundle:coordinator-wearable") {
+		t.Fatal("IsDevOnlyBundle must not classify coordinator-wearable (production-enabled)")
 	}
 	if IsDevOnlyBundle("builtin:bundle:web-search") {
 		t.Fatal("IsDevOnlyBundle must not flag regular bundles")
 	}
-	oldType := buildinfo.BuildType
-	t.Cleanup(func() { buildinfo.BuildType = oldType })
-
-	for _, buildTypes := range []string{"release", "beta"} {
-		buildinfo.BuildType = buildTypes
+	for _, buildTypes := range []string{"dev", "release", "beta"} {
+		var coordinatorHasWearable bool
 		for _, cfg := range BaseKindConfigs() {
+			if cfg.Kind != domain.AgentKindCoordinator {
+				continue
+			}
 			for _, b := range cfg.DefaultBundleIDs {
 				if b == "builtin:bundle:coordinator-wearable" {
-					t.Fatalf("%s build kind defaults still list coordinator-wearable (kind %q)", buildTypes, cfg.Kind)
+					coordinatorHasWearable = true
 				}
 			}
 		}
-	}
-	buildinfo.BuildType = "dev"
-	var coordinatorHasWearable bool
-	for _, cfg := range BaseKindConfigs() {
-		if cfg.Kind != domain.AgentKindCoordinator {
-			continue
+		if !coordinatorHasWearable {
+			t.Fatalf("%s build coordinator defaults must list coordinator-wearable", buildTypes)
 		}
-		for _, b := range cfg.DefaultBundleIDs {
-			if b == "builtin:bundle:coordinator-wearable" {
-				coordinatorHasWearable = true
-			}
-		}
-	}
-	if !coordinatorHasWearable {
-		t.Fatal("dev build coordinator defaults must list coordinator-wearable")
 	}
 }
 

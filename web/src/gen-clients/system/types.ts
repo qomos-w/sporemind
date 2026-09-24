@@ -1094,6 +1094,7 @@ export interface AgentSkillUseResp {
   Body?: string | undefined;
   SkillId?: string | undefined;
   Warning?: string | undefined;
+  Result?: string | undefined;
 }
 
 export interface AgentStatusResp {

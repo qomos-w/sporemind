@@ -73,8 +73,14 @@ const (
 // monitor / display frame / inbox) single-writer within the lane while the
 // lane's cross-actor Await never touches the owner lane.
 const (
-	loopGlassPoll    = "glass_poll"
+	loopGlassPoll = "glass_poll"
+	// loopGlassUpdater serialises the coordinator round-trips: the session-
+	// gated inbox delivery tick and the interaction-report reply delivery.
 	loopGlassUpdater = "glass_updater"
+	// loopGlassSTT carries the speech.end finalization: the coordinator
+	// hotword peek plus the voice.recognize STT call are seconds-long
+	// cross-actor awaits that must never occupy the owner lane.
+	loopGlassSTT = "glass_stt"
 )
 
 // IdleRenderInterval is how often the idle frame is refreshed so the clock
@@ -491,6 +497,9 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	if err := ctx.RegisterLoop(loopGlassUpdater, actor.ModeStateful); err != nil {
 		return fmt.Errorf("glassinteract: register loop %s: %w", loopGlassUpdater, err)
 	}
+	if err := ctx.RegisterLoop(loopGlassSTT, actor.ModeStateful); err != nil {
+		return fmt.Errorf("glassinteract: register loop %s: %w", loopGlassSTT, err)
+	}
 
 	if err := ctx.Register(callableBootstrap, a.handleBootstrap, actor.Public()); err != nil {
 		return fmt.Errorf("glassinteract: register %s: %w", callableBootstrap, err)
@@ -519,7 +528,7 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	if err := ctx.Register(callableSpeechChunk, a.handleSpeechChunk, actor.Public()); err != nil {
 		return fmt.Errorf("glassinteract: register %s: %w", callableSpeechChunk, err)
 	}
-	if err := ctx.Register(callableSpeechEnd, a.handleSpeechEnd, actor.Public()); err != nil {
+	if err := ctx.Register(callableSpeechEnd, a.handleSpeechEnd, actor.Public(), actor.WithLoop(loopGlassSTT)); err != nil {
 		return fmt.Errorf("glassinteract: register %s: %w", callableSpeechEnd, err)
 	}
 	if err := ctx.Register(callableTranscriptLatest, a.handleTranscriptLatest, actor.Internal()); err != nil {
@@ -540,7 +549,7 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	if err := ctx.Register(callableDebugSimulate, a.handleDebugSimulate, actor.Public()); err != nil {
 		return fmt.Errorf("glassinteract: register %s: %w", callableDebugSimulate, err)
 	}
-	if err := ctx.Register(callableInteractionReport, a.handleInteractionReport, actor.Public()); err != nil {
+	if err := ctx.Register(callableInteractionReport, a.handleInteractionReport, actor.Public(), actor.WithLoop(loopGlassUpdater)); err != nil {
 		return fmt.Errorf("glassinteract: register %s: %w", callableInteractionReport, err)
 	}
 	if err := ctx.Register(callableEventEnqueue, a.handleEventEnqueue, actor.Internal()); err != nil {
@@ -940,10 +949,12 @@ func (a *Actor) handleClaim(ctx actor.Context, req gen.GlassSessionClaimReq) (ge
 		ctx.Logger().Error("glassinteract: persist session state", "err", err)
 	}
 	a.scheduleCheck(ctx)
-	// The session is online: arm the periodic updater and run an immediate
-	// check so queued events are delivered without waiting for the first tick.
+	// The session is online: arm the periodic updater and kick an immediate
+	// check on the glass_updater lane so queued events are delivered without
+	// waiting for the first tick — without holding the owner lane on the
+	// coordinator round-trip.
 	a.scheduleUpdater(ctx)
-	a.updaterTick(ctx)
+	a.kickUpdater(ctx)
 
 	return gen.GlassSessionClaimResp{
 		SessionID:   res.Session.SessionID,
@@ -956,8 +967,13 @@ func (a *Actor) handleClaim(ctx actor.Context, req gen.GlassSessionClaimReq) (ge
 	}, nil
 }
 
-// handleGetState returns the current logical session projection.
-func (a *Actor) handleGetState(_ actor.PureContext, _ gen.GlassGetStateReq) (gen.GlassGetStateResp, error) {
+// handleGetState returns the current logical session projection. Glass-only:
+// the projection is device-facing (session id/generation/lastFrame) and is not
+// part of the developer debug surface (debug_state covers that).
+func (a *Actor) handleGetState(ctx actor.PureContext, _ gen.GlassGetStateReq) (gen.GlassGetStateResp, error) {
+	if ctx.Identity().Role != "glass" {
+		return gen.GlassGetStateResp{}, fmt.Errorf("%s: requires a glass-authenticated /ws session (role=glass)", callableGetState)
+	}
 	active, st := a.sess.snapshot()
 	return gen.GlassGetStateResp{Active: active, Session: &st}, nil
 }

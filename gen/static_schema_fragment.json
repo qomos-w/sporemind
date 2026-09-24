@@ -42811,6 +42811,14 @@
               "name": "string"
             },
             "optional": true
+          },
+          {
+            "name": "Result",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
           }
         ],
         "schemaId": 2689

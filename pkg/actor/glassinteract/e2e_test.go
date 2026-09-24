@@ -140,8 +140,9 @@ func TestGlassInteractEndToEnd(t *testing.T) {
 		t.Fatal("replaced session claim succeeded, want rejection")
 	}
 
-	// 6. get_state reports the new session as the only active one.
-	stRaw, err := invokeCall(t, handle, "glass_interact.session_get_state", map[string]any{}, "", "")
+	// 6. get_state reports the new session as the only active one (glass-only
+	// callable; the device's role/subject is the new session).
+	stRaw, err := invokeCall(t, handle, "glass_interact.session_get_state", map[string]any{}, "glass", boot2.SessionID)
 	if err != nil {
 		t.Fatalf("get_state invoke: %v", err)
 	}

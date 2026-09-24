@@ -30,8 +30,8 @@ func TestBuiltinComponentCardProvider(t *testing.T) {
 		}
 		if item.ID == "builtin:bundle:coordinator-wearable" {
 			wearableFound = true
-			if item.Data["devOnly"] != true {
-				t.Fatalf("coordinator-wearable devOnly=%#v", item.Data["devOnly"])
+			if _, ok := item.Data["devOnly"]; ok {
+				t.Fatalf("coordinator-wearable must not be devOnly (production-enabled): %#v", item.Data)
 			}
 		}
 	}

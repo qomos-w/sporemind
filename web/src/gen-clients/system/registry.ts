@@ -45525,6 +45525,15 @@ export const schemaEntries: SchemaEntry[] = [
             typeId: 12
           },
           optional: true
+        },
+        {
+          name: "Result",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
         }
       ]
     }

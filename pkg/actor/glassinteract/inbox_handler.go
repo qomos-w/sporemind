@@ -50,7 +50,7 @@ func (a *Actor) handleEventEnqueue(ctx actor.Context, req gen.GlassEventEnqueueR
 		}
 	}
 	// Immediate updater check: a freshly enqueued event may be deliverable now.
-	a.updaterTick(ctx)
+	a.kickUpdater(ctx)
 	return resp, nil
 }
 
@@ -75,7 +75,7 @@ func (a *Actor) handleEventComplete(ctx actor.Context, req gen.GlassEventComplet
 		}
 	}
 	// A defer/failed event is eligible again; check immediately.
-	a.updaterTick(ctx)
+	a.kickUpdater(ctx)
 	return gen.GlassEventCompleteResp{EventID: req.EventID, State: string(state)}, nil
 }
 
@@ -99,6 +99,19 @@ func (a *Actor) handleUpdaterTick(ctx actor.Context) error {
 	return nil
 }
 
+// kickUpdater requests one immediate updater evaluation on the glass_updater
+// lane. It replaces the old inline owner-lane updaterTick calls (claim /
+// enqueue / complete): those ran the coordinator round-trip synchronously on
+// the owner lane, violating the no-cross-actor-Await rule. The kick is a
+// fire-and-forget self-call; delivery remains single-flight (in_flight gate),
+// and the periodic 5s schedule (scheduleUpdater) is the fallback when a kick
+// races past an already-running tick.
+func (a *Actor) kickUpdater(ctx actor.Context) {
+	if err := ctx.After(0, callableUpdaterTick, nil); err != nil {
+		ctx.Logger().Error("glassinteract: kick updater tick failed", "err", err)
+	}
+}
+
 // scheduleUpdater arms the periodic updater tick at most once. It is a no-op
 // when a tick is already outstanding. The check-and-set is a CompareAndSwap
 // because the scheduled tick (glass_updater lane) and a session claim (owner
@@ -115,11 +128,10 @@ func (a *Actor) scheduleUpdater(ctx actor.PureContext) {
 }
 
 // updaterTick runs one updater evaluation: housekeeping, the session/coordinator
-// gate, and at most one delivery. It is safe to call from handlers (the
-// enqueue/complete/claim immediate checks, which run inline on the owner lane)
-// and from the scheduled tick on the glass_updater lane. The inbox, delivery
-// log, and debug timeline it mutates are mutex-guarded, so the two lanes do not
-// race; the in_flight gate keeps delivery single-flight across lanes.
+// gate, and at most one delivery. It is called from the scheduled tick and the
+// claim/enqueue/complete kicks, all of which arrive on the glass_updater lane.
+// The inbox, delivery log, and debug timeline it mutates are mutex-guarded, so
+// concurrent lanes do not race; the in_flight gate keeps delivery single-flight.
 func (a *Actor) updaterTick(ctx actor.Context) {
 	now := a.now()
 	a.inbox.housekeep(now)

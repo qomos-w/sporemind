@@ -1,7 +1,6 @@
 package agentkit
 
 import (
-	"github.com/qomos-w/sporemind/pkg/buildinfo"
 	"github.com/qomos-w/sporemind/pkg/domain"
 )
 
@@ -9,9 +8,9 @@ import (
 // (BuildType=dev): outside dev they are excluded from kind defaults, cannot
 // be mounted (agent_component mount guard), and are hidden from every
 // frontend picker via the card metadata flag `data.devOnly`.
-var DevOnlyBundleIDs = []string{
-	"builtin:bundle:coordinator-wearable",
-}
+// coordinator-wearable was removed from this list: the wearable interaction
+// loop (notify / call / reply intake) is now complete and production-enabled.
+var DevOnlyBundleIDs = []string{}
 
 // IsDevOnlyBundle reports whether a builtin bundle card is dev-build-only.
 func IsDevOnlyBundle(cardID string) bool {
@@ -157,9 +156,7 @@ func BaseKindConfigs() []domain.AgentKindConfig {
 		"builtin:bundle:computeruse-tools",
 		"builtin:bundle:web-search",
 		"builtin:bundle:workbench-attention",
-	}
-	if buildinfo.IsDev() {
-		coordinator.DefaultBundleIDs = append(coordinator.DefaultBundleIDs, "builtin:bundle:coordinator-wearable")
+		"builtin:bundle:coordinator-wearable",
 	}
 
 	// pluginAgent is the per-(app, slot) dedicated agent provisioned at

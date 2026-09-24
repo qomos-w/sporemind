@@ -801,6 +801,9 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 		if err := ctx.Register(coordinatorGlassEventIntake, a.handleCoordinatorGlassEvent, actor.Internal(), actor.WithLoop(coordEventLoop)); err != nil {
 			return fmt.Errorf("agent: register coordinator_ingest_glass_event: %w", err)
 		}
+		if err := ctx.Register(coordinatorGlassReplyIntake, a.handleCoordinatorGlassReply, actor.Internal(), actor.WithLoop(coordEventLoop)); err != nil {
+			return fmt.Errorf("agent: register coordinator_ingest_glass_reply: %w", err)
+		}
 		if err := ctx.Register(coordinatorLifecycleNotify, a.handleCoordinatorLifecycleNotify, actor.Internal(), actor.WithLoop(coordEventLoop)); err != nil {
 			return fmt.Errorf("agent: register coordinator_lifecycle_notify: %w", err)
 		}

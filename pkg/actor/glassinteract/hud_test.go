@@ -5,6 +5,7 @@ import (
 
 	"github.com/qomos-w/gospore/ref"
 	"github.com/qomos-w/sporemind/pkg/domain/gen"
+	"github.com/qomos-w/gospore/id"
 	"github.com/qomos-w/sporemind/pkg/testutil"
 )
 
@@ -127,6 +128,7 @@ func TestHudManager_NoChangeDetection(t *testing.T) {
 func TestHandleTelemetryReport(t *testing.T) {
 	a := claimedActorWithInbox(t)
 	ctx := testutilWithHud()
+	ctx.Identity_ = id.Identity{Role: "glass", Subject: "gs_aaa"}
 
 	// First report — should update and emit
 	resp, err := a.handleTelemetryReport(ctx, gen.GlassTelemetryReq{
@@ -177,6 +179,7 @@ func TestHandleTelemetryReport(t *testing.T) {
 func TestTelemetryWrongSession(t *testing.T) {
 	a := claimedActorWithInbox(t)
 	ctx := testutilWithHud()
+	ctx.Identity_ = id.Identity{Role: "glass", Subject: "gs_aaa"}
 
 	_, err := a.handleTelemetryReport(ctx, gen.GlassTelemetryReq{
 		SessionID:  "wrong_session",

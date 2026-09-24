@@ -56,14 +56,15 @@ func (w *slowWorkspaceActor) callCount() int {
 }
 
 // invokeWithTimeout performs an in-process ref.Invoke and waits for the final
-// response with an explicit budget; errors are reported via errOut.
-func invokeWithTimeout(t *testing.T, h *runtime.Handle, callID string, payload any, budget time.Duration) ([]byte, error) {
+// response with an explicit budget; errors are reported via errOut. Optional
+// caller headers set the gateway-style caller identity (role/subject).
+func invokeWithTimeout(t *testing.T, h *runtime.Handle, callID string, payload any, budget time.Duration, headers ...map[string]string) ([]byte, error) {
 	t.Helper()
 	ref, ok := h.App().LookupService("glass_interact")
 	if !ok {
 		t.Fatal("glassinteract service not found")
 	}
-	call := ref.Invoke(context.Background(), callID, payload)
+	call := ref.Invoke(context.Background(), callID, payload, headers...)
 	if call == nil {
 		t.Fatalf("invoke %s returned nil call", callID)
 	}
@@ -149,8 +150,10 @@ func TestAgentPollTickDoesNotBlockBootstrapOrSessionList(t *testing.T) {
 	}
 
 	// A session-read (owner-lane list/read-class) call must also answer
-	// promptly — the poll's workspace fetch is still in flight.
-	if _, err := invokeWithTimeout(t, handle, "glass_interact.session_get_state", nil, 1500*time.Millisecond); err != nil {
+	// promptly — the poll's workspace fetch is still in flight. get_state is
+	// glass-only, so the probe carries the device identity.
+	if _, err := invokeWithTimeout(t, handle, "glass_interact.session_get_state", nil, 1500*time.Millisecond,
+		map[string]string{"gospore.caller_role": "glass"}); err != nil {
 		t.Fatalf("session_get_state during poll fetch: %v", err)
 	}
 

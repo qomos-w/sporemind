@@ -8510,6 +8510,15 @@
               "typeId": 12
             },
             "optional": true
+          },
+          {
+            "name": "Result",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
           }
         ]
       }
@@ -69118,6 +69127,24 @@
         "kind": "struct",
         "name": "GlassEventDeliverResp",
         "className": "GlassEventDeliverResp"
+      }
+    },
+    {
+      "namespace": "",
+      "name": "coordinator_ingest_glass_reply",
+      "actorType": "agent",
+      "visibility": "internal",
+      "mode": "unary",
+      "reqSchemaId": 4036,
+      "finalSchemaId": 0,
+      "req": {
+        "kind": "struct",
+        "name": "GlassInteractionEvent",
+        "className": "GlassInteractionEvent"
+      },
+      "final": {
+        "kind": "void",
+        "name": "void"
       }
     },
     {

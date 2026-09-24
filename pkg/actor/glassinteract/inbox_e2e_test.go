@@ -157,7 +157,17 @@ func TestGlassInboxEndToEnd(t *testing.T) {
 	}
 
 	// The Coordinator received exactly one delivery with the event payload.
-	delivered := coord.deliveredSnapshot()
+	// The enqueue kicks an async updater on the glass_updater lane, so poll
+	// for the delivery (and the resulting in_flight inbox state).
+	deadline := time.Now().Add(5 * time.Second)
+	var delivered []gen.GlassEventDeliverReq
+	for {
+		delivered = coord.deliveredSnapshot()
+		if len(delivered) >= 1 || time.Now().After(deadline) {
+			break
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
 	if len(delivered) != 1 {
 		t.Fatalf("coordinator deliveries = %d, want 1", len(delivered))
 	}
@@ -306,8 +316,17 @@ func TestGlassInboxEndToEndCoordinatorCompletes(t *testing.T) {
 		t.Fatalf("enqueue resp = %+v", enq)
 	}
 
-	// The Coordinator received exactly one delivery.
-	delivered := coord.deliveredSnapshot()
+	// The Coordinator received exactly one delivery. The enqueue kicks an
+	// async updater on the glass_updater lane, so poll for the delivery.
+	deadline := time.Now().Add(5 * time.Second)
+	var delivered []gen.GlassEventDeliverReq
+	for {
+		delivered = coord.deliveredSnapshot()
+		if len(delivered) >= 1 || time.Now().After(deadline) {
+			break
+		}
+		time.Sleep(20 * time.Millisecond)
+	}
 	if len(delivered) != 1 {
 		t.Fatalf("coordinator deliveries = %d, want 1", len(delivered))
 	}
@@ -317,7 +336,7 @@ func TestGlassInboxEndToEndCoordinatorCompletes(t *testing.T) {
 
 	// Poll: the Coordinator's own completion must drive the inbox to a terminal
 	// completed state.
-	deadline := time.Now().Add(5 * time.Second)
+	deadline = time.Now().Add(5 * time.Second)
 	for {
 		inboxRaw, err := invokeCall(t, handle, "glass_interact.inbox_state", map[string]any{}, "", "")
 		if err != nil {

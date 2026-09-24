@@ -193,6 +193,9 @@ func TestUpdaterDeliversOneEventWhenCoordinatorIdle(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// The enqueue kicks an async updater on the glass_updater lane; drive one
+	// tick synchronously here (the lane handler is handleUpdaterTick's core).
+	a.updaterTick(ctx)
 	if len(delivered) != 1 {
 		t.Fatalf("deliveries = %d, want 1 (log %+v)", len(delivered), a.deliveryLog.snapshot())
 	}
@@ -271,8 +274,9 @@ func TestUpdaterDeliversOnePerTick(t *testing.T) {
 			t.Fatal(err)
 		}
 	}
-	// handleEventEnqueue runs an immediate check each time, but the first
-	// enqueue's delivery leaves one in_flight, so later enqueues cannot deliver.
+	// The enqueues kick async updater checks; drive one tick synchronously —
+	// the first delivery leaves one in_flight, so later ticks cannot deliver.
+	a.updaterTick(ctx)
 	if len(delivered) != 1 {
 		t.Fatalf("deliveries = %d, want exactly 1 (in_flight blocks)", len(delivered))
 	}
@@ -309,6 +313,8 @@ func TestDeliveryFailureRequeues(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	// Drive the async kick's tick synchronously: this delivery fails.
+	a.updaterTick(ctx)
 	ev := a.inbox.get(resp.EventID)
 	if ev == nil || ev.State != statePending || ev.Retries != 1 {
 		t.Fatalf("event after failed delivery = %+v, want pending with 1 retry", ev)
@@ -479,7 +485,12 @@ func TestDebugStateIncludesInboxHudDeliveries(t *testing.T) {
 	}); err != nil {
 		t.Fatal(err)
 	}
-	debugResp, err := a.handleDebugState(nil, gen.GlassDebugReq{})
+	// Drive the async kick's tick synchronously so the event is in_flight.
+	a.updaterTick(ctx)
+	// debug_state is developer-gated; call it with a developer identity.
+	devCtx := testutil.AnonCtx(testutil.GenActorID())
+	devCtx.Identity_ = id.Identity{Role: "developer"}
+	debugResp, err := a.handleDebugState(devCtx, gen.GlassDebugReq{})
 	if err != nil {
 		t.Fatal(err)
 	}

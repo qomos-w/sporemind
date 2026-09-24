@@ -153,8 +153,9 @@ func TestGlassInteractRenderSpeakDebugEndToEnd(t *testing.T) {
 		t.Fatalf("capabilities = %+v", capsResp.State.Capabilities)
 	}
 
-	// 5. Public debug.state exposes session/frame/stats/timeline, secret-free.
-	dbgRaw, err := invokeCall(t, handle, "glass_interact.debug_state", map[string]any{}, "", "")
+	// 5. debug.state exposes session/frame/stats/timeline, secret-free, and is
+	// developer-gated: call it with a developer role.
+	dbgRaw, err := invokeCall(t, handle, "glass_interact.debug_state", map[string]any{}, "developer", "")
 	if err != nil {
 		t.Fatalf("debug.state: %v", err)
 	}
