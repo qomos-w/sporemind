@@ -282,6 +282,41 @@ func TestHandleCoordinatorWearableCall_RendersPromptFrame(t *testing.T) {
 	}
 }
 
+// TestWearableCallDefaultsFocusID pins the MentraOS gesture-routing
+// convention: a prompt frame with interactive elements but no FocusId is
+// rendered (and recorded) with FocusId defaulted to the first list/button
+// element; frames without interactive elements are passed through untouched.
+func TestWearableCallDefaultsFocusID(t *testing.T) {
+	var renders []gen.GlassRenderReq
+	ctx, a := coordinatorWearableCtx(t, captureWearableCalls(nil, &renders, "", ""))
+	frame := gen.GlassRenderFrame{Scene: &gen.GlassScene{
+		Elements: []gen.GlassSceneElement{
+			{ID: "title", Type: "text"},
+			{ID: "opt0", Type: "list"},
+		},
+	}}
+	if _, err := a.handleCoordinatorWearableCall(ctx, gen.CoordinatorWearableCallReq{Prompt: "选一个", Frame: &frame}); err != nil {
+		t.Fatalf("call: %v", err)
+	}
+	if len(renders) != 1 || renders[0].Frame.Scene == nil || renders[0].Frame.Scene.FocusID != "opt0" {
+		t.Fatalf("rendered focus = %+v, want FocusId=opt0", renders[0].Frame.Scene)
+	}
+	// The original request frame is not mutated.
+	if frame.Scene.FocusID != "" {
+		t.Fatalf("caller frame mutated: %+v", frame.Scene)
+	}
+	// No interactive element: FocusId stays empty (client keeps legacy routing).
+	plain := gen.GlassRenderFrame{Scene: &gen.GlassScene{Elements: []gen.GlassSceneElement{{ID: "t", Type: "text"}}}}
+	renders = nil
+	ctx2, a2 := coordinatorWearableCtx(t, captureWearableCalls(nil, &renders, "", ""))
+	if _, err := a2.handleCoordinatorWearableCall(ctx2, gen.CoordinatorWearableCallReq{Prompt: "看一眼", Frame: &plain}); err != nil {
+		t.Fatalf("call: %v", err)
+	}
+	if len(renders) != 1 || renders[0].Frame.Scene.FocusID != "" {
+		t.Fatalf("text-only frame FocusId = %q, want empty", renders[0].Frame.Scene.FocusID)
+	}
+}
+
 // TestWearableReplyLoop closes the coordinator_wearable_call contract: the
 // pending record carries the prompt frame's scene element ids, a confirmed
 // interaction report on one of those ids resolves the record exactly once, and

@@ -39,7 +39,12 @@ exposed to any LLM.
   user. The `Prompt` is delivered through the high-level speak surface (plus an
   optional rendered `Frame`) and recorded as a bounded pending interaction so
   the eventual reply can be correlated. Returns the pending interaction
-  response with an `InteractionId`.
+  response with an `InteractionId`. Give the frame a `Scene` with one `list`
+  element (options) — the server defaults `Scene.FocusId` to the first
+  interactive element when omitted, and the glasses route gestures by it. The
+  user's confirmed choice comes back to you as a new turn
+  (`via=glass_interaction`) reporting the element id, action (`select`/`cancel`)
+  and chosen value.
 
 ## Do Not
 
@@ -48,3 +53,7 @@ exposed to any LLM.
   directly — they are internal and not part of the LLM tool surface.
 - Do not use `coordinator_wearable_call` as a fire-and-forget notification;
   use `coordinator_wearable_notify` when no reply is expected.
+- Do not re-render the interactive prompt scene while its
+  `coordinator_wearable_call` is still pending — a full-frame re-render resets
+  the user's in-progress selection on the glasses. Send progress as `speak`
+  or wait for the reply turn first.

@@ -146,6 +146,12 @@ func (a *Actor) handleCoordinatorWearableCall(ctx actor.PureContext, req gen.Coo
 	if messageID == "" {
 		messageID = newWearableID("wm_")
 	}
+	// MentraOS client convention: gestures route to the element named by
+	// Scene.FocusId. The LLM-supplied frame may omit it, so the server
+	// guarantees it — an empty FocusId is defaulted to the first interactive
+	// (list/button) element before the frame is rendered. This is the element
+	// the pending wi_* interaction will be correlated by.
+	frame := ensurePromptFocusID(req.Frame)
 	speakResp, err := callGlassSpeak(ctx, planner, glassRef, gen.GlassSpeakReq{
 		Text:       req.Prompt,
 		MessageID:  messageID,
@@ -155,16 +161,16 @@ func (a *Actor) handleCoordinatorWearableCall(ctx actor.PureContext, req gen.Coo
 	if err != nil {
 		return gen.CoordinatorWearableCallResp{}, fmt.Errorf("%s: no online glass session to interact with: %w", coordinatorWearableCallCallable, err)
 	}
-	if req.Frame != nil && !frameEmpty(req.Frame) {
+	if frame != nil && !frameEmpty(frame) {
 		if _, err := callGlassRender(ctx, planner, glassRef, gen.GlassRenderReq{
-			Frame:      *req.Frame,
+			Frame:      *frame,
 			SessionID:  req.SessionID,
 			Generation: req.Generation,
 		}); err != nil {
 			return gen.CoordinatorWearableCallResp{}, fmt.Errorf("%s: render prompt frame: %w", coordinatorWearableCallCallable, err)
 		}
 	}
-	interactionID := a.recordWearableInteraction(req.Prompt, messageID, req.Frame)
+	interactionID := a.recordWearableInteraction(req.Prompt, messageID, frame)
 	return gen.CoordinatorWearableCallResp{
 		InteractionID: interactionID,
 		SessionID:     speakResp.SessionID,
@@ -234,6 +240,27 @@ func decodeGlassResp[T any](result any, callable string) (T, error) {
 	default:
 		return zero, fmt.Errorf("%s returned unexpected type %T", callable, result)
 	}
+}
+
+// ensurePromptFocusID returns the frame unchanged unless it carries a scene
+// without FocusId that contains interactive (list/button) elements — in that
+// case it returns a shallow copy with FocusId set to the first interactive
+// element id, fulfilling the MentraOS gesture-routing convention.
+func ensurePromptFocusID(frame *gen.GlassRenderFrame) *gen.GlassRenderFrame {
+	if frame == nil || frame.Scene == nil || strings.TrimSpace(frame.Scene.FocusID) != "" {
+		return frame
+	}
+	for _, el := range frame.Scene.Elements {
+		if el.ID == "" || (el.Type != "list" && el.Type != "button") {
+			continue
+		}
+		patched := *frame
+		scene := *frame.Scene
+		scene.FocusID = el.ID
+		patched.Scene = &scene
+		return &patched
+	}
+	return frame
 }
 
 // recordWearableInteraction appends one pending interaction to the bounded
