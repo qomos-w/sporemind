@@ -76,10 +76,10 @@ function timelineKindLabel(kind: string): string {
   }
 }
 
-function FrameCard({ frame }: { frame: GlassRenderFrame | undefined }) {
+function FrameCard({ frame, online }: { frame: GlassRenderFrame | undefined; online?: boolean }) {
   return (
     <section className="glass-debug-card glass-debug-canvas-card">
-      <GlassScenePreview frame={frame} />
+      <GlassScenePreview frame={frame} online={online} />
       {frame ? (
         <div className="glass-debug-frame-meta">
           {frame.Scene ? <span className="glass-debug-chip">tick: {frame.Scene.Tick}</span> : null}
@@ -424,7 +424,7 @@ export function GlassDebugPanel() {
 
       <div className="glass-debug-grid">
         <ConnectionCard state={state} connectionEvents={connectionEvents} />
-        <FrameCard frame={state?.CurrentFrame} />
+        <FrameCard frame={state?.CurrentFrame} online={state?.Session?.Online} />
         <SimulationCard onResult={setSimMsg} />
         <CapabilitiesCard capabilities={capabilities} />
         <AudioAckCard ack={state?.AudioAck} stats={state?.Stats ?? { Utterances: 0, Transcripts: 0, Renders: 0, Speaks: 0, SpeakDeduped: 0, Errors: 0 }} />

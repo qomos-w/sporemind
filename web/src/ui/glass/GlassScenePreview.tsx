@@ -14,6 +14,13 @@ const CANVAS_H = 288
 // Real G2 firmware metrics: 26px bitmap glyph inside a 40px text container.
 const LINE_HEIGHT_PX = 40
 const FONT_SIZE_PX = 26
+// Device-side compositing constants (MentraOS rendering contract, 54f627c):
+// the HUD bar is drawn by the device (glass.hud.update), reserves the top
+// 40px and shifts scene content down; the firmware text-container pool holds
+// 6 elements total and the HUD occupies slots in front of the scene.
+const HUD_HEIGHT_PX = 40
+const DEVICE_TEXT_POOL = 6
+const HUD_POOL_COST = 3
 const VERTICAL_PADDING_PX = 7
 const HORIZONTAL_PADDING_PX = 4
 const PREVIEW_FONT = '"GlassesMirror", "Cascadia Code", "Consolas", "Courier New", monospace'
@@ -23,21 +30,33 @@ function px(v: number, scale: number): number {
 }
 
 // Focus ring for the element the device would route gestures to (Scene.FocusId).
+// Preview tool only — the device itself gives no FocusId visual feedback.
 const focusOutline = (focused: boolean): React.CSSProperties =>
   focused ? { outline: '2px dashed #22d3ee', outlineOffset: 1 } : {}
 
-function renderElement(el: GlassSceneElement, index: number, scale: number, focusId?: string) {
+const overBudgetStyle = (over: boolean): React.CSSProperties =>
+  over ? { opacity: 0.25, outline: '2px dashed #f43f5e', outlineOffset: 1 } : {}
+
+function renderElement(
+  el: GlassSceneElement,
+  index: number,
+  scale: number,
+  focusId?: string,
+  yOffset = 0,
+  overBudget = false,
+) {
   if (el.Visible === false) return null
   const focused = focusId !== undefined && el.Id === focusId
 
   const baseStyle: React.CSSProperties = {
     position: 'absolute',
     left: px(el.Box.X, scale),
-    top: px(el.Box.Y, scale),
+    top: px(el.Box.Y + yOffset, scale),
     width: px(el.Box.W, scale),
     height: px(el.Box.H, scale),
     boxSizing: 'border-box',
     zIndex: el.Z ?? 0,
+    ...overBudgetStyle(overBudget),
   }
 
   switch (el.Type) {
@@ -143,8 +162,10 @@ const MAX_SCALE = 8
 
 export const GlassScenePreview = memo(function GlassScenePreview({
   frame,
+  online,
 }: {
   frame: GlassRenderFrame | undefined
+  online?: boolean
 }) {
   const [showGrid, setShowGrid] = useState(false)
   const [autoScale, setAutoScale] = useState(true)
@@ -153,6 +174,21 @@ export const GlassScenePreview = memo(function GlassScenePreview({
   const wrapperRef = useRef<HTMLDivElement>(null)
   const elements = frame?.Scene?.Elements
   const sorted = elements ? [...elements].sort((a, b) => (a.Z ?? 0) - (b.Z ?? 0)) : []
+  const [showDeviceHUD, setShowDeviceHUD] = useState(true)
+
+  // Device text-container pool: the HUD bar occupies slots in front of the
+  // scene, and elements beyond the pool are silently dropped on the device.
+  const sceneBudget = showDeviceHUD ? DEVICE_TEXT_POOL - HUD_POOL_COST : DEVICE_TEXT_POOL
+  const overBudgetIds = new Set<string>()
+  if (elements) {
+    let used = 0
+    for (const el of elements) {
+      if (el.Visible === false) continue
+      used++
+      if (used > sceneBudget) overBudgetIds.add(el.Id)
+    }
+  }
+  const yOffset = showDeviceHUD ? HUD_HEIGHT_PX : 0
 
   useEffect(() => {
     const el = wrapperRef.current
@@ -193,8 +229,16 @@ export const GlassScenePreview = memo(function GlassScenePreview({
         </span>
         <span className="glass-preview-scale">{CANVAS_W}×{CANVAS_H} @ {scale}x</span>
         {frame?.Scene?.FocusId ? (
-          <span className="glass-preview-scale" title="Scene.FocusId — element the device routes gestures to">
+          <span className="glass-preview-scale" title="Scene.FocusId — element the device routes gestures to (preview tool; the device itself shows no focus feedback)">
             focus: {frame.Scene.FocusId}
+          </span>
+        ) : null}
+        {overBudgetIds.size > 0 ? (
+          <span
+            className="glass-preview-scale"
+            style={{ color: '#f43f5e' }}
+            title="Elements beyond the firmware text-container pool (6 slots; HUD uses 3). The device drops them silently — shown ghosted here."          >
+            {overBudgetIds.size} over budget
           </span>
         ) : null}
         <div className="glass-preview-zoom">
@@ -202,6 +246,13 @@ export const GlassScenePreview = memo(function GlassScenePreview({
           <button className="glass-preview-zoom-btn" onClick={zoomFit} title="Fit to width">fit</button>
           <button className="glass-preview-zoom-btn" onClick={zoomIn} title="Zoom in">+</button>
         </div>
+        <button
+          className={`glass-preview-toggle ${showDeviceHUD ? 'active' : ''}`}
+          onClick={() => setShowDeviceHUD(v => !v)}
+          title="Device-drawn HUD bar (glass.hud.update): reserves top 40px, shifts scene down, and consumes 3 of the 6 text-container slots. Values are placeholders except connection."
+        >
+          HUD
+        </button>
         <button
           className={`glass-preview-toggle ${showGrid ? 'active' : ''}`}
           onClick={() => setShowGrid(v => !v)}
@@ -223,8 +274,13 @@ export const GlassScenePreview = memo(function GlassScenePreview({
         }}
       >
         {showGrid ? <GlassesGrid scale={scale} /> : null}
+        {showDeviceHUD ? (
+          <DeviceHudBar scale={scale} online={online} />
+        ) : null}
         {sorted.length > 0 ? (
-          sorted.map((el, i) => renderElement(el, i, scale, frame?.Scene?.FocusId))
+          sorted.map((el, i) =>
+            renderElement(el, i, scale, frame?.Scene?.FocusId, yOffset, overBudgetIds.has(el.Id)),
+          )
         ) : frame?.Text ? (
           <div
             style={{
@@ -310,5 +366,53 @@ function GlassesGrid({ scale }: { scale: number }) {
       <line x1={width / 2 + 0.5} y1={0} x2={width / 2 + 0.5} y2={height} stroke="#3a3a5a" strokeWidth={1} strokeDasharray={`${4 * scale} ${4 * scale}`} />
       <line x1={0} y1={height / 2 + 0.5} x2={width} y2={height / 2 + 0.5} stroke="#3a3a5a" strokeWidth={1} strokeDasharray={`${4 * scale} ${4 * scale}`} />
     </svg>
+  )
+}
+
+/**
+ * DeviceHudBar — simulation of the device-drawn HUD bar (glass.hud.update,
+ * NOT frame content): left connection glyph, middle agent indicator, right
+ * battery, separator rect at y=39, and scene content shifted down by 40px.
+ * Connection reflects the real session; agent and battery are placeholders
+ * until those values flow into the debug snapshot.
+ */
+function DeviceHudBar({ scale, online }: { scale: number; online?: boolean }) {
+  const h = px(HUD_HEIGHT_PX, scale)
+  const hudStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: CANVAS_W * scale,
+    height: h,
+    boxSizing: 'border-box',
+    color: '#0f0',
+    fontSize: FONT_SIZE_PX * scale,
+    lineHeight: `${h}px`,
+    fontFamily: PREVIEW_FONT,
+    whiteSpace: 'pre',
+    overflow: 'hidden',
+    zIndex: 998,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: `0 ${px(4, scale)}px`,
+  }
+  return (
+    <div style={hudStyle} title="Device-drawn HUD (glass.hud.update). Server-frame hudLine text is ignored on the device.">
+      <span>{online ? '● ok' : '○ off'}</span>
+      <span>agent off</span>
+      <span>BAT --</span>
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: px(HUD_HEIGHT_PX - 1, scale),
+          width: CANVAS_W * scale,
+          height: scale,
+          background: '#0f0',
+          opacity: 0.6,
+        }}
+      />
+    </div>
   )
 }
