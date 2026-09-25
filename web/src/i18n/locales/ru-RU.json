@@ -1757,6 +1757,7 @@
   "settings.plugins.empty": "Зарегистрированные плагины отсутствуют.",
   "settings.plugins.load": "Загрузить",
   "settings.plugins.logs": "Показать журналы плагина",
+  "settings.plugins.openStorage": "Открыть каталог хранилища",
   "settings.plugins.placeholder": "Управление плагинами скоро будет доступно",
   "settings.plugins.restartHint": "Перезапустите приложение, чтобы полностью выгрузить плагины in-process.",
   "settings.plugins.title": "Плагины",
