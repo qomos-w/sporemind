@@ -665,6 +665,48 @@
   align-items: center;
   gap: 8px;
 }
+
+/* ── Agent option rows (avatar + label + status) ──
+   The avatar reuses the sidebar classes (ai-sidebar-session-avatar) for
+   identical hue / paused-glyph / coordinator / unloaded / working-spinner
+   rendering; the sidebar's outer margins are neutralized for dropdown rows. */
+.scheduled-agent-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.scheduled-agent-option .ai-sidebar-session-avatar {
+  margin-right: 0;
+}
+.scheduled-agent-status {
+  margin-left: auto;
+  flex-shrink: 0;
+  padding-left: 12px;
+  font-size: 0.6875rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+}
+.scheduled-agent-status.is-working {
+  color: var(--accent, hsl(210 80% 55%));
+}
+.scheduled-agent-status.is-error {
+  color: var(--accent-danger, #e5484d);
+}
+
+/* Compact trigger variant: the same avatar scheme at 14px inside SelectValue. */
+.scheduled-trigger-agent {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.scheduled-trigger-agent .ai-sidebar-session-avatar {
+  margin-right: 0;
+  width: 14px;
+  height: 14px;
+  font-size: 0.5rem;
+}
 .scheduled-agent-actions-footer {
   display: flex;
   align-items: center;

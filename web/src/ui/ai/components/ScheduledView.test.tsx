@@ -829,6 +829,29 @@ describe('ScheduledView', () => {
     expect(ids).toEqual(['id-a', 'id-b', 'id-c'])
   })
 
+  it('agent picker options show the sidebar avatar and runtime status', async () => {
+    projectMocks.wikiListTimers.mockResolvedValue({ Timers: [mkTimer('scheduler:头像', true)] })
+    agentStore.agents = [
+      { Id: 'id-跑', ActorId: 'actor-跑', DisplayName: '跑动Agent', ProjectId: 'proj-1', AgentKind: 'coder', LoadState: 'loaded', Runtime: { State: 'running' } },
+    ] as never
+    renderView(
+      [mkSchedulerCard('scheduler:头像', { cron: '0 8 * * *' })],
+      'proj-1',
+      { onUpdateBoundAgent: vi.fn().mockResolvedValue(true) },
+    )
+    await flush()
+    await flush()
+
+    await act(async () => {
+      await userEvent.click(container.querySelector('[data-guide-id="scheduled-agent-kind-trigger"]')!)
+    })
+    const option = document.querySelector('[data-guide-id="scheduled-agent-existing-id-跑"]')!
+    expect(option.querySelector('.ai-sidebar-session-avatar')).not.toBeNull()
+    // working spinner class + the runtime status label
+    expect(option.querySelector('.ai-sidebar-session-avatar.working')).not.toBeNull()
+    expect(option.querySelector('.scheduled-agent-status')!.textContent).toBe('running')
+  })
+
   it('agent pickers exclude unloaded agents', async () => {
     projectMocks.wikiListTimers.mockResolvedValue({ Timers: [mkTimer('scheduler:过滤', true)] })
     agentStore.agents = [

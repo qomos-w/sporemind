@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type CSSProperties } from 'react'
 import { Search, Play, Pause, RefreshCw, Clock, ExternalLink, Locate, MapPin, CalendarPlus, ChevronLeft, ChevronDown, Trash2, Waypoints, MessageSquare, UserCog, Sparkles, Plus, Folder, Globe, Check } from 'lucide-react'
 import { useBrowserOverlay } from '../browserOverlay'
 import { client } from '../../../application/generated-client'
@@ -22,6 +22,9 @@ import {
 } from './scheduledTasks'
 import './ScheduledView.css'
 import { applyAgentOrder } from '../lib/agent-order'
+import { avatarHue } from '../lib/agent-avatar'
+import { AgentAvatarContent } from './AgentAvatarContent'
+import { computeAgentStatus, AGENT_STATUS_LABELS, type AgentStatus } from '../hooks/agentInfoStore'
 import { ScheduleCronEditor } from './ScheduleCronEditor'
 import { ConfirmDialog } from '../../components/ConfirmDialog'
 import { useClickOutside } from '../hooks/useClickOutside'
@@ -201,6 +204,71 @@ function targetOpts(projectId?: string): InvokeOptions | undefined {
 
 function agentDisplay(ag: AgentListItem | null | undefined, fallback: string): string {
   return ag ? (ag.DisplayName || ag.Id) : fallback
+}
+
+/** Statuses that count as "working" for the avatar spinner ring — mirrors
+ *  agentInfoStore's IsWorking derivation so dropdowns match the sidebar. */
+function isWorkingStatus(status: AgentStatus): boolean {
+  return status === 'running' || status === 'ask_user' || status === 'ask_permission'
+    || status === 'plan_approval' || status === 'goal_submit'
+}
+
+/** Sidebar-identical agent avatar for the scheduled-task pickers: hue seeded
+ *  from the agent Id, coordinator grayscale, paused glyph, unloaded
+ *  grayscale, working spinner ring. The underlying classes live in
+ *  AIShellSidebar.css, which the shell always loads. */
+function ScheduledAgentAvatar({ agent, status }: { agent: AgentListItem; status: AgentStatus }) {
+  const cls = [
+    'ai-sidebar-session-avatar',
+    isWorkingStatus(status) ? 'working' : '',
+    (agent.AgentKind ?? '').toLowerCase() === 'coordinator' ? 'coordinator' : '',
+    agent.LoadState !== 'loaded' ? 'unloaded' : '',
+  ].filter(Boolean).join(' ')
+  return (
+    <span className={cls} style={{ '--avatar-hue': avatarHue(agent.Id) } as CSSProperties}>
+      <AgentAvatarContent agent={{ DisplayName: agent.DisplayName, AgentKind: agent.AgentKind, Status: status }} size={15} pauseSize={8} />
+    </span>
+  )
+}
+
+/** One agent option row shared by the three agent pickers: avatar, name
+ *  (+title), optional second line (project name / unloaded tag), and the
+ *  live runtime status right-aligned. Stale refs with no registry entry
+ *  degrade to plain text. */
+function AgentOptionRow({ agent, projectName, fallback }: {
+  agent: AgentListItem | null | undefined
+  projectName?: string
+  fallback: string
+}) {
+  const { t } = useI18n()
+  if (!agent) return <span>{fallback}</span>
+  const unloaded = agent.LoadState !== 'loaded'
+  const status = unloaded ? undefined : computeAgentStatus(agent.Runtime)
+  return (
+    <span className="scheduled-agent-option">
+      <ScheduledAgentAvatar agent={agent} status={status ?? 'idle'} />
+      <span className={cn('flex flex-col min-w-0', unloaded && 'text-muted-foreground')}>
+        <span className="flex items-center gap-1 min-w-0">
+          <span className="truncate">{agent.DisplayName || agent.Id}</span>
+          {agent.Title && <span className="text-xs text-muted-foreground truncate">{agent.Title}</span>}
+        </span>
+        {unloaded ? (
+          <span className="text-xs text-muted-foreground">{t('scheduled.mode.agentUnloaded')}</span>
+        ) : projectName ? (
+          <span className="text-xs text-muted-foreground">{projectName}</span>
+        ) : null}
+      </span>
+      {status && (
+        <span className={cn(
+          'scheduled-agent-status',
+          status === 'error' && 'is-error',
+          isWorkingStatus(status) && 'is-working',
+        )}>
+          {AGENT_STATUS_LABELS[status]}
+        </span>
+      )}
+    </span>
+  )
 }
 
 export function ScheduledView({
@@ -1263,9 +1331,16 @@ export function ScheduledView({
                         >
                           <SelectTrigger size="sm" disabled={agentKindBusy || boundAgentBusy} className="w-full max-w-xs" data-guide-id="scheduled-agent-kind-trigger">
                             <SelectValue>
-                              <span className="scheduled-executor-name">
-                                {boundActive ? boundAgentDisplayName : agentKindDisplayName}
-                              </span>
+                              {boundActive && boundAgentInfo ? (
+                                <span className="scheduled-trigger-agent">
+                                  <ScheduledAgentAvatar agent={boundAgentInfo} status={computeAgentStatus(boundAgentInfo.Runtime)} />
+                                  <span className="scheduled-executor-name">{boundAgentDisplayName}</span>
+                                </span>
+                              ) : (
+                                <span className="scheduled-executor-name">
+                                  {boundActive ? boundAgentDisplayName : agentKindDisplayName}
+                                </span>
+                              )}
                             </SelectValue>
                           </SelectTrigger>
                           <SelectContent>
@@ -1288,12 +1363,7 @@ export function ScheduledView({
                                 {pickableAgents.map(ag => (
                                   <SelectItem key={ag.Id} value={`agent:${ag.Id}`} data-guide-id={`scheduled-agent-existing-${ag.Id}`}>
                                     <SelectItemText>
-                                      <span className="flex flex-col">
-                                        <span className="flex items-center gap-1">
-                                          {ag.DisplayName || ag.Id}
-                                          {ag.Title && <span className="text-xs text-muted-foreground">{ag.Title}</span>}
-                                        </span>
-                                      </span>
+                                      <AgentOptionRow agent={ag} fallback={ag.DisplayName || ag.Id} />
                                     </SelectItemText>
                                   </SelectItem>
                                 ))}
@@ -1328,23 +1398,23 @@ export function ScheduledView({
                       >
                         <SelectTrigger size="sm" disabled={executorBusy} className="w-full max-w-xs">
                           <SelectValue placeholder={t('scheduled.executor.none')}>
-                            <span className={cn('scheduled-executor-name', executorMissing && 'missing')}>
-                              {executorAgent
-                                ? executorAgent.DisplayName || executorAgent.Id
-                                : selected.executor || t('scheduled.executor.none')}
-                            </span>
+                            {executorAgent ? (
+                              <span className={cn('scheduled-trigger-agent', 'scheduled-executor-name', executorMissing && 'missing')}>
+                                <ScheduledAgentAvatar agent={executorAgent} status={computeAgentStatus(executorAgent.Runtime)} />
+                                {executorAgent.DisplayName || executorAgent.Id}
+                              </span>
+                            ) : (
+                              <span className={cn('scheduled-executor-name', executorMissing && 'missing')}>
+                                {selected.executor || t('scheduled.executor.none')}
+                              </span>
+                            )}
                           </SelectValue>
                         </SelectTrigger>
                         <SelectContent>
                           {pickableAgents.map(ag => (
                             <SelectItem key={ag.Id} value={`agent:${ag.Id}`}>
                               <SelectItemText>
-                                <span className="flex flex-col">
-                                  <span className="flex items-center gap-1">
-                                    {ag.DisplayName || ag.Id}
-                                    {ag.Title && <span className="text-xs text-muted-foreground">{ag.Title}</span>}
-                                  </span>
-                                </span>
+                                <AgentOptionRow agent={ag} fallback={ag.DisplayName || ag.Id} />
                               </SelectItemText>
                             </SelectItem>
                           ))}
@@ -1676,23 +1746,26 @@ function AgentActionsEditor({ selected, agentItems, projectNameOf, projectOpts, 
             >
               <SelectTrigger size="sm" className="flex-1 min-w-0">
                 <SelectValue placeholder={t('scheduled.targetAgent')}>
-                  {agentDisplay(findAgentByRef(agentItems, action.targetAgent), action.targetAgent)}
+                  {(() => {
+                    const ag = findAgentByRef(agentItems, action.targetAgent)
+                    return ag ? (
+                      <span className="scheduled-trigger-agent">
+                        <ScheduledAgentAvatar agent={ag} status={computeAgentStatus(ag.Runtime)} />
+                        {agentDisplay(ag, action.targetAgent)}
+                      </span>
+                    ) : agentDisplay(null, action.targetAgent)
+                  })()}
                 </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {targetOptions(action.targetAgent).map(opt => (
                   <SelectItem key={opt.value} value={opt.value}>
                     <SelectItemText>
-                      <span className={cn('flex items-center gap-2', !opt.loaded && 'text-muted-foreground')}>
-                        <span className="flex flex-col">
-                          <span className="flex items-center gap-1">
-                            {opt.label}
-                            {opt.title && <span className="text-xs text-muted-foreground">{opt.title}</span>}
-                          </span>
-                          {opt.projectName && <span className="text-xs text-muted-foreground">{opt.projectName}</span>}
-                        </span>
-                        {!opt.loaded && <span className="text-xs text-muted-foreground">{t('scheduled.mode.agentUnloaded')}</span>}
-                      </span>
+                      <AgentOptionRow
+                        agent={findAgentByRef(agentItems, opt.value)}
+                        projectName={opt.projectName || undefined}
+                        fallback={opt.label}
+                      />
                     </SelectItemText>
                   </SelectItem>
                 ))}

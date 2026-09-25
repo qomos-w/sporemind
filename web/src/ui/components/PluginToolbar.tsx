@@ -1,7 +1,10 @@
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
-import { ChevronDown, ChevronRight, RotateCw, Terminal } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore, type ReactNode } from 'react'
+import { ChevronDown, ChevronRight, FolderOpen, RotateCw, Terminal } from 'lucide-react'
 import { appRegistry, type AppEntry } from '../../application/app-registry'
 import { client } from '../../application/generated-client'
+import { isWails } from '../../application/runtime'
+import * as desktopApp from '../../bindings/github.com/qomos-w/sporemind/pkg/desktop/app'
+import { appdataUsage } from '../../gen-clients/pluginhost/client'
 import * as projectClient from '../../gen-clients/project/client'
 import { gitStore } from '../panels/git-store'
 import type { AppBundle, AppCallableDescriptor, AppEventDescriptor, AppObjectDescriptor, AppTypeDescriptor } from '../../gen-types/app'
@@ -47,12 +50,14 @@ export interface PluginToolbarProps {
   canRefresh: boolean
   expanded: boolean
   showLogs: boolean
+  canOpenStorage: boolean
   onToggleDetails: () => void
   onRefresh: () => void
   onToggleLogs: () => void
+  onOpenStorage: () => void
 }
 
-export function PluginToolbar({ entry, refreshing, canRefresh, expanded, showLogs, onToggleDetails, onRefresh, onToggleLogs }: PluginToolbarProps) {
+export function PluginToolbar({ entry, refreshing, canRefresh, expanded, showLogs, canOpenStorage, onToggleDetails, onRefresh, onToggleLogs, onOpenStorage }: PluginToolbarProps) {
   const { t } = useI18n()
   const status = statusFor(entry)
   const programName = entry?.namespace || entry?.id || ''
@@ -90,6 +95,17 @@ export function PluginToolbar({ entry, refreshing, canRefresh, expanded, showLog
           onClick={onRefresh}
         >
           <RotateCw size={14} className={refreshing ? 'plugin-toolbar-spin' : undefined} />
+        </button>
+        <button
+          type="button"
+          className="plugin-toolbar-btn"
+          title={String(t('settings.plugins.openStorage'))}
+          aria-label={String(t('settings.plugins.openStorage'))}
+          disabled={!canOpenStorage}
+          data-testid="plugin-toolbar-storage"
+          onClick={onOpenStorage}
+        >
+          <FolderOpen size={14} />
         </button>
         <button
           type="button"
@@ -417,6 +433,19 @@ export function PluginTabView({ pluginID, viewID, route, title, active = true }:
     setNonce((n) => n + 1)
   }
 
+  // Opens the plugin's app.data storage directory in the host file manager.
+  // The grant dir comes from pluginhost (host-side truth); the reveal itself
+  // is a Wails binding, so the button stays disabled in browser/mobile modes.
+  const desktop = isWails()
+  const handleOpenStorage = useCallback(async () => {
+    if (!desktop) return
+    try {
+      const resp = await appdataUsage(client, { PluginId: pluginID })
+      const dir = resp.Items?.find((item) => item.PluginId === pluginID)?.DataDir
+      if (dir) await desktopApp.OpenDirectory(dir)
+    } catch { /* best-effort: no grant or no file manager */ }
+  }, [desktop, pluginID])
+
   return (
     <>
       <PluginToolbar
@@ -425,9 +454,11 @@ export function PluginTabView({ pluginID, viewID, route, title, active = true }:
         canRefresh={running}
         expanded={expanded}
         showLogs={showLogs}
+        canOpenStorage={desktop}
         onToggleDetails={() => setExpanded((v) => !v)}
         onRefresh={handleRefresh}
         onToggleLogs={() => setShowLogs((v) => !v)}
+        onOpenStorage={() => { void handleOpenStorage() }}
       />
       {expanded && entry && <PluginDetails entry={entry} />}
       <div className="plugin-tab-frame">

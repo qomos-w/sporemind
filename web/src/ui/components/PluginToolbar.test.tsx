@@ -22,6 +22,29 @@ vi.mock('../../application/generated-client', () => ({
   client: {},
 }))
 
+// The storage-directory button is desktop-only (Wails reveal binding) and
+// resolves the grant dir through pluginhost.appdata_usage; both edges are
+// mocked here. isWails is override-able so one suite covers web + desktop.
+const runtimeState = vi.hoisted(() => ({ wails: false }))
+const storageMocks = vi.hoisted(() => ({
+  appdataUsage: vi.fn(),
+  openDirectory: vi.fn(),
+}))
+
+vi.mock('../../application/runtime', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../application/runtime')>()
+  return { ...actual, isWails: () => runtimeState.wails }
+})
+
+vi.mock('../../gen-clients/pluginhost/client', () => ({
+  appdataUsage: storageMocks.appdataUsage,
+}))
+
+vi.mock('../../bindings/github.com/qomos-w/sporemind/pkg/desktop/app', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../bindings/github.com/qomos-w/sporemind/pkg/desktop/app')>()
+  return { ...actual, OpenDirectory: storageMocks.openDirectory }
+})
+
 describe('PluginTabView toolbar', () => {
   beforeEach(() => {
     __setGatewayUrlsForTest({ ws: 'ws://127.0.0.1:18080/ws', http: 'http://127.0.0.1:18080', source: 'default', resolvedAt: Date.now() } satisfies GatewayUrls)
@@ -260,5 +283,47 @@ describe('PluginTabView toolbar', () => {
     expect(container.querySelector('[data-testid="plugin-log-panel"]')).toBeNull()
 
     act(() => { root?.unmount() })
+  })
+
+  it('opens the plugin storage directory from the toolbar button', async () => {
+    // Web runtime: no Wails bridge, the button stays disabled.
+    act(() => {
+      appRegistry.upsert({ id: 'com.example.test', runtime: 'native', state: 'running', version: '1.0.0', namespace: 'testapp', entrypoints: [], generation: 1 })
+    })
+    const container = document.createElement('div')
+    let root: Root | undefined
+    act(() => {
+      root = createRoot(container)
+      root.render(<PluginTabView pluginID="com.example.test" viewID="test.view" route="/" />)
+    })
+    expect(container.querySelector<HTMLButtonElement>('[data-testid="plugin-toolbar-storage"]')!.disabled).toBe(true)
+    act(() => { root?.unmount() })
+
+    runtimeState.wails = true
+    storageMocks.appdataUsage.mockResolvedValue({
+      Items: [{ PluginId: 'com.example.test', DataDir: 'D:/nomos/appdata', Bytes: 42, Files: 3, Loaded: true }],
+      TotalBytes: 42,
+      SoftLimitBytes: 1024,
+    })
+    storageMocks.openDirectory.mockResolvedValue(undefined)
+    try {
+      const desktopContainer = document.createElement('div')
+      act(() => {
+        root = createRoot(desktopContainer)
+        root.render(<PluginTabView pluginID="com.example.test" viewID="test.view" route="/" />)
+      })
+      const btn = desktopContainer.querySelector<HTMLButtonElement>('[data-testid="plugin-toolbar-storage"]')!
+      expect(btn.disabled).toBe(false)
+
+      await act(async () => { btn.click() })
+      expect(storageMocks.appdataUsage).toHaveBeenCalledWith({}, { PluginId: 'com.example.test' })
+      expect(storageMocks.openDirectory).toHaveBeenCalledWith('D:/nomos/appdata')
+
+      act(() => { root?.unmount() })
+    } finally {
+      runtimeState.wails = false
+      storageMocks.appdataUsage.mockReset()
+      storageMocks.openDirectory.mockReset()
+    }
   })
 })

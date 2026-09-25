@@ -4,7 +4,8 @@ import "github.com/qomos-w/sporemind/pkg/domain"
 
 // sameSiteFromInt32 maps the WebView2 COREWEBVIEW2_COOKIE_SAME_SITE_KIND enum
 // to the canonical string used by BrowserCookieEntry.
-//  0 = None, 1 = Lax, 2 = Strict
+//
+//	0 = None, 1 = Lax, 2 = Strict
 func sameSiteFromInt32(v int32) string {
 	switch v {
 	case 0:

@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"net"
 	"os"
 	"os/user"
 	"path/filepath"
@@ -129,7 +130,11 @@ func init() {
 
 func defaultConfig() config {
 	return config{
-		GatewayAddr:       devReleaseGatewayAddr,
+		// The stock default is written to sporemind.yaml so a shared config
+		// file never bakes a flavor-specific (or ephemeral ":0") address into
+		// a lane the flavor remapping cannot recognize back. devrelease
+		// builds remap it at load time via resolveGatewayDefault.
+		GatewayAddr:       DefaultGatewayAddr,
 		DataDir:           defaultDataDir(),
 		Namespace:         "sporemind",
 		Backend:           "fs",
@@ -253,20 +258,26 @@ func resolveDataDir(dir string) string {
 	return filepath.Join(exeDir, dir)
 }
 
-// GatewayAddr returns the HTTP gateway listen address.
+// GatewayAddr returns the HTTP gateway listen address. While the gateway
+// requests an ephemeral port this still reports the ":0" form; once the
+// listener has bound, AdoptBoundGatewayAddr replaces it with the actual
+// address.
 func GatewayAddr() string {
 	if addr := os.Getenv(gatewayAddrEnv); addr != "" {
 		return addr
 	}
+	cfgMu.RLock()
+	defer cfgMu.RUnlock()
 	return cfg.GatewayAddr
 }
 
 // resolveGatewayDefault maps a missing or stock-default gateway address onto
 // this build's flavor default. It is a no-op for regular builds; devrelease
 // builds remap the stock default — including the value auto-written into a
-// sporemind.yaml shared with a sibling dev binary — onto their own port so the
-// two flavors never listen on, or shut down, the same gateway. Explicit
-// non-default addresses (including the LAN ":18080" form) are honored as-is.
+// sporemind.yaml shared with a sibling dev binary — onto an ephemeral port
+// (":0", resolved to the real address at runtime) so the two flavors never
+// listen on, or shut down, the same gateway. Explicit non-default addresses
+// (including the LAN ":18080" form) are honored as-is.
 func resolveGatewayDefault(addr string) string {
 	if addr == "" || addr == DefaultGatewayAddr {
 		return devReleaseGatewayAddr
@@ -643,20 +654,58 @@ func DesktopTransport() string { return cfg.DesktopTransport }
 // persisted until Save is called.
 func SetGatewayAddr(addr string) {
 	addr = resolveGatewayDefault(addr)
+	cfgMu.Lock()
 	cfg.GatewayAddr = addr
+	cfgMu.Unlock()
+}
+
+// GatewayAddrIsEphemeral reports whether the effective gateway address
+// requests an OS-assigned port (":0") — the actual address is only known
+// after the listener has bound and AdoptBoundGatewayAddr has run.
+func GatewayAddrIsEphemeral() bool {
+	_, port, err := net.SplitHostPort(GatewayAddr())
+	return err == nil && port == "0"
+}
+
+// AdoptBoundGatewayAddr records the address the ephemeral gateway actually
+// bound as the effective in-process gateway address (frontend bindings, frp,
+// and the LAN URL builders read it afterwards), and announces it for
+// same-flavor instance discovery on flavors that record one.
+func AdoptBoundGatewayAddr(addr string) {
+	if addr == "" {
+		return
+	}
+	SetGatewayAddr(addr)
+	announceGatewayAddr(addr)
+}
+
+// TakeoverGatewayAddr returns the address a previous same-flavor instance may
+// still be listening on: the recorded ephemeral port when this build requests
+// one, otherwise the configured address. Best-effort — stale or missing
+// records simply fail the caller's probe.
+func TakeoverGatewayAddr() string {
+	addr := GatewayAddr()
+	if prev, ok := previousGatewayAddr(addr); ok {
+		return prev
+	}
+	return addr
 }
 
 // GatewayBindAddrs returns the additional gateway bind addresses beyond the
 // primary GatewayAddr. Each gets its own listener sharing the same handler,
 // enabling dual binding (loopback + LAN IP) without exposing 0.0.0.0.
 func GatewayBindAddrs() []string {
+	cfgMu.RLock()
+	defer cfgMu.RUnlock()
 	return cfg.GatewayBindAddrs
 }
 
 // SetGatewayBindAddrs updates the in-memory extra bind addresses. Pass nil
 // or an empty slice to clear. The change is not persisted until Save is called.
 func SetGatewayBindAddrs(addrs []string) {
+	cfgMu.Lock()
 	cfg.GatewayBindAddrs = addrs
+	cfgMu.Unlock()
 }
 
 // SetDesktopTransport updates the in-memory desktop transport mode. Valid

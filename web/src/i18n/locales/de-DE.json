@@ -1759,6 +1759,7 @@
   "settings.plugins.empty": "Noch keine Plugin-Apps registriert.",
   "settings.plugins.load": "Laden",
   "settings.plugins.logs": "Plugin-Protokolle anzeigen",
+  "settings.plugins.openStorage": "Speicherverzeichnis öffnen",
   "settings.plugins.placeholder": "Plugin-Verwaltung kommt bald",
   "settings.plugins.restartHint": "Starte die App neu, um In-Process-Plugins vollständig zu entladen.",
   "settings.plugins.title": "Plugins",

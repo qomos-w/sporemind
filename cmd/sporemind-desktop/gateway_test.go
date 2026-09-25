@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"net"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,6 +14,7 @@ import (
 	"time"
 
 	"github.com/qomos-w/sporemind/cmd/internal/actorset"
+	"github.com/qomos-w/sporemind/pkg/config"
 	"github.com/qomos-w/sporemind/pkg/runtime"
 )
 
@@ -22,6 +24,64 @@ func cleanupDataDir(t *testing.T) {
 	dataDir := filepath.Join(".", "data")
 	if err := os.RemoveAll(dataDir); err != nil {
 		t.Logf("cleanup data dir: %v", err)
+	}
+}
+
+// TestGatewayEphemeralAdopt verifies the ":0 means OS-assigned" semantics end
+// to end: a runtime booted with an ephemeral gateway address adopts the
+// actually bound address into the in-process config once the listener is
+// accepting, and the adopted address is dialable.
+func TestGatewayEphemeralAdopt(t *testing.T) {
+	cleanupDataDir(t)
+	defer cleanupDataDir(t)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	origAddr := config.GatewayAddr()
+	origDataDir := config.DataDir()
+	config.SetGatewayAddr("127.0.0.1:0")
+	config.SetDataDirForTest(t.TempDir())
+	t.Cleanup(func() {
+		config.SetGatewayAddr(origAddr)
+		config.SetDataDirForTest(origDataDir)
+	})
+
+	handle, err := runtime.Bootstrap(ctx, runtime.Config{
+		GatewayAddr: "127.0.0.1:0",
+		Children:    actorset.Default(),
+	})
+	if err != nil {
+		t.Fatalf("bootstrap: %v", err)
+	}
+	defer func() {
+		cancel()
+		_ = handle.Wait()
+	}()
+
+	deadline := time.Now().Add(15 * time.Second)
+	for config.GatewayAddr() == "127.0.0.1:0" {
+		if time.Now().After(deadline) {
+			t.Fatal("gateway never adopted the bound address")
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+
+	bound := config.GatewayAddr()
+	host, port, err := net.SplitHostPort(bound)
+	if err != nil || port == "" || port == "0" {
+		t.Fatalf("adopted address %q is not dialable", bound)
+	}
+	if host == "" {
+		host = "localhost"
+	}
+	resp, err := http.Get("http://" + net.JoinHostPort(host, port) + "/healthz")
+	if err != nil {
+		t.Fatalf("get healthz on adopted address %q: %v", bound, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("healthz on adopted address: status %d", resp.StatusCode)
 	}
 }
 

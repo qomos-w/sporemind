@@ -2480,6 +2480,7 @@
   "settings.plugins.installLocalHint": "Choose a .zip app package or a package folder",
   "settings.plugins.load": "Load",
   "settings.plugins.logs": "Show plugin logs",
+  "settings.plugins.openStorage": "Open storage directory",
   "settings.plugins.open": "Open",
   "settings.plugins.openHint": "Open this plugin in the right panel",
   "settings.plugins.placeholder": "Plugin management coming soon",

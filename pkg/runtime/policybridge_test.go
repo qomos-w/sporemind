@@ -14,7 +14,9 @@ type recordingPolicyStore struct {
 	policies []actor.Policy
 }
 
-func (s *recordingPolicyStore) Evaluate(role actor.Role, scope string) (bool, bool) { return true, false }
+func (s *recordingPolicyStore) Evaluate(role actor.Role, scope string) (bool, bool) {
+	return true, false
+}
 func (s *recordingPolicyStore) Reload(policies []actor.Policy) error {
 	s.policies = append(s.policies, policies...)
 	return nil
@@ -27,7 +29,7 @@ func (h *failWaitHost) WaitForAllCellsStart(timeout time.Duration) error {
 	return errors.New("wait timeout")
 }
 func (h *failWaitHost) LookupService(name string) (ref.Ref, bool) { return nil, false }
-func (h *failWaitHost) PolicyStore() actor.PolicyStore           { return &recordingPolicyStore{} }
+func (h *failWaitHost) PolicyStore() actor.PolicyStore            { return &recordingPolicyStore{} }
 
 func TestRunPolicyBridge_WaitTimeoutContinues(t *testing.T) {
 	// WaitForAllCellsStart failing must not stop the bridge from trying to
@@ -54,8 +56,8 @@ type okWaitHost struct {
 }
 
 func (h *okWaitHost) WaitForAllCellsStart(timeout time.Duration) error { return nil }
-func (h *okWaitHost) LookupService(name string) (ref.Ref, bool)         { return nil, false }
-func (h *okWaitHost) PolicyStore() actor.PolicyStore                     { return h.store }
+func (h *okWaitHost) LookupService(name string) (ref.Ref, bool)        { return nil, false }
+func (h *okWaitHost) PolicyStore() actor.PolicyStore                   { return h.store }
 
 func TestRunPolicyBridge_BestEffortAfterWait(t *testing.T) {
 	// Even when WaitForAllCellsStart succeeds, a missing user service is logged

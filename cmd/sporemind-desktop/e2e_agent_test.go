@@ -273,7 +273,6 @@ func (e *e2eEnv) sessionSnapshot(agentActorID string) []e2eTurn {
 	return forkResp.Session.Turns
 }
 
-
 // TestE2E_AgentChatLoop verifies the full agent loop with a single-turn simple query.
 func TestE2E_AgentChatLoop(t *testing.T) {
 	env := newE2EEnv(t)

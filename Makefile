@@ -271,9 +271,11 @@ dev-build: build-backend build-desktop
 # Artifacts land at the same path as build-desktop (build/bin/sporemind.exe and
 # build/bin/sporemind-v{ver}.exe) so a launcher keyed on that path picks up the
 # latest dev-release build. Instance isolation comes from the devrelease build
-# tag alone — gateway port 18081 + data dir .sporemind-devrelease
-# (pkg/config/gateway_flavor_devrelease.go). Startup never kills processes, so
-# same-named builds of other flavors are not affected.
+# tag alone — ephemeral gateway port (OS-assigned; the bound address is
+# recorded in <dataDir>/gateway.port for same-flavor takeover) + data dir
+# .sporemind-devrelease (pkg/config/gateway_flavor_devrelease.go). Startup
+# never kills processes, so same-named builds of other flavors are not
+# affected.
 dev-release: BUILD_TYPE := dev
 dev-release: DESKTOP_TAGS := devrelease,noapk
 dev-release: build-sdk-asset build-desktop-core

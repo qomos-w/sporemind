@@ -1757,6 +1757,7 @@
   "settings.plugins.empty": "Aucune application de plugin enregistrée.",
   "settings.plugins.load": "Charger",
   "settings.plugins.logs": "Afficher les journaux du plugin",
+  "settings.plugins.openStorage": "Ouvrir le répertoire de stockage",
   "settings.plugins.placeholder": "Gestion des plugins bientôt disponible",
   "settings.plugins.restartHint": "Redémarrez l'application pour décharger complètement les plugins in-process.",
   "settings.plugins.title": "Plugins",

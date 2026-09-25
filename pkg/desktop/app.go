@@ -82,6 +82,11 @@ type App struct {
 	winStateMu         sync.Mutex
 	winStateFlushTimer *time.Timer
 
+	// gatewayAdoptOnce guards the lazy adoption of an OS-assigned gateway
+	// port: address getters wait (bounded) for the listener and replace the
+	// ":0" placeholder with the bound address exactly once.
+	gatewayAdoptOnce sync.Once
+
 	screenshotWindow *application.WebviewWindow
 	screenshotData   *ScreenshotData
 
@@ -296,8 +301,10 @@ func (a *App) Shutdown() {
 // Call this BEFORE Bootstrap to release the gateway port.
 // Only used in dev mode (hot-reload needs the new process to take over the
 // gateway port). Release builds use Wails SingleInstance (named mutex) instead.
+// Ephemeral-port builds (devrelease) discover the previous instance through
+// the gateway.port record in their data dir instead of a fixed port.
 func ClosePreviousInstance() {
-	addr := config.GatewayAddr()
+	addr := config.TakeoverGatewayAddr()
 	hostPort := addr
 	if strings.HasPrefix(addr, ":") {
 		hostPort = "localhost" + addr
@@ -584,6 +591,7 @@ func (a *App) BeforeClose() {
 // WebSocket client can target the in-process gateway even when
 // sporemind.yaml overrides the default :18080.
 func (a *App) GetGatewayAddr() string {
+	a.ensureGatewayAddr()
 	addr := config.GatewayAddr()
 	if strings.HasPrefix(addr, ":") {
 		return "localhost" + addr
@@ -593,10 +601,36 @@ func (a *App) GetGatewayAddr() string {
 
 // GetRawGatewayAddr returns the effective gateway address — the env override
 // or the flavor-remapped config value (e.g. ":18080"; devrelease builds
-// report 18081), not necessarily the literal sporemind.yaml text. Used by
-// the developer settings form.
+// report the OS-assigned port adopted at runtime), not necessarily the
+// literal sporemind.yaml text. Used by the developer settings form.
 func (a *App) GetRawGatewayAddr() string {
+	a.ensureGatewayAddr()
 	return config.GatewayAddr()
+}
+
+// ensureGatewayAddr closes the ":0" placeholder race for address consumers:
+// when the gateway requests an OS-assigned port, wait (bounded) for the
+// listener and adopt the bound address before it is read. No-op and instant
+// for regular fixed-port configs.
+func (a *App) ensureGatewayAddr() {
+	if !config.GatewayAddrIsEphemeral() {
+		return
+	}
+	a.gatewayAdoptOnce.Do(func() {
+		if a.handle == nil || a.handle.App() == nil {
+			return
+		}
+		if !a.WaitGatewayReady(12000) {
+			return
+		}
+		srv := a.handle.App().GatewayServer()
+		if srv == nil {
+			return
+		}
+		if bound := srv.Addr(); bound != "" {
+			config.AdoptBoundGatewayAddr(bound)
+		}
+	})
 }
 
 // WaitGatewayReady blocks until the in-process gateway listener is accepting
@@ -721,6 +755,7 @@ func (a *App) SaveConfig() error {
 // local network can use to reach the gateway. It prefers the first non-loopback
 // IPv4 address and falls back to an empty string if none is available.
 func (a *App) GetLocalNetworkGatewayURL() string {
+	a.ensureGatewayAddr()
 	if !isGatewayAccessibleOnLAN() {
 		return ""
 	}

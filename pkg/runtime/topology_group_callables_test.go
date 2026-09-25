@@ -4,8 +4,8 @@ import (
 	"sort"
 	"testing"
 
-	spore "github.com/qomos-w/spore/schema"
 	"github.com/qomos-w/gospore/schema"
+	spore "github.com/qomos-w/spore/schema"
 )
 
 func TestGroupCallablesByKind_PassesEffectServiceToolName(t *testing.T) {

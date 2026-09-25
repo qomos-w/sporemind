@@ -1759,6 +1759,7 @@
   "settings.plugins.empty": "Aún no hay aplicaciones de plugin registradas.",
   "settings.plugins.load": "Cargar",
   "settings.plugins.logs": "Mostrar registros del plugin",
+  "settings.plugins.openStorage": "Abrir directorio de almacenamiento",
   "settings.plugins.placeholder": "Gestión de complementos próximamente",
   "settings.plugins.restartHint": "Reinicia la aplicación para descargar por completo los plugins en proceso.",
   "settings.plugins.title": "Complementos",

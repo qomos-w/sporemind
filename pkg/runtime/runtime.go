@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/fs"
 	"log/slog"
+	"net"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -356,11 +357,48 @@ func Bootstrap(ctx context.Context, cfg Config) (*Handle, error) {
 		h.done <- a.Run(ctx)
 	}()
 
+	if !cfg.NoGateway {
+		go h.adoptEphemeralGatewayAddr(cfg.GatewayAddr, a)
+	}
+
 	// Load the user permission matrix into the PolicyStore once all cells are
 	// started. Failures are logged and do not block startup.
 	StartPolicyBridge(ctx, h, 30*time.Second)
 
 	return h, nil
+}
+
+// adoptEphemeralGatewayAddr resolves the ":0 means OS-assigned" semantic: once
+// the listener is accepting, the actually bound address replaces the ":0"
+// placeholder in the in-process config so every consumer (frontend bindings,
+// frp, LAN URL builders) reads a dialable address. Flavors that need
+// same-instance takeover also get the address announced.
+func (h *Handle) adoptEphemeralGatewayAddr(configured string, a app.App) {
+	if configured == "" {
+		configured = config.DefaultGatewayAddr
+	}
+	if _, port, err := net.SplitHostPort(configured); err != nil || port != "0" {
+		return
+	}
+	ready := h.GatewayReady()
+	if ready == nil {
+		return
+	}
+	timer := time.NewTimer(15 * time.Second)
+	defer timer.Stop()
+	select {
+	case <-ready:
+	case <-timer.C:
+		return
+	}
+	srv := a.GatewayServer()
+	if srv == nil {
+		return
+	}
+	if bound := srv.Addr(); bound != "" {
+		config.AdoptBoundGatewayAddr(bound)
+		slog.Info("runtime: gateway bound ephemeral address", "addr", bound)
+	}
 }
 
 // Run assembles the App and runs it on the calling goroutine, then
@@ -443,8 +481,8 @@ type rootActor struct {
 	topo           *topologyProvider
 	registry       *Registry
 	actorID        string
-	startOrder     []string            // topologically sorted child names, set by OnInit
-	nameToID       map[string]string   // child name → actor ID string, populated by OnInit
+	startOrder     []string          // topologically sorted child names, set by OnInit
+	nameToID       map[string]string // child name → actor ID string, populated by OnInit
 	onInitComplete func(startOrder []string, nameToID map[string]string)
 }
 

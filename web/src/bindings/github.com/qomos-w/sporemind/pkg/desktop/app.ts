@@ -301,8 +301,8 @@ export function GetLogsBefore(before: string, limit: number): $CancellablePromis
 /**
  * GetRawGatewayAddr returns the effective gateway address — the env override
  * or the flavor-remapped config value (e.g. ":18080"; devrelease builds
- * report 18081), not necessarily the literal sporemind.yaml text. Used by
- * the developer settings form.
+ * report the OS-assigned port adopted at runtime), not necessarily the
+ * literal sporemind.yaml text. Used by the developer settings form.
  */
 export function GetRawGatewayAddr(): $CancellablePromise<string> {
     return $Call.ByID(1994476151);
@@ -403,6 +403,16 @@ export function OpenBrowserSession(sessionID: string, kind: string, url: string,
 
 export function OpenDevTools(): $CancellablePromise<void> {
     return $Call.ByID(2133331398);
+}
+
+/**
+ * OpenDirectory opens an existing host directory in the OS file manager.
+ * Bound to the frontend via Wails v3. The plugin toolbar uses it to open a
+ * plugin's app.data storage directory; paths come from host-side callables,
+ * never from untrusted renderer input.
+ */
+export function OpenDirectory(path: string): $CancellablePromise<void> {
+    return $Call.ByID(212006179, path);
 }
 
 /**

@@ -13,4 +13,9 @@ func init() {
 		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 		return cmd.Start()
 	}
+	openDirectoryInFileManager = func(path string) error {
+		cmd := exec.Command("explorer.exe", path)
+		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+		return cmd.Start()
+	}
 }

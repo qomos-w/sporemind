@@ -1759,6 +1759,7 @@
   "settings.plugins.empty": "登録されたプラグインアプリはありません。",
   "settings.plugins.load": "ロード",
   "settings.plugins.logs": "プラグインログを表示",
+  "settings.plugins.openStorage": "ストレージディレクトリを開く",
   "settings.plugins.placeholder": "プラグイン管理は近日公開予定",
   "settings.plugins.restartHint": "プロセス内プラグインを完全にアンロードするには、アプリを再起動してください。",
   "settings.plugins.title": "プラグイン",

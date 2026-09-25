@@ -1811,6 +1811,7 @@
   "settings.plugins.empty": "尚未註冊任何外掛應用。",
   "settings.plugins.load": "載入",
   "settings.plugins.logs": "顯示插件日誌",
+  "settings.plugins.openStorage": "開啟儲存目錄",
   "settings.plugins.placeholder": "外掛管理即將上线",
   "settings.plugins.restartHint": "重新啟動應用以完全卸載處理程序內外掛。",
   "settings.plugins.title": "外掛管理",

@@ -2480,6 +2480,7 @@
   "settings.plugins.installLocalHint": "选择 .zip 应用包或应用目录",
   "settings.plugins.load": "加载",
   "settings.plugins.logs": "显示插件日志",
+  "settings.plugins.openStorage": "打开存储目录",
   "settings.plugins.open": "打开",
   "settings.plugins.openHint": "在右侧面板打开该插件",
   "settings.plugins.placeholder": "插件管理即将上线",

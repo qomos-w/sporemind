@@ -162,3 +162,5 @@ exclude google.golang.org/genproto v0.0.0-20180817151627-c66870c02cf8
 exclude google.golang.org/genproto v0.0.0-20190819201941-24fa4b261c55
 
 exclude google.golang.org/genproto v0.0.0-20240227224415-6ceb2ff114de
+
+replace github.com/qomos-w/gospore => ../gospore

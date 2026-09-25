@@ -1756,6 +1756,7 @@
   "settings.plugins.empty": "등록된 플러그인 앱이 없습니다.",
   "settings.plugins.load": "로드",
   "settings.plugins.logs": "플러그인 로그 표시",
+  "settings.plugins.openStorage": "저장소 디렉터리 열기",
   "settings.plugins.placeholder": "플러그인 관리는 곧 제공 예정",
   "settings.plugins.restartHint": "인프로세스 플러그인을 완전히 언로드하려면 앱을 재시작하세요.",
   "settings.plugins.title": "플러그인",
