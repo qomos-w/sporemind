@@ -183,399 +183,378 @@ export const SchemaIDs = {
   BrowserManagerOpenReq: 590,
   BrowserManagerOpenGlobalReq: 591,
   BrowserManagerOpenGlobalResp: 592,
-  BrowserCookieEntry: 672,
-  BrowserManagerExportCookiesReq: 673,
-  BrowserManagerExportCookiesResp: 674,
-  BrowserManagerImportCookiesReq: 675,
-  BrowserManagerImportCookiesResp: 676,
-  FileEntry: 720,
-  FileEntryListResp: 721,
-  FileSystemListReq: 722,
-  FileSystemReadReq: 723,
-  FileSystemReadResp: 724,
-  FileSystemReadBase64Req: 725,
-  FileSystemReadChunkReq: 726,
-  FileSystemReadChunkResp: 727,
-  FileSystemWriteReq: 728,
-  FileSystemWriteResp: 729,
-  FileSystemEditReq: 730,
-  FileSystemEditHunk: 731,
-  FileSystemEditResp: 732,
-  FileSystemGlobReq: 733,
-  FileSystemGlobResp: 734,
-  FileSystemGrepReq: 735,
-  FileSystemGrepMatch: 736,
-  FileSystemGrepCount: 737,
-  FileSystemGrepResp: 738,
-  FileSystemRmReq: 739,
-  FileSystemRmResp: 740,
-  ArchiveExportReq: 742,
-  ArchiveExportResp: 743,
-  ArchiveImportReq: 744,
-  ArchiveImportResp: 745,
-  FileSystemReadBase64Resp: 746,
-  FileSystemWriteBase64Req: 747,
-  FileSystemRootsResp: 748,
-  FrpProxy: 784,
-  FrpWebProxy: 785,
-  FrpInstanceConfig: 786,
-  FrpProxyStatus: 787,
-  FrpInstanceStatus: 788,
-  FrpInstance: 789,
-  FrpManagerCreateReq: 790,
-  FrpManagerRemoveReq: 791,
-  FrpManagerGetReq: 792,
-  FrpManagerListResp: 793,
-  FrpManagerUpdateReq: 795,
-  FrpManagerStartReq: 796,
-  FrpManagerStopReq: 797,
-  FrpManagerDetectReq: 798,
-  FrpManagerDetectResp: 799,
-  InspectRef: 832,
-  OpenTarget: 833,
-  InspectCapability: 834,
-  InspectContextSegment: 835,
-  InspectStatus: 836,
-  InspectRelation: 837,
-  InspectDocumentReq: 838,
-  InspectRow: 839,
-  InspectListItem: 840,
-  InspectSection: 841,
-  InspectAction: 842,
-  InspectPage: 843,
-  InspectPagesResp: 844,
-  InspectDocument: 845,
-  CallableParam: 880,
-  CallableInterface: 881,
-  TopologyNodeDescriptor: 882,
-  TopologyCardRow: 883,
-  TopologyCardSection: 884,
-  TopologyCard: 885,
-  UnifiedGraphEdge: 886,
-  UnifiedGraphNode: 887,
-  UnifiedGraph: 888,
-  GraphPatch: 889,
-  TopologySyncReq: 890,
-  TopologySyncResp: 891,
-  TopologyHistoryEntry: 892,
-  TopologyHistoryResp: 893,
-  TopologyEpochEvent: 894,
-  ServiceInfo: 895,
-  RuntimeListServicesReq: 896,
-  RuntimeListServicesResp: 897,
-  RuntimeBuildInfoReq: 898,
-  RuntimeBuildInfoResp: 899,
-  OracleCapabilityDiscoverReq: 944,
-  CapabilityCandidate: 945,
-  OracleCapabilityDiscoverResp: 946,
-  OracleCapabilityExplainReq: 947,
-  OracleCapabilityExplainResp: 948,
-  Diagnostic: 949,
-  OracleReportDiagnosticReq: 950,
-  DiagnosticSummary: 951,
-  OracleListDiagnosticsReq: 952,
-  OracleListDiagnosticsResp: 953,
-  OracleGetDiagnosticReq: 954,
-  OracleSearchServicesReq: 955,
-  OracleSearchServicesResp: 956,
-  ProjectInfoRoot: 994,
-  ProjectInfoResp: 995,
-  ProjectGitStatusReq: 996,
-  ProjectGitStatusResp: 997,
-  ProjectGitFileStatus: 998,
-  ProjectSyncRootsReq: 999,
-  ProjectGitCommitInfo: 1000,
-  ProjectGitBranchInfo: 1001,
-  ProjectGitStashInfo: 1002,
-  ProjectGitRemoteInfo: 1003,
-  ProjectGitBlameLine: 1004,
-  ProjectGitLogReq: 1005,
-  ProjectGitLogResp: 1006,
-  ProjectGitDiffReq: 1007,
-  ProjectGitDiffResp: 1008,
-  ProjectGitAddReq: 1009,
-  ProjectGitCommitReq: 1010,
-  ProjectGitCommitResp: 1011,
-  ProjectGitPushReq: 1012,
-  ProjectGitPullReq: 1013,
-  ProjectGitBranchReq: 1014,
-  ProjectGitBranchResp: 1015,
-  ProjectGitCheckoutReq: 1016,
-  ProjectGitResetReq: 1017,
-  ProjectGitStashSaveReq: 1018,
-  ProjectGitStashPopReq: 1019,
-  ProjectGitStashListReq: 1020,
-  ProjectGitStashListResp: 1021,
-  ProjectGitStashDropReq: 1022,
-  ProjectGitRemoteListReq: 1023,
-  ProjectFileChangedEvent: 1024,
-  ProjectGitRemoteListResp: 1025,
-  ProjectGitRemoteAddReq: 1026,
-  ProjectGitRemoteRemoveReq: 1027,
-  ProjectGitBlameReq: 1028,
-  ProjectGitBlameResp: 1029,
-  ProjectGitConfigGetReq: 1030,
-  ProjectGitConfigGetResp: 1031,
-  ProjectGitConfigSetReq: 1032,
-  ProjectWorktree: 1034,
-  ProjectWorktreeCreateReq: 1035,
-  ProjectWorktreeListReq: 1036,
-  ProjectWorktreeListResp: 1037,
-  ProjectWorktreeGetReq: 1038,
-  ProjectWorktreeDiscardReq: 1039,
-  ProjectWorktreeAgentBinding: 1040,
-  ProjectWorktreeAgentBindingsReq: 1041,
-  ProjectWorktreeAgentBindingsResp: 1042,
-  ProjectWorktreeEnterReq: 1044,
-  ProjectWorktreeEnterResp: 1045,
-  ProjectWorktreeExitReq: 1046,
-  ProjectWorktreeExitResp: 1047,
-  ProjectWatchFileReq: 1060,
-  ProjectWorktreeCopyReq: 1061,
-  ProjectWorktreeCopyResult: 1062,
-  ProjectWorktreeCopySkipped: 1063,
-  ProjectWorktreeCopyResp: 1064,
-  ProjectNoGitModeGetReq: 1069,
-  ProjectNoGitModeGetResp: 1070,
-  ProjectNoGitModeSetReq: 1071,
-  ProjectNoGitModeSetResp: 1072,
-  ProjectDefaultBundlesGetReq: 1073,
-  ProjectDefaultBundlesGetResp: 1074,
-  ProjectDefaultBundlesSetReq: 1075,
-  ProjectDefaultBundlesSetResp: 1076,
+  BrowserCookieEntry: 688,
+  BrowserManagerExportCookiesReq: 689,
+  BrowserManagerExportCookiesResp: 690,
+  BrowserManagerImportCookiesReq: 691,
+  BrowserManagerImportCookiesResp: 692,
+  FileEntry: 736,
+  FileEntryListResp: 737,
+  FileSystemListReq: 738,
+  FileSystemReadReq: 739,
+  FileSystemReadResp: 740,
+  FileSystemReadBase64Req: 741,
+  FileSystemReadChunkReq: 742,
+  FileSystemReadChunkResp: 743,
+  FileSystemWriteReq: 744,
+  FileSystemWriteResp: 745,
+  FileSystemEditReq: 746,
+  FileSystemEditHunk: 747,
+  FileSystemEditResp: 748,
+  FileSystemGlobReq: 749,
+  FileSystemGlobResp: 750,
+  FileSystemGrepReq: 751,
+  FileSystemGrepMatch: 752,
+  FileSystemGrepCount: 753,
+  FileSystemGrepResp: 754,
+  FileSystemRmReq: 755,
+  FileSystemRmResp: 756,
+  ArchiveExportReq: 758,
+  ArchiveExportResp: 759,
+  ArchiveImportReq: 760,
+  ArchiveImportResp: 761,
+  FileSystemReadBase64Resp: 762,
+  FileSystemWriteBase64Req: 763,
+  FileSystemRootsResp: 764,
+  FrpProxy: 800,
+  FrpWebProxy: 801,
+  FrpInstanceConfig: 802,
+  FrpProxyStatus: 803,
+  FrpInstanceStatus: 804,
+  FrpInstance: 805,
+  FrpManagerCreateReq: 806,
+  FrpManagerRemoveReq: 807,
+  FrpManagerGetReq: 808,
+  FrpManagerListResp: 809,
+  FrpManagerUpdateReq: 811,
+  FrpManagerStartReq: 812,
+  FrpManagerStopReq: 813,
+  FrpManagerDetectReq: 814,
+  FrpManagerDetectResp: 815,
+  InspectRef: 848,
+  OpenTarget: 849,
+  InspectCapability: 850,
+  InspectContextSegment: 851,
+  InspectStatus: 852,
+  InspectRelation: 853,
+  InspectDocumentReq: 854,
+  InspectRow: 855,
+  InspectListItem: 856,
+  InspectSection: 857,
+  InspectAction: 858,
+  InspectPage: 859,
+  InspectPagesResp: 860,
+  InspectDocument: 861,
+  CallableParam: 896,
+  CallableInterface: 897,
+  TopologyNodeDescriptor: 898,
+  TopologyCardRow: 899,
+  TopologyCardSection: 900,
+  TopologyCard: 901,
+  UnifiedGraphEdge: 902,
+  UnifiedGraphNode: 903,
+  UnifiedGraph: 904,
+  GraphPatch: 905,
+  TopologySyncReq: 906,
+  TopologySyncResp: 907,
+  TopologyHistoryEntry: 908,
+  TopologyHistoryResp: 909,
+  TopologyEpochEvent: 910,
+  ServiceInfo: 911,
+  RuntimeListServicesReq: 912,
+  RuntimeListServicesResp: 913,
+  RuntimeBuildInfoReq: 914,
+  RuntimeBuildInfoResp: 915,
+  OracleCapabilityDiscoverReq: 960,
+  CapabilityCandidate: 961,
+  OracleCapabilityDiscoverResp: 962,
+  OracleCapabilityExplainReq: 963,
+  OracleCapabilityExplainResp: 964,
+  Diagnostic: 965,
+  OracleReportDiagnosticReq: 966,
+  DiagnosticSummary: 967,
+  OracleListDiagnosticsReq: 968,
+  OracleListDiagnosticsResp: 969,
+  OracleGetDiagnosticReq: 970,
+  OracleSearchServicesReq: 971,
+  OracleSearchServicesResp: 972,
+  ProjectInfoRoot: 1010,
+  ProjectInfoResp: 1011,
+  ProjectGitStatusReq: 1012,
+  ProjectGitStatusResp: 1013,
+  ProjectGitFileStatus: 1014,
+  ProjectSyncRootsReq: 1015,
+  ProjectGitCommitInfo: 1016,
+  ProjectGitBranchInfo: 1017,
+  ProjectGitStashInfo: 1018,
+  ProjectGitRemoteInfo: 1019,
+  ProjectGitBlameLine: 1020,
+  ProjectGitLogReq: 1021,
+  ProjectGitLogResp: 1022,
+  ProjectGitDiffReq: 1023,
+  ProjectGitDiffResp: 1024,
+  ProjectGitAddReq: 1025,
+  ProjectGitCommitReq: 1026,
+  ProjectGitCommitResp: 1027,
+  ProjectGitPushReq: 1028,
+  ProjectGitPullReq: 1029,
+  ProjectGitBranchReq: 1030,
+  ProjectGitBranchResp: 1031,
+  ProjectGitCheckoutReq: 1032,
+  ProjectGitResetReq: 1033,
+  ProjectGitStashSaveReq: 1034,
+  ProjectGitStashPopReq: 1035,
+  ProjectGitStashListReq: 1036,
+  ProjectGitStashListResp: 1037,
+  ProjectGitStashDropReq: 1038,
+  ProjectGitRemoteListReq: 1039,
+  ProjectFileChangedEvent: 1040,
+  ProjectGitRemoteListResp: 1041,
+  ProjectGitRemoteAddReq: 1042,
+  ProjectGitRemoteRemoveReq: 1043,
+  ProjectGitBlameReq: 1044,
+  ProjectGitBlameResp: 1045,
+  ProjectGitConfigGetReq: 1046,
+  ProjectGitConfigGetResp: 1047,
+  ProjectGitConfigSetReq: 1048,
+  ProjectWorktree: 1050,
+  ProjectWorktreeCreateReq: 1051,
+  ProjectWorktreeListReq: 1052,
+  ProjectWorktreeListResp: 1053,
+  ProjectWorktreeGetReq: 1054,
+  ProjectWorktreeDiscardReq: 1055,
+  ProjectWorktreeAgentBinding: 1056,
+  ProjectWorktreeAgentBindingsReq: 1057,
+  ProjectWorktreeAgentBindingsResp: 1058,
+  ProjectWorktreeEnterReq: 1060,
+  ProjectWorktreeEnterResp: 1061,
+  ProjectWorktreeExitReq: 1062,
+  ProjectWorktreeExitResp: 1063,
+  ProjectWatchFileReq: 1076,
+  ProjectWorktreeCopyReq: 1077,
+  ProjectWorktreeCopyResult: 1078,
+  ProjectWorktreeCopySkipped: 1079,
+  ProjectWorktreeCopyResp: 1080,
+  ProjectNoGitModeGetReq: 1085,
+  ProjectNoGitModeGetResp: 1086,
+  ProjectNoGitModeSetReq: 1087,
+  ProjectNoGitModeSetResp: 1088,
+  ProjectDefaultBundlesGetReq: 1089,
+  ProjectDefaultBundlesGetResp: 1090,
+  ProjectDefaultBundlesSetReq: 1091,
+  ProjectDefaultBundlesSetResp: 1092,
   registerActorReq: 1127,
   registerActorRes: 1128,
   unregisterActorReq: 1129,
   unregisterActorRes: 1130,
-  ProjectReviewChangesetReq: 1136,
-  ProjectReviewChangesetSummaryResp: 1137,
-  ProjectReviewCommitInfo: 1138,
-  ProjectReviewFileEntry: 1139,
-  ProjectReviewUntrackedFile: 1140,
-  ProjectReviewTestResult: 1141,
-  ProjectReviewChangesetStats: 1142,
-  ProjectReviewFileContentReq: 1143,
-  ProjectReviewFileContentResp: 1144,
-  ProjectTaskValidateOutputsReq: 1146,
-  ProjectTaskValidateOutputsResp: 1147,
   AgentSkillMountReq: 1150,
   AgentSkillMountResp: 1151,
-  GraphSnapshotMeta: 1184,
-  Concept: 1190,
-  ProjectGraphGetReq: 1207,
-  ProjectGraphSaveReq: 1208,
-  ProjectGraphEnvelopeResp: 1209,
-  ProjectGraphConceptGetReq: 1210,
-  ProjectGraphConceptGetResp: 1211,
-  WikiOpenCardsReq: 1248,
-  WikiOpenCardsResp: 1249,
-  WikiSaveOpenCardsReq: 1250,
-  MonoCardListItem: 1251,
-  WikiListCardsReq: 1252,
-  WikiListCardsResp: 1253,
-  WikiGetCardReq: 1254,
-  WikiGetCardResp: 1255,
-  WikiCreateCardReq: 1256,
-  WikiCreateCardResp: 1257,
-  WikiEditCardReq: 1258,
-  WikiEditCardResp: 1259,
-  WikiDeleteCardReq: 1260,
-  WikiDeleteCardResp: 1261,
-  WikiTimerListItem: 1262,
-  WikiListTimersResp: 1263,
-  CardValidationError: 1265,
-  WikiValidateCardReq: 1266,
-  WikiValidateCardResp: 1267,
-  WikiSetStatusReq: 1268,
-  WikiSetStatusResp: 1269,
-  FrontierTaskCard: 1270,
-  WikiFrontierReq: 1271,
-  WikiFrontierResp: 1272,
-  WikiSetMapOwnerReq: 1273,
-  WikiSetMapOwnerResp: 1274,
-  WikiClaimTaskCardReq: 1275,
-  WikiClaimTaskCardResp: 1276,
-  WikiCreateMapReq: 1277,
-  WikiCreateMapResp: 1278,
-  WikiCreateTaskCardReq: 1279,
-  WikiCreateTaskCardResp: 1280,
-  WikiSetTaskDependenciesReq: 1281,
-  WikiSetTaskDependenciesResp: 1282,
-  WikiListDependenciesReq: 1285,
-  WikiListDependenciesResp: 1286,
-  TaskDepEdge: 1287,
-  TaskDataBinding: 1288,
-  WikiSetTaskOutputsReq: 1289,
-  WikiSetTaskOutputsResp: 1290,
-  WikiTemplateSaveReq: 1291,
-  WikiTemplateSaveResp: 1292,
-  WikiTemplateInstantiateReq: 1293,
-  WikiTemplateInstantiateResp: 1294,
-  TemplateNodeMapping: 1295,
-  WikiSetMapInputsReq: 1296,
-  WikiSetMapInputsResp: 1297,
-  WikiPromoteNodeOutputsReq: 1298,
-  WikiPromoteNodeOutputsResp: 1299,
-  WikiAutomationBindReq: 1300,
-  WikiAutomationBindResp: 1301,
-  WikiListTemplatesReq: 1302,
-  WikiListTemplatesResp: 1303,
-  WikiListTemplateRunsReq: 1305,
-  WikiListTemplateRunsResp: 1306,
-  TemplateRunRecord: 1307,
-  WikiGetCardsBatchReq: 1308,
-  WikiCardRaw: 1309,
-  WikiGetCardsBatchResp: 1310,
-  WikiSetStarredReq: 1311,
-  WikiGetStarredReq: 1312,
-  WikiStarredResp: 1313,
-  PromptRef: 1344,
-  PromptFragment: 1346,
-  PromptContextSegment: 1347,
-  PromptArtifact: 1348,
-  Provider: 1408,
-  ProviderModelCostTier: 1409,
-  ProviderModel: 1410,
-  FetchedModel: 1411,
-  Model: 1412,
-  AIManagerProviderConfigureReq: 1413,
-  AIManagerProviderConfigureResp: 1414,
-  ProviderListResp: 1416,
-  ModelListResp: 1417,
-  AIManagerProviderFetchModelsReq: 1418,
-  AIManagerProviderFetchModelsResp: 1419,
-  ManualCallableUnit: 1420,
-  AIManagerAggregatorConfigureReq: 1425,
-  AIManagerAggregatorConfigureResp: 1426,
-  AIManagerAggregatorGetReq: 1427,
-  AIManagerAggregatorGetResp: 1428,
-  AIManagerConfigExportResp: 1432,
-  AIManagerConfigImportReq: 1433,
-  AIManagerConfigImportResp: 1434,
-  AIManagerProviderSetTokenPlanReq: 1441,
-  AIManagerProviderSetTokenPlanResp: 1442,
-  AIManagerProviderResetHealthReq: 1445,
-  AIManagerProviderResetHealthResp: 1446,
-  AIManagerProviderRecordProbeReq: 1447,
-  AIManagerProviderRecordProbeResp: 1448,
-  ProviderDisableWindow: 1449,
-  AIManagerUnitHealthListResp: 1451,
-  AIManagerProviderSetDisabledReq: 1452,
-  AIManagerProviderSetDisabledResp: 1453,
-  AIManagerAggregatorSetDisabledReq: 1454,
-  AIManagerAggregatorSetDisabledResp: 1455,
-  AIManagerListUnitsReq: 1456,
-  AIManagerListUnitsResp: 1457,
-  ShellExecReq: 1488,
-  ShellBashReq: 1490,
-  ShellChunk: 1492,
-  SshHost: 1536,
-  SshHostListReq: 1537,
-  SshHostListResp: 1538,
-  SshHostCreateReq: 1539,
-  SshHostCreateResp: 1540,
-  SshHostUpdateReq: 1541,
-  SshHostUpdateResp: 1542,
-  SshHostRemoveReq: 1543,
-  SshHostRemoveResp: 1544,
-  SshSessionInfo: 1545,
-  SshSessionListReq: 1546,
-  SshSessionListResp: 1547,
-  SshShellOpenReq: 1548,
-  SshShellOpenResp: 1549,
-  SshShellCloseReq: 1550,
-  SshShellCloseResp: 1551,
-  SshShellInputReq: 1552,
-  SshShellInputResp: 1553,
-  SshShellResizeReq: 1554,
-  SshShellResizeResp: 1555,
-  SshFileEntry: 1556,
-  SshFileListReq: 1557,
-  SshFileListResp: 1558,
-  SshFileReadReq: 1559,
-  SshFileReadResp: 1560,
-  SshFileWriteReq: 1561,
-  SshFileWriteResp: 1562,
-  SshFileMkdirReq: 1563,
-  SshFileMkdirResp: 1564,
-  SshFileDeleteReq: 1565,
-  SshFileDeleteResp: 1566,
-  SshFileRenameReq: 1567,
-  SshFileRenameResp: 1568,
-  SshProcInfo: 1570,
-  SshDiskInfo: 1571,
-  SshNetInfo: 1572,
-  SshStatus: 1573,
-  SshStatusReq: 1574,
-  SshStatusResp: 1575,
-  SshStatusListReq: 1576,
-  SshStatusListResp: 1577,
-  SshFileDownloadReq: 1578,
-  SshFileDownloadResp: 1579,
-  SshShellStreamReq: 1580,
-  SshShellStreamChunk: 1581,
-  SshCommandSnippet: 1582,
-  SshCommandListReq: 1583,
-  SshCommandListResp: 1584,
-  SshCommandCreateReq: 1585,
-  SshCommandCreateResp: 1586,
-  SshCommandUpdateReq: 1587,
-  SshCommandUpdateResp: 1588,
-  SshCommandRemoveReq: 1589,
-  SshCommandRemoveResp: 1590,
-  SshHistoryListReq: 1591,
-  SshHistoryListResp: 1592,
-  SshArchiveExportReq: 1593,
-  SshArchiveImportReq: 1594,
-  SshExecReq: 1595,
-  SshExecResp: 1596,
-  SshFolderCreateReq: 1597,
-  SshFolderCreateResp: 1598,
-  SshFolderRenameReq: 1599,
-  SshFolderRenameResp: 1600,
-  SshFolderReorderReq: 1601,
-  SshFolderReorderResp: 1602,
-  SshFolderRemoveReq: 1603,
-  SshFolderRemoveResp: 1604,
-  SshFileWriteBase64Req: 1605,
-  SshFileWriteBase64Resp: 1606,
-  SshFileChmodReq: 1607,
-  SshFileChmodResp: 1608,
-  SshManagerEvent: 1609,
-  SshShellRunReq: 1610,
-  SshShellRunResp: 1611,
-  SshDownloadReq: 1612,
-  SshDownloadResp: 1613,
-  SshUploadReq: 1614,
-  SshUploadResp: 1615,
-  SshTunnelOpenReq: 1616,
-  SshTunnelOpenResp: 1617,
-  SshTunnelCloseReq: 1618,
-  SshTunnelCloseResp: 1619,
-  SshTunnelListReq: 1620,
-  SshTunnelInfo: 1621,
-  SshTunnelListResp: 1622,
-  Account: 1680,
-  AccountView: 1681,
-  AuthRegisterReq: 1682,
-  AuthLoginReq: 1683,
-  AuthLoginResp: 1684,
-  AuthRefreshReq: 1685,
-  AuthRefreshResp: 1686,
-  RefreshTokenEntry: 1687,
-  AccountListResp: 1688,
-  AccountCreateReq: 1689,
-  AccountUpdateReq: 1690,
-  AccountDeleteReq: 1691,
-  AccountResetPasswordReq: 1692,
-  Group: 1693,
-  GroupListResp: 1694,
-  GroupCreateReq: 1695,
-  GroupUpdateReq: 1696,
-  GroupDeleteReq: 1697,
-  PermissionEntry: 1698,
-  PermissionMatrix: 1699,
-  PermissionUpdateReq: 1700,
+  ProjectReviewChangesetReq: 1152,
+  ProjectReviewChangesetSummaryResp: 1153,
+  ProjectReviewCommitInfo: 1154,
+  ProjectReviewFileEntry: 1155,
+  ProjectReviewUntrackedFile: 1156,
+  ProjectReviewTestResult: 1157,
+  ProjectReviewChangesetStats: 1158,
+  ProjectReviewFileContentReq: 1159,
+  ProjectReviewFileContentResp: 1160,
+  ProjectTaskValidateOutputsReq: 1162,
+  ProjectTaskValidateOutputsResp: 1163,
+  GraphSnapshotMeta: 1200,
+  Concept: 1206,
+  ProjectGraphGetReq: 1223,
+  ProjectGraphSaveReq: 1224,
+  ProjectGraphEnvelopeResp: 1225,
+  ProjectGraphConceptGetReq: 1226,
+  ProjectGraphConceptGetResp: 1227,
+  WikiOpenCardsReq: 1264,
+  WikiOpenCardsResp: 1265,
+  WikiSaveOpenCardsReq: 1266,
+  MonoCardListItem: 1267,
+  WikiListCardsReq: 1268,
+  WikiListCardsResp: 1269,
+  WikiGetCardReq: 1270,
+  WikiGetCardResp: 1271,
+  WikiCreateCardReq: 1272,
+  WikiCreateCardResp: 1273,
+  WikiEditCardReq: 1274,
+  WikiEditCardResp: 1275,
+  WikiDeleteCardReq: 1276,
+  WikiDeleteCardResp: 1277,
+  WikiTimerListItem: 1278,
+  WikiListTimersResp: 1279,
+  CardValidationError: 1280,
+  WikiValidateCardReq: 1281,
+  WikiValidateCardResp: 1282,
+  WikiSetStatusReq: 1283,
+  WikiSetStatusResp: 1284,
+  FrontierTaskCard: 1285,
+  WikiFrontierReq: 1286,
+  WikiFrontierResp: 1287,
+  WikiSetMapOwnerReq: 1288,
+  WikiSetMapOwnerResp: 1289,
+  WikiClaimTaskCardReq: 1290,
+  WikiClaimTaskCardResp: 1291,
+  WikiCreateMapReq: 1292,
+  WikiCreateMapResp: 1293,
+  WikiCreateTaskCardReq: 1294,
+  WikiCreateTaskCardResp: 1295,
+  WikiSetTaskDependenciesReq: 1296,
+  WikiSetTaskDependenciesResp: 1297,
+  WikiListDependenciesReq: 1300,
+  WikiListDependenciesResp: 1301,
+  TaskDepEdge: 1302,
+  TaskDataBinding: 1303,
+  WikiSetTaskOutputsReq: 1304,
+  WikiSetTaskOutputsResp: 1305,
+  WikiTemplateSaveReq: 1306,
+  WikiTemplateSaveResp: 1307,
+  WikiTemplateInstantiateReq: 1308,
+  WikiTemplateInstantiateResp: 1309,
+  TemplateNodeMapping: 1310,
+  WikiSetMapInputsReq: 1311,
+  WikiSetMapInputsResp: 1312,
+  WikiPromoteNodeOutputsReq: 1313,
+  WikiPromoteNodeOutputsResp: 1314,
+  WikiAutomationBindReq: 1315,
+  WikiAutomationBindResp: 1316,
+  WikiListTemplatesReq: 1317,
+  WikiListTemplatesResp: 1318,
+  WikiListTemplateRunsReq: 1320,
+  WikiListTemplateRunsResp: 1321,
+  TemplateRunRecord: 1322,
+  WikiGetCardsBatchReq: 1323,
+  WikiCardRaw: 1324,
+  WikiGetCardsBatchResp: 1325,
+  WikiSetStarredReq: 1326,
+  WikiGetStarredReq: 1327,
+  WikiStarredResp: 1328,
+  PromptRef: 1392,
+  PromptFragment: 1394,
+  PromptContextSegment: 1395,
+  PromptArtifact: 1396,
+  Provider: 1456,
+  ProviderModelCostTier: 1457,
+  ProviderModel: 1458,
+  FetchedModel: 1459,
+  Model: 1460,
+  AIManagerProviderConfigureReq: 1461,
+  AIManagerProviderConfigureResp: 1462,
+  ProviderListResp: 1464,
+  ModelListResp: 1465,
+  AIManagerProviderFetchModelsReq: 1466,
+  AIManagerProviderFetchModelsResp: 1467,
+  ManualCallableUnit: 1468,
+  AIManagerAggregatorConfigureReq: 1473,
+  AIManagerAggregatorConfigureResp: 1474,
+  AIManagerAggregatorGetReq: 1475,
+  AIManagerAggregatorGetResp: 1476,
+  AIManagerConfigExportResp: 1480,
+  AIManagerConfigImportReq: 1481,
+  AIManagerConfigImportResp: 1482,
+  AIManagerProviderSetTokenPlanReq: 1489,
+  AIManagerProviderSetTokenPlanResp: 1490,
+  AIManagerProviderResetHealthReq: 1493,
+  AIManagerProviderResetHealthResp: 1494,
+  AIManagerProviderRecordProbeReq: 1495,
+  AIManagerProviderRecordProbeResp: 1496,
+  ProviderDisableWindow: 1497,
+  AIManagerUnitHealthListResp: 1499,
+  AIManagerProviderSetDisabledReq: 1500,
+  AIManagerProviderSetDisabledResp: 1501,
+  AIManagerAggregatorSetDisabledReq: 1502,
+  AIManagerAggregatorSetDisabledResp: 1503,
+  AIManagerListUnitsReq: 1504,
+  AIManagerListUnitsResp: 1505,
+  ShellExecReq: 1552,
+  ShellBashReq: 1554,
+  ShellChunk: 1556,
+  SshHost: 1600,
+  SshHostListReq: 1601,
+  SshHostListResp: 1602,
+  SshHostCreateReq: 1603,
+  SshHostCreateResp: 1604,
+  SshHostUpdateReq: 1605,
+  SshHostUpdateResp: 1606,
+  SshHostRemoveReq: 1607,
+  SshHostRemoveResp: 1608,
+  SshSessionInfo: 1609,
+  SshSessionListReq: 1610,
+  SshSessionListResp: 1611,
+  SshShellOpenReq: 1612,
+  SshShellOpenResp: 1613,
+  SshShellCloseReq: 1614,
+  SshShellCloseResp: 1615,
+  SshShellInputReq: 1616,
+  SshShellInputResp: 1617,
+  SshShellResizeReq: 1618,
+  SshShellResizeResp: 1619,
+  SshFileEntry: 1620,
+  SshFileListReq: 1621,
+  SshFileListResp: 1622,
+  SshFileReadReq: 1623,
+  SshFileReadResp: 1624,
+  SshFileWriteReq: 1625,
+  SshFileWriteResp: 1626,
+  SshFileMkdirReq: 1627,
+  SshFileMkdirResp: 1628,
+  SshFileDeleteReq: 1629,
+  SshFileDeleteResp: 1630,
+  SshFileRenameReq: 1631,
+  SshFileRenameResp: 1632,
+  SshProcInfo: 1634,
+  SshDiskInfo: 1635,
+  SshNetInfo: 1636,
+  SshStatus: 1637,
+  SshStatusReq: 1638,
+  SshStatusResp: 1639,
+  SshStatusListReq: 1640,
+  SshStatusListResp: 1641,
+  SshFileDownloadReq: 1642,
+  SshFileDownloadResp: 1643,
+  SshShellStreamReq: 1644,
+  SshShellStreamChunk: 1645,
+  SshCommandSnippet: 1646,
+  SshCommandListReq: 1647,
+  SshCommandListResp: 1648,
+  SshCommandCreateReq: 1649,
+  SshCommandCreateResp: 1650,
+  SshCommandUpdateReq: 1651,
+  SshCommandUpdateResp: 1652,
+  SshCommandRemoveReq: 1653,
+  SshCommandRemoveResp: 1654,
+  SshHistoryListReq: 1655,
+  SshHistoryListResp: 1656,
+  SshArchiveExportReq: 1657,
+  SshArchiveImportReq: 1658,
+  SshExecReq: 1659,
+  SshExecResp: 1660,
+  SshFolderCreateReq: 1661,
+  SshFolderCreateResp: 1662,
+  SshFolderRenameReq: 1663,
+  SshFolderRenameResp: 1664,
+  SshFolderReorderReq: 1665,
+  SshFolderReorderResp: 1666,
+  SshFolderRemoveReq: 1667,
+  SshFolderRemoveResp: 1668,
+  SshFileWriteBase64Req: 1669,
+  SshFileWriteBase64Resp: 1670,
+  SshFileChmodReq: 1671,
+  SshFileChmodResp: 1672,
+  SshManagerEvent: 1673,
+  SshShellRunReq: 1674,
+  SshShellRunResp: 1675,
+  SshDownloadReq: 1676,
+  SshDownloadResp: 1677,
+  SshUploadReq: 1678,
+  SshUploadResp: 1679,
+  SshTunnelOpenReq: 1680,
+  SshTunnelOpenResp: 1681,
+  SshTunnelCloseReq: 1682,
+  SshTunnelCloseResp: 1683,
+  SshTunnelListReq: 1684,
+  SshTunnelInfo: 1685,
+  SshTunnelListResp: 1686,
   SystemTreeResp: 1716,
   AIStatsRollupReq: 1717,
   AIStatsRollupResp: 1718,
@@ -586,34 +565,30 @@ export const SchemaIDs = {
   AgentToolsRefreshNotifyResp: 1732,
   readSnapshotReq: 1733,
   readSnapshotResp: 1734,
-  VoiceAccountView: 1745,
-  VoiceAccountListReq: 1746,
-  VoiceAccountListResp: 1747,
-  VoiceAccountCreateReq: 1748,
-  VoiceAccountCreateResp: 1749,
-  VoiceAccountUpdateReq: 1750,
-  VoiceAccountUpdateResp: 1751,
-  VoiceAccountDeleteReq: 1752,
-  VoiceAccountDeleteResp: 1753,
-  VoiceAccountActivateReq: 1754,
-  VoiceAccountActivateResp: 1755,
-  VoiceAudio: 1756,
-  VoiceRecognizeReq: 1757,
-  VoiceRecognizeResp: 1758,
-  VoiceSynthesizeReq: 1759,
-  VoiceSynthesizeResp: 1760,
-  VoiceConfigExportResp: 1762,
-  VoiceConfigImportReq: 1763,
-  VoiceConfigImportResp: 1764,
-  VoiceNotifyConfig: 1765,
-  VoiceNotifyConfigResp: 1766,
-  VoiceCloneReq: 1767,
-  VoiceCloneResp: 1768,
-  VoiceDesignReq: 1769,
-  VoiceDesignResp: 1770,
-  eventStatsReq: 1771,
-  eventStatsResp: 1772,
-  cellStatsReq: 1773,
+  Account: 1744,
+  AccountView: 1745,
+  AuthRegisterReq: 1746,
+  AuthLoginReq: 1747,
+  AuthLoginResp: 1748,
+  AuthRefreshReq: 1749,
+  AuthRefreshResp: 1750,
+  RefreshTokenEntry: 1751,
+  AccountListResp: 1752,
+  AccountCreateReq: 1753,
+  AccountUpdateReq: 1754,
+  AccountDeleteReq: 1755,
+  AccountResetPasswordReq: 1756,
+  Group: 1757,
+  GroupListResp: 1758,
+  GroupCreateReq: 1759,
+  GroupUpdateReq: 1760,
+  GroupDeleteReq: 1761,
+  PermissionEntry: 1762,
+  PermissionMatrix: 1763,
+  PermissionUpdateReq: 1764,
+  eventStatsReq: 1766,
+  eventStatsResp: 1767,
+  cellStatsReq: 1768,
   LoginDoneReq: 1779,
   ListPluginsResp: 1781,
   setPermissionModeReq: 1783,
@@ -627,743 +602,773 @@ export const SchemaIDs = {
   GetReq: 1801,
   listPluginsReq: 1802,
   AgentSessionImportTurnsReq: 1806,
-  ProjectMount: 1808,
-  ProjectRef: 1809,
-  WorkspaceMountReq: 1810,
-  WorkspaceUnmountReq: 1811,
-  WorkspaceCreateReq: 1812,
-  WorkspaceMountsEvent: 1813,
-  WorkspaceAgentsChangedEvent: 1814,
-  AgentRuntimeState: 1815,
-  ComposerHistoryItem: 1816,
-  AgentListItem: 1817,
-  WorkspaceAgentListState: 1818,
-  WorkspaceAgentListStateEvent: 1819,
-  WorkspaceAgentStatusUpdateReq: 1820,
-  WorkspaceAddMountReq: 1821,
-  WorkspaceRemoveMountReq: 1822,
-  WorkspaceListAgentsReq: 1823,
-  WorkspaceCreateAgentReq: 1824,
-  WorkspaceUpdateAgentReq: 1825,
-  WorkspaceDeleteAgentReq: 1826,
-  WorkspaceCloneAgentReq: 1827,
-  ProjectSpawnAgentReq: 1828,
-  ProjectSpawnAgentResp: 1829,
-  AgentKindInfo: 1830,
-  RandomNameConfig: 1831,
-  AgentKindConfig: 1832,
-  WorkspaceSaveAgentKindConfigReq: 1833,
-  WorkspaceListAgentKindsResp: 1834,
-  WorkspaceGetAgentKindConfigReq: 1835,
-  WorkspaceListAgentKindConfigsResp: 1836,
-  ProjectRefListResp: 1837,
-  ActorContextSnapshot: 1838,
-  AccountSnapshot: 1839,
-  SessionSnapshot: 1840,
-  AccountPreferencesSnapshot: 1841,
-  SaveAccountPreferencesCommand: 1842,
-  XY: 1843,
-  WH: 1844,
-  WorkspacePanelState: 1845,
-  WorkspacePanelsState: 1846,
-  WorkspaceDockState: 1847,
-  WorkspaceShellLayout: 1848,
-  WorkspaceAIShellState: 1849,
-  WorkspaceProjectBrowserState: 1850,
-  WorkspaceExplorerState: 1851,
-  WorkspaceUIModel: 1852,
-  SaveWorkspaceLayoutCommand: 1853,
-  SaveWorkspacePanelsCommand: 1854,
-  SaveWorkspaceDockCommand: 1855,
-  SaveWorkspaceAIShellCommand: 1856,
-  SaveWorkspaceProjectCardBrowserCommand: 1857,
-  SaveWorkspaceExplorerCommand: 1858,
-  GitFileStatus: 1859,
-  GitCommitInfo: 1860,
-  GitBranchInfo: 1861,
-  WorkspaceGitStatusReq: 1862,
-  WorkspaceGitStatusResp: 1863,
-  WorkspaceGitLogReq: 1864,
-  WorkspaceGitLogResp: 1865,
-  WorkspaceGitDiffReq: 1866,
-  WorkspaceGitDiffResp: 1867,
-  WorkspaceGitAddReq: 1868,
-  WorkspaceGitCommitReq: 1869,
-  WorkspaceGitCommitResp: 1870,
-  WorkspaceGitPushReq: 1871,
-  WorkspaceGitPullReq: 1872,
-  WorkspaceGitBranchReq: 1873,
-  WorkspaceGitBranchResp: 1874,
-  WorkspaceGitCheckoutReq: 1875,
-  WorkspaceGitResetReq: 1876,
-  GitStashInfo: 1877,
-  WorkspaceGitStashSaveReq: 1878,
-  WorkspaceGitStashPopReq: 1879,
-  WorkspaceGitStashListReq: 1880,
-  WorkspaceGitStashListResp: 1881,
-  WorkspaceGitStashDropReq: 1882,
-  GitRemoteInfo: 1883,
-  WorkspaceGitRemoteListReq: 1884,
-  WorkspaceGitRemoteListResp: 1885,
-  WorkspaceGitRemoteAddReq: 1886,
-  WorkspaceGitRemoteRemoveReq: 1887,
-  GitBlameLine: 1888,
-  WorkspaceGitBlameReq: 1889,
-  WorkspaceGitBlameResp: 1890,
-  WorkspaceGitConfigGetReq: 1891,
-  WorkspaceGitConfigGetResp: 1892,
-  WorkspaceGitConfigSetReq: 1893,
-  WorkspaceUpdateProjectReq: 1894,
-  WorkspaceUpdateProjectResp: 1895,
-  WorkspaceLoadAgentReq: 1896,
-  WorkspaceLogEntry: 1897,
-  WorkspaceLogsQueryReq: 1898,
-  WorkspaceLogsQueryResp: 1899,
-  ChildSpawnConfig: 1900,
-  WorkspaceAgentAccessReq: 1901,
-  GitTagInfo: 1902,
-  GitShowFile: 1903,
-  WorkspaceGitShowReq: 1904,
-  WorkspaceGitShowResp: 1905,
-  WorkspaceGitFetchReq: 1906,
-  WorkspaceGitDiscardReq: 1907,
-  WorkspaceGitAmendReq: 1908,
-  WorkspaceGitTagListReq: 1909,
-  WorkspaceGitTagListResp: 1910,
-  WorkspaceGitTagCreateReq: 1911,
-  WorkspaceGitTagDeleteReq: 1912,
-  WorkspaceGitMergeReq: 1913,
-  WorkspaceGitMergeResp: 1914,
-  WorkspaceAgentSpawnSchedulerReq: 1915,
-  WorkspaceAgentSpawnSchedulerResp: 1916,
-  WorkspaceDeleteAgentKindReq: 1920,
-  WorkspaceDeleteAgentKindResp: 1921,
-  WorkspaceCreateAgentKindReq: 1922,
-  WorkspaceCreateAgentKindResp: 1923,
-  WikiStarredEntry: 1924,
-  WikiListStarredReq: 1925,
-  WikiListStarredResp: 1926,
-  WorkspaceHostCallReq: 1927,
-  WorkspaceHostCallResp: 1928,
-  WorkspaceAgentSpawnSwarmReq: 1930,
-  WorkspaceAgentSpawnSwarmResp: 1931,
-  AppSchemaRef: 2032,
-  AppTypeDescriptor: 2033,
-  AppFieldDescriptor: 2034,
-  AppObjectDescriptor: 2035,
-  AppCallableDescriptor: 2036,
-  AppEventDescriptor: 2037,
-  AppProjectionDescriptor: 2038,
-  AppEntrypoint: 2039,
-  AppDependency: 2040,
-  AgentCapabilityBinding: 2041,
-  AgentSurfaceBinding: 2042,
-  FreeAgentBinding: 2043,
-  PluginAgentBinding: 2044,
-  AppAgentBinding: 2045,
-  AppSecurityPolicy: 2046,
-  AppBundleTool: 2047,
-  AppBundle: 2048,
-  AppManifest: 2049,
-  AppStatus: 2052,
-  AppLifecycleEvent: 2053,
-  AppManagerRegisterReq: 2096,
-  AppManagerUnregisterReq: 2097,
-  AppManagerGetReq: 2098,
-  AppManagerGetResp: 2099,
-  AppManagerListReq: 2100,
-  AppManagerListResp: 2101,
-  AppManagerInvokeReq: 2102,
-  AppManagerInvokeResp: 2103,
-  AppManagerCastReq: 2104,
-  AppManagerCastResp: 2105,
-  AppManagerEmitReq: 2106,
-  AppManagerEmitResp: 2107,
-  AppEventMessage: 2108,
-  AppManagerAuditReq: 2109,
-  AppManagerAuditResp: 2110,
-  AppAuditRecord: 2111,
-  WikiTriggerTimerCardReq: 2144,
-  WikiTriggerTimerCardResp: 2145,
-  WikiToggleTimerReq: 2146,
-  WikiToggleTimerResp: 2147,
-  WikiGetCardHierarchyReq: 2148,
-  WikiGetCardHierarchyResp: 2149,
-  WikiOpenCardReq: 2150,
-  WikiCloseCardReq: 2151,
-  WikiSearchCardContentReq: 2152,
-  WikiCardContentMatch: 2153,
-  WikiSearchCardContentResp: 2154,
-  WikiWorkflowFilter: 2155,
-  WikiCardTreeNode: 2156,
-  PluginAbi: 2240,
-  PluginInvokeReq: 2247,
-  PluginInvokeResp: 2248,
-  PluginInvokeChunk: 2249,
-  PluginEventDeliverReq: 2250,
-  PluginEventDeliverResp: 2251,
-  PluginLogPutReq: 2253,
-  PluginLogEntry: 2254,
-  PluginLogsReq: 2255,
-  PluginLogsResp: 2256,
-  WikiCardChangedEvent: 2353,
-  GraphChangedEvent: 2354,
-  FrontendErrorReport: 2401,
-  ComponentRef: 2448,
-  ComponentDependency: 2449,
-  ComponentPromptContribution: 2450,
-  ComponentToolContribution: 2451,
-  ComponentDescriptor: 2452,
-  ComponentVisual: 2453,
-  AgentComponentMount: 2454,
-  ComponentDiagnostic: 2455,
-  AgentComponentSnapshot: 2456,
-  AgentComponentMountReq: 2496,
-  AgentComponentMountResp: 2497,
-  AgentComponentUnmountReq: 2498,
-  AgentComponentUnmountResp: 2499,
-  AgentComponentSetEnabledReq: 2500,
-  AgentComponentSetEnabledResp: 2501,
-  AgentComponentListReq: 2502,
-  AgentComponentListResp: 2503,
-  AgentComponentSnapshotReq: 2504,
-  AgentComponentSnapshotResp: 2505,
-  ProjectComponentListReq: 2544,
-  ProjectComponentListResp: 2545,
-  ProjectComponentGetReq: 2546,
-  ProjectComponentGetResp: 2547,
-  AgentModesUnloadAllReq: 2592,
-  AgentModesUnloadAllResp: 2593,
-  AgentSchedulerBindReq: 2640,
-  AgentSchedulerBindResp: 2641,
-  AgentSchedulerUnbindReq: 2642,
-  AgentSchedulerUnbindResp: 2643,
-  AgentSkillUseReq: 2688,
-  AgentSkillUseResp: 2689,
-  AgentPauseReq: 2736,
-  AgentPauseResp: 2737,
-  AgentResumeReq: 2738,
-  AgentResumeResp: 2739,
-  AgentUnloadReq: 2740,
-  AgentUnloadResp: 2741,
-  WikiDispatchPlanReq: 2784,
-  WikiDispatchPlanResp: 2785,
-  AppManagerAgentActionReq: 2832,
-  AppManagerAgentActionResp: 2833,
-  AppManagerReloadReq: 2834,
-  AppManagerReloadResp: 2835,
-  AIStatsRecord: 2928,
-  TurnRequestStat: 2929,
-  AIStatsCostRate: 2930,
-  AIStatsCostTier: 2931,
-  AIStatsCounters: 2932,
-  AIStatsProviderAggregate: 2936,
-  AIStatsModelAggregate: 2937,
-  AIStatsQueryReq: 2940,
-  AIStatsQueryResp: 2941,
-  AIStatsCostConfigureReq: 2942,
-  AIStatsCostConfigureResp: 2943,
-  AIStatsCostListReq: 2944,
-  AIStatsCostListResp: 2945,
-  AIStatsExportReq: 2946,
-  AIStatsExportResp: 2947,
-  AgentSessionStatsReq: 2948,
-  AgentSessionStatsResp: 2949,
-  AIStatsBackfillReq: 2950,
-  AIStatsBackfillResp: 2951,
-  AIStatsAggregatesReq: 2952,
-  AIStatsAggregatesResp: 2953,
-  AIStatsBucket: 2954,
-  AIStatsModelStat: 2955,
-  AIStatsSeriesReq: 2956,
-  AIStatsSeriesResp: 2957,
-  AppManagerProjectPackageReq: 2992,
-  AppManagerProjectPackageResp: 2993,
-  AppManagerRegisterProjectReq: 3040,
-  AppManagerRegisterProjectResp: 3041,
-  AppManagerReloadProjectReq: 3042,
-  AppManagerReloadProjectResp: 3043,
-  NativeBuildResult: 3089,
-  NativeBuildReq: 3090,
-  NativeBuildResp: 3091,
-  PluginArtifactLoadReq: 3092,
-  PluginArtifactLoadResp: 3093,
-  PluginArtifactReloadPrepareReq: 3094,
-  PluginArtifactReloadPrepareResp: 3095,
-  PluginArtifactReloadCommitReq: 3096,
-  PluginArtifactReloadCommitResp: 3097,
-  PluginArtifactReloadAbortReq: 3098,
-  PluginArtifactReloadAbortResp: 3099,
-  PluginArtifactUnloadReq: 3100,
-  PluginArtifactUnloadResp: 3101,
-  PluginAssetsPutReq: 3102,
-  PluginAssetsPutResp: 3103,
-  PluginAssetsRemoveReq: 3104,
-  PluginAssetsRemoveResp: 3105,
-  PluginStateGetReq: 3106,
-  PluginStateGetResp: 3107,
-  PluginStateSetReq: 3108,
-  PluginStateSetResp: 3109,
-  PluginStateDeleteReq: 3110,
-  PluginStateDeleteResp: 3111,
-  PluginStateListReq: 3112,
-  PluginStateListResp: 3113,
-  PluginStateAppendReq: 3114,
-  PluginStateAppendResp: 3115,
-  PluginStateGetManyReq: 3116,
-  PluginStateGetManyResp: 3117,
-  PluginStateSetManyReq: 3118,
-  PluginStateSetManyResp: 3119,
-  PluginStatePurgeReq: 3120,
-  PluginStatePurgeResp: 3121,
-  PluginAppDataUsageItem: 3122,
-  PluginAppDataUsageReq: 3123,
-  PluginAppDataUsageResp: 3124,
-  SshHostView: 3168,
-  AppSessionCreateReq: 3216,
-  AppSessionCreateResp: 3217,
-  AppSessionResolveReq: 3218,
-  AppSessionResolveResp: 3219,
-  AppSessionRevokeReq: 3220,
-  AppSessionRevokeResp: 3221,
-  AppRouteTokenReq: 3222,
-  AppRouteTokenResp: 3223,
-  CardRef: 3312,
-  ProjectCardMountReq: 3360,
-  ProjectCardMountResp: 3361,
-  ProjectCardUnmountReq: 3362,
-  ProjectCardUnmountResp: 3363,
-  ProjectCardListReq: 3364,
-  ProjectCardListResp: 3365,
-  WorkspaceAistatsActorIdResp: 3505,
-  SlashCommand: 3552,
-  WorkspaceSlashCommandsListResp: 3554,
-  BuiltinMode: 3600,
-  WorkspaceBuiltinModesListResp: 3602,
-  MemorySaveReq: 3648,
-  MemorySaveResp: 3649,
-  MemoryRecallReq: 3650,
-  MemoryRecallResp: 3651,
-  MemorySnapshotReq: 3653,
-  MemorySnapshotResp: 3654,
-  MemoryNode: 3655,
-  MemoryEdge: 3656,
-  GuideStep: 3696,
-  TutorialSpec: 3697,
-  UiInteractionRecord: 3698,
-  InterfaceManagerControlReq: 3699,
-  InterfaceManagerControlResp: 3700,
-  InterfaceManagerEvent: 3701,
-  ReportInteractionReq: 3702,
-  ReportInteractionResp: 3703,
-  QueryInteractionsReq: 3704,
-  QueryInteractionsResp: 3705,
-  GuideAnchor: 3706,
-  VoiceHotwordsBinding: 3744,
-  VoiceHotwordsSetReq: 3745,
-  VoiceHotwordsSetResp: 3746,
-  VoiceHotwordsGetReq: 3747,
-  VoiceHotwordsGetResp: 3748,
-  VoiceHotwordsDeleteReq: 3749,
-  VoiceHotwordsDeleteResp: 3750,
-  WorkspaceAgentSpawnAssignReq: 3792,
-  WorkspaceAgentSpawnAssignResp: 3793,
-  WorkspaceAgentAssignReq: 3794,
-  WorkspaceAgentAssignResp: 3795,
-  WorkspaceAgentReviewReq: 3796,
-  WorkspaceAgentReviewResp: 3797,
-  WorkspaceAgentTerminateReq: 3798,
-  WorkspaceAgentTerminateResp: 3799,
-  WorkspaceAgentSpawnByTypeReq: 3800,
-  WorkspaceAgentSpawnByTypeResp: 3801,
-  WorkspaceWorkflowStartReq: 3802,
-  WorkspaceWorkflowStartResp: 3803,
-  WorkspaceGateApproveReq: 3804,
-  WorkspaceGateApproveResp: 3805,
-  WorkspaceGateRejectReq: 3806,
-  WorkspaceGateRejectResp: 3807,
-  PluginDomReq: 3840,
-  PluginDomResp: 3841,
-  PluginDomPutReq: 3842,
-  PluginDomPutResp: 3843,
-  GlassCapability: 3888,
-  GlassRenderFrame: 3889,
-  GlassBootstrapReq: 3890,
-  GlassBootstrapResp: 3891,
-  GlassSessionClaimReq: 3892,
-  GlassSessionClaimResp: 3893,
-  GlassLifecycleEvent: 3894,
-  GlassSessionState: 3895,
-  GlassGetStateReq: 3896,
-  GlassGetStateResp: 3897,
-  GlassSpeechStartReq: 3898,
-  GlassSpeechChunkReq: 3899,
-  GlassSpeechEndReq: 3900,
-  GlassSpeechAck: 3901,
-  GlassSpeechStartResp: 3902,
-  GlassSpeechEndResp: 3903,
-  GlassTranscript: 3904,
-  GlassTranscriptEvent: 3905,
-  GlassRenderEvent: 3910,
-  GlassSpeakEvent: 3913,
-  GlassDebugTimelineEntry: 3917,
-  GlassDebugStats: 3918,
-  GlassDebugState: 3919,
-  GlassDebugReq: 3920,
-  GlassDebugResp: 3921,
-  GlassEvent: 3922,
-  GlassInboxSnapshot: 3930,
-  GlassEventEnqueuedEvent: 3933,
-  GlassEventDeliveredEvent: 3934,
-  GlassEventCompletedEvent: 3935,
-  GlassDeliveryLogEntry: 3936,
-  GlassHudStatus: 3937,
-  GlassSceneBox: 4032,
-  GlassSceneOption: 4033,
-  GlassSceneElement: 4034,
-  GlassScene: 4035,
-  GlassInteractionEvent: 4036,
-  GlassInteractionReportReq: 4037,
-  GlassInteractionReportResp: 4038,
-  GlassTelemetryReq: 4080,
-  GlassTelemetryResp: 4081,
-  GlassDebugSimulateReq: 4128,
-  GlassDebugSimulateResp: 4129,
-  McpStdioTransport: 4176,
-  McpHttpTransport: 4177,
-  McpServerConfig: 4178,
-  McpServerStatus: 4179,
-  McpEnvVarEntry: 4180,
-  McpStdioTransportView: 4181,
-  McpHttpTransportView: 4182,
-  McpServerView: 4183,
-  McpListServersResp: 4185,
-  McpAddServerReq: 4186,
-  McpAddServerResp: 4187,
-  McpUpdateServerReq: 4188,
-  McpUpdateServerResp: 4189,
-  McpRemoveServerReq: 4190,
-  McpRemoveServerResp: 4191,
-  McpConnectReq: 4192,
-  McpConnectResp: 4193,
-  McpDisconnectReq: 4194,
-  McpDisconnectResp: 4195,
-  McpReconnectReq: 4196,
-  McpReconnectResp: 4197,
-  McpToolContent: 4198,
-  McpCallToolReq: 4199,
-  McpCallToolResp: 4200,
-  McpServerStatusEvent: 4201,
-  McpToolView: 4202,
-  McpServerTools: 4203,
-  McpDiscoverToolsResp: 4205,
-  BrowserCrawlStartReq: 4240,
-  BrowserCrawlStartResp: 4241,
-  BrowserCrawlStatusReq: 4242,
-  BrowserCrawlStatusResp: 4243,
-  BrowserCrawlResultsReq: 4244,
-  BrowserCrawlResultsResp: 4245,
-  BrowserCrawlPageResult: 4246,
-  BrowserCrawlHandoffReq: 4247,
-  BrowserCrawlHandoffResp: 4248,
-  BrowserCrawlConfig: 4249,
-  GuidanceCapabilityEntry: 4288,
-  GuidanceCapabilityProfile: 4289,
-  GuidanceRecord: 4290,
-  GuidanceProfileQueryReq: 4291,
-  GuidanceProfileQueryResp: 4292,
-  GuidanceProfileUpdateReq: 4293,
-  GuidanceProfileUpdateResp: 4294,
-  GuidanceProfileClearReq: 4295,
-  GuidanceProfileClearResp: 4296,
-  GuidanceProfileIncrementReq: 4297,
-  GuidanceProfileIncrementResp: 4298,
-  AppManagerRetryCleanupReq: 4336,
-  AppManagerRetryCleanupResp: 4337,
-  EntitlementsView: 4384,
-  CloudAccountStatus: 4385,
-  CloudAccountLinkReq: 4386,
-  CloudAccountUnlinkResp: 4387,
-  CloudAccountGetEntitlementsResp: 4388,
-  ContentListItem: 4389,
-  ContentSearchReq: 4390,
-  ContentSearchResp: 4391,
-  ContentDetailReq: 4392,
-  ContentDetailResp: 4393,
-  ContentInstallReq: 4394,
-  ContentInstallResp: 4395,
-  ContentRiskAssessment: 4396,
-  PassView: 4397,
-  CdkeyRedeemReq: 4398,
-  CdkeyRedeemResp: 4399,
-  CloudAccountSessionTokenResp: 4401,
-  WebSearchReq: 4432,
-  WebSearchResp: 4433,
-  WebSearchResult: 4434,
-  WebSearchProviderInfo: 4435,
-  WebSearchProviderListResp: 4437,
-  WebSearchAccountView: 4439,
-  WebSearchAccountListReq: 4440,
-  WebSearchAccountListResp: 4441,
-  WebSearchAccountCreateReq: 4442,
-  WebSearchAccountCreateResp: 4443,
-  WebSearchAccountUpdateReq: 4444,
-  WebSearchAccountUpdateResp: 4445,
-  WebSearchAccountDeleteReq: 4446,
-  WebSearchAccountDeleteResp: 4447,
-  WebSearchAccountActivateReq: 4448,
-  WebSearchAccountActivateResp: 4449,
-  WebFetchReq: 4450,
-  WebFetchMeta: 4451,
-  WebFetchResp: 4452,
-  WebDownloadReq: 4453,
-  WebDownloadResp: 4454,
-  MediaAccountView: 4497,
-  MediaAccountListReq: 4498,
-  MediaAccountListResp: 4499,
-  MediaAccountCreateReq: 4500,
-  MediaAccountCreateResp: 4501,
-  MediaAccountUpdateReq: 4502,
-  MediaAccountUpdateResp: 4503,
-  MediaAccountDeleteReq: 4504,
-  MediaAccountDeleteResp: 4505,
-  MediaAccountActivateReq: 4506,
-  MediaAccountActivateResp: 4507,
-  PuppetNode: 4544,
-  PuppetDocument: 4545,
-  PuppetDocumentSnapshot: 4546,
-  PuppetDocumentSnapshotReq: 4547,
-  PuppetDocumentSnapshotResp: 4548,
-  PuppetStagedAsset: 4549,
-  PuppetAssetListReq: 4550,
-  PuppetAssetListResp: 4551,
-  PuppetAssetStageReq: 4552,
-  PuppetAssetStageResp: 4553,
-  PuppetAssetCommitReq: 4554,
-  PuppetAssetCommitResp: 4555,
-  PuppetAssetRejectReq: 4556,
-  PuppetAssetRejectResp: 4557,
-  PuppetRevision: 4558,
-  PuppetRevisionLogReq: 4559,
-  PuppetRevisionLogResp: 4560,
-  PuppetEditCommand: 4561,
-  PuppetEditReq: 4562,
-  PuppetEditResp: 4563,
-  PuppetMesh: 4577,
-  PuppetAssetReadReq: 4580,
-  PuppetAssetReadResp: 4581,
-  PuppetDocumentRevertToReq: 4582,
-  PuppetDocumentRevertToResp: 4583,
-  PuppetParam: 4584,
-  PuppetParamBinding: 4585,
-  PuppetParamListReq: 4588,
-  PuppetParamListResp: 4589,
-  PuppetViewportCaptureReq: 4593,
-  PuppetViewportCaptureResp: 4594,
-  AppManagerCallableInfoReq: 4640,
-  AppManagerCallableParam: 4641,
-  AppManagerCallableInfoEntry: 4642,
-  AppManagerCallableInfoResp: 4643,
-  AppManagerDevGuideReq: 4644,
-  AppManagerDevGuideStep: 4645,
-  AppManagerDevGuideError: 4646,
-  AppManagerDevGuideResp: 4647,
-  ImAccountView: 4689,
-  ImAccountListReq: 4690,
-  ImAccountListResp: 4691,
-  ImAccountCreateReq: 4692,
-  ImAccountCreateResp: 4693,
-  ImAccountUpdateReq: 4694,
-  ImAccountUpdateResp: 4695,
-  ImAccountDeleteReq: 4696,
-  ImAccountDeleteResp: 4697,
-  ImRoute: 4698,
-  ImRouteListReq: 4699,
-  ImRouteListResp: 4700,
-  ImRouteSetReq: 4701,
-  ImRouteSetResp: 4702,
-  ImRouteDeleteReq: 4703,
-  ImRouteDeleteResp: 4704,
-  ImStatusReq: 4705,
-  ImStatusResp: 4706,
-  ImSendReq: 4707,
-  ImSendResp: 4708,
-  AppManagerDevGenerateReq: 4752,
-  AppManagerDevGenerateFileEntry: 4753,
-  AppManagerDevGenerateResp: 4754,
-  AppManagerDevGateReq: 4800,
-  AppManagerGateError: 4801,
-  AppManagerGateResult: 4802,
-  AppManagerDevGateResp: 4803,
-  SetProtectedFilesReq: 4848,
-  SetProtectedFilesResp: 4849,
-  ShellCandidate: 4896,
-  ShellEnvProbeResp: 4897,
-  ShellPrefSaveReq: 4898,
-  ShellPrefSaveResp: 4899,
-  ModelDefault: 4944,
-  AIManagerModelDefaultsGetResp: 4946,
-  AIManagerModelDefaultsSetReq: 4947,
-  AIManagerModelDefaultsSetResp: 4948,
-  AIManagerFetchOpenRouterModelsResp: 4950,
-  LspPositionParams: 4992,
-  LspRangeParams: 4993,
-  LspDidOpenReq: 4994,
-  LspDidChangeReq: 4995,
-  LspDidCloseReq: 4996,
-  LspUriReq: 4997,
-  LspInitializeReq: 4998,
-  LspRenameReq: 4999,
-  LspReferencesReq: 5000,
-  LspShutdownReq: 5001,
-  LspClearCacheReq: 5002,
-  LspJsonResp: 5003,
-  LspDiagnosticsEvent: 5004,
-  LspLanguageState: 5005,
-  LspStateResp: 5006,
-  LspStateSaveReq: 5007,
-  LspStatusReq: 5008,
-  LspLanguageInstallState: 5009,
-  LspStatusResp: 5010,
-  LspInstallReq: 5011,
-  LspInstallResp: 5012,
-  LspInstallProgressEvent: 5013,
-  ShellSessionOpenReq: 5056,
-  ShellSessionOpenResp: 5057,
-  ShellSessionWriteReq: 5058,
-  ShellSessionWriteResp: 5059,
-  ShellSessionResizeReq: 5060,
-  ShellSessionResizeResp: 5061,
-  ShellSessionCloseReq: 5062,
-  ShellSessionCloseResp: 5063,
-  ShellSessionOutputEvent: 5064,
-  WorkspaceLogStreamEntry: 5104,
-  WorkspaceLogStreamEvent: 5105,
-  ShellSessionFetchReq: 5152,
-  ShellSessionFetchResp: 5153,
-  DebugCommandsListResp: 5200,
-  DebugCommandExecReq: 5201,
-  DebugCommandExecResp: 5202,
-  WorkspaceAgentLoadedReq: 5344,
-  WorkspaceAgentLoadedResp: 5345,
-  AppManagerPluginLoadReq: 5392,
-  AppManagerPluginLoadResp: 5393,
-  AppManagerPluginUnloadReq: 5394,
-  AppManagerPluginUnloadResp: 5395,
-  AppManagerInstallLocalReq: 5440,
-  AppManagerInstallLocalResp: 5441,
-  AppManagerIconNamesReq: 5488,
-  AppManagerIconEntry: 5489,
-  AppManagerIconNamesResp: 5490,
-  AppManagerOpenViewReq: 5536,
-  AppManagerOpenViewResp: 5537,
-  AppManagerComponentListReq: 5584,
-  AppManagerComponentListResp: 5585,
-  AppManagerComponentGetReq: 5586,
-  AppManagerComponentGetResp: 5587,
-  AppManagerSdkVendorReq: 5632,
-  AppManagerSdkVendorResp: 5633,
-  MediaProviderModelSetReq: 5680,
-  MediaProviderModelSetResp: 5681,
-  AppManagerHostProtocolReq: 5728,
-  AppManagerHostCallInfo: 5729,
-  AppManagerHostCapabilityInfo: 5730,
-  AppManagerHostProtocolResp: 5731,
-  AppManagerPluginEmitReq: 5776,
-  AppManagerPluginEmitResp: 5777,
-  PluginProxyAttachReq: 5872,
-  PluginProxyAttachResp: 5873,
-  PluginProxyDetachReq: 5874,
-  PluginProxyDetachResp: 5875,
-  DbProfileView: 5921,
-  DbProfileSaveReq: 5922,
-  DbProfileSaveResp: 5923,
-  DbProfileListReq: 5924,
-  DbProfileListResp: 5925,
-  DbProfileGetReq: 5926,
-  DbProfileGetResp: 5927,
-  DbProfileRemoveReq: 5928,
-  DbProfileRemoveResp: 5929,
-  AppManagerRegistrationPreviewReq: 5968,
-  AppManagerRegistrationPreviewResp: 5969,
-  AppManagerPanelTopologyReq: 6016,
-  AppManagerPanelTopologyResp: 6017,
-  AppManagerAppExportReq: 6064,
-  AppManagerAppExportResp: 6065,
-  DbTreeNode: 6160,
-  DbRows: 6161,
-  DbDialTestReq: 6162,
-  DbDialTestResp: 6163,
-  DbTreeReq: 6164,
-  DbTreeResp: 6165,
-  DbReadReq: 6166,
-  DbQueryReq: 6167,
-  DbCloseReq: 6168,
-  DbCloseResp: 6169,
-  DbColumnDef: 6170,
-  DbIndexDef: 6171,
-  DbDescribeReq: 6172,
-  DbDescribeResp: 6173,
-  DbObjectEntry: 6174,
-  DbObjectListReq: 6175,
-  DbObjectListResp: 6176,
-  DbObjectReadReq: 6177,
-  DbObjectReadResp: 6178,
-  DbObjectWriteReq: 6179,
-  DbObjectWriteResp: 6180,
-  DbObjectDeleteReq: 6181,
-  DbObjectDeleteResp: 6182,
-  DbObjectMkdirReq: 6183,
-  DbObjectMkdirResp: 6184,
-  DbObjectStatReq: 6185,
-  DbObjectStatResp: 6186,
-  ToastCard: 6208,
-  ToastShowReq: 6209,
-  ToastShowResp: 6210,
-  ToastDismissReq: 6211,
-  ToastDismissResp: 6212,
-  ToastCardRemovedEvent: 6213,
-  ToastStateReq: 6214,
-  ToastStateResp: 6215,
-  ToastActionReq: 6216,
-  ToastActionResp: 6217,
-  ToastActionTriggeredEvent: 6218,
-  CookieBridgePairingInfoReq: 6256,
-  CookieBridgePairingInfoResp: 6257,
-  CookieBridgeRegenTokenReq: 6258,
-  CookieBridgeRegenTokenResp: 6259,
-  WorkbenchCardState: 6400,
-  WorkbenchSnapshot: 6401,
-  WorkbenchSnapshotReq: 6402,
-  WorkbenchCardRefReq: 6403,
-  WorkbenchSetHiddenReq: 6404,
-  WorkbenchSetPinnedReq: 6405,
-  WorkbenchUpsertCardReq: 6406,
-  WorkbenchSetFrozenReq: 6407,
-  WorkbenchSetMaximizedReq: 6408,
-  WorkbenchAttentionEvent: 6496,
-  WorkbenchAttentionReportReq: 6497,
-  WorkbenchAttentionReportResp: 6498,
-  StoreClientConfigView: 6657,
-  StoreClientConfigGetResp: 6659,
-  StoreClientConfigSetReq: 6660,
-  StoreClientConfigSetResp: 6661,
-  StoreIndexResp: 6663,
-  StorePluginView: 6664,
-  StoreVersionView: 6665,
-  StoreCommunityView: 6666,
-  StoreInstallReq: 6667,
-  StoreInstallResp: 6668,
-  PolicyQuestion: 6688,
-  PolicyDecideReq: 6689,
-  PolicyAnswer: 6690,
-  PolicyDecideResp: 6691,
-  PolicyJevConfig: 6692,
-  PolicyLLMConfig: 6693,
-  PolicyConfigureReq: 6694,
-  PolicyConfigureResp: 6695,
-  PolicyStatusReq: 6696,
-  PolicyStatusResp: 6697,
+  VoiceAccountView: 1809,
+  VoiceAccountListReq: 1810,
+  VoiceAccountListResp: 1811,
+  VoiceAccountCreateReq: 1812,
+  VoiceAccountCreateResp: 1813,
+  VoiceAccountUpdateReq: 1814,
+  VoiceAccountUpdateResp: 1815,
+  VoiceAccountDeleteReq: 1816,
+  VoiceAccountDeleteResp: 1817,
+  VoiceAccountActivateReq: 1818,
+  VoiceAccountActivateResp: 1819,
+  VoiceAudio: 1820,
+  VoiceRecognizeReq: 1821,
+  VoiceRecognizeResp: 1822,
+  VoiceSynthesizeReq: 1823,
+  VoiceSynthesizeResp: 1824,
+  VoiceConfigExportResp: 1826,
+  VoiceConfigImportReq: 1827,
+  VoiceConfigImportResp: 1828,
+  VoiceNotifyConfig: 1829,
+  VoiceNotifyConfigResp: 1830,
+  VoiceCloneReq: 1831,
+  VoiceCloneResp: 1832,
+  VoiceDesignReq: 1833,
+  VoiceDesignResp: 1834,
+  WorkspaceAgentSpawnSwarmReq: 1835,
+  WorkspaceAgentSpawnSwarmResp: 1836,
+  ProjectMount: 1872,
+  ProjectRef: 1873,
+  WorkspaceMountReq: 1874,
+  WorkspaceUnmountReq: 1875,
+  WorkspaceCreateReq: 1876,
+  WorkspaceMountsEvent: 1877,
+  WorkspaceAgentsChangedEvent: 1878,
+  AgentRuntimeState: 1879,
+  ComposerHistoryItem: 1880,
+  AgentListItem: 1881,
+  WorkspaceAgentListState: 1882,
+  WorkspaceAgentListStateEvent: 1883,
+  WorkspaceAgentStatusUpdateReq: 1884,
+  WorkspaceAddMountReq: 1885,
+  WorkspaceRemoveMountReq: 1886,
+  WorkspaceListAgentsReq: 1887,
+  WorkspaceCreateAgentReq: 1888,
+  WorkspaceUpdateAgentReq: 1889,
+  WorkspaceDeleteAgentReq: 1890,
+  WorkspaceCloneAgentReq: 1891,
+  ProjectSpawnAgentReq: 1892,
+  ProjectSpawnAgentResp: 1893,
+  AgentKindInfo: 1894,
+  RandomNameConfig: 1895,
+  AgentKindConfig: 1896,
+  WorkspaceSaveAgentKindConfigReq: 1897,
+  WorkspaceListAgentKindsResp: 1898,
+  WorkspaceGetAgentKindConfigReq: 1899,
+  WorkspaceListAgentKindConfigsResp: 1900,
+  ProjectRefListResp: 1901,
+  ActorContextSnapshot: 1902,
+  AccountSnapshot: 1903,
+  SessionSnapshot: 1904,
+  AccountPreferencesSnapshot: 1905,
+  SaveAccountPreferencesCommand: 1906,
+  XY: 1907,
+  WH: 1908,
+  WorkspacePanelState: 1909,
+  WorkspacePanelsState: 1910,
+  WorkspaceDockState: 1911,
+  WorkspaceShellLayout: 1912,
+  WorkspaceAIShellState: 1913,
+  WorkspaceProjectBrowserState: 1914,
+  WorkspaceExplorerState: 1915,
+  WorkspaceUIModel: 1916,
+  SaveWorkspaceLayoutCommand: 1917,
+  SaveWorkspacePanelsCommand: 1918,
+  SaveWorkspaceDockCommand: 1919,
+  SaveWorkspaceAIShellCommand: 1920,
+  SaveWorkspaceProjectCardBrowserCommand: 1921,
+  SaveWorkspaceExplorerCommand: 1922,
+  GitFileStatus: 1923,
+  GitCommitInfo: 1924,
+  GitBranchInfo: 1925,
+  WorkspaceGitStatusReq: 1926,
+  WorkspaceGitStatusResp: 1927,
+  WorkspaceGitLogReq: 1928,
+  WorkspaceGitLogResp: 1929,
+  WorkspaceGitDiffReq: 1930,
+  WorkspaceGitDiffResp: 1931,
+  WorkspaceGitAddReq: 1932,
+  WorkspaceGitCommitReq: 1933,
+  WorkspaceGitCommitResp: 1934,
+  WorkspaceGitPushReq: 1935,
+  WorkspaceGitPullReq: 1936,
+  WorkspaceGitBranchReq: 1937,
+  WorkspaceGitBranchResp: 1938,
+  WorkspaceGitCheckoutReq: 1939,
+  WorkspaceGitResetReq: 1940,
+  GitStashInfo: 1941,
+  WorkspaceGitStashSaveReq: 1942,
+  WorkspaceGitStashPopReq: 1943,
+  WorkspaceGitStashListReq: 1944,
+  WorkspaceGitStashListResp: 1945,
+  WorkspaceGitStashDropReq: 1946,
+  GitRemoteInfo: 1947,
+  WorkspaceGitRemoteListReq: 1948,
+  WorkspaceGitRemoteListResp: 1949,
+  WorkspaceGitRemoteAddReq: 1950,
+  WorkspaceGitRemoteRemoveReq: 1951,
+  GitBlameLine: 1952,
+  WorkspaceGitBlameReq: 1953,
+  WorkspaceGitBlameResp: 1954,
+  WorkspaceGitConfigGetReq: 1955,
+  WorkspaceGitConfigGetResp: 1956,
+  WorkspaceGitConfigSetReq: 1957,
+  WorkspaceUpdateProjectReq: 1958,
+  WorkspaceUpdateProjectResp: 1959,
+  WorkspaceLoadAgentReq: 1960,
+  WorkspaceLogEntry: 1961,
+  WorkspaceLogsQueryReq: 1962,
+  WorkspaceLogsQueryResp: 1963,
+  ChildSpawnConfig: 1964,
+  WorkspaceAgentAccessReq: 1965,
+  GitTagInfo: 1966,
+  GitShowFile: 1967,
+  WorkspaceGitShowReq: 1968,
+  WorkspaceGitShowResp: 1969,
+  WorkspaceGitFetchReq: 1970,
+  WorkspaceGitDiscardReq: 1971,
+  WorkspaceGitAmendReq: 1972,
+  WorkspaceGitTagListReq: 1973,
+  WorkspaceGitTagListResp: 1974,
+  WorkspaceGitTagCreateReq: 1975,
+  WorkspaceGitTagDeleteReq: 1976,
+  WorkspaceGitMergeReq: 1977,
+  WorkspaceGitMergeResp: 1978,
+  WorkspaceAgentSpawnSchedulerReq: 1979,
+  WorkspaceAgentSpawnSchedulerResp: 1980,
+  WorkspaceDeleteAgentKindReq: 1984,
+  WorkspaceDeleteAgentKindResp: 1985,
+  WorkspaceCreateAgentKindReq: 1986,
+  WorkspaceCreateAgentKindResp: 1987,
+  WikiStarredEntry: 1988,
+  WikiListStarredReq: 1989,
+  WikiListStarredResp: 1990,
+  WorkspaceHostCallReq: 1991,
+  WorkspaceHostCallResp: 1992,
+  AppSchemaRef: 2112,
+  AppTypeDescriptor: 2113,
+  AppFieldDescriptor: 2114,
+  AppObjectDescriptor: 2115,
+  AppCallableDescriptor: 2116,
+  AppEventDescriptor: 2117,
+  AppProjectionDescriptor: 2118,
+  AppEntrypoint: 2119,
+  AppDependency: 2120,
+  AgentCapabilityBinding: 2121,
+  AgentSurfaceBinding: 2122,
+  FreeAgentBinding: 2123,
+  PluginAgentBinding: 2124,
+  AppAgentBinding: 2125,
+  AppSecurityPolicy: 2126,
+  AppBundleTool: 2127,
+  AppBundle: 2128,
+  AppManifest: 2129,
+  AppStatus: 2132,
+  AppLifecycleEvent: 2133,
+  AppManagerRegisterReq: 2176,
+  AppManagerUnregisterReq: 2177,
+  AppManagerGetReq: 2178,
+  AppManagerGetResp: 2179,
+  AppManagerListReq: 2180,
+  AppManagerListResp: 2181,
+  AppManagerInvokeReq: 2182,
+  AppManagerInvokeResp: 2183,
+  AppManagerCastReq: 2184,
+  AppManagerCastResp: 2185,
+  AppManagerEmitReq: 2186,
+  AppManagerEmitResp: 2187,
+  AppEventMessage: 2188,
+  AppManagerAuditReq: 2189,
+  AppManagerAuditResp: 2190,
+  AppAuditRecord: 2191,
+  WikiTriggerTimerCardReq: 2224,
+  WikiTriggerTimerCardResp: 2225,
+  WikiToggleTimerReq: 2226,
+  WikiToggleTimerResp: 2227,
+  WikiGetCardHierarchyReq: 2228,
+  WikiGetCardHierarchyResp: 2229,
+  WikiOpenCardReq: 2230,
+  WikiCloseCardReq: 2231,
+  WikiSearchCardContentReq: 2232,
+  WikiCardContentMatch: 2233,
+  WikiSearchCardContentResp: 2234,
+  WikiWorkflowFilter: 2235,
+  WikiCardTreeNode: 2236,
+  PluginAbi: 2320,
+  PluginInvokeReq: 2327,
+  PluginInvokeResp: 2328,
+  PluginInvokeChunk: 2329,
+  PluginEventDeliverReq: 2330,
+  PluginEventDeliverResp: 2331,
+  PluginLogPutReq: 2333,
+  PluginLogEntry: 2334,
+  PluginLogsReq: 2335,
+  PluginLogsResp: 2336,
+  WikiCardChangedEvent: 2433,
+  GraphChangedEvent: 2434,
+  FrontendErrorReport: 2481,
+  ComponentRef: 2528,
+  ComponentDependency: 2529,
+  ComponentPromptContribution: 2530,
+  ComponentToolContribution: 2531,
+  ComponentDescriptor: 2532,
+  ComponentVisual: 2533,
+  AgentComponentMount: 2534,
+  ComponentDiagnostic: 2535,
+  AgentComponentSnapshot: 2536,
+  AgentComponentMountReq: 2576,
+  AgentComponentMountResp: 2577,
+  AgentComponentUnmountReq: 2578,
+  AgentComponentUnmountResp: 2579,
+  AgentComponentSetEnabledReq: 2580,
+  AgentComponentSetEnabledResp: 2581,
+  AgentComponentListReq: 2582,
+  AgentComponentListResp: 2583,
+  AgentComponentSnapshotReq: 2584,
+  AgentComponentSnapshotResp: 2585,
+  ProjectComponentListReq: 2624,
+  ProjectComponentListResp: 2625,
+  ProjectComponentGetReq: 2626,
+  ProjectComponentGetResp: 2627,
+  AgentModesUnloadAllReq: 2672,
+  AgentModesUnloadAllResp: 2673,
+  AgentSchedulerBindReq: 2720,
+  AgentSchedulerBindResp: 2721,
+  AgentSchedulerUnbindReq: 2722,
+  AgentSchedulerUnbindResp: 2723,
+  AgentSkillUseReq: 2768,
+  AgentSkillUseResp: 2769,
+  AgentPauseReq: 2816,
+  AgentPauseResp: 2817,
+  AgentResumeReq: 2818,
+  AgentResumeResp: 2819,
+  AgentUnloadReq: 2820,
+  AgentUnloadResp: 2821,
+  WikiDispatchPlanReq: 2864,
+  WikiDispatchPlanResp: 2865,
+  AppManagerAgentActionReq: 2912,
+  AppManagerAgentActionResp: 2913,
+  AppManagerReloadReq: 2914,
+  AppManagerReloadResp: 2915,
+  AIStatsRecord: 3008,
+  TurnRequestStat: 3009,
+  AIStatsCostRate: 3010,
+  AIStatsCostTier: 3011,
+  AIStatsCounters: 3012,
+  AIStatsProviderAggregate: 3016,
+  AIStatsModelAggregate: 3017,
+  AIStatsQueryReq: 3020,
+  AIStatsQueryResp: 3021,
+  AIStatsCostConfigureReq: 3022,
+  AIStatsCostConfigureResp: 3023,
+  AIStatsCostListReq: 3024,
+  AIStatsCostListResp: 3025,
+  AIStatsExportReq: 3026,
+  AIStatsExportResp: 3027,
+  AgentSessionStatsReq: 3028,
+  AgentSessionStatsResp: 3029,
+  AIStatsBackfillReq: 3030,
+  AIStatsBackfillResp: 3031,
+  AIStatsAggregatesReq: 3032,
+  AIStatsAggregatesResp: 3033,
+  AIStatsBucket: 3034,
+  AIStatsModelStat: 3035,
+  AIStatsSeriesReq: 3036,
+  AIStatsSeriesResp: 3037,
+  AppManagerProjectPackageReq: 3072,
+  AppManagerProjectPackageResp: 3073,
+  AppManagerRegisterProjectReq: 3120,
+  AppManagerRegisterProjectResp: 3121,
+  AppManagerReloadProjectReq: 3122,
+  AppManagerReloadProjectResp: 3123,
+  NativeBuildResult: 3169,
+  NativeBuildReq: 3170,
+  NativeBuildResp: 3171,
+  PluginArtifactLoadReq: 3172,
+  PluginArtifactLoadResp: 3173,
+  PluginArtifactReloadPrepareReq: 3174,
+  PluginArtifactReloadPrepareResp: 3175,
+  PluginArtifactReloadCommitReq: 3176,
+  PluginArtifactReloadCommitResp: 3177,
+  PluginArtifactReloadAbortReq: 3178,
+  PluginArtifactReloadAbortResp: 3179,
+  PluginArtifactUnloadReq: 3180,
+  PluginArtifactUnloadResp: 3181,
+  PluginAssetsPutReq: 3182,
+  PluginAssetsPutResp: 3183,
+  PluginAssetsRemoveReq: 3184,
+  PluginAssetsRemoveResp: 3185,
+  PluginStateGetReq: 3186,
+  PluginStateGetResp: 3187,
+  PluginStateSetReq: 3188,
+  PluginStateSetResp: 3189,
+  PluginStateDeleteReq: 3190,
+  PluginStateDeleteResp: 3191,
+  PluginStateListReq: 3192,
+  PluginStateListResp: 3193,
+  PluginStateAppendReq: 3194,
+  PluginStateAppendResp: 3195,
+  PluginStateGetManyReq: 3196,
+  PluginStateGetManyResp: 3197,
+  PluginStateSetManyReq: 3198,
+  PluginStateSetManyResp: 3199,
+  PluginStatePurgeReq: 3200,
+  PluginStatePurgeResp: 3201,
+  PluginAppDataUsageItem: 3202,
+  PluginAppDataUsageReq: 3203,
+  PluginAppDataUsageResp: 3204,
+  SshHostView: 3248,
+  AppSessionCreateReq: 3296,
+  AppSessionCreateResp: 3297,
+  AppSessionResolveReq: 3298,
+  AppSessionResolveResp: 3299,
+  AppSessionRevokeReq: 3300,
+  AppSessionRevokeResp: 3301,
+  AppRouteTokenReq: 3302,
+  AppRouteTokenResp: 3303,
+  CardRef: 3392,
+  ProjectCardMountReq: 3440,
+  ProjectCardMountResp: 3441,
+  ProjectCardUnmountReq: 3442,
+  ProjectCardUnmountResp: 3443,
+  ProjectCardListReq: 3444,
+  ProjectCardListResp: 3445,
+  WorkspaceAistatsActorIdResp: 3585,
+  SlashCommand: 3632,
+  WorkspaceSlashCommandsListResp: 3634,
+  BuiltinMode: 3680,
+  WorkspaceBuiltinModesListResp: 3682,
+  MemorySaveReq: 3728,
+  MemorySaveResp: 3729,
+  MemoryRecallReq: 3730,
+  MemoryRecallResp: 3731,
+  MemorySnapshotReq: 3733,
+  MemorySnapshotResp: 3734,
+  MemoryNode: 3735,
+  MemoryEdge: 3736,
+  GuideStep: 3776,
+  TutorialSpec: 3777,
+  UiInteractionRecord: 3778,
+  InterfaceManagerControlReq: 3779,
+  PanelOpSpec: 3780,
+  InterfaceManagerControlResp: 3781,
+  InterfaceManagerEvent: 3782,
+  ReportInteractionReq: 3783,
+  ReportInteractionResp: 3784,
+  QueryInteractionsReq: 3785,
+  QueryInteractionsResp: 3786,
+  GuideAnchor: 3787,
+  VoiceHotwordsBinding: 3824,
+  VoiceHotwordsSetReq: 3825,
+  VoiceHotwordsSetResp: 3826,
+  VoiceHotwordsGetReq: 3827,
+  VoiceHotwordsGetResp: 3828,
+  VoiceHotwordsDeleteReq: 3829,
+  VoiceHotwordsDeleteResp: 3830,
+  WorkspaceAgentSpawnAssignReq: 3872,
+  WorkspaceAgentSpawnAssignResp: 3873,
+  WorkspaceAgentAssignReq: 3874,
+  WorkspaceAgentAssignResp: 3875,
+  WorkspaceAgentReviewReq: 3876,
+  WorkspaceAgentReviewResp: 3877,
+  WorkspaceAgentTerminateReq: 3878,
+  WorkspaceAgentTerminateResp: 3879,
+  WorkspaceAgentSpawnByTypeReq: 3880,
+  WorkspaceAgentSpawnByTypeResp: 3881,
+  WorkspaceWorkflowStartReq: 3882,
+  WorkspaceWorkflowStartResp: 3883,
+  WorkspaceGateApproveReq: 3884,
+  WorkspaceGateApproveResp: 3885,
+  WorkspaceGateRejectReq: 3886,
+  WorkspaceGateRejectResp: 3887,
+  PluginDomReq: 3920,
+  PluginDomResp: 3921,
+  PluginDomPutReq: 3922,
+  PluginDomPutResp: 3923,
+  PluginPanelOpReq: 3968,
+  PluginPanelOpResp: 3969,
+  PluginPanelOpPutReq: 3970,
+  PluginPanelOpPutResp: 3971,
+  GlassCapability: 4016,
+  GlassRenderFrame: 4017,
+  GlassBootstrapReq: 4018,
+  GlassBootstrapResp: 4019,
+  GlassSessionClaimReq: 4020,
+  GlassSessionClaimResp: 4021,
+  GlassLifecycleEvent: 4022,
+  GlassSessionState: 4023,
+  GlassGetStateReq: 4024,
+  GlassGetStateResp: 4025,
+  GlassSpeechStartReq: 4026,
+  GlassSpeechChunkReq: 4027,
+  GlassSpeechEndReq: 4028,
+  GlassSpeechAck: 4029,
+  GlassSpeechStartResp: 4030,
+  GlassSpeechEndResp: 4031,
+  GlassTranscript: 4032,
+  GlassTranscriptEvent: 4033,
+  GlassRenderEvent: 4038,
+  GlassSpeakEvent: 4041,
+  GlassDebugTimelineEntry: 4045,
+  GlassDebugStats: 4046,
+  GlassDebugState: 4047,
+  GlassDebugReq: 4048,
+  GlassDebugResp: 4049,
+  GlassEvent: 4050,
+  GlassInboxSnapshot: 4058,
+  GlassEventEnqueuedEvent: 4061,
+  GlassEventDeliveredEvent: 4062,
+  GlassEventCompletedEvent: 4063,
+  GlassDeliveryLogEntry: 4064,
+  GlassHudStatus: 4065,
+  GlassSceneBox: 4160,
+  GlassSceneOption: 4161,
+  GlassSceneElement: 4162,
+  GlassScene: 4163,
+  GlassInteractionEvent: 4164,
+  GlassInteractionReportReq: 4165,
+  GlassInteractionReportResp: 4166,
+  GlassTelemetryReq: 4208,
+  GlassTelemetryResp: 4209,
+  GlassDebugSimulateReq: 4256,
+  GlassDebugSimulateResp: 4257,
+  McpStdioTransport: 4304,
+  McpHttpTransport: 4305,
+  McpServerConfig: 4306,
+  McpServerStatus: 4307,
+  McpEnvVarEntry: 4308,
+  McpStdioTransportView: 4309,
+  McpHttpTransportView: 4310,
+  McpServerView: 4311,
+  McpListServersResp: 4313,
+  McpAddServerReq: 4314,
+  McpAddServerResp: 4315,
+  McpUpdateServerReq: 4316,
+  McpUpdateServerResp: 4317,
+  McpRemoveServerReq: 4318,
+  McpRemoveServerResp: 4319,
+  McpConnectReq: 4320,
+  McpConnectResp: 4321,
+  McpDisconnectReq: 4322,
+  McpDisconnectResp: 4323,
+  McpReconnectReq: 4324,
+  McpReconnectResp: 4325,
+  McpToolContent: 4326,
+  McpCallToolReq: 4327,
+  McpCallToolResp: 4328,
+  McpServerStatusEvent: 4329,
+  McpToolView: 4330,
+  McpServerTools: 4331,
+  McpDiscoverToolsResp: 4333,
+  BrowserCrawlStartReq: 4368,
+  BrowserCrawlStartResp: 4369,
+  BrowserCrawlStatusReq: 4370,
+  BrowserCrawlStatusResp: 4371,
+  BrowserCrawlResultsReq: 4372,
+  BrowserCrawlResultsResp: 4373,
+  BrowserCrawlPageResult: 4374,
+  BrowserCrawlHandoffReq: 4375,
+  BrowserCrawlHandoffResp: 4376,
+  BrowserCrawlConfig: 4377,
+  GuidanceCapabilityEntry: 4416,
+  GuidanceCapabilityProfile: 4417,
+  GuidanceRecord: 4418,
+  GuidanceProfileQueryReq: 4419,
+  GuidanceProfileQueryResp: 4420,
+  GuidanceProfileUpdateReq: 4421,
+  GuidanceProfileUpdateResp: 4422,
+  GuidanceProfileClearReq: 4423,
+  GuidanceProfileClearResp: 4424,
+  GuidanceProfileIncrementReq: 4425,
+  GuidanceProfileIncrementResp: 4426,
+  AppManagerRetryCleanupReq: 4464,
+  AppManagerRetryCleanupResp: 4465,
+  EntitlementsView: 4512,
+  CloudAccountStatus: 4513,
+  CloudAccountLinkReq: 4514,
+  CloudAccountUnlinkResp: 4515,
+  CloudAccountGetEntitlementsResp: 4516,
+  ContentListItem: 4517,
+  ContentSearchReq: 4518,
+  ContentSearchResp: 4519,
+  ContentDetailReq: 4520,
+  ContentDetailResp: 4521,
+  ContentInstallReq: 4522,
+  ContentInstallResp: 4523,
+  ContentRiskAssessment: 4524,
+  PassView: 4525,
+  CdkeyRedeemReq: 4526,
+  CdkeyRedeemResp: 4527,
+  CloudAccountSessionTokenResp: 4529,
+  WebSearchReq: 4576,
+  WebSearchResp: 4577,
+  WebSearchResult: 4578,
+  WebSearchProviderInfo: 4579,
+  WebSearchProviderListResp: 4581,
+  WebSearchAccountView: 4583,
+  WebSearchAccountListReq: 4584,
+  WebSearchAccountListResp: 4585,
+  WebSearchAccountCreateReq: 4586,
+  WebSearchAccountCreateResp: 4587,
+  WebSearchAccountUpdateReq: 4588,
+  WebSearchAccountUpdateResp: 4589,
+  WebSearchAccountDeleteReq: 4590,
+  WebSearchAccountDeleteResp: 4591,
+  WebSearchAccountActivateReq: 4592,
+  WebSearchAccountActivateResp: 4593,
+  WebFetchReq: 4594,
+  WebFetchMeta: 4595,
+  WebFetchResp: 4596,
+  WebDownloadReq: 4597,
+  WebDownloadResp: 4598,
+  MediaAccountView: 4641,
+  MediaAccountListReq: 4642,
+  MediaAccountListResp: 4643,
+  MediaAccountCreateReq: 4644,
+  MediaAccountCreateResp: 4645,
+  MediaAccountUpdateReq: 4646,
+  MediaAccountUpdateResp: 4647,
+  MediaAccountDeleteReq: 4648,
+  MediaAccountDeleteResp: 4649,
+  MediaAccountActivateReq: 4650,
+  MediaAccountActivateResp: 4651,
+  PuppetNode: 4688,
+  PuppetDocument: 4689,
+  PuppetDocumentSnapshot: 4690,
+  PuppetDocumentSnapshotReq: 4691,
+  PuppetDocumentSnapshotResp: 4692,
+  PuppetStagedAsset: 4693,
+  PuppetAssetListReq: 4694,
+  PuppetAssetListResp: 4695,
+  PuppetAssetStageReq: 4696,
+  PuppetAssetStageResp: 4697,
+  PuppetAssetCommitReq: 4698,
+  PuppetAssetCommitResp: 4699,
+  PuppetAssetRejectReq: 4700,
+  PuppetAssetRejectResp: 4701,
+  PuppetRevision: 4702,
+  PuppetRevisionLogReq: 4703,
+  PuppetRevisionLogResp: 4704,
+  PuppetEditCommand: 4705,
+  PuppetEditReq: 4706,
+  PuppetEditResp: 4707,
+  PuppetMesh: 4721,
+  PuppetAssetReadReq: 4724,
+  PuppetAssetReadResp: 4725,
+  PuppetDocumentRevertToReq: 4726,
+  PuppetDocumentRevertToResp: 4727,
+  PuppetParam: 4728,
+  PuppetParamBinding: 4729,
+  PuppetParamListReq: 4732,
+  PuppetParamListResp: 4733,
+  PuppetViewportCaptureReq: 4737,
+  PuppetViewportCaptureResp: 4738,
+  AppManagerCallableInfoReq: 4784,
+  AppManagerCallableParam: 4785,
+  AppManagerCallableInfoEntry: 4786,
+  AppManagerCallableInfoResp: 4787,
+  AppManagerDevGuideReq: 4788,
+  AppManagerDevGuideStep: 4789,
+  AppManagerDevGuideError: 4790,
+  AppManagerDevGuideResp: 4791,
+  ImAccountView: 4833,
+  ImAccountListReq: 4834,
+  ImAccountListResp: 4835,
+  ImAccountCreateReq: 4836,
+  ImAccountCreateResp: 4837,
+  ImAccountUpdateReq: 4838,
+  ImAccountUpdateResp: 4839,
+  ImAccountDeleteReq: 4840,
+  ImAccountDeleteResp: 4841,
+  ImRoute: 4842,
+  ImRouteListReq: 4843,
+  ImRouteListResp: 4844,
+  ImRouteSetReq: 4845,
+  ImRouteSetResp: 4846,
+  ImRouteDeleteReq: 4847,
+  ImRouteDeleteResp: 4848,
+  ImStatusReq: 4849,
+  ImStatusResp: 4850,
+  ImSendReq: 4851,
+  ImSendResp: 4852,
+  AppManagerDevGenerateReq: 4896,
+  AppManagerDevGenerateFileEntry: 4897,
+  AppManagerDevGenerateResp: 4898,
+  AppManagerDevGateReq: 4944,
+  AppManagerGateError: 4945,
+  AppManagerGateResult: 4946,
+  AppManagerDevGateResp: 4947,
+  SetProtectedFilesReq: 4992,
+  SetProtectedFilesResp: 4993,
+  ShellCandidate: 5040,
+  ShellEnvProbeResp: 5041,
+  ShellPrefSaveReq: 5042,
+  ShellPrefSaveResp: 5043,
+  ModelDefault: 5088,
+  AIManagerModelDefaultsGetResp: 5090,
+  AIManagerModelDefaultsSetReq: 5091,
+  AIManagerModelDefaultsSetResp: 5092,
+  AIManagerFetchOpenRouterModelsResp: 5094,
+  LspPositionParams: 5136,
+  LspRangeParams: 5137,
+  LspDidOpenReq: 5138,
+  LspDidChangeReq: 5139,
+  LspDidCloseReq: 5140,
+  LspUriReq: 5141,
+  LspInitializeReq: 5142,
+  LspRenameReq: 5143,
+  LspReferencesReq: 5144,
+  LspShutdownReq: 5145,
+  LspClearCacheReq: 5146,
+  LspJsonResp: 5147,
+  LspDiagnosticsEvent: 5148,
+  LspLanguageState: 5149,
+  LspStateResp: 5150,
+  LspStateSaveReq: 5151,
+  LspStatusReq: 5152,
+  LspLanguageInstallState: 5153,
+  LspStatusResp: 5154,
+  LspInstallReq: 5155,
+  LspInstallResp: 5156,
+  LspInstallProgressEvent: 5157,
+  ShellSessionOpenReq: 5200,
+  ShellSessionOpenResp: 5201,
+  ShellSessionWriteReq: 5202,
+  ShellSessionWriteResp: 5203,
+  ShellSessionResizeReq: 5204,
+  ShellSessionResizeResp: 5205,
+  ShellSessionCloseReq: 5206,
+  ShellSessionCloseResp: 5207,
+  ShellSessionOutputEvent: 5208,
+  WorkspaceLogStreamEntry: 5248,
+  WorkspaceLogStreamEvent: 5249,
+  ShellSessionFetchReq: 5296,
+  ShellSessionFetchResp: 5297,
+  DebugCommandsListResp: 5344,
+  DebugCommandExecReq: 5345,
+  DebugCommandExecResp: 5346,
+  WorkspaceAgentLoadedReq: 5488,
+  WorkspaceAgentLoadedResp: 5489,
+  AppManagerPluginLoadReq: 5536,
+  AppManagerPluginLoadResp: 5537,
+  AppManagerPluginUnloadReq: 5538,
+  AppManagerPluginUnloadResp: 5539,
+  AppManagerInstallLocalReq: 5584,
+  AppManagerInstallLocalResp: 5585,
+  AppManagerIconNamesReq: 5632,
+  AppManagerIconEntry: 5633,
+  AppManagerIconNamesResp: 5634,
+  AppManagerOpenViewReq: 5680,
+  AppManagerOpenViewResp: 5681,
+  AppManagerComponentListReq: 5728,
+  AppManagerComponentListResp: 5729,
+  AppManagerComponentGetReq: 5730,
+  AppManagerComponentGetResp: 5731,
+  AppManagerSdkVendorReq: 5776,
+  AppManagerSdkVendorResp: 5777,
+  MediaProviderModelSetReq: 5824,
+  MediaProviderModelSetResp: 5825,
+  AppManagerHostProtocolReq: 5872,
+  AppManagerHostCallInfo: 5873,
+  AppManagerHostCapabilityInfo: 5874,
+  AppManagerHostProtocolResp: 5875,
+  AppManagerPluginEmitReq: 5920,
+  AppManagerPluginEmitResp: 5921,
+  PluginProxyAttachReq: 6016,
+  PluginProxyAttachResp: 6017,
+  PluginProxyDetachReq: 6018,
+  PluginProxyDetachResp: 6019,
+  DbProfileView: 6065,
+  DbProfileSaveReq: 6066,
+  DbProfileSaveResp: 6067,
+  DbProfileListReq: 6068,
+  DbProfileListResp: 6069,
+  DbProfileGetReq: 6070,
+  DbProfileGetResp: 6071,
+  DbProfileRemoveReq: 6072,
+  DbProfileRemoveResp: 6073,
+  AppManagerRegistrationPreviewReq: 6112,
+  AppManagerRegistrationPreviewResp: 6113,
+  AppManagerPanelTopologyReq: 6160,
+  AppManagerPanelTopologyResp: 6161,
+  AppManagerAppExportReq: 6208,
+  AppManagerAppExportResp: 6209,
+  DbTreeNode: 6256,
+  DbRows: 6257,
+  DbDialTestReq: 6258,
+  DbDialTestResp: 6259,
+  DbTreeReq: 6260,
+  DbTreeResp: 6261,
+  DbReadReq: 6262,
+  DbQueryReq: 6263,
+  DbCloseReq: 6264,
+  DbCloseResp: 6265,
+  DbColumnDef: 6266,
+  DbIndexDef: 6267,
+  DbDescribeReq: 6268,
+  DbDescribeResp: 6269,
+  DbObjectEntry: 6270,
+  DbObjectListReq: 6271,
+  DbObjectListResp: 6272,
+  DbObjectReadReq: 6273,
+  DbObjectReadResp: 6274,
+  DbObjectWriteReq: 6275,
+  DbObjectWriteResp: 6276,
+  DbObjectDeleteReq: 6277,
+  DbObjectDeleteResp: 6278,
+  DbObjectMkdirReq: 6279,
+  DbObjectMkdirResp: 6280,
+  DbObjectStatReq: 6281,
+  DbObjectStatResp: 6282,
+  ToastCard: 6320,
+  ToastShowReq: 6321,
+  ToastShowResp: 6322,
+  ToastDismissReq: 6323,
+  ToastDismissResp: 6324,
+  ToastCardRemovedEvent: 6325,
+  ToastStateReq: 6326,
+  ToastStateResp: 6327,
+  ToastActionReq: 6328,
+  ToastActionResp: 6329,
+  ToastActionTriggeredEvent: 6330,
+  CookieBridgePairingInfoReq: 6368,
+  CookieBridgePairingInfoResp: 6369,
+  CookieBridgeRegenTokenReq: 6370,
+  CookieBridgeRegenTokenResp: 6371,
+  WorkbenchCardState: 6416,
+  WorkbenchSnapshot: 6417,
+  WorkbenchSnapshotReq: 6418,
+  WorkbenchCardRefReq: 6419,
+  WorkbenchSetHiddenReq: 6420,
+  WorkbenchSetPinnedReq: 6421,
+  WorkbenchUpsertCardReq: 6422,
+  WorkbenchSetFrozenReq: 6423,
+  WorkbenchSetMaximizedReq: 6424,
+  WorkbenchAttentionEvent: 6512,
+  WorkbenchAttentionReportReq: 6513,
+  WorkbenchAttentionReportResp: 6514,
+  StoreClientConfigView: 6561,
+  StoreClientConfigGetResp: 6563,
+  StoreClientConfigSetReq: 6564,
+  StoreClientConfigSetResp: 6565,
+  StoreIndexResp: 6567,
+  StorePluginView: 6568,
+  StoreVersionView: 6569,
+  StoreCommunityView: 6570,
+  StoreInstallReq: 6571,
+  StoreInstallResp: 6572,
+  PolicyQuestion: 6608,
+  PolicyDecideReq: 6609,
+  PolicyAnswer: 6610,
+  PolicyDecideResp: 6611,
+  PolicyJevConfig: 6612,
+  PolicyLLMConfig: 6613,
+  PolicyConfigureReq: 6614,
+  PolicyConfigureResp: 6615,
+  PolicyStatusReq: 6616,
+  PolicyStatusResp: 6617,
 } as const;
 
 export const schemaEntries: SchemaEntry[] = [
@@ -2452,6 +2457,14 @@ export const schemaEntries: SchemaEntry[] = [
         },
         {
           name: "Trusted",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "Dev",
           type: {
             kind: "scalar",
             name: "bool",
@@ -12578,14 +12591,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 672,
+    schemaId: 688,
     name: "BrowserCookieEntry",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "BrowserCookieEntry",
       className: "BrowserCookieEntry",
-      classId: 672
+      classId: 688
     },
     object: {
       kind: "struct",
@@ -12660,14 +12673,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 673,
+    schemaId: 689,
     name: "BrowserManagerExportCookiesReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "BrowserManagerExportCookiesReq",
       className: "BrowserManagerExportCookiesReq",
-      classId: 673
+      classId: 689
     },
     object: {
       kind: "struct",
@@ -12686,14 +12699,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 674,
+    schemaId: 690,
     name: "BrowserManagerExportCookiesResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "BrowserManagerExportCookiesResp",
       className: "BrowserManagerExportCookiesResp",
-      classId: 674
+      classId: 690
     },
     object: {
       kind: "struct",
@@ -12725,14 +12738,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 675,
+    schemaId: 691,
     name: "BrowserManagerImportCookiesReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "BrowserManagerImportCookiesReq",
       className: "BrowserManagerImportCookiesReq",
-      classId: 675
+      classId: 691
     },
     object: {
       kind: "struct",
@@ -12772,14 +12785,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 676,
+    schemaId: 692,
     name: "BrowserManagerImportCookiesResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "BrowserManagerImportCookiesResp",
       className: "BrowserManagerImportCookiesResp",
-      classId: 676
+      classId: 692
     },
     object: {
       kind: "struct",
@@ -12798,14 +12811,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 720,
+    schemaId: 736,
     name: "FileEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileEntry",
       className: "FileEntry",
-      classId: 720
+      classId: 736
     },
     object: {
       kind: "struct",
@@ -12848,14 +12861,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 721,
+    schemaId: 737,
     name: "FileEntryListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileEntryListResp",
       className: "FileEntryListResp",
-      classId: 721
+      classId: 737
     },
     object: {
       kind: "struct",
@@ -12895,14 +12908,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 722,
+    schemaId: 738,
     name: "FileSystemListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemListReq",
       className: "FileSystemListReq",
-      classId: 722
+      classId: 738
     },
     object: {
       kind: "struct",
@@ -12966,14 +12979,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 723,
+    schemaId: 739,
     name: "FileSystemReadReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemReadReq",
       className: "FileSystemReadReq",
-      classId: 723
+      classId: 739
     },
     object: {
       kind: "struct",
@@ -13028,14 +13041,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 724,
+    schemaId: 740,
     name: "FileSystemReadResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemReadResp",
       className: "FileSystemReadResp",
-      classId: 724
+      classId: 740
     },
     object: {
       kind: "struct",
@@ -13095,14 +13108,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 725,
+    schemaId: 741,
     name: "FileSystemReadBase64Req",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemReadBase64Req",
       className: "FileSystemReadBase64Req",
-      classId: 725
+      classId: 741
     },
     object: {
       kind: "struct",
@@ -13121,14 +13134,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 726,
+    schemaId: 742,
     name: "FileSystemReadChunkReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemReadChunkReq",
       className: "FileSystemReadChunkReq",
-      classId: 726
+      classId: 742
     },
     object: {
       kind: "struct",
@@ -13163,14 +13176,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 727,
+    schemaId: 743,
     name: "FileSystemReadChunkResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemReadChunkResp",
       className: "FileSystemReadChunkResp",
-      classId: 727
+      classId: 743
     },
     object: {
       kind: "struct",
@@ -13222,14 +13235,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 728,
+    schemaId: 744,
     name: "FileSystemWriteReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemWriteReq",
       className: "FileSystemWriteReq",
-      classId: 728
+      classId: 744
     },
     object: {
       kind: "struct",
@@ -13265,14 +13278,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 729,
+    schemaId: 745,
     name: "FileSystemWriteResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemWriteResp",
       className: "FileSystemWriteResp",
-      classId: 729
+      classId: 745
     },
     object: {
       kind: "struct",
@@ -13292,14 +13305,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 730,
+    schemaId: 746,
     name: "FileSystemEditReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemEditReq",
       className: "FileSystemEditReq",
-      classId: 730
+      classId: 746
     },
     object: {
       kind: "struct",
@@ -13361,14 +13374,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 731,
+    schemaId: 747,
     name: "FileSystemEditHunk",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemEditHunk",
       className: "FileSystemEditHunk",
-      classId: 731
+      classId: 747
     },
     object: {
       kind: "struct",
@@ -13423,14 +13436,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 732,
+    schemaId: 748,
     name: "FileSystemEditResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemEditResp",
       className: "FileSystemEditResp",
-      classId: 732
+      classId: 748
     },
     object: {
       kind: "struct",
@@ -13477,14 +13490,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 733,
+    schemaId: 749,
     name: "FileSystemGlobReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemGlobReq",
       className: "FileSystemGlobReq",
-      classId: 733
+      classId: 749
     },
     object: {
       kind: "struct",
@@ -13548,14 +13561,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 734,
+    schemaId: 750,
     name: "FileSystemGlobResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemGlobResp",
       className: "FileSystemGlobResp",
-      classId: 734
+      classId: 750
     },
     object: {
       kind: "struct",
@@ -13603,14 +13616,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 735,
+    schemaId: 751,
     name: "FileSystemGrepReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemGrepReq",
       className: "FileSystemGrepReq",
-      classId: 735
+      classId: 751
     },
     object: {
       kind: "struct",
@@ -13764,14 +13777,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 736,
+    schemaId: 752,
     name: "FileSystemGrepMatch",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemGrepMatch",
       className: "FileSystemGrepMatch",
-      classId: 736
+      classId: 752
     },
     object: {
       kind: "struct",
@@ -13806,14 +13819,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 737,
+    schemaId: 753,
     name: "FileSystemGrepCount",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemGrepCount",
       className: "FileSystemGrepCount",
-      classId: 737
+      classId: 753
     },
     object: {
       kind: "struct",
@@ -13840,14 +13853,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 738,
+    schemaId: 754,
     name: "FileSystemGrepResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemGrepResp",
       className: "FileSystemGrepResp",
-      classId: 738
+      classId: 754
     },
     object: {
       kind: "struct",
@@ -13933,14 +13946,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 739,
+    schemaId: 755,
     name: "FileSystemRmReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemRmReq",
       className: "FileSystemRmReq",
-      classId: 739
+      classId: 755
     },
     object: {
       kind: "struct",
@@ -13986,14 +13999,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 740,
+    schemaId: 756,
     name: "FileSystemRmResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemRmResp",
       className: "FileSystemRmResp",
-      classId: 740
+      classId: 756
     },
     object: {
       kind: "struct",
@@ -14032,14 +14045,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 742,
+    schemaId: 758,
     name: "ArchiveExportReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ArchiveExportReq",
       className: "ArchiveExportReq",
-      classId: 742
+      classId: 758
     },
     object: {
       kind: "struct",
@@ -14058,14 +14071,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 743,
+    schemaId: 759,
     name: "ArchiveExportResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ArchiveExportResp",
       className: "ArchiveExportResp",
-      classId: 743
+      classId: 759
     },
     object: {
       kind: "struct",
@@ -14100,14 +14113,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 744,
+    schemaId: 760,
     name: "ArchiveImportReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ArchiveImportReq",
       className: "ArchiveImportReq",
-      classId: 744
+      classId: 760
     },
     object: {
       kind: "struct",
@@ -14134,14 +14147,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 745,
+    schemaId: 761,
     name: "ArchiveImportResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ArchiveImportResp",
       className: "ArchiveImportResp",
-      classId: 745
+      classId: 761
     },
     object: {
       kind: "struct",
@@ -14168,14 +14181,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 746,
+    schemaId: 762,
     name: "FileSystemReadBase64Resp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemReadBase64Resp",
       className: "FileSystemReadBase64Resp",
-      classId: 746
+      classId: 762
     },
     object: {
       kind: "struct",
@@ -14203,14 +14216,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 747,
+    schemaId: 763,
     name: "FileSystemWriteBase64Req",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemWriteBase64Req",
       className: "FileSystemWriteBase64Req",
-      classId: 747
+      classId: 763
     },
     object: {
       kind: "struct",
@@ -14246,14 +14259,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 748,
+    schemaId: 764,
     name: "FileSystemRootsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FileSystemRootsResp",
       className: "FileSystemRootsResp",
-      classId: 748
+      classId: 764
     },
     object: {
       kind: "struct",
@@ -14284,14 +14297,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 784,
+    schemaId: 800,
     name: "FrpProxy",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrpProxy",
       className: "FrpProxy",
-      classId: 784
+      classId: 800
     },
     object: {
       kind: "struct",
@@ -14342,14 +14355,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 785,
+    schemaId: 801,
     name: "FrpWebProxy",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrpWebProxy",
       className: "FrpWebProxy",
-      classId: 785
+      classId: 801
     },
     object: {
       kind: "struct",
@@ -14434,14 +14447,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 786,
+    schemaId: 802,
     name: "FrpInstanceConfig",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrpInstanceConfig",
       className: "FrpInstanceConfig",
-      classId: 786
+      classId: 802
     },
     object: {
       kind: "struct",
@@ -14533,14 +14546,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 787,
+    schemaId: 803,
     name: "FrpProxyStatus",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrpProxyStatus",
       className: "FrpProxyStatus",
-      classId: 787
+      classId: 803
     },
     object: {
       kind: "struct",
@@ -14585,14 +14598,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 788,
+    schemaId: 804,
     name: "FrpInstanceStatus",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrpInstanceStatus",
       className: "FrpInstanceStatus",
-      classId: 788
+      classId: 804
     },
     object: {
       kind: "struct",
@@ -14668,14 +14681,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 789,
+    schemaId: 805,
     name: "FrpInstance",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrpInstance",
       className: "FrpInstance",
-      classId: 789
+      classId: 805
     },
     object: {
       kind: "struct",
@@ -14702,14 +14715,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 790,
+    schemaId: 806,
     name: "FrpManagerCreateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "FrpManagerCreateReq",
       className: "FrpManagerCreateReq",
-      classId: 790
+      classId: 806
     },
     object: {
       kind: "struct",
@@ -14784,14 +14797,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 791,
+    schemaId: 807,
     name: "FrpManagerRemoveReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "FrpManagerRemoveReq",
       className: "FrpManagerRemoveReq",
-      classId: 791
+      classId: 807
     },
     object: {
       kind: "struct",
@@ -14810,14 +14823,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 792,
+    schemaId: 808,
     name: "FrpManagerGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrpManagerGetReq",
       className: "FrpManagerGetReq",
-      classId: 792
+      classId: 808
     },
     object: {
       kind: "struct",
@@ -14836,14 +14849,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 793,
+    schemaId: 809,
     name: "FrpManagerListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrpManagerListResp",
       className: "FrpManagerListResp",
-      classId: 793
+      classId: 809
     },
     object: {
       kind: "struct",
@@ -14874,14 +14887,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 795,
+    schemaId: 811,
     name: "FrpManagerUpdateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "FrpManagerUpdateReq",
       className: "FrpManagerUpdateReq",
-      classId: 795
+      classId: 811
     },
     object: {
       kind: "struct",
@@ -14908,14 +14921,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 796,
+    schemaId: 812,
     name: "FrpManagerStartReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "FrpManagerStartReq",
       className: "FrpManagerStartReq",
-      classId: 796
+      classId: 812
     },
     object: {
       kind: "struct",
@@ -14934,14 +14947,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 797,
+    schemaId: 813,
     name: "FrpManagerStopReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "FrpManagerStopReq",
       className: "FrpManagerStopReq",
-      classId: 797
+      classId: 813
     },
     object: {
       kind: "struct",
@@ -14960,14 +14973,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 798,
+    schemaId: 814,
     name: "FrpManagerDetectReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrpManagerDetectReq",
       className: "FrpManagerDetectReq",
-      classId: 798
+      classId: 814
     },
     object: {
       kind: "struct",
@@ -14995,14 +15008,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 799,
+    schemaId: 815,
     name: "FrpManagerDetectResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrpManagerDetectResp",
       className: "FrpManagerDetectResp",
-      classId: 799
+      classId: 815
     },
     object: {
       kind: "struct",
@@ -15030,14 +15043,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 832,
+    schemaId: 848,
     name: "InspectRef",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectRef",
       className: "InspectRef",
-      classId: 832
+      classId: 848
     },
     object: {
       kind: "struct",
@@ -15082,14 +15095,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 833,
+    schemaId: 849,
     name: "OpenTarget",
     visibility: "public",
     type: {
       kind: "struct",
       name: "OpenTarget",
       className: "OpenTarget",
-      classId: 833
+      classId: 849
     },
     object: {
       kind: "struct",
@@ -15162,14 +15175,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 834,
+    schemaId: 850,
     name: "InspectCapability",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectCapability",
       className: "InspectCapability",
-      classId: 834
+      classId: 850
     },
     object: {
       kind: "struct",
@@ -15204,14 +15217,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 835,
+    schemaId: 851,
     name: "InspectContextSegment",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectContextSegment",
       className: "InspectContextSegment",
-      classId: 835
+      classId: 851
     },
     object: {
       kind: "struct",
@@ -15307,14 +15320,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 836,
+    schemaId: 852,
     name: "InspectStatus",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectStatus",
       className: "InspectStatus",
-      classId: 836
+      classId: 852
     },
     object: {
       kind: "struct",
@@ -15341,14 +15354,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 837,
+    schemaId: 853,
     name: "InspectRelation",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectRelation",
       className: "InspectRelation",
-      classId: 837
+      classId: 853
     },
     object: {
       kind: "struct",
@@ -15375,14 +15388,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 838,
+    schemaId: 854,
     name: "InspectDocumentReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectDocumentReq",
       className: "InspectDocumentReq",
-      classId: 838
+      classId: 854
     },
     object: {
       kind: "struct",
@@ -15427,14 +15440,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 839,
+    schemaId: 855,
     name: "InspectRow",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectRow",
       className: "InspectRow",
-      classId: 839
+      classId: 855
     },
     object: {
       kind: "struct",
@@ -15510,14 +15523,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 840,
+    schemaId: 856,
     name: "InspectListItem",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectListItem",
       className: "InspectListItem",
-      classId: 840
+      classId: 856
     },
     object: {
       kind: "struct",
@@ -15563,14 +15576,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 841,
+    schemaId: 857,
     name: "InspectSection",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectSection",
       className: "InspectSection",
-      classId: 841
+      classId: 857
     },
     object: {
       kind: "struct",
@@ -15662,14 +15675,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 842,
+    schemaId: 858,
     name: "InspectAction",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectAction",
       className: "InspectAction",
-      classId: 842
+      classId: 858
     },
     object: {
       kind: "struct",
@@ -15705,14 +15718,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 843,
+    schemaId: 859,
     name: "InspectPage",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectPage",
       className: "InspectPage",
-      classId: 843
+      classId: 859
     },
     object: {
       kind: "struct",
@@ -15748,14 +15761,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 844,
+    schemaId: 860,
     name: "InspectPagesResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectPagesResp",
       className: "InspectPagesResp",
-      classId: 844
+      classId: 860
     },
     object: {
       kind: "struct",
@@ -15778,14 +15791,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 845,
+    schemaId: 861,
     name: "InspectDocument",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InspectDocument",
       className: "InspectDocument",
-      classId: 845
+      classId: 861
     },
     object: {
       kind: "struct",
@@ -15890,14 +15903,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 880,
+    schemaId: 896,
     name: "CallableParam",
     visibility: "public",
     type: {
       kind: "struct",
       name: "CallableParam",
       className: "CallableParam",
-      classId: 880
+      classId: 896
     },
     object: {
       kind: "struct",
@@ -15942,14 +15955,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 881,
+    schemaId: 897,
     name: "CallableInterface",
     visibility: "public",
     type: {
       kind: "struct",
       name: "CallableInterface",
       className: "CallableInterface",
-      classId: 881
+      classId: 897
     },
     object: {
       kind: "struct",
@@ -16150,14 +16163,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 882,
+    schemaId: 898,
     name: "TopologyNodeDescriptor",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TopologyNodeDescriptor",
       className: "TopologyNodeDescriptor",
-      classId: 882
+      classId: 898
     },
     object: {
       kind: "struct",
@@ -16222,14 +16235,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 883,
+    schemaId: 899,
     name: "TopologyCardRow",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TopologyCardRow",
       className: "TopologyCardRow",
-      classId: 883
+      classId: 899
     },
     object: {
       kind: "struct",
@@ -16305,14 +16318,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 884,
+    schemaId: 900,
     name: "TopologyCardSection",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TopologyCardSection",
       className: "TopologyCardSection",
-      classId: 884
+      classId: 900
     },
     object: {
       kind: "struct",
@@ -16351,14 +16364,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 885,
+    schemaId: 901,
     name: "TopologyCard",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TopologyCard",
       className: "TopologyCard",
-      classId: 885
+      classId: 901
     },
     object: {
       kind: "struct",
@@ -16409,14 +16422,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 886,
+    schemaId: 902,
     name: "UnifiedGraphEdge",
     visibility: "public",
     type: {
       kind: "struct",
       name: "UnifiedGraphEdge",
       className: "UnifiedGraphEdge",
-      classId: 886
+      classId: 902
     },
     object: {
       kind: "struct",
@@ -16486,14 +16499,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 887,
+    schemaId: 903,
     name: "UnifiedGraphNode",
     visibility: "public",
     type: {
       kind: "struct",
       name: "UnifiedGraphNode",
       className: "UnifiedGraphNode",
-      classId: 887
+      classId: 903
     },
     object: {
       kind: "struct",
@@ -16657,14 +16670,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 888,
+    schemaId: 904,
     name: "UnifiedGraph",
     visibility: "public",
     type: {
       kind: "struct",
       name: "UnifiedGraph",
       className: "UnifiedGraph",
-      classId: 888
+      classId: 904
     },
     object: {
       kind: "struct",
@@ -16707,14 +16720,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 889,
+    schemaId: 905,
     name: "GraphPatch",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GraphPatch",
       className: "GraphPatch",
-      classId: 889
+      classId: 905
     },
     object: {
       kind: "struct",
@@ -16801,14 +16814,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 890,
+    schemaId: 906,
     name: "TopologySyncReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TopologySyncReq",
       className: "TopologySyncReq",
-      classId: 890
+      classId: 906
     },
     object: {
       kind: "struct",
@@ -16827,14 +16840,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 891,
+    schemaId: 907,
     name: "TopologySyncResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TopologySyncResp",
       className: "TopologySyncResp",
-      classId: 891
+      classId: 907
     },
     object: {
       kind: "struct",
@@ -16874,14 +16887,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 892,
+    schemaId: 908,
     name: "TopologyHistoryEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TopologyHistoryEntry",
       className: "TopologyHistoryEntry",
-      classId: 892
+      classId: 908
     },
     object: {
       kind: "struct",
@@ -16916,14 +16929,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 893,
+    schemaId: 909,
     name: "TopologyHistoryResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TopologyHistoryResp",
       className: "TopologyHistoryResp",
-      classId: 893
+      classId: 909
     },
     object: {
       kind: "struct",
@@ -16946,14 +16959,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 894,
+    schemaId: 910,
     name: "TopologyEpochEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TopologyEpochEvent",
       className: "TopologyEpochEvent",
-      classId: 894
+      classId: 910
     },
     object: {
       kind: "struct",
@@ -16981,14 +16994,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 895,
+    schemaId: 911,
     name: "ServiceInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ServiceInfo",
       className: "ServiceInfo",
-      classId: 895
+      classId: 911
     },
     object: {
       kind: "struct",
@@ -17023,14 +17036,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 896,
+    schemaId: 912,
     name: "RuntimeListServicesReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "RuntimeListServicesReq",
       className: "RuntimeListServicesReq",
-      classId: 896
+      classId: 912
     },
     object: {
       kind: "struct",
@@ -17040,14 +17053,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 897,
+    schemaId: 913,
     name: "RuntimeListServicesResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "RuntimeListServicesResp",
       className: "RuntimeListServicesResp",
-      classId: 897
+      classId: 913
     },
     object: {
       kind: "struct",
@@ -17070,14 +17083,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 898,
+    schemaId: 914,
     name: "RuntimeBuildInfoReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "RuntimeBuildInfoReq",
       className: "RuntimeBuildInfoReq",
-      classId: 898
+      classId: 914
     },
     object: {
       kind: "struct",
@@ -17087,14 +17100,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 899,
+    schemaId: 915,
     name: "RuntimeBuildInfoResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "RuntimeBuildInfoResp",
       className: "RuntimeBuildInfoResp",
-      classId: 899
+      classId: 915
     },
     object: {
       kind: "struct",
@@ -17176,14 +17189,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 944,
+    schemaId: 960,
     name: "OracleCapabilityDiscoverReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "OracleCapabilityDiscoverReq",
       className: "OracleCapabilityDiscoverReq",
-      classId: 944
+      classId: 960
     },
     object: {
       kind: "struct",
@@ -17264,14 +17277,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 945,
+    schemaId: 961,
     name: "CapabilityCandidate",
     visibility: "public",
     type: {
       kind: "struct",
       name: "CapabilityCandidate",
       className: "CapabilityCandidate",
-      classId: 945
+      classId: 961
     },
     object: {
       kind: "struct",
@@ -17324,14 +17337,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 946,
+    schemaId: 962,
     name: "OracleCapabilityDiscoverResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "OracleCapabilityDiscoverResp",
       className: "OracleCapabilityDiscoverResp",
-      classId: 946
+      classId: 962
     },
     object: {
       kind: "struct",
@@ -17354,14 +17367,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 947,
+    schemaId: 963,
     name: "OracleCapabilityExplainReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "OracleCapabilityExplainReq",
       className: "OracleCapabilityExplainReq",
-      classId: 947
+      classId: 963
     },
     object: {
       kind: "struct",
@@ -17407,14 +17420,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 948,
+    schemaId: 964,
     name: "OracleCapabilityExplainResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "OracleCapabilityExplainResp",
       className: "OracleCapabilityExplainResp",
-      classId: 948
+      classId: 964
     },
     object: {
       kind: "struct",
@@ -17473,14 +17486,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 949,
+    schemaId: 965,
     name: "Diagnostic",
     visibility: "public",
     type: {
       kind: "struct",
       name: "Diagnostic",
       className: "Diagnostic",
-      classId: 949
+      classId: 965
     },
     object: {
       kind: "struct",
@@ -17630,14 +17643,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 950,
+    schemaId: 966,
     name: "OracleReportDiagnosticReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "OracleReportDiagnosticReq",
       className: "OracleReportDiagnosticReq",
-      classId: 950
+      classId: 966
     },
     object: {
       kind: "struct",
@@ -17771,14 +17784,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 951,
+    schemaId: 967,
     name: "DiagnosticSummary",
     visibility: "public",
     type: {
       kind: "struct",
       name: "DiagnosticSummary",
       className: "DiagnosticSummary",
-      classId: 951
+      classId: 967
     },
     object: {
       kind: "struct",
@@ -17928,14 +17941,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 952,
+    schemaId: 968,
     name: "OracleListDiagnosticsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "OracleListDiagnosticsReq",
       className: "OracleListDiagnosticsReq",
-      classId: 952
+      classId: 968
     },
     object: {
       kind: "struct",
@@ -18009,14 +18022,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 953,
+    schemaId: 969,
     name: "OracleListDiagnosticsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "OracleListDiagnosticsResp",
       className: "OracleListDiagnosticsResp",
-      classId: 953
+      classId: 969
     },
     object: {
       kind: "struct",
@@ -18039,14 +18052,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 954,
+    schemaId: 970,
     name: "OracleGetDiagnosticReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "OracleGetDiagnosticReq",
       className: "OracleGetDiagnosticReq",
-      classId: 954
+      classId: 970
     },
     object: {
       kind: "struct",
@@ -18065,14 +18078,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 955,
+    schemaId: 971,
     name: "OracleSearchServicesReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "OracleSearchServicesReq",
       className: "OracleSearchServicesReq",
-      classId: 955
+      classId: 971
     },
     object: {
       kind: "struct",
@@ -18101,14 +18114,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 956,
+    schemaId: 972,
     name: "OracleSearchServicesResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "OracleSearchServicesResp",
       className: "OracleSearchServicesResp",
-      classId: 956
+      classId: 972
     },
     object: {
       kind: "struct",
@@ -18131,14 +18144,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 994,
+    schemaId: 1010,
     name: "ProjectInfoRoot",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectInfoRoot",
       className: "ProjectInfoRoot",
-      classId: 994
+      classId: 1010
     },
     object: {
       kind: "struct",
@@ -18165,14 +18178,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 995,
+    schemaId: 1011,
     name: "ProjectInfoResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectInfoResp",
       className: "ProjectInfoResp",
-      classId: 995
+      classId: 1011
     },
     object: {
       kind: "struct",
@@ -18195,14 +18208,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 996,
+    schemaId: 1012,
     name: "ProjectGitStatusReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitStatusReq",
       className: "ProjectGitStatusReq",
-      classId: 996
+      classId: 1012
     },
     object: {
       kind: "struct",
@@ -18222,14 +18235,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 997,
+    schemaId: 1013,
     name: "ProjectGitStatusResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitStatusResp",
       className: "ProjectGitStatusResp",
-      classId: 997
+      classId: 1013
     },
     object: {
       kind: "struct",
@@ -18302,14 +18315,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 998,
+    schemaId: 1014,
     name: "ProjectGitFileStatus",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitFileStatus",
       className: "ProjectGitFileStatus",
-      classId: 998
+      classId: 1014
     },
     object: {
       kind: "struct",
@@ -18344,14 +18357,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 999,
+    schemaId: 1015,
     name: "ProjectSyncRootsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectSyncRootsReq",
       className: "ProjectSyncRootsReq",
-      classId: 999
+      classId: 1015
     },
     object: {
       kind: "struct",
@@ -18374,14 +18387,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1000,
+    schemaId: 1016,
     name: "ProjectGitCommitInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitCommitInfo",
       className: "ProjectGitCommitInfo",
-      classId: 1000
+      classId: 1016
     },
     object: {
       kind: "struct",
@@ -18453,14 +18466,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1001,
+    schemaId: 1017,
     name: "ProjectGitBranchInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitBranchInfo",
       className: "ProjectGitBranchInfo",
-      classId: 1001
+      classId: 1017
     },
     object: {
       kind: "struct",
@@ -18511,14 +18524,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1002,
+    schemaId: 1018,
     name: "ProjectGitStashInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitStashInfo",
       className: "ProjectGitStashInfo",
-      classId: 1002
+      classId: 1018
     },
     object: {
       kind: "struct",
@@ -18561,14 +18574,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1003,
+    schemaId: 1019,
     name: "ProjectGitRemoteInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitRemoteInfo",
       className: "ProjectGitRemoteInfo",
-      classId: 1003
+      classId: 1019
     },
     object: {
       kind: "struct",
@@ -18599,14 +18612,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1004,
+    schemaId: 1020,
     name: "ProjectGitBlameLine",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitBlameLine",
       className: "ProjectGitBlameLine",
-      classId: 1004
+      classId: 1020
     },
     object: {
       kind: "struct",
@@ -18665,14 +18678,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1005,
+    schemaId: 1021,
     name: "ProjectGitLogReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitLogReq",
       className: "ProjectGitLogReq",
-      classId: 1005
+      classId: 1021
     },
     object: {
       kind: "struct",
@@ -18700,14 +18713,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1006,
+    schemaId: 1022,
     name: "ProjectGitLogResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitLogResp",
       className: "ProjectGitLogResp",
-      classId: 1006
+      classId: 1022
     },
     object: {
       kind: "struct",
@@ -18730,14 +18743,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1007,
+    schemaId: 1023,
     name: "ProjectGitDiffReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitDiffReq",
       className: "ProjectGitDiffReq",
-      classId: 1007
+      classId: 1023
     },
     object: {
       kind: "struct",
@@ -18773,14 +18786,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1008,
+    schemaId: 1024,
     name: "ProjectGitDiffResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitDiffResp",
       className: "ProjectGitDiffResp",
-      classId: 1008
+      classId: 1024
     },
     object: {
       kind: "struct",
@@ -18803,14 +18816,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1009,
+    schemaId: 1025,
     name: "ProjectGitAddReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitAddReq",
       className: "ProjectGitAddReq",
-      classId: 1009
+      classId: 1025
     },
     object: {
       kind: "struct",
@@ -18833,14 +18846,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1010,
+    schemaId: 1026,
     name: "ProjectGitCommitReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitCommitReq",
       className: "ProjectGitCommitReq",
-      classId: 1010
+      classId: 1026
     },
     object: {
       kind: "struct",
@@ -18859,14 +18872,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1011,
+    schemaId: 1027,
     name: "ProjectGitCommitResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitCommitResp",
       className: "ProjectGitCommitResp",
-      classId: 1011
+      classId: 1027
     },
     object: {
       kind: "struct",
@@ -18893,14 +18906,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1012,
+    schemaId: 1028,
     name: "ProjectGitPushReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitPushReq",
       className: "ProjectGitPushReq",
-      classId: 1012
+      classId: 1028
     },
     object: {
       kind: "struct",
@@ -18919,14 +18932,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1013,
+    schemaId: 1029,
     name: "ProjectGitPullReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitPullReq",
       className: "ProjectGitPullReq",
-      classId: 1013
+      classId: 1029
     },
     object: {
       kind: "struct",
@@ -18945,14 +18958,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1014,
+    schemaId: 1030,
     name: "ProjectGitBranchReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitBranchReq",
       className: "ProjectGitBranchReq",
-      classId: 1014
+      classId: 1030
     },
     object: {
       kind: "struct",
@@ -18962,14 +18975,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1015,
+    schemaId: 1031,
     name: "ProjectGitBranchResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitBranchResp",
       className: "ProjectGitBranchResp",
-      classId: 1015
+      classId: 1031
     },
     object: {
       kind: "struct",
@@ -18992,14 +19005,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1016,
+    schemaId: 1032,
     name: "ProjectGitCheckoutReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitCheckoutReq",
       className: "ProjectGitCheckoutReq",
-      classId: 1016
+      classId: 1032
     },
     object: {
       kind: "struct",
@@ -19026,14 +19039,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1017,
+    schemaId: 1033,
     name: "ProjectGitResetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitResetReq",
       className: "ProjectGitResetReq",
-      classId: 1017
+      classId: 1033
     },
     object: {
       kind: "struct",
@@ -19057,14 +19070,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1018,
+    schemaId: 1034,
     name: "ProjectGitStashSaveReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitStashSaveReq",
       className: "ProjectGitStashSaveReq",
-      classId: 1018
+      classId: 1034
     },
     object: {
       kind: "struct",
@@ -19093,14 +19106,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1019,
+    schemaId: 1035,
     name: "ProjectGitStashPopReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitStashPopReq",
       className: "ProjectGitStashPopReq",
-      classId: 1019
+      classId: 1035
     },
     object: {
       kind: "struct",
@@ -19129,14 +19142,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1020,
+    schemaId: 1036,
     name: "ProjectGitStashListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitStashListReq",
       className: "ProjectGitStashListReq",
-      classId: 1020
+      classId: 1036
     },
     object: {
       kind: "struct",
@@ -19156,14 +19169,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1021,
+    schemaId: 1037,
     name: "ProjectGitStashListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitStashListResp",
       className: "ProjectGitStashListResp",
-      classId: 1021
+      classId: 1037
     },
     object: {
       kind: "struct",
@@ -19186,14 +19199,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1022,
+    schemaId: 1038,
     name: "ProjectGitStashDropReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitStashDropReq",
       className: "ProjectGitStashDropReq",
-      classId: 1022
+      classId: 1038
     },
     object: {
       kind: "struct",
@@ -19213,14 +19226,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1023,
+    schemaId: 1039,
     name: "ProjectGitRemoteListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitRemoteListReq",
       className: "ProjectGitRemoteListReq",
-      classId: 1023
+      classId: 1039
     },
     object: {
       kind: "struct",
@@ -19230,14 +19243,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1024,
+    schemaId: 1040,
     name: "ProjectFileChangedEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectFileChangedEvent",
       className: "ProjectFileChangedEvent",
-      classId: 1024
+      classId: 1040
     },
     object: {
       kind: "struct",
@@ -19264,14 +19277,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1025,
+    schemaId: 1041,
     name: "ProjectGitRemoteListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitRemoteListResp",
       className: "ProjectGitRemoteListResp",
-      classId: 1025
+      classId: 1041
     },
     object: {
       kind: "struct",
@@ -19294,14 +19307,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1026,
+    schemaId: 1042,
     name: "ProjectGitRemoteAddReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitRemoteAddReq",
       className: "ProjectGitRemoteAddReq",
-      classId: 1026
+      classId: 1042
     },
     object: {
       kind: "struct",
@@ -19328,14 +19341,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1027,
+    schemaId: 1043,
     name: "ProjectGitRemoteRemoveReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitRemoteRemoveReq",
       className: "ProjectGitRemoteRemoveReq",
-      classId: 1027
+      classId: 1043
     },
     object: {
       kind: "struct",
@@ -19354,14 +19367,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1028,
+    schemaId: 1044,
     name: "ProjectGitBlameReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitBlameReq",
       className: "ProjectGitBlameReq",
-      classId: 1028
+      classId: 1044
     },
     object: {
       kind: "struct",
@@ -19380,14 +19393,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1029,
+    schemaId: 1045,
     name: "ProjectGitBlameResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitBlameResp",
       className: "ProjectGitBlameResp",
-      classId: 1029
+      classId: 1045
     },
     object: {
       kind: "struct",
@@ -19410,14 +19423,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1030,
+    schemaId: 1046,
     name: "ProjectGitConfigGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitConfigGetReq",
       className: "ProjectGitConfigGetReq",
-      classId: 1030
+      classId: 1046
     },
     object: {
       kind: "struct",
@@ -19436,14 +19449,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1031,
+    schemaId: 1047,
     name: "ProjectGitConfigGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitConfigGetResp",
       className: "ProjectGitConfigGetResp",
-      classId: 1031
+      classId: 1047
     },
     object: {
       kind: "struct",
@@ -19462,14 +19475,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1032,
+    schemaId: 1048,
     name: "ProjectGitConfigSetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGitConfigSetReq",
       className: "ProjectGitConfigSetReq",
-      classId: 1032
+      classId: 1048
     },
     object: {
       kind: "struct",
@@ -19504,14 +19517,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1034,
+    schemaId: 1050,
     name: "ProjectWorktree",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktree",
       className: "ProjectWorktree",
-      classId: 1034
+      classId: 1050
     },
     object: {
       kind: "struct",
@@ -19604,14 +19617,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1035,
+    schemaId: 1051,
     name: "ProjectWorktreeCreateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ProjectWorktreeCreateReq",
       className: "ProjectWorktreeCreateReq",
-      classId: 1035
+      classId: 1051
     },
     object: {
       kind: "struct",
@@ -19656,14 +19669,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1036,
+    schemaId: 1052,
     name: "ProjectWorktreeListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeListReq",
       className: "ProjectWorktreeListReq",
-      classId: 1036
+      classId: 1052
     },
     object: {
       kind: "struct",
@@ -19673,14 +19686,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1037,
+    schemaId: 1053,
     name: "ProjectWorktreeListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeListResp",
       className: "ProjectWorktreeListResp",
-      classId: 1037
+      classId: 1053
     },
     object: {
       kind: "struct",
@@ -19703,14 +19716,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1038,
+    schemaId: 1054,
     name: "ProjectWorktreeGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeGetReq",
       className: "ProjectWorktreeGetReq",
-      classId: 1038
+      classId: 1054
     },
     object: {
       kind: "struct",
@@ -19729,14 +19742,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1039,
+    schemaId: 1055,
     name: "ProjectWorktreeDiscardReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ProjectWorktreeDiscardReq",
       className: "ProjectWorktreeDiscardReq",
-      classId: 1039
+      classId: 1055
     },
     object: {
       kind: "struct",
@@ -19764,14 +19777,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1040,
+    schemaId: 1056,
     name: "ProjectWorktreeAgentBinding",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeAgentBinding",
       className: "ProjectWorktreeAgentBinding",
-      classId: 1040
+      classId: 1056
     },
     object: {
       kind: "struct",
@@ -19832,14 +19845,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1041,
+    schemaId: 1057,
     name: "ProjectWorktreeAgentBindingsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeAgentBindingsReq",
       className: "ProjectWorktreeAgentBindingsReq",
-      classId: 1041
+      classId: 1057
     },
     object: {
       kind: "struct",
@@ -19849,14 +19862,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1042,
+    schemaId: 1058,
     name: "ProjectWorktreeAgentBindingsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeAgentBindingsResp",
       className: "ProjectWorktreeAgentBindingsResp",
-      classId: 1042
+      classId: 1058
     },
     object: {
       kind: "struct",
@@ -19879,14 +19892,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1044,
+    schemaId: 1060,
     name: "ProjectWorktreeEnterReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeEnterReq",
       className: "ProjectWorktreeEnterReq",
-      classId: 1044
+      classId: 1060
     },
     object: {
       kind: "struct",
@@ -19915,14 +19928,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1045,
+    schemaId: 1061,
     name: "ProjectWorktreeEnterResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeEnterResp",
       className: "ProjectWorktreeEnterResp",
-      classId: 1045
+      classId: 1061
     },
     object: {
       kind: "struct",
@@ -19949,14 +19962,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1046,
+    schemaId: 1062,
     name: "ProjectWorktreeExitReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeExitReq",
       className: "ProjectWorktreeExitReq",
-      classId: 1046
+      classId: 1062
     },
     object: {
       kind: "struct",
@@ -20002,14 +20015,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1047,
+    schemaId: 1063,
     name: "ProjectWorktreeExitResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeExitResp",
       className: "ProjectWorktreeExitResp",
-      classId: 1047
+      classId: 1063
     },
     object: {
       kind: "struct",
@@ -20044,14 +20057,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1060,
+    schemaId: 1076,
     name: "ProjectWatchFileReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWatchFileReq",
       className: "ProjectWatchFileReq",
-      classId: 1060
+      classId: 1076
     },
     object: {
       kind: "struct",
@@ -20079,14 +20092,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1061,
+    schemaId: 1077,
     name: "ProjectWorktreeCopyReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeCopyReq",
       className: "ProjectWorktreeCopyReq",
-      classId: 1061
+      classId: 1077
     },
     object: {
       kind: "struct",
@@ -20135,14 +20148,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1062,
+    schemaId: 1078,
     name: "ProjectWorktreeCopyResult",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeCopyResult",
       className: "ProjectWorktreeCopyResult",
-      classId: 1062
+      classId: 1078
     },
     object: {
       kind: "struct",
@@ -20177,14 +20190,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1063,
+    schemaId: 1079,
     name: "ProjectWorktreeCopySkipped",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeCopySkipped",
       className: "ProjectWorktreeCopySkipped",
-      classId: 1063
+      classId: 1079
     },
     object: {
       kind: "struct",
@@ -20211,14 +20224,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1064,
+    schemaId: 1080,
     name: "ProjectWorktreeCopyResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectWorktreeCopyResp",
       className: "ProjectWorktreeCopyResp",
-      classId: 1064
+      classId: 1080
     },
     object: {
       kind: "struct",
@@ -20253,14 +20266,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1069,
+    schemaId: 1085,
     name: "ProjectNoGitModeGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectNoGitModeGetReq",
       className: "ProjectNoGitModeGetReq",
-      classId: 1069
+      classId: 1085
     },
     object: {
       kind: "struct",
@@ -20270,14 +20283,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1070,
+    schemaId: 1086,
     name: "ProjectNoGitModeGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectNoGitModeGetResp",
       className: "ProjectNoGitModeGetResp",
-      classId: 1070
+      classId: 1086
     },
     object: {
       kind: "struct",
@@ -20304,14 +20317,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1071,
+    schemaId: 1087,
     name: "ProjectNoGitModeSetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectNoGitModeSetReq",
       className: "ProjectNoGitModeSetReq",
-      classId: 1071
+      classId: 1087
     },
     object: {
       kind: "struct",
@@ -20330,14 +20343,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1072,
+    schemaId: 1088,
     name: "ProjectNoGitModeSetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectNoGitModeSetResp",
       className: "ProjectNoGitModeSetResp",
-      classId: 1072
+      classId: 1088
     },
     object: {
       kind: "struct",
@@ -20356,14 +20369,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1073,
+    schemaId: 1089,
     name: "ProjectDefaultBundlesGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectDefaultBundlesGetReq",
       className: "ProjectDefaultBundlesGetReq",
-      classId: 1073
+      classId: 1089
     },
     object: {
       kind: "struct",
@@ -20373,14 +20386,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1074,
+    schemaId: 1090,
     name: "ProjectDefaultBundlesGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectDefaultBundlesGetResp",
       className: "ProjectDefaultBundlesGetResp",
-      classId: 1074
+      classId: 1090
     },
     object: {
       kind: "struct",
@@ -20403,14 +20416,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1075,
+    schemaId: 1091,
     name: "ProjectDefaultBundlesSetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectDefaultBundlesSetReq",
       className: "ProjectDefaultBundlesSetReq",
-      classId: 1075
+      classId: 1091
     },
     object: {
       kind: "struct",
@@ -20433,14 +20446,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1076,
+    schemaId: 1092,
     name: "ProjectDefaultBundlesSetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectDefaultBundlesSetResp",
       className: "ProjectDefaultBundlesSetResp",
-      classId: 1076
+      classId: 1092
     },
     object: {
       kind: "struct",
@@ -20619,14 +20632,111 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1136,
+    schemaId: 1150,
+    name: "AgentSkillMountReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentSkillMountReq",
+      className: "AgentSkillMountReq",
+      classId: 1150
+    },
+    object: {
+      kind: "struct",
+      name: "AgentSkillMountReq",
+      fields: [
+        {
+          name: "SkillId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Args",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Context",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "TurnId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1151,
+    name: "AgentSkillMountResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentSkillMountResp",
+      className: "AgentSkillMountResp",
+      classId: 1151
+    },
+    object: {
+      kind: "struct",
+      name: "AgentSkillMountResp",
+      fields: [
+        {
+          name: "MountId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Body",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "SkillId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1152,
     name: "ProjectReviewChangesetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectReviewChangesetReq",
       className: "ProjectReviewChangesetReq",
-      classId: 1136
+      classId: 1152
     },
     object: {
       kind: "struct",
@@ -20690,14 +20800,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1137,
+    schemaId: 1153,
     name: "ProjectReviewChangesetSummaryResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectReviewChangesetSummaryResp",
       className: "ProjectReviewChangesetSummaryResp",
-      classId: 1137
+      classId: 1153
     },
     object: {
       kind: "struct",
@@ -20832,14 +20942,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1138,
+    schemaId: 1154,
     name: "ProjectReviewCommitInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectReviewCommitInfo",
       className: "ProjectReviewCommitInfo",
-      classId: 1138
+      classId: 1154
     },
     object: {
       kind: "struct",
@@ -20890,14 +21000,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1139,
+    schemaId: 1155,
     name: "ProjectReviewFileEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectReviewFileEntry",
       className: "ProjectReviewFileEntry",
-      classId: 1139
+      classId: 1155
     },
     object: {
       kind: "struct",
@@ -20956,14 +21066,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1140,
+    schemaId: 1156,
     name: "ProjectReviewUntrackedFile",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectReviewUntrackedFile",
       className: "ProjectReviewUntrackedFile",
-      classId: 1140
+      classId: 1156
     },
     object: {
       kind: "struct",
@@ -21014,14 +21124,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1141,
+    schemaId: 1157,
     name: "ProjectReviewTestResult",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectReviewTestResult",
       className: "ProjectReviewTestResult",
-      classId: 1141
+      classId: 1157
     },
     object: {
       kind: "struct",
@@ -21088,14 +21198,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1142,
+    schemaId: 1158,
     name: "ProjectReviewChangesetStats",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectReviewChangesetStats",
       className: "ProjectReviewChangesetStats",
-      classId: 1142
+      classId: 1158
     },
     object: {
       kind: "struct",
@@ -21146,14 +21256,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1143,
+    schemaId: 1159,
     name: "ProjectReviewFileContentReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectReviewFileContentReq",
       className: "ProjectReviewFileContentReq",
-      classId: 1143
+      classId: 1159
     },
     object: {
       kind: "struct",
@@ -21207,14 +21317,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1144,
+    schemaId: 1160,
     name: "ProjectReviewFileContentResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectReviewFileContentResp",
       className: "ProjectReviewFileContentResp",
-      classId: 1144
+      classId: 1160
     },
     object: {
       kind: "struct",
@@ -21297,14 +21407,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1146,
+    schemaId: 1162,
     name: "ProjectTaskValidateOutputsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectTaskValidateOutputsReq",
       className: "ProjectTaskValidateOutputsReq",
-      classId: 1146
+      classId: 1162
     },
     object: {
       kind: "struct",
@@ -21340,14 +21450,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1147,
+    schemaId: 1163,
     name: "ProjectTaskValidateOutputsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectTaskValidateOutputsResp",
       className: "ProjectTaskValidateOutputsResp",
-      classId: 1147
+      classId: 1163
     },
     object: {
       kind: "struct",
@@ -21378,111 +21488,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1150,
-    name: "AgentSkillMountReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AgentSkillMountReq",
-      className: "AgentSkillMountReq",
-      classId: 1150
-    },
-    object: {
-      kind: "struct",
-      name: "AgentSkillMountReq",
-      fields: [
-        {
-          name: "SkillId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Args",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Context",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "TurnId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1151,
-    name: "AgentSkillMountResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AgentSkillMountResp",
-      className: "AgentSkillMountResp",
-      classId: 1151
-    },
-    object: {
-      kind: "struct",
-      name: "AgentSkillMountResp",
-      fields: [
-        {
-          name: "MountId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Body",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "SkillId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1184,
+    schemaId: 1200,
     name: "GraphSnapshotMeta",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GraphSnapshotMeta",
       className: "GraphSnapshotMeta",
-      classId: 1184
+      classId: 1200
     },
     object: {
       kind: "struct",
@@ -21559,14 +21572,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1190,
+    schemaId: 1206,
     name: "Concept",
     visibility: "public",
     type: {
       kind: "struct",
       name: "Concept",
       className: "Concept",
-      classId: 1190
+      classId: 1206
     },
     object: {
       kind: "struct",
@@ -21637,14 +21650,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1207,
+    schemaId: 1223,
     name: "ProjectGraphGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGraphGetReq",
       className: "ProjectGraphGetReq",
-      classId: 1207
+      classId: 1223
     },
     object: {
       kind: "struct",
@@ -21689,14 +21702,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1208,
+    schemaId: 1224,
     name: "ProjectGraphSaveReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGraphSaveReq",
       className: "ProjectGraphSaveReq",
-      classId: 1208
+      classId: 1224
     },
     object: {
       kind: "struct",
@@ -21756,14 +21769,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1209,
+    schemaId: 1225,
     name: "ProjectGraphEnvelopeResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGraphEnvelopeResp",
       className: "ProjectGraphEnvelopeResp",
-      classId: 1209
+      classId: 1225
     },
     object: {
       kind: "struct",
@@ -21790,14 +21803,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1210,
+    schemaId: 1226,
     name: "ProjectGraphConceptGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGraphConceptGetReq",
       className: "ProjectGraphConceptGetReq",
-      classId: 1210
+      classId: 1226
     },
     object: {
       kind: "struct",
@@ -21840,14 +21853,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1211,
+    schemaId: 1227,
     name: "ProjectGraphConceptGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectGraphConceptGetResp",
       className: "ProjectGraphConceptGetResp",
-      classId: 1211
+      classId: 1227
     },
     object: {
       kind: "struct",
@@ -21890,14 +21903,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1248,
+    schemaId: 1264,
     name: "WikiOpenCardsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiOpenCardsReq",
       className: "WikiOpenCardsReq",
-      classId: 1248
+      classId: 1264
     },
     object: {
       kind: "struct",
@@ -21907,14 +21920,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1249,
+    schemaId: 1265,
     name: "WikiOpenCardsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiOpenCardsResp",
       className: "WikiOpenCardsResp",
-      classId: 1249
+      classId: 1265
     },
     object: {
       kind: "struct",
@@ -21937,14 +21950,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1250,
+    schemaId: 1266,
     name: "WikiSaveOpenCardsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSaveOpenCardsReq",
       className: "WikiSaveOpenCardsReq",
-      classId: 1250
+      classId: 1266
     },
     object: {
       kind: "struct",
@@ -21967,14 +21980,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1251,
+    schemaId: 1267,
     name: "MonoCardListItem",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MonoCardListItem",
       className: "MonoCardListItem",
-      classId: 1251
+      classId: 1267
     },
     object: {
       kind: "struct",
@@ -22160,14 +22173,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1252,
+    schemaId: 1268,
     name: "WikiListCardsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiListCardsReq",
       className: "WikiListCardsReq",
-      classId: 1252
+      classId: 1268
     },
     object: {
       kind: "struct",
@@ -22398,14 +22411,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1253,
+    schemaId: 1269,
     name: "WikiListCardsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiListCardsResp",
       className: "WikiListCardsResp",
-      classId: 1253
+      classId: 1269
     },
     object: {
       kind: "struct",
@@ -22456,14 +22469,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1254,
+    schemaId: 1270,
     name: "WikiGetCardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiGetCardReq",
       className: "WikiGetCardReq",
-      classId: 1254
+      classId: 1270
     },
     object: {
       kind: "struct",
@@ -22482,14 +22495,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1255,
+    schemaId: 1271,
     name: "WikiGetCardResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiGetCardResp",
       className: "WikiGetCardResp",
-      classId: 1255
+      classId: 1271
     },
     object: {
       kind: "struct",
@@ -22516,14 +22529,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1256,
+    schemaId: 1272,
     name: "WikiCreateCardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiCreateCardReq",
       className: "WikiCreateCardReq",
-      classId: 1256
+      classId: 1272
     },
     object: {
       kind: "struct",
@@ -22550,14 +22563,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1257,
+    schemaId: 1273,
     name: "WikiCreateCardResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiCreateCardResp",
       className: "WikiCreateCardResp",
-      classId: 1257
+      classId: 1273
     },
     object: {
       kind: "struct",
@@ -22576,14 +22589,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1258,
+    schemaId: 1274,
     name: "WikiEditCardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiEditCardReq",
       className: "WikiEditCardReq",
-      classId: 1258
+      classId: 1274
     },
     object: {
       kind: "struct",
@@ -22638,14 +22651,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1259,
+    schemaId: 1275,
     name: "WikiEditCardResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiEditCardResp",
       className: "WikiEditCardResp",
-      classId: 1259
+      classId: 1275
     },
     object: {
       kind: "struct",
@@ -22664,14 +22677,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1260,
+    schemaId: 1276,
     name: "WikiDeleteCardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiDeleteCardReq",
       className: "WikiDeleteCardReq",
-      classId: 1260
+      classId: 1276
     },
     object: {
       kind: "struct",
@@ -22690,14 +22703,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1261,
+    schemaId: 1277,
     name: "WikiDeleteCardResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiDeleteCardResp",
       className: "WikiDeleteCardResp",
-      classId: 1261
+      classId: 1277
     },
     object: {
       kind: "struct",
@@ -22716,14 +22729,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1262,
+    schemaId: 1278,
     name: "WikiTimerListItem",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiTimerListItem",
       className: "WikiTimerListItem",
-      classId: 1262
+      classId: 1278
     },
     object: {
       kind: "struct",
@@ -22818,14 +22831,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1263,
+    schemaId: 1279,
     name: "WikiListTimersResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiListTimersResp",
       className: "WikiListTimersResp",
-      classId: 1263
+      classId: 1279
     },
     object: {
       kind: "struct",
@@ -22848,14 +22861,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1265,
+    schemaId: 1280,
     name: "CardValidationError",
     visibility: "public",
     type: {
       kind: "struct",
       name: "CardValidationError",
       className: "CardValidationError",
-      classId: 1265
+      classId: 1280
     },
     object: {
       kind: "struct",
@@ -22890,14 +22903,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1266,
+    schemaId: 1281,
     name: "WikiValidateCardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiValidateCardReq",
       className: "WikiValidateCardReq",
-      classId: 1266
+      classId: 1281
     },
     object: {
       kind: "struct",
@@ -22924,14 +22937,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1267,
+    schemaId: 1282,
     name: "WikiValidateCardResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiValidateCardResp",
       className: "WikiValidateCardResp",
-      classId: 1267
+      classId: 1282
     },
     object: {
       kind: "struct",
@@ -22962,14 +22975,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1268,
+    schemaId: 1283,
     name: "WikiSetStatusReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSetStatusReq",
       className: "WikiSetStatusReq",
-      classId: 1268
+      classId: 1283
     },
     object: {
       kind: "struct",
@@ -23018,14 +23031,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1269,
+    schemaId: 1284,
     name: "WikiSetStatusResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSetStatusResp",
       className: "WikiSetStatusResp",
-      classId: 1269
+      classId: 1284
     },
     object: {
       kind: "struct",
@@ -23052,14 +23065,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1270,
+    schemaId: 1285,
     name: "FrontierTaskCard",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrontierTaskCard",
       className: "FrontierTaskCard",
-      classId: 1270
+      classId: 1285
     },
     object: {
       kind: "struct",
@@ -23106,14 +23119,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1271,
+    schemaId: 1286,
     name: "WikiFrontierReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiFrontierReq",
       className: "WikiFrontierReq",
-      classId: 1271
+      classId: 1286
     },
     object: {
       kind: "struct",
@@ -23132,14 +23145,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1272,
+    schemaId: 1287,
     name: "WikiFrontierResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiFrontierResp",
       className: "WikiFrontierResp",
-      classId: 1272
+      classId: 1287
     },
     object: {
       kind: "struct",
@@ -23162,14 +23175,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1273,
+    schemaId: 1288,
     name: "WikiSetMapOwnerReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSetMapOwnerReq",
       className: "WikiSetMapOwnerReq",
-      classId: 1273
+      classId: 1288
     },
     object: {
       kind: "struct",
@@ -23196,14 +23209,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1274,
+    schemaId: 1289,
     name: "WikiSetMapOwnerResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSetMapOwnerResp",
       className: "WikiSetMapOwnerResp",
-      classId: 1274
+      classId: 1289
     },
     object: {
       kind: "struct",
@@ -23230,14 +23243,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1275,
+    schemaId: 1290,
     name: "WikiClaimTaskCardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiClaimTaskCardReq",
       className: "WikiClaimTaskCardReq",
-      classId: 1275
+      classId: 1290
     },
     object: {
       kind: "struct",
@@ -23276,14 +23289,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1276,
+    schemaId: 1291,
     name: "WikiClaimTaskCardResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiClaimTaskCardResp",
       className: "WikiClaimTaskCardResp",
-      classId: 1276
+      classId: 1291
     },
     object: {
       kind: "struct",
@@ -23336,14 +23349,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1277,
+    schemaId: 1292,
     name: "WikiCreateMapReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiCreateMapReq",
       className: "WikiCreateMapReq",
-      classId: 1277
+      classId: 1292
     },
     object: {
       kind: "struct",
@@ -23380,14 +23393,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1278,
+    schemaId: 1293,
     name: "WikiCreateMapResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiCreateMapResp",
       className: "WikiCreateMapResp",
-      classId: 1278
+      classId: 1293
     },
     object: {
       kind: "struct",
@@ -23406,14 +23419,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1279,
+    schemaId: 1294,
     name: "WikiCreateTaskCardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiCreateTaskCardReq",
       className: "WikiCreateTaskCardReq",
-      classId: 1279
+      classId: 1294
     },
     object: {
       kind: "struct",
@@ -23510,14 +23523,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1280,
+    schemaId: 1295,
     name: "WikiCreateTaskCardResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiCreateTaskCardResp",
       className: "WikiCreateTaskCardResp",
-      classId: 1280
+      classId: 1295
     },
     object: {
       kind: "struct",
@@ -23536,14 +23549,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1281,
+    schemaId: 1296,
     name: "WikiSetTaskDependenciesReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSetTaskDependenciesReq",
       className: "WikiSetTaskDependenciesReq",
-      classId: 1281
+      classId: 1296
     },
     object: {
       kind: "struct",
@@ -23595,14 +23608,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1282,
+    schemaId: 1297,
     name: "WikiSetTaskDependenciesResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSetTaskDependenciesResp",
       className: "WikiSetTaskDependenciesResp",
-      classId: 1282
+      classId: 1297
     },
     object: {
       kind: "struct",
@@ -23621,14 +23634,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1285,
+    schemaId: 1300,
     name: "WikiListDependenciesReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiListDependenciesReq",
       className: "WikiListDependenciesReq",
-      classId: 1285
+      classId: 1300
     },
     object: {
       kind: "struct",
@@ -23648,14 +23661,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1286,
+    schemaId: 1301,
     name: "WikiListDependenciesResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiListDependenciesResp",
       className: "WikiListDependenciesResp",
-      classId: 1286
+      classId: 1301
     },
     object: {
       kind: "struct",
@@ -23678,14 +23691,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1287,
+    schemaId: 1302,
     name: "TaskDepEdge",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TaskDepEdge",
       className: "TaskDepEdge",
-      classId: 1287
+      classId: 1302
     },
     object: {
       kind: "struct",
@@ -23720,14 +23733,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1288,
+    schemaId: 1303,
     name: "TaskDataBinding",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TaskDataBinding",
       className: "TaskDataBinding",
-      classId: 1288
+      classId: 1303
     },
     object: {
       kind: "struct",
@@ -23762,14 +23775,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1289,
+    schemaId: 1304,
     name: "WikiSetTaskOutputsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSetTaskOutputsReq",
       className: "WikiSetTaskOutputsReq",
-      classId: 1289
+      classId: 1304
     },
     object: {
       kind: "struct",
@@ -23805,14 +23818,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1290,
+    schemaId: 1305,
     name: "WikiSetTaskOutputsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSetTaskOutputsResp",
       className: "WikiSetTaskOutputsResp",
-      classId: 1290
+      classId: 1305
     },
     object: {
       kind: "struct",
@@ -23831,14 +23844,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1291,
+    schemaId: 1306,
     name: "WikiTemplateSaveReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiTemplateSaveReq",
       className: "WikiTemplateSaveReq",
-      classId: 1291
+      classId: 1306
     },
     object: {
       kind: "struct",
@@ -23865,14 +23878,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1292,
+    schemaId: 1307,
     name: "WikiTemplateSaveResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiTemplateSaveResp",
       className: "WikiTemplateSaveResp",
-      classId: 1292
+      classId: 1307
     },
     object: {
       kind: "struct",
@@ -23903,14 +23916,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1293,
+    schemaId: 1308,
     name: "WikiTemplateInstantiateReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiTemplateInstantiateReq",
       className: "WikiTemplateInstantiateReq",
-      classId: 1293
+      classId: 1308
     },
     object: {
       kind: "struct",
@@ -23973,14 +23986,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1294,
+    schemaId: 1309,
     name: "WikiTemplateInstantiateResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiTemplateInstantiateResp",
       className: "WikiTemplateInstantiateResp",
-      classId: 1294
+      classId: 1309
     },
     object: {
       kind: "struct",
@@ -24011,14 +24024,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1295,
+    schemaId: 1310,
     name: "TemplateNodeMapping",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TemplateNodeMapping",
       className: "TemplateNodeMapping",
-      classId: 1295
+      classId: 1310
     },
     object: {
       kind: "struct",
@@ -24045,14 +24058,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1296,
+    schemaId: 1311,
     name: "WikiSetMapInputsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSetMapInputsReq",
       className: "WikiSetMapInputsReq",
-      classId: 1296
+      classId: 1311
     },
     object: {
       kind: "struct",
@@ -24088,14 +24101,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1297,
+    schemaId: 1312,
     name: "WikiSetMapInputsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSetMapInputsResp",
       className: "WikiSetMapInputsResp",
-      classId: 1297
+      classId: 1312
     },
     object: {
       kind: "struct",
@@ -24114,14 +24127,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1298,
+    schemaId: 1313,
     name: "WikiPromoteNodeOutputsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiPromoteNodeOutputsReq",
       className: "WikiPromoteNodeOutputsReq",
-      classId: 1298
+      classId: 1313
     },
     object: {
       kind: "struct",
@@ -24148,14 +24161,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1299,
+    schemaId: 1314,
     name: "WikiPromoteNodeOutputsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiPromoteNodeOutputsResp",
       className: "WikiPromoteNodeOutputsResp",
-      classId: 1299
+      classId: 1314
     },
     object: {
       kind: "struct",
@@ -24191,14 +24204,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1300,
+    schemaId: 1315,
     name: "WikiAutomationBindReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiAutomationBindReq",
       className: "WikiAutomationBindReq",
-      classId: 1300
+      classId: 1315
     },
     object: {
       kind: "struct",
@@ -24225,14 +24238,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1301,
+    schemaId: 1316,
     name: "WikiAutomationBindResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiAutomationBindResp",
       className: "WikiAutomationBindResp",
-      classId: 1301
+      classId: 1316
     },
     object: {
       kind: "struct",
@@ -24267,14 +24280,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1302,
+    schemaId: 1317,
     name: "WikiListTemplatesReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiListTemplatesReq",
       className: "WikiListTemplatesReq",
-      classId: 1302
+      classId: 1317
     },
     object: {
       kind: "struct",
@@ -24284,14 +24297,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1303,
+    schemaId: 1318,
     name: "WikiListTemplatesResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiListTemplatesResp",
       className: "WikiListTemplatesResp",
-      classId: 1303
+      classId: 1318
     },
     object: {
       kind: "struct",
@@ -24314,14 +24327,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1305,
+    schemaId: 1320,
     name: "WikiListTemplateRunsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiListTemplateRunsReq",
       className: "WikiListTemplateRunsReq",
-      classId: 1305
+      classId: 1320
     },
     object: {
       kind: "struct",
@@ -24349,14 +24362,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1306,
+    schemaId: 1321,
     name: "WikiListTemplateRunsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiListTemplateRunsResp",
       className: "WikiListTemplateRunsResp",
-      classId: 1306
+      classId: 1321
     },
     object: {
       kind: "struct",
@@ -24379,14 +24392,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1307,
+    schemaId: 1322,
     name: "TemplateRunRecord",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TemplateRunRecord",
       className: "TemplateRunRecord",
-      classId: 1307
+      classId: 1322
     },
     object: {
       kind: "struct",
@@ -24431,14 +24444,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1308,
+    schemaId: 1323,
     name: "WikiGetCardsBatchReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiGetCardsBatchReq",
       className: "WikiGetCardsBatchReq",
-      classId: 1308
+      classId: 1323
     },
     object: {
       kind: "struct",
@@ -24461,14 +24474,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1309,
+    schemaId: 1324,
     name: "WikiCardRaw",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiCardRaw",
       className: "WikiCardRaw",
-      classId: 1309
+      classId: 1324
     },
     object: {
       kind: "struct",
@@ -24503,14 +24516,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1310,
+    schemaId: 1325,
     name: "WikiGetCardsBatchResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiGetCardsBatchResp",
       className: "WikiGetCardsBatchResp",
-      classId: 1310
+      classId: 1325
     },
     object: {
       kind: "struct",
@@ -24533,14 +24546,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1311,
+    schemaId: 1326,
     name: "WikiSetStarredReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSetStarredReq",
       className: "WikiSetStarredReq",
-      classId: 1311
+      classId: 1326
     },
     object: {
       kind: "struct",
@@ -24567,14 +24580,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1312,
+    schemaId: 1327,
     name: "WikiGetStarredReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiGetStarredReq",
       className: "WikiGetStarredReq",
-      classId: 1312
+      classId: 1327
     },
     object: {
       kind: "struct",
@@ -24584,14 +24597,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1313,
+    schemaId: 1328,
     name: "WikiStarredResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiStarredResp",
       className: "WikiStarredResp",
-      classId: 1313
+      classId: 1328
     },
     object: {
       kind: "struct",
@@ -24614,14 +24627,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1344,
+    schemaId: 1392,
     name: "PromptRef",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PromptRef",
       className: "PromptRef",
-      classId: 1344
+      classId: 1392
     },
     object: {
       kind: "struct",
@@ -24657,14 +24670,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1346,
+    schemaId: 1394,
     name: "PromptFragment",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PromptFragment",
       className: "PromptFragment",
-      classId: 1346
+      classId: 1394
     },
     object: {
       kind: "struct",
@@ -24796,14 +24809,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1347,
+    schemaId: 1395,
     name: "PromptContextSegment",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PromptContextSegment",
       className: "PromptContextSegment",
-      classId: 1347
+      classId: 1395
     },
     object: {
       kind: "struct",
@@ -24839,14 +24852,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1348,
+    schemaId: 1396,
     name: "PromptArtifact",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PromptArtifact",
       className: "PromptArtifact",
-      classId: 1348
+      classId: 1396
     },
     object: {
       kind: "struct",
@@ -24925,14 +24938,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1408,
+    schemaId: 1456,
     name: "Provider",
     visibility: "public",
     type: {
       kind: "struct",
       name: "Provider",
       className: "Provider",
-      classId: 1408
+      classId: 1456
     },
     object: {
       kind: "struct",
@@ -25145,14 +25158,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1409,
+    schemaId: 1457,
     name: "ProviderModelCostTier",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProviderModelCostTier",
       className: "ProviderModelCostTier",
-      classId: 1409
+      classId: 1457
     },
     object: {
       kind: "struct",
@@ -25204,14 +25217,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1410,
+    schemaId: 1458,
     name: "ProviderModel",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProviderModel",
       className: "ProviderModel",
-      classId: 1410
+      classId: 1458
     },
     object: {
       kind: "struct",
@@ -25360,14 +25373,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1411,
+    schemaId: 1459,
     name: "FetchedModel",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FetchedModel",
       className: "FetchedModel",
-      classId: 1411
+      classId: 1459
     },
     object: {
       kind: "struct",
@@ -25402,14 +25415,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1412,
+    schemaId: 1460,
     name: "Model",
     visibility: "public",
     type: {
       kind: "struct",
       name: "Model",
       className: "Model",
-      classId: 1412
+      classId: 1460
     },
     object: {
       kind: "struct",
@@ -25452,14 +25465,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1413,
+    schemaId: 1461,
     name: "AIManagerProviderConfigureReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerProviderConfigureReq",
       className: "AIManagerProviderConfigureReq",
-      classId: 1413
+      classId: 1461
     },
     object: {
       kind: "struct",
@@ -25600,14 +25613,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1414,
+    schemaId: 1462,
     name: "AIManagerProviderConfigureResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerProviderConfigureResp",
       className: "AIManagerProviderConfigureResp",
-      classId: 1414
+      classId: 1462
     },
     object: {
       kind: "struct",
@@ -25617,14 +25630,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1416,
+    schemaId: 1464,
     name: "ProviderListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProviderListResp",
       className: "ProviderListResp",
-      classId: 1416
+      classId: 1464
     },
     object: {
       kind: "struct",
@@ -25647,14 +25660,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1417,
+    schemaId: 1465,
     name: "ModelListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ModelListResp",
       className: "ModelListResp",
-      classId: 1417
+      classId: 1465
     },
     object: {
       kind: "struct",
@@ -25677,14 +25690,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1418,
+    schemaId: 1466,
     name: "AIManagerProviderFetchModelsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIManagerProviderFetchModelsReq",
       className: "AIManagerProviderFetchModelsReq",
-      classId: 1418
+      classId: 1466
     },
     object: {
       kind: "struct",
@@ -25737,14 +25750,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1419,
+    schemaId: 1467,
     name: "AIManagerProviderFetchModelsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIManagerProviderFetchModelsResp",
       className: "AIManagerProviderFetchModelsResp",
-      classId: 1419
+      classId: 1467
     },
     object: {
       kind: "struct",
@@ -25767,14 +25780,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1420,
+    schemaId: 1468,
     name: "ManualCallableUnit",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ManualCallableUnit",
       className: "ManualCallableUnit",
-      classId: 1420
+      classId: 1468
     },
     object: {
       kind: "struct",
@@ -25979,14 +25992,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1425,
+    schemaId: 1473,
     name: "AIManagerAggregatorConfigureReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerAggregatorConfigureReq",
       className: "AIManagerAggregatorConfigureReq",
-      classId: 1425
+      classId: 1473
     },
     object: {
       kind: "struct",
@@ -26035,14 +26048,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1426,
+    schemaId: 1474,
     name: "AIManagerAggregatorConfigureResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerAggregatorConfigureResp",
       className: "AIManagerAggregatorConfigureResp",
-      classId: 1426
+      classId: 1474
     },
     object: {
       kind: "struct",
@@ -26052,14 +26065,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1427,
+    schemaId: 1475,
     name: "AIManagerAggregatorGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIManagerAggregatorGetReq",
       className: "AIManagerAggregatorGetReq",
-      classId: 1427
+      classId: 1475
     },
     object: {
       kind: "struct",
@@ -26078,14 +26091,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1428,
+    schemaId: 1476,
     name: "AIManagerAggregatorGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIManagerAggregatorGetResp",
       className: "AIManagerAggregatorGetResp",
-      classId: 1428
+      classId: 1476
     },
     object: {
       kind: "struct",
@@ -26142,14 +26155,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1432,
+    schemaId: 1480,
     name: "AIManagerConfigExportResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerConfigExportResp",
       className: "AIManagerConfigExportResp",
-      classId: 1432
+      classId: 1480
     },
     object: {
       kind: "struct",
@@ -26168,14 +26181,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1433,
+    schemaId: 1481,
     name: "AIManagerConfigImportReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerConfigImportReq",
       className: "AIManagerConfigImportReq",
-      classId: 1433
+      classId: 1481
     },
     object: {
       kind: "struct",
@@ -26194,14 +26207,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1434,
+    schemaId: 1482,
     name: "AIManagerConfigImportResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerConfigImportResp",
       className: "AIManagerConfigImportResp",
-      classId: 1434
+      classId: 1482
     },
     object: {
       kind: "struct",
@@ -26211,14 +26224,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1441,
+    schemaId: 1489,
     name: "AIManagerProviderSetTokenPlanReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerProviderSetTokenPlanReq",
       className: "AIManagerProviderSetTokenPlanReq",
-      classId: 1441
+      classId: 1489
     },
     object: {
       kind: "struct",
@@ -26273,14 +26286,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1442,
+    schemaId: 1490,
     name: "AIManagerProviderSetTokenPlanResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerProviderSetTokenPlanResp",
       className: "AIManagerProviderSetTokenPlanResp",
-      classId: 1442
+      classId: 1490
     },
     object: {
       kind: "struct",
@@ -26307,14 +26320,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1445,
+    schemaId: 1493,
     name: "AIManagerProviderResetHealthReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerProviderResetHealthReq",
       className: "AIManagerProviderResetHealthReq",
-      classId: 1445
+      classId: 1493
     },
     object: {
       kind: "struct",
@@ -26333,14 +26346,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1446,
+    schemaId: 1494,
     name: "AIManagerProviderResetHealthResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerProviderResetHealthResp",
       className: "AIManagerProviderResetHealthResp",
-      classId: 1446
+      classId: 1494
     },
     object: {
       kind: "struct",
@@ -26367,14 +26380,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1447,
+    schemaId: 1495,
     name: "AIManagerProviderRecordProbeReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerProviderRecordProbeReq",
       className: "AIManagerProviderRecordProbeReq",
-      classId: 1447
+      classId: 1495
     },
     object: {
       kind: "struct",
@@ -26427,14 +26440,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1448,
+    schemaId: 1496,
     name: "AIManagerProviderRecordProbeResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerProviderRecordProbeResp",
       className: "AIManagerProviderRecordProbeResp",
-      classId: 1448
+      classId: 1496
     },
     object: {
       kind: "struct",
@@ -26461,14 +26474,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1449,
+    schemaId: 1497,
     name: "ProviderDisableWindow",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProviderDisableWindow",
       className: "ProviderDisableWindow",
-      classId: 1449
+      classId: 1497
     },
     object: {
       kind: "struct",
@@ -26508,14 +26521,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1451,
+    schemaId: 1499,
     name: "AIManagerUnitHealthListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIManagerUnitHealthListResp",
       className: "AIManagerUnitHealthListResp",
-      classId: 1451
+      classId: 1499
     },
     object: {
       kind: "struct",
@@ -26538,14 +26551,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1452,
+    schemaId: 1500,
     name: "AIManagerProviderSetDisabledReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerProviderSetDisabledReq",
       className: "AIManagerProviderSetDisabledReq",
-      classId: 1452
+      classId: 1500
     },
     object: {
       kind: "struct",
@@ -26581,14 +26594,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1453,
+    schemaId: 1501,
     name: "AIManagerProviderSetDisabledResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerProviderSetDisabledResp",
       className: "AIManagerProviderSetDisabledResp",
-      classId: 1453
+      classId: 1501
     },
     object: {
       kind: "struct",
@@ -26615,14 +26628,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1454,
+    schemaId: 1502,
     name: "AIManagerAggregatorSetDisabledReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerAggregatorSetDisabledReq",
       className: "AIManagerAggregatorSetDisabledReq",
-      classId: 1454
+      classId: 1502
     },
     object: {
       kind: "struct",
@@ -26649,14 +26662,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1455,
+    schemaId: 1503,
     name: "AIManagerAggregatorSetDisabledResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerAggregatorSetDisabledResp",
       className: "AIManagerAggregatorSetDisabledResp",
-      classId: 1455
+      classId: 1503
     },
     object: {
       kind: "struct",
@@ -26683,14 +26696,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1456,
+    schemaId: 1504,
     name: "AIManagerListUnitsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIManagerListUnitsReq",
       className: "AIManagerListUnitsReq",
-      classId: 1456
+      classId: 1504
     },
     object: {
       kind: "struct",
@@ -26710,14 +26723,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1457,
+    schemaId: 1505,
     name: "AIManagerListUnitsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIManagerListUnitsResp",
       className: "AIManagerListUnitsResp",
-      classId: 1457
+      classId: 1505
     },
     object: {
       kind: "struct",
@@ -26740,14 +26753,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1488,
+    schemaId: 1552,
     name: "ShellExecReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellExecReq",
       className: "ShellExecReq",
-      classId: 1488
+      classId: 1552
     },
     object: {
       kind: "struct",
@@ -26806,14 +26819,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1490,
+    schemaId: 1554,
     name: "ShellBashReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellBashReq",
       className: "ShellBashReq",
-      classId: 1490
+      classId: 1554
     },
     object: {
       kind: "struct",
@@ -26863,14 +26876,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1492,
+    schemaId: 1556,
     name: "ShellChunk",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellChunk",
       className: "ShellChunk",
-      classId: 1492
+      classId: 1556
     },
     object: {
       kind: "struct",
@@ -26961,14 +26974,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1536,
+    schemaId: 1600,
     name: "SshHost",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHost",
       className: "SshHost",
-      classId: 1536
+      classId: 1600
     },
     object: {
       kind: "struct",
@@ -27071,14 +27084,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1537,
+    schemaId: 1601,
     name: "SshHostListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHostListReq",
       className: "SshHostListReq",
-      classId: 1537
+      classId: 1601
     },
     object: {
       kind: "struct",
@@ -27088,14 +27101,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1538,
+    schemaId: 1602,
     name: "SshHostListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHostListResp",
       className: "SshHostListResp",
-      classId: 1538
+      classId: 1602
     },
     object: {
       kind: "struct",
@@ -27130,14 +27143,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1539,
+    schemaId: 1603,
     name: "SshHostCreateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHostCreateReq",
       className: "SshHostCreateReq",
-      classId: 1539
+      classId: 1603
     },
     object: {
       kind: "struct",
@@ -27232,14 +27245,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1540,
+    schemaId: 1604,
     name: "SshHostCreateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHostCreateResp",
       className: "SshHostCreateResp",
-      classId: 1540
+      classId: 1604
     },
     object: {
       kind: "struct",
@@ -27258,14 +27271,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1541,
+    schemaId: 1605,
     name: "SshHostUpdateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHostUpdateReq",
       className: "SshHostUpdateReq",
-      classId: 1541
+      classId: 1605
     },
     object: {
       kind: "struct",
@@ -27368,14 +27381,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1542,
+    schemaId: 1606,
     name: "SshHostUpdateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHostUpdateResp",
       className: "SshHostUpdateResp",
-      classId: 1542
+      classId: 1606
     },
     object: {
       kind: "struct",
@@ -27385,14 +27398,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1543,
+    schemaId: 1607,
     name: "SshHostRemoveReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHostRemoveReq",
       className: "SshHostRemoveReq",
-      classId: 1543
+      classId: 1607
     },
     object: {
       kind: "struct",
@@ -27411,14 +27424,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1544,
+    schemaId: 1608,
     name: "SshHostRemoveResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHostRemoveResp",
       className: "SshHostRemoveResp",
-      classId: 1544
+      classId: 1608
     },
     object: {
       kind: "struct",
@@ -27428,14 +27441,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1545,
+    schemaId: 1609,
     name: "SshSessionInfo",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshSessionInfo",
       className: "SshSessionInfo",
-      classId: 1545
+      classId: 1609
     },
     object: {
       kind: "struct",
@@ -27512,14 +27525,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1546,
+    schemaId: 1610,
     name: "SshSessionListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshSessionListReq",
       className: "SshSessionListReq",
-      classId: 1546
+      classId: 1610
     },
     object: {
       kind: "struct",
@@ -27529,14 +27542,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1547,
+    schemaId: 1611,
     name: "SshSessionListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshSessionListResp",
       className: "SshSessionListResp",
-      classId: 1547
+      classId: 1611
     },
     object: {
       kind: "struct",
@@ -27559,14 +27572,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1548,
+    schemaId: 1612,
     name: "SshShellOpenReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellOpenReq",
       className: "SshShellOpenReq",
-      classId: 1548
+      classId: 1612
     },
     object: {
       kind: "struct",
@@ -27603,14 +27616,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1549,
+    schemaId: 1613,
     name: "SshShellOpenResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellOpenResp",
       className: "SshShellOpenResp",
-      classId: 1549
+      classId: 1613
     },
     object: {
       kind: "struct",
@@ -27646,14 +27659,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1550,
+    schemaId: 1614,
     name: "SshShellCloseReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellCloseReq",
       className: "SshShellCloseReq",
-      classId: 1550
+      classId: 1614
     },
     object: {
       kind: "struct",
@@ -27672,14 +27685,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1551,
+    schemaId: 1615,
     name: "SshShellCloseResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellCloseResp",
       className: "SshShellCloseResp",
-      classId: 1551
+      classId: 1615
     },
     object: {
       kind: "struct",
@@ -27689,14 +27702,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1552,
+    schemaId: 1616,
     name: "SshShellInputReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellInputReq",
       className: "SshShellInputReq",
-      classId: 1552
+      classId: 1616
     },
     object: {
       kind: "struct",
@@ -27723,14 +27736,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1553,
+    schemaId: 1617,
     name: "SshShellInputResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellInputResp",
       className: "SshShellInputResp",
-      classId: 1553
+      classId: 1617
     },
     object: {
       kind: "struct",
@@ -27740,14 +27753,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1554,
+    schemaId: 1618,
     name: "SshShellResizeReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellResizeReq",
       className: "SshShellResizeReq",
-      classId: 1554
+      classId: 1618
     },
     object: {
       kind: "struct",
@@ -27782,14 +27795,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1555,
+    schemaId: 1619,
     name: "SshShellResizeResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellResizeResp",
       className: "SshShellResizeResp",
-      classId: 1555
+      classId: 1619
     },
     object: {
       kind: "struct",
@@ -27799,14 +27812,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1556,
+    schemaId: 1620,
     name: "SshFileEntry",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileEntry",
       className: "SshFileEntry",
-      classId: 1556
+      classId: 1620
     },
     object: {
       kind: "struct",
@@ -27867,14 +27880,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1557,
+    schemaId: 1621,
     name: "SshFileListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileListReq",
       className: "SshFileListReq",
-      classId: 1557
+      classId: 1621
     },
     object: {
       kind: "struct",
@@ -27901,14 +27914,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1558,
+    schemaId: 1622,
     name: "SshFileListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileListResp",
       className: "SshFileListResp",
-      classId: 1558
+      classId: 1622
     },
     object: {
       kind: "struct",
@@ -27939,14 +27952,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1559,
+    schemaId: 1623,
     name: "SshFileReadReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileReadReq",
       className: "SshFileReadReq",
-      classId: 1559
+      classId: 1623
     },
     object: {
       kind: "struct",
@@ -27973,14 +27986,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1560,
+    schemaId: 1624,
     name: "SshFileReadResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileReadResp",
       className: "SshFileReadResp",
-      classId: 1560
+      classId: 1624
     },
     object: {
       kind: "struct",
@@ -28015,14 +28028,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1561,
+    schemaId: 1625,
     name: "SshFileWriteReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileWriteReq",
       className: "SshFileWriteReq",
-      classId: 1561
+      classId: 1625
     },
     object: {
       kind: "struct",
@@ -28057,14 +28070,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1562,
+    schemaId: 1626,
     name: "SshFileWriteResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileWriteResp",
       className: "SshFileWriteResp",
-      classId: 1562
+      classId: 1626
     },
     object: {
       kind: "struct",
@@ -28074,14 +28087,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1563,
+    schemaId: 1627,
     name: "SshFileMkdirReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileMkdirReq",
       className: "SshFileMkdirReq",
-      classId: 1563
+      classId: 1627
     },
     object: {
       kind: "struct",
@@ -28108,14 +28121,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1564,
+    schemaId: 1628,
     name: "SshFileMkdirResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileMkdirResp",
       className: "SshFileMkdirResp",
-      classId: 1564
+      classId: 1628
     },
     object: {
       kind: "struct",
@@ -28125,14 +28138,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1565,
+    schemaId: 1629,
     name: "SshFileDeleteReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileDeleteReq",
       className: "SshFileDeleteReq",
-      classId: 1565
+      classId: 1629
     },
     object: {
       kind: "struct",
@@ -28159,14 +28172,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1566,
+    schemaId: 1630,
     name: "SshFileDeleteResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileDeleteResp",
       className: "SshFileDeleteResp",
-      classId: 1566
+      classId: 1630
     },
     object: {
       kind: "struct",
@@ -28176,14 +28189,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1567,
+    schemaId: 1631,
     name: "SshFileRenameReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileRenameReq",
       className: "SshFileRenameReq",
-      classId: 1567
+      classId: 1631
     },
     object: {
       kind: "struct",
@@ -28218,14 +28231,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1568,
+    schemaId: 1632,
     name: "SshFileRenameResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileRenameResp",
       className: "SshFileRenameResp",
-      classId: 1568
+      classId: 1632
     },
     object: {
       kind: "struct",
@@ -28235,14 +28248,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1570,
+    schemaId: 1634,
     name: "SshProcInfo",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshProcInfo",
       className: "SshProcInfo",
-      classId: 1570
+      classId: 1634
     },
     object: {
       kind: "struct",
@@ -28293,14 +28306,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1571,
+    schemaId: 1635,
     name: "SshDiskInfo",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshDiskInfo",
       className: "SshDiskInfo",
-      classId: 1571
+      classId: 1635
     },
     object: {
       kind: "struct",
@@ -28335,14 +28348,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1572,
+    schemaId: 1636,
     name: "SshNetInfo",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshNetInfo",
       className: "SshNetInfo",
-      classId: 1572
+      classId: 1636
     },
     object: {
       kind: "struct",
@@ -28377,14 +28390,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1573,
+    schemaId: 1637,
     name: "SshStatus",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshStatus",
       className: "SshStatus",
-      classId: 1573
+      classId: 1637
     },
     object: {
       kind: "struct",
@@ -28523,14 +28536,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1574,
+    schemaId: 1638,
     name: "SshStatusReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshStatusReq",
       className: "SshStatusReq",
-      classId: 1574
+      classId: 1638
     },
     object: {
       kind: "struct",
@@ -28549,14 +28562,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1575,
+    schemaId: 1639,
     name: "SshStatusResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshStatusResp",
       className: "SshStatusResp",
-      classId: 1575
+      classId: 1639
     },
     object: {
       kind: "struct",
@@ -28575,14 +28588,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1576,
+    schemaId: 1640,
     name: "SshStatusListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshStatusListReq",
       className: "SshStatusListReq",
-      classId: 1576
+      classId: 1640
     },
     object: {
       kind: "struct",
@@ -28592,14 +28605,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1577,
+    schemaId: 1641,
     name: "SshStatusListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshStatusListResp",
       className: "SshStatusListResp",
-      classId: 1577
+      classId: 1641
     },
     object: {
       kind: "struct",
@@ -28622,14 +28635,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1578,
+    schemaId: 1642,
     name: "SshFileDownloadReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileDownloadReq",
       className: "SshFileDownloadReq",
-      classId: 1578
+      classId: 1642
     },
     object: {
       kind: "struct",
@@ -28656,14 +28669,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1579,
+    schemaId: 1643,
     name: "SshFileDownloadResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileDownloadResp",
       className: "SshFileDownloadResp",
-      classId: 1579
+      classId: 1643
     },
     object: {
       kind: "struct",
@@ -28698,14 +28711,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1580,
+    schemaId: 1644,
     name: "SshShellStreamReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellStreamReq",
       className: "SshShellStreamReq",
-      classId: 1580
+      classId: 1644
     },
     object: {
       kind: "struct",
@@ -28724,14 +28737,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1581,
+    schemaId: 1645,
     name: "SshShellStreamChunk",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellStreamChunk",
       className: "SshShellStreamChunk",
-      classId: 1581
+      classId: 1645
     },
     object: {
       kind: "struct",
@@ -28768,14 +28781,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1582,
+    schemaId: 1646,
     name: "SshCommandSnippet",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshCommandSnippet",
       className: "SshCommandSnippet",
-      classId: 1582
+      classId: 1646
     },
     object: {
       kind: "struct",
@@ -28818,14 +28831,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1583,
+    schemaId: 1647,
     name: "SshCommandListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshCommandListReq",
       className: "SshCommandListReq",
-      classId: 1583
+      classId: 1647
     },
     object: {
       kind: "struct",
@@ -28835,14 +28848,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1584,
+    schemaId: 1648,
     name: "SshCommandListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshCommandListResp",
       className: "SshCommandListResp",
-      classId: 1584
+      classId: 1648
     },
     object: {
       kind: "struct",
@@ -28865,14 +28878,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1585,
+    schemaId: 1649,
     name: "SshCommandCreateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshCommandCreateReq",
       className: "SshCommandCreateReq",
-      classId: 1585
+      classId: 1649
     },
     object: {
       kind: "struct",
@@ -28907,14 +28920,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1586,
+    schemaId: 1650,
     name: "SshCommandCreateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshCommandCreateResp",
       className: "SshCommandCreateResp",
-      classId: 1586
+      classId: 1650
     },
     object: {
       kind: "struct",
@@ -28933,14 +28946,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1587,
+    schemaId: 1651,
     name: "SshCommandUpdateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshCommandUpdateReq",
       className: "SshCommandUpdateReq",
-      classId: 1587
+      classId: 1651
     },
     object: {
       kind: "struct",
@@ -28983,14 +28996,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1588,
+    schemaId: 1652,
     name: "SshCommandUpdateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshCommandUpdateResp",
       className: "SshCommandUpdateResp",
-      classId: 1588
+      classId: 1652
     },
     object: {
       kind: "struct",
@@ -29000,14 +29013,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1589,
+    schemaId: 1653,
     name: "SshCommandRemoveReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshCommandRemoveReq",
       className: "SshCommandRemoveReq",
-      classId: 1589
+      classId: 1653
     },
     object: {
       kind: "struct",
@@ -29026,14 +29039,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1590,
+    schemaId: 1654,
     name: "SshCommandRemoveResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshCommandRemoveResp",
       className: "SshCommandRemoveResp",
-      classId: 1590
+      classId: 1654
     },
     object: {
       kind: "struct",
@@ -29043,14 +29056,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1591,
+    schemaId: 1655,
     name: "SshHistoryListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHistoryListReq",
       className: "SshHistoryListReq",
-      classId: 1591
+      classId: 1655
     },
     object: {
       kind: "struct",
@@ -29069,14 +29082,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1592,
+    schemaId: 1656,
     name: "SshHistoryListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHistoryListResp",
       className: "SshHistoryListResp",
-      classId: 1592
+      classId: 1656
     },
     object: {
       kind: "struct",
@@ -29099,14 +29112,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1593,
+    schemaId: 1657,
     name: "SshArchiveExportReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshArchiveExportReq",
       className: "SshArchiveExportReq",
-      classId: 1593
+      classId: 1657
     },
     object: {
       kind: "struct",
@@ -29133,14 +29146,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1594,
+    schemaId: 1658,
     name: "SshArchiveImportReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshArchiveImportReq",
       className: "SshArchiveImportReq",
-      classId: 1594
+      classId: 1658
     },
     object: {
       kind: "struct",
@@ -29175,14 +29188,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1595,
+    schemaId: 1659,
     name: "SshExecReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshExecReq",
       className: "SshExecReq",
-      classId: 1595
+      classId: 1659
     },
     object: {
       kind: "struct",
@@ -29218,14 +29231,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1596,
+    schemaId: 1660,
     name: "SshExecResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshExecResp",
       className: "SshExecResp",
-      classId: 1596
+      classId: 1660
     },
     object: {
       kind: "struct",
@@ -29276,14 +29289,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1597,
+    schemaId: 1661,
     name: "SshFolderCreateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFolderCreateReq",
       className: "SshFolderCreateReq",
-      classId: 1597
+      classId: 1661
     },
     object: {
       kind: "struct",
@@ -29302,14 +29315,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1598,
+    schemaId: 1662,
     name: "SshFolderCreateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFolderCreateResp",
       className: "SshFolderCreateResp",
-      classId: 1598
+      classId: 1662
     },
     object: {
       kind: "struct",
@@ -29319,14 +29332,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1599,
+    schemaId: 1663,
     name: "SshFolderRenameReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFolderRenameReq",
       className: "SshFolderRenameReq",
-      classId: 1599
+      classId: 1663
     },
     object: {
       kind: "struct",
@@ -29353,14 +29366,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1600,
+    schemaId: 1664,
     name: "SshFolderRenameResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFolderRenameResp",
       className: "SshFolderRenameResp",
-      classId: 1600
+      classId: 1664
     },
     object: {
       kind: "struct",
@@ -29370,14 +29383,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1601,
+    schemaId: 1665,
     name: "SshFolderReorderReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFolderReorderReq",
       className: "SshFolderReorderReq",
-      classId: 1601
+      classId: 1665
     },
     object: {
       kind: "struct",
@@ -29400,14 +29413,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1602,
+    schemaId: 1666,
     name: "SshFolderReorderResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFolderReorderResp",
       className: "SshFolderReorderResp",
-      classId: 1602
+      classId: 1666
     },
     object: {
       kind: "struct",
@@ -29417,14 +29430,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1603,
+    schemaId: 1667,
     name: "SshFolderRemoveReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFolderRemoveReq",
       className: "SshFolderRemoveReq",
-      classId: 1603
+      classId: 1667
     },
     object: {
       kind: "struct",
@@ -29443,14 +29456,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1604,
+    schemaId: 1668,
     name: "SshFolderRemoveResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFolderRemoveResp",
       className: "SshFolderRemoveResp",
-      classId: 1604
+      classId: 1668
     },
     object: {
       kind: "struct",
@@ -29460,14 +29473,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1605,
+    schemaId: 1669,
     name: "SshFileWriteBase64Req",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileWriteBase64Req",
       className: "SshFileWriteBase64Req",
-      classId: 1605
+      classId: 1669
     },
     object: {
       kind: "struct",
@@ -29502,14 +29515,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1606,
+    schemaId: 1670,
     name: "SshFileWriteBase64Resp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileWriteBase64Resp",
       className: "SshFileWriteBase64Resp",
-      classId: 1606
+      classId: 1670
     },
     object: {
       kind: "struct",
@@ -29519,14 +29532,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1607,
+    schemaId: 1671,
     name: "SshFileChmodReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileChmodReq",
       className: "SshFileChmodReq",
-      classId: 1607
+      classId: 1671
     },
     object: {
       kind: "struct",
@@ -29561,14 +29574,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1608,
+    schemaId: 1672,
     name: "SshFileChmodResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshFileChmodResp",
       className: "SshFileChmodResp",
-      classId: 1608
+      classId: 1672
     },
     object: {
       kind: "struct",
@@ -29578,14 +29591,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1609,
+    schemaId: 1673,
     name: "SshManagerEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "SshManagerEvent",
       className: "SshManagerEvent",
-      classId: 1609
+      classId: 1673
     },
     object: {
       kind: "struct",
@@ -29637,14 +29650,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1610,
+    schemaId: 1674,
     name: "SshShellRunReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellRunReq",
       className: "SshShellRunReq",
-      classId: 1610
+      classId: 1674
     },
     object: {
       kind: "struct",
@@ -29680,14 +29693,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1611,
+    schemaId: 1675,
     name: "SshShellRunResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshShellRunResp",
       className: "SshShellRunResp",
-      classId: 1611
+      classId: 1675
     },
     object: {
       kind: "struct",
@@ -29730,14 +29743,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1612,
+    schemaId: 1676,
     name: "SshDownloadReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshDownloadReq",
       className: "SshDownloadReq",
-      classId: 1612
+      classId: 1676
     },
     object: {
       kind: "struct",
@@ -29764,14 +29777,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1613,
+    schemaId: 1677,
     name: "SshDownloadResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshDownloadResp",
       className: "SshDownloadResp",
-      classId: 1613
+      classId: 1677
     },
     object: {
       kind: "struct",
@@ -29822,14 +29835,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1614,
+    schemaId: 1678,
     name: "SshUploadReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshUploadReq",
       className: "SshUploadReq",
-      classId: 1614
+      classId: 1678
     },
     object: {
       kind: "struct",
@@ -29872,14 +29885,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1615,
+    schemaId: 1679,
     name: "SshUploadResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshUploadResp",
       className: "SshUploadResp",
-      classId: 1615
+      classId: 1679
     },
     object: {
       kind: "struct",
@@ -29906,14 +29919,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1616,
+    schemaId: 1680,
     name: "SshTunnelOpenReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshTunnelOpenReq",
       className: "SshTunnelOpenReq",
-      classId: 1616
+      classId: 1680
     },
     object: {
       kind: "struct",
@@ -29940,14 +29953,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1617,
+    schemaId: 1681,
     name: "SshTunnelOpenResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshTunnelOpenResp",
       className: "SshTunnelOpenResp",
-      classId: 1617
+      classId: 1681
     },
     object: {
       kind: "struct",
@@ -29974,14 +29987,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1618,
+    schemaId: 1682,
     name: "SshTunnelCloseReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshTunnelCloseReq",
       className: "SshTunnelCloseReq",
-      classId: 1618
+      classId: 1682
     },
     object: {
       kind: "struct",
@@ -30008,14 +30021,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1619,
+    schemaId: 1683,
     name: "SshTunnelCloseResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshTunnelCloseResp",
       className: "SshTunnelCloseResp",
-      classId: 1619
+      classId: 1683
     },
     object: {
       kind: "struct",
@@ -30042,14 +30055,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1620,
+    schemaId: 1684,
     name: "SshTunnelListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshTunnelListReq",
       className: "SshTunnelListReq",
-      classId: 1620
+      classId: 1684
     },
     object: {
       kind: "struct",
@@ -30059,14 +30072,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1621,
+    schemaId: 1685,
     name: "SshTunnelInfo",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshTunnelInfo",
       className: "SshTunnelInfo",
-      classId: 1621
+      classId: 1685
     },
     object: {
       kind: "struct",
@@ -30117,14 +30130,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1622,
+    schemaId: 1686,
     name: "SshTunnelListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshTunnelListResp",
       className: "SshTunnelListResp",
-      classId: 1622
+      classId: 1686
     },
     object: {
       kind: "struct",
@@ -30139,996 +30152,6 @@ export const schemaEntries: SchemaEntry[] = [
               kind: "struct",
               name: "struct",
               className: "SshTunnelInfo"
-            }
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1680,
-    name: "Account",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "Account",
-      className: "Account",
-      classId: 1680
-    },
-    object: {
-      kind: "struct",
-      name: "Account",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Username",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "DisplayName",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "PasswordHash",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Roles",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          }
-        },
-        {
-          name: "Groups",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          }
-        },
-        {
-          name: "Status",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "CreatedAt",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1681,
-    name: "AccountView",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AccountView",
-      className: "AccountView",
-      classId: 1681
-    },
-    object: {
-      kind: "struct",
-      name: "AccountView",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Username",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "DisplayName",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Roles",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          }
-        },
-        {
-          name: "Groups",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          }
-        },
-        {
-          name: "Status",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "CreatedAt",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1682,
-    name: "AuthRegisterReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AuthRegisterReq",
-      className: "AuthRegisterReq",
-      classId: 1682
-    },
-    object: {
-      kind: "struct",
-      name: "AuthRegisterReq",
-      fields: [
-        {
-          name: "Username",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Password",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "DisplayName",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Roles",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1683,
-    name: "AuthLoginReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AuthLoginReq",
-      className: "AuthLoginReq",
-      classId: 1683
-    },
-    object: {
-      kind: "struct",
-      name: "AuthLoginReq",
-      fields: [
-        {
-          name: "Username",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Password",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1684,
-    name: "AuthLoginResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AuthLoginResp",
-      className: "AuthLoginResp",
-      classId: 1684
-    },
-    object: {
-      kind: "struct",
-      name: "AuthLoginResp",
-      fields: [
-        {
-          name: "Token",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "RefreshToken",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "ExpiresAt",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Account",
-          type: {
-            kind: "struct",
-            name: "struct",
-            className: "AccountView"
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1685,
-    name: "AuthRefreshReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AuthRefreshReq",
-      className: "AuthRefreshReq",
-      classId: 1685
-    },
-    object: {
-      kind: "struct",
-      name: "AuthRefreshReq",
-      fields: [
-        {
-          name: "RefreshToken",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1686,
-    name: "AuthRefreshResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AuthRefreshResp",
-      className: "AuthRefreshResp",
-      classId: 1686
-    },
-    object: {
-      kind: "struct",
-      name: "AuthRefreshResp",
-      fields: [
-        {
-          name: "Token",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "RefreshToken",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "ExpiresAt",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1687,
-    name: "RefreshTokenEntry",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "RefreshTokenEntry",
-      className: "RefreshTokenEntry",
-      classId: 1687
-    },
-    object: {
-      kind: "struct",
-      name: "RefreshTokenEntry",
-      fields: [
-        {
-          name: "Token",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "UserID",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "ExpiresAt",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1688,
-    name: "AccountListResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AccountListResp",
-      className: "AccountListResp",
-      classId: 1688
-    },
-    object: {
-      kind: "struct",
-      name: "AccountListResp",
-      fields: [
-        {
-          name: "Items",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "struct",
-              name: "struct",
-              className: "AccountView"
-            }
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1689,
-    name: "AccountCreateReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AccountCreateReq",
-      className: "AccountCreateReq",
-      classId: 1689
-    },
-    object: {
-      kind: "struct",
-      name: "AccountCreateReq",
-      fields: [
-        {
-          name: "Username",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Password",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "DisplayName",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Roles",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          },
-          optional: true
-        },
-        {
-          name: "Groups",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1690,
-    name: "AccountUpdateReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AccountUpdateReq",
-      className: "AccountUpdateReq",
-      classId: 1690
-    },
-    object: {
-      kind: "struct",
-      name: "AccountUpdateReq",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "DisplayName",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Roles",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          },
-          optional: true
-        },
-        {
-          name: "Groups",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          },
-          optional: true
-        },
-        {
-          name: "Status",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1691,
-    name: "AccountDeleteReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AccountDeleteReq",
-      className: "AccountDeleteReq",
-      classId: 1691
-    },
-    object: {
-      kind: "struct",
-      name: "AccountDeleteReq",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1692,
-    name: "AccountResetPasswordReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AccountResetPasswordReq",
-      className: "AccountResetPasswordReq",
-      classId: 1692
-    },
-    object: {
-      kind: "struct",
-      name: "AccountResetPasswordReq",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Password",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1693,
-    name: "Group",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "Group",
-      className: "Group",
-      classId: 1693
-    },
-    object: {
-      kind: "struct",
-      name: "Group",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Name",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Description",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Roles",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          }
-        },
-        {
-          name: "MemberCount",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1694,
-    name: "GroupListResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "GroupListResp",
-      className: "GroupListResp",
-      classId: 1694
-    },
-    object: {
-      kind: "struct",
-      name: "GroupListResp",
-      fields: [
-        {
-          name: "Items",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "struct",
-              name: "struct",
-              className: "Group"
-            }
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1695,
-    name: "GroupCreateReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "GroupCreateReq",
-      className: "GroupCreateReq",
-      classId: 1695
-    },
-    object: {
-      kind: "struct",
-      name: "GroupCreateReq",
-      fields: [
-        {
-          name: "Name",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Description",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Roles",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1696,
-    name: "GroupUpdateReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "GroupUpdateReq",
-      className: "GroupUpdateReq",
-      classId: 1696
-    },
-    object: {
-      kind: "struct",
-      name: "GroupUpdateReq",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Name",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Description",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Roles",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            }
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1697,
-    name: "GroupDeleteReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "GroupDeleteReq",
-      className: "GroupDeleteReq",
-      classId: 1697
-    },
-    object: {
-      kind: "struct",
-      name: "GroupDeleteReq",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1698,
-    name: "PermissionEntry",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "PermissionEntry",
-      className: "PermissionEntry",
-      classId: 1698
-    },
-    object: {
-      kind: "struct",
-      name: "PermissionEntry",
-      fields: [
-        {
-          name: "Role",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Actions",
-          type: {
-            kind: "map",
-            name: "map",
-            key: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            },
-            value: {
-              kind: "scalar",
-              name: "bool",
-              typeId: 2
-            }
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1699,
-    name: "PermissionMatrix",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "PermissionMatrix",
-      className: "PermissionMatrix",
-      classId: 1699
-    },
-    object: {
-      kind: "struct",
-      name: "PermissionMatrix",
-      fields: [
-        {
-          name: "Entries",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "struct",
-              name: "struct",
-              className: "PermissionEntry"
-            }
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1700,
-    name: "PermissionUpdateReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "PermissionUpdateReq",
-      className: "PermissionUpdateReq",
-      classId: 1700
-    },
-    object: {
-      kind: "struct",
-      name: "PermissionUpdateReq",
-      fields: [
-        {
-          name: "Role",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Actions",
-          type: {
-            kind: "map",
-            name: "map",
-            key: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            },
-            value: {
-              kind: "scalar",
-              name: "bool",
-              typeId: 2
             }
           }
         }
@@ -31529,18 +30552,18 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1745,
-    name: "VoiceAccountView",
-    visibility: "public",
+    schemaId: 1744,
+    name: "Account",
+    visibility: "admin",
     type: {
       kind: "struct",
-      name: "VoiceAccountView",
-      className: "VoiceAccountView",
-      classId: 1745
+      name: "Account",
+      className: "Account",
+      classId: 1744
     },
     object: {
       kind: "struct",
-      name: "VoiceAccountView",
+      name: "Account",
       fields: [
         {
           name: "Id",
@@ -31551,7 +30574,7 @@ export const schemaEntries: SchemaEntry[] = [
           }
         },
         {
-          name: "Kind",
+          name: "Username",
           type: {
             kind: "scalar",
             name: "string",
@@ -31559,7 +30582,7 @@ export const schemaEntries: SchemaEntry[] = [
           }
         },
         {
-          name: "Name",
+          name: "DisplayName",
           type: {
             kind: "scalar",
             name: "string",
@@ -31567,7 +30590,7 @@ export const schemaEntries: SchemaEntry[] = [
           }
         },
         {
-          name: "Provider",
+          name: "PasswordHash",
           type: {
             kind: "scalar",
             name: "string",
@@ -31575,57 +30598,126 @@ export const schemaEntries: SchemaEntry[] = [
           }
         },
         {
-          name: "HasApiKey",
+          name: "Roles",
           type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
           }
         },
         {
-          name: "Model",
+          name: "Groups",
           type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          }
         },
         {
-          name: "Voice",
+          name: "Status",
           type: {
             kind: "scalar",
             name: "string",
             typeId: 12
-          },
-          optional: true
+          }
         },
         {
-          name: "Language",
+          name: "CreatedAt",
           type: {
             kind: "scalar",
             name: "string",
             typeId: 12
-          },
-          optional: true
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1745,
+    name: "AccountView",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AccountView",
+      className: "AccountView",
+      classId: 1745
+    },
+    object: {
+      kind: "struct",
+      name: "AccountView",
+      fields: [
+        {
+          name: "Id",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
         },
         {
-          name: "BaseUrl",
+          name: "Username",
           type: {
             kind: "scalar",
             name: "string",
             typeId: 12
-          },
-          optional: true
+          }
         },
         {
-          name: "Proxy",
+          name: "DisplayName",
           type: {
             kind: "scalar",
             name: "string",
             typeId: 12
-          },
-          optional: true
+          }
+        },
+        {
+          name: "Roles",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          }
+        },
+        {
+          name: "Groups",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          }
+        },
+        {
+          name: "Status",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "CreatedAt",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
         }
       ]
     }
@@ -31633,24 +30725,53 @@ export const schemaEntries: SchemaEntry[] = [
   {
     namespace: "system",
     schemaId: 1746,
-    name: "VoiceAccountListReq",
+    name: "AuthRegisterReq",
     visibility: "public",
     type: {
       kind: "struct",
-      name: "VoiceAccountListReq",
-      className: "VoiceAccountListReq",
+      name: "AuthRegisterReq",
+      className: "AuthRegisterReq",
       classId: 1746
     },
     object: {
       kind: "struct",
-      name: "VoiceAccountListReq",
+      name: "AuthRegisterReq",
       fields: [
         {
-          name: "Kind",
+          name: "Username",
           type: {
             kind: "scalar",
             name: "string",
             typeId: 12
+          }
+        },
+        {
+          name: "Password",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "DisplayName",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Roles",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
           },
           optional: true
         }
@@ -31660,17 +30781,211 @@ export const schemaEntries: SchemaEntry[] = [
   {
     namespace: "system",
     schemaId: 1747,
-    name: "VoiceAccountListResp",
+    name: "AuthLoginReq",
     visibility: "public",
     type: {
       kind: "struct",
-      name: "VoiceAccountListResp",
-      className: "VoiceAccountListResp",
+      name: "AuthLoginReq",
+      className: "AuthLoginReq",
       classId: 1747
     },
     object: {
       kind: "struct",
-      name: "VoiceAccountListResp",
+      name: "AuthLoginReq",
+      fields: [
+        {
+          name: "Username",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Password",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1748,
+    name: "AuthLoginResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AuthLoginResp",
+      className: "AuthLoginResp",
+      classId: 1748
+    },
+    object: {
+      kind: "struct",
+      name: "AuthLoginResp",
+      fields: [
+        {
+          name: "Token",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "RefreshToken",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "ExpiresAt",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Account",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "AccountView"
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1749,
+    name: "AuthRefreshReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AuthRefreshReq",
+      className: "AuthRefreshReq",
+      classId: 1749
+    },
+    object: {
+      kind: "struct",
+      name: "AuthRefreshReq",
+      fields: [
+        {
+          name: "RefreshToken",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1750,
+    name: "AuthRefreshResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AuthRefreshResp",
+      className: "AuthRefreshResp",
+      classId: 1750
+    },
+    object: {
+      kind: "struct",
+      name: "AuthRefreshResp",
+      fields: [
+        {
+          name: "Token",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "RefreshToken",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "ExpiresAt",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1751,
+    name: "RefreshTokenEntry",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "RefreshTokenEntry",
+      className: "RefreshTokenEntry",
+      classId: 1751
+    },
+    object: {
+      kind: "struct",
+      name: "RefreshTokenEntry",
+      fields: [
+        {
+          name: "Token",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "UserID",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "ExpiresAt",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1752,
+    name: "AccountListResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AccountListResp",
+      className: "AccountListResp",
+      classId: 1752
+    },
+    object: {
+      kind: "struct",
+      name: "AccountListResp",
       fields: [
         {
           name: "Items",
@@ -31680,289 +30995,8 @@ export const schemaEntries: SchemaEntry[] = [
             element: {
               kind: "struct",
               name: "struct",
-              className: "VoiceAccountView"
+              className: "AccountView"
             }
-          }
-        },
-        {
-          name: "ActiveId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1748,
-    name: "VoiceAccountCreateReq",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "VoiceAccountCreateReq",
-      className: "VoiceAccountCreateReq",
-      classId: 1748
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceAccountCreateReq",
-      fields: [
-        {
-          name: "Kind",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Name",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Provider",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "ApiKey",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Model",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Voice",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Language",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "BaseUrl",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Proxy",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1749,
-    name: "VoiceAccountCreateResp",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "VoiceAccountCreateResp",
-      className: "VoiceAccountCreateResp",
-      classId: 1749
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceAccountCreateResp",
-      fields: [
-        {
-          name: "Account",
-          type: {
-            kind: "struct",
-            name: "struct",
-            className: "VoiceAccountView"
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1750,
-    name: "VoiceAccountUpdateReq",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "VoiceAccountUpdateReq",
-      className: "VoiceAccountUpdateReq",
-      classId: 1750
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceAccountUpdateReq",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Name",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Provider",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "ApiKey",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Model",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Voice",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Language",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "BaseUrl",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Proxy",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1751,
-    name: "VoiceAccountUpdateResp",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "VoiceAccountUpdateResp",
-      className: "VoiceAccountUpdateResp",
-      classId: 1751
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceAccountUpdateResp",
-      fields: [
-        {
-          name: "Account",
-          type: {
-            kind: "struct",
-            name: "struct",
-            className: "VoiceAccountView"
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1752,
-    name: "VoiceAccountDeleteReq",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "VoiceAccountDeleteReq",
-      className: "VoiceAccountDeleteReq",
-      classId: 1752
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceAccountDeleteReq",
-      fields: [
-        {
-          name: "Id",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
           }
         }
       ]
@@ -31971,37 +31005,20 @@ export const schemaEntries: SchemaEntry[] = [
   {
     namespace: "system",
     schemaId: 1753,
-    name: "VoiceAccountDeleteResp",
-    visibility: "admin",
+    name: "AccountCreateReq",
+    visibility: "public",
     type: {
       kind: "struct",
-      name: "VoiceAccountDeleteResp",
-      className: "VoiceAccountDeleteResp",
+      name: "AccountCreateReq",
+      className: "AccountCreateReq",
       classId: 1753
     },
     object: {
       kind: "struct",
-      name: "VoiceAccountDeleteResp",
-      fields: []
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1754,
-    name: "VoiceAccountActivateReq",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "VoiceAccountActivateReq",
-      className: "VoiceAccountActivateReq",
-      classId: 1754
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceAccountActivateReq",
+      name: "AccountCreateReq",
       fields: [
         {
-          name: "Kind",
+          name: "Username",
           type: {
             kind: "scalar",
             name: "string",
@@ -32009,101 +31026,24 @@ export const schemaEntries: SchemaEntry[] = [
           }
         },
         {
-          name: "Id",
+          name: "Password",
           type: {
             kind: "scalar",
             name: "string",
             typeId: 12
           }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1755,
-    name: "VoiceAccountActivateResp",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "VoiceAccountActivateResp",
-      className: "VoiceAccountActivateResp",
-      classId: 1755
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceAccountActivateResp",
-      fields: [
+        },
         {
-          name: "ActiveId",
+          name: "DisplayName",
           type: {
             kind: "scalar",
             name: "string",
             typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1756,
-    name: "VoiceAudio",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "VoiceAudio",
-      className: "VoiceAudio",
-      classId: 1756
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceAudio",
-      fields: [
-        {
-          name: "AudioType",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          }
+          },
+          optional: true
         },
         {
-          name: "Data",
-          type: {
-            kind: "scalar",
-            name: "bytes",
-            typeId: 13
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1757,
-    name: "VoiceRecognizeReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "VoiceRecognizeReq",
-      className: "VoiceRecognizeReq",
-      classId: 1757
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceRecognizeReq",
-      fields: [
-        {
-          name: "Audio",
-          type: {
-            kind: "struct",
-            name: "struct",
-            className: "VoiceAudio"
-          }
-        },
-        {
-          name: "Hotwords",
+          name: "Roles",
           type: {
             kind: "array",
             name: "array",
@@ -32116,7 +31056,81 @@ export const schemaEntries: SchemaEntry[] = [
           optional: true
         },
         {
-          name: "AccountId",
+          name: "Groups",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1754,
+    name: "AccountUpdateReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AccountUpdateReq",
+      className: "AccountUpdateReq",
+      classId: 1754
+    },
+    object: {
+      kind: "struct",
+      name: "AccountUpdateReq",
+      fields: [
+        {
+          name: "Id",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "DisplayName",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Roles",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          },
+          optional: true
+        },
+        {
+          name: "Groups",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          },
+          optional: true
+        },
+        {
+          name: "Status",
           type: {
             kind: "scalar",
             name: "string",
@@ -32129,25 +31143,151 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1758,
-    name: "VoiceRecognizeResp",
+    schemaId: 1755,
+    name: "AccountDeleteReq",
     visibility: "public",
     type: {
       kind: "struct",
-      name: "VoiceRecognizeResp",
-      className: "VoiceRecognizeResp",
-      classId: 1758
+      name: "AccountDeleteReq",
+      className: "AccountDeleteReq",
+      classId: 1755
     },
     object: {
       kind: "struct",
-      name: "VoiceRecognizeResp",
+      name: "AccountDeleteReq",
       fields: [
         {
-          name: "Text",
+          name: "Id",
           type: {
             kind: "scalar",
             name: "string",
             typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1756,
+    name: "AccountResetPasswordReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AccountResetPasswordReq",
+      className: "AccountResetPasswordReq",
+      classId: 1756
+    },
+    object: {
+      kind: "struct",
+      name: "AccountResetPasswordReq",
+      fields: [
+        {
+          name: "Id",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Password",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1757,
+    name: "Group",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "Group",
+      className: "Group",
+      classId: 1757
+    },
+    object: {
+      kind: "struct",
+      name: "Group",
+      fields: [
+        {
+          name: "Id",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Name",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Description",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Roles",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          }
+        },
+        {
+          name: "MemberCount",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1758,
+    name: "GroupListResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "GroupListResp",
+      className: "GroupListResp",
+      classId: 1758
+    },
+    object: {
+      kind: "struct",
+      name: "GroupListResp",
+      fields: [
+        {
+          name: "Items",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "Group"
+            }
           }
         }
       ]
@@ -32156,20 +31296,20 @@ export const schemaEntries: SchemaEntry[] = [
   {
     namespace: "system",
     schemaId: 1759,
-    name: "VoiceSynthesizeReq",
+    name: "GroupCreateReq",
     visibility: "public",
     type: {
       kind: "struct",
-      name: "VoiceSynthesizeReq",
-      className: "VoiceSynthesizeReq",
+      name: "GroupCreateReq",
+      className: "GroupCreateReq",
       classId: 1759
     },
     object: {
       kind: "struct",
-      name: "VoiceSynthesizeReq",
+      name: "GroupCreateReq",
       fields: [
         {
-          name: "Input",
+          name: "Name",
           type: {
             kind: "scalar",
             name: "string",
@@ -32177,7 +31317,7 @@ export const schemaEntries: SchemaEntry[] = [
           }
         },
         {
-          name: "Model",
+          name: "Description",
           type: {
             kind: "scalar",
             name: "string",
@@ -32186,38 +31326,15 @@ export const schemaEntries: SchemaEntry[] = [
           optional: true
         },
         {
-          name: "Voice",
+          name: "Roles",
           type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Format",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Instruction",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "AccountId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
           },
           optional: true
         }
@@ -32227,24 +31344,81 @@ export const schemaEntries: SchemaEntry[] = [
   {
     namespace: "system",
     schemaId: 1760,
-    name: "VoiceSynthesizeResp",
+    name: "GroupUpdateReq",
     visibility: "public",
     type: {
       kind: "struct",
-      name: "VoiceSynthesizeResp",
-      className: "VoiceSynthesizeResp",
+      name: "GroupUpdateReq",
+      className: "GroupUpdateReq",
       classId: 1760
     },
     object: {
       kind: "struct",
-      name: "VoiceSynthesizeResp",
+      name: "GroupUpdateReq",
       fields: [
         {
-          name: "Audio",
+          name: "Id",
           type: {
-            kind: "struct",
-            name: "struct",
-            className: "VoiceAudio"
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Name",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Description",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Roles",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1761,
+    name: "GroupDeleteReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "GroupDeleteReq",
+      className: "GroupDeleteReq",
+      classId: 1761
+    },
+    object: {
+      kind: "struct",
+      name: "GroupDeleteReq",
+      fields: [
+        {
+          name: "Id",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
           }
         }
       ]
@@ -32253,24 +31427,41 @@ export const schemaEntries: SchemaEntry[] = [
   {
     namespace: "system",
     schemaId: 1762,
-    name: "VoiceConfigExportResp",
-    visibility: "admin",
+    name: "PermissionEntry",
+    visibility: "public",
     type: {
       kind: "struct",
-      name: "VoiceConfigExportResp",
-      className: "VoiceConfigExportResp",
+      name: "PermissionEntry",
+      className: "PermissionEntry",
       classId: 1762
     },
     object: {
       kind: "struct",
-      name: "VoiceConfigExportResp",
+      name: "PermissionEntry",
       fields: [
         {
-          name: "Data",
+          name: "Role",
           type: {
             kind: "scalar",
             name: "string",
             typeId: 12
+          }
+        },
+        {
+          name: "Actions",
+          type: {
+            kind: "map",
+            name: "map",
+            key: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            },
+            value: {
+              kind: "scalar",
+              name: "bool",
+              typeId: 2
+            }
           }
         }
       ]
@@ -32279,24 +31470,28 @@ export const schemaEntries: SchemaEntry[] = [
   {
     namespace: "system",
     schemaId: 1763,
-    name: "VoiceConfigImportReq",
-    visibility: "admin",
+    name: "PermissionMatrix",
+    visibility: "public",
     type: {
       kind: "struct",
-      name: "VoiceConfigImportReq",
-      className: "VoiceConfigImportReq",
+      name: "PermissionMatrix",
+      className: "PermissionMatrix",
       classId: 1763
     },
     object: {
       kind: "struct",
-      name: "VoiceConfigImportReq",
+      name: "PermissionMatrix",
       fields: [
         {
-          name: "Data",
+          name: "Entries",
           type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "PermissionEntry"
+            }
           }
         }
       ]
@@ -32305,53 +31500,20 @@ export const schemaEntries: SchemaEntry[] = [
   {
     namespace: "system",
     schemaId: 1764,
-    name: "VoiceConfigImportResp",
-    visibility: "admin",
+    name: "PermissionUpdateReq",
+    visibility: "public",
     type: {
       kind: "struct",
-      name: "VoiceConfigImportResp",
-      className: "VoiceConfigImportResp",
+      name: "PermissionUpdateReq",
+      className: "PermissionUpdateReq",
       classId: 1764
     },
     object: {
       kind: "struct",
-      name: "VoiceConfigImportResp",
-      fields: []
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1765,
-    name: "VoiceNotifyConfig",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "VoiceNotifyConfig",
-      className: "VoiceNotifyConfig",
-      classId: 1765
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceNotifyConfig",
+      name: "PermissionUpdateReq",
       fields: [
         {
-          name: "Enabled",
-          type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
-          }
-        },
-        {
-          name: "Volume",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          }
-        },
-        {
-          name: "Sound",
+          name: "Role",
           type: {
             kind: "scalar",
             name: "string",
@@ -32359,135 +31521,21 @@ export const schemaEntries: SchemaEntry[] = [
           }
         },
         {
-          name: "OnComplete",
+          name: "Actions",
           type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
+            kind: "map",
+            name: "map",
+            key: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            },
+            value: {
+              kind: "scalar",
+              name: "bool",
+              typeId: 2
+            }
           }
-        },
-        {
-          name: "OnError",
-          type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
-          }
-        },
-        {
-          name: "OnInteraction",
-          type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
-          }
-        },
-        {
-          name: "OnAllComplete",
-          type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
-          }
-        },
-        {
-          name: "SoundError",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "SoundInteraction",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "SoundAllComplete",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "VolumeComplete",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          },
-          optional: true
-        },
-        {
-          name: "VolumeError",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          },
-          optional: true
-        },
-        {
-          name: "VolumeInteraction",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          },
-          optional: true
-        },
-        {
-          name: "VolumeAllComplete",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          },
-          optional: true
-        },
-        {
-          name: "CustomSoundComplete",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "CustomSoundError",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "CustomSoundInteraction",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "CustomSoundAllComplete",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
         }
       ]
     }
@@ -32495,264 +31543,13 @@ export const schemaEntries: SchemaEntry[] = [
   {
     namespace: "system",
     schemaId: 1766,
-    name: "VoiceNotifyConfigResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "VoiceNotifyConfigResp",
-      className: "VoiceNotifyConfigResp",
-      classId: 1766
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceNotifyConfigResp",
-      fields: [
-        {
-          name: "Config",
-          type: {
-            kind: "struct",
-            name: "struct",
-            className: "VoiceNotifyConfig"
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1767,
-    name: "VoiceCloneReq",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "VoiceCloneReq",
-      className: "VoiceCloneReq",
-      classId: 1767
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceCloneReq",
-      fields: [
-        {
-          name: "AccountId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "AudioData",
-          type: {
-            kind: "scalar",
-            name: "bytes",
-            typeId: 13
-          }
-        },
-        {
-          name: "AudioName",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "VoiceID",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "PromptAudioData",
-          type: {
-            kind: "scalar",
-            name: "bytes",
-            typeId: 13
-          },
-          optional: true
-        },
-        {
-          name: "PromptAudioName",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "PromptText",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "PreviewText",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "NeedNoiseReduction",
-          type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
-          },
-          optional: true
-        },
-        {
-          name: "NeedVolumeNormalization",
-          type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1768,
-    name: "VoiceCloneResp",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "VoiceCloneResp",
-      className: "VoiceCloneResp",
-      classId: 1768
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceCloneResp",
-      fields: [
-        {
-          name: "VoiceId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "DemoAudioUrl",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1769,
-    name: "VoiceDesignReq",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "VoiceDesignReq",
-      className: "VoiceDesignReq",
-      classId: 1769
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceDesignReq",
-      fields: [
-        {
-          name: "AccountId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Prompt",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "PreviewText",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "VoiceID",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1770,
-    name: "VoiceDesignResp",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "VoiceDesignResp",
-      className: "VoiceDesignResp",
-      classId: 1770
-    },
-    object: {
-      kind: "struct",
-      name: "VoiceDesignResp",
-      fields: [
-        {
-          name: "VoiceId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "TrialAudio",
-          type: {
-            kind: "scalar",
-            name: "bytes",
-            typeId: 13
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1771,
     name: "eventStatsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "eventStatsReq",
       className: "eventStatsReq",
-      classId: 1771
+      classId: 1766
     },
     object: {
       kind: "struct",
@@ -32762,14 +31559,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1772,
+    schemaId: 1767,
     name: "eventStatsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "eventStatsResp",
       className: "eventStatsResp",
-      classId: 1772
+      classId: 1767
     },
     object: {
       kind: "struct",
@@ -32816,14 +31613,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1773,
+    schemaId: 1768,
     name: "cellStatsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "cellStatsReq",
       className: "cellStatsReq",
-      classId: 1773
+      classId: 1768
     },
     object: {
       kind: "struct",
@@ -33396,14 +32193,1352 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1808,
+    schemaId: 1809,
+    name: "VoiceAccountView",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "VoiceAccountView",
+      className: "VoiceAccountView",
+      classId: 1809
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAccountView",
+      fields: [
+        {
+          name: "Id",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Kind",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Name",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Provider",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "HasApiKey",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "Model",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Voice",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Language",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "BaseUrl",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Proxy",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1810,
+    name: "VoiceAccountListReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "VoiceAccountListReq",
+      className: "VoiceAccountListReq",
+      classId: 1810
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAccountListReq",
+      fields: [
+        {
+          name: "Kind",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1811,
+    name: "VoiceAccountListResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "VoiceAccountListResp",
+      className: "VoiceAccountListResp",
+      classId: 1811
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAccountListResp",
+      fields: [
+        {
+          name: "Items",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "VoiceAccountView"
+            }
+          }
+        },
+        {
+          name: "ActiveId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1812,
+    name: "VoiceAccountCreateReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceAccountCreateReq",
+      className: "VoiceAccountCreateReq",
+      classId: 1812
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAccountCreateReq",
+      fields: [
+        {
+          name: "Kind",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Name",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Provider",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "ApiKey",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Model",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Voice",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Language",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "BaseUrl",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Proxy",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1813,
+    name: "VoiceAccountCreateResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceAccountCreateResp",
+      className: "VoiceAccountCreateResp",
+      classId: 1813
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAccountCreateResp",
+      fields: [
+        {
+          name: "Account",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "VoiceAccountView"
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1814,
+    name: "VoiceAccountUpdateReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceAccountUpdateReq",
+      className: "VoiceAccountUpdateReq",
+      classId: 1814
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAccountUpdateReq",
+      fields: [
+        {
+          name: "Id",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Name",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Provider",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "ApiKey",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Model",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Voice",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Language",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "BaseUrl",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Proxy",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1815,
+    name: "VoiceAccountUpdateResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceAccountUpdateResp",
+      className: "VoiceAccountUpdateResp",
+      classId: 1815
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAccountUpdateResp",
+      fields: [
+        {
+          name: "Account",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "VoiceAccountView"
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1816,
+    name: "VoiceAccountDeleteReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceAccountDeleteReq",
+      className: "VoiceAccountDeleteReq",
+      classId: 1816
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAccountDeleteReq",
+      fields: [
+        {
+          name: "Id",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1817,
+    name: "VoiceAccountDeleteResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceAccountDeleteResp",
+      className: "VoiceAccountDeleteResp",
+      classId: 1817
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAccountDeleteResp",
+      fields: []
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1818,
+    name: "VoiceAccountActivateReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceAccountActivateReq",
+      className: "VoiceAccountActivateReq",
+      classId: 1818
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAccountActivateReq",
+      fields: [
+        {
+          name: "Kind",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Id",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1819,
+    name: "VoiceAccountActivateResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceAccountActivateResp",
+      className: "VoiceAccountActivateResp",
+      classId: 1819
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAccountActivateResp",
+      fields: [
+        {
+          name: "ActiveId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1820,
+    name: "VoiceAudio",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "VoiceAudio",
+      className: "VoiceAudio",
+      classId: 1820
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceAudio",
+      fields: [
+        {
+          name: "AudioType",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          }
+        },
+        {
+          name: "Data",
+          type: {
+            kind: "scalar",
+            name: "bytes",
+            typeId: 13
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1821,
+    name: "VoiceRecognizeReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "VoiceRecognizeReq",
+      className: "VoiceRecognizeReq",
+      classId: 1821
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceRecognizeReq",
+      fields: [
+        {
+          name: "Audio",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "VoiceAudio"
+          }
+        },
+        {
+          name: "Hotwords",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "string",
+              typeId: 12
+            }
+          },
+          optional: true
+        },
+        {
+          name: "AccountId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1822,
+    name: "VoiceRecognizeResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "VoiceRecognizeResp",
+      className: "VoiceRecognizeResp",
+      classId: 1822
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceRecognizeResp",
+      fields: [
+        {
+          name: "Text",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1823,
+    name: "VoiceSynthesizeReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "VoiceSynthesizeReq",
+      className: "VoiceSynthesizeReq",
+      classId: 1823
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceSynthesizeReq",
+      fields: [
+        {
+          name: "Input",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Model",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Voice",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Format",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Instruction",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "AccountId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1824,
+    name: "VoiceSynthesizeResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "VoiceSynthesizeResp",
+      className: "VoiceSynthesizeResp",
+      classId: 1824
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceSynthesizeResp",
+      fields: [
+        {
+          name: "Audio",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "VoiceAudio"
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1826,
+    name: "VoiceConfigExportResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceConfigExportResp",
+      className: "VoiceConfigExportResp",
+      classId: 1826
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceConfigExportResp",
+      fields: [
+        {
+          name: "Data",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1827,
+    name: "VoiceConfigImportReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceConfigImportReq",
+      className: "VoiceConfigImportReq",
+      classId: 1827
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceConfigImportReq",
+      fields: [
+        {
+          name: "Data",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1828,
+    name: "VoiceConfigImportResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceConfigImportResp",
+      className: "VoiceConfigImportResp",
+      classId: 1828
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceConfigImportResp",
+      fields: []
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1829,
+    name: "VoiceNotifyConfig",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "VoiceNotifyConfig",
+      className: "VoiceNotifyConfig",
+      classId: 1829
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceNotifyConfig",
+      fields: [
+        {
+          name: "Enabled",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "Volume",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          }
+        },
+        {
+          name: "Sound",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "OnComplete",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "OnError",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "OnInteraction",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "OnAllComplete",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "SoundError",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "SoundInteraction",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "SoundAllComplete",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "VolumeComplete",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          },
+          optional: true
+        },
+        {
+          name: "VolumeError",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          },
+          optional: true
+        },
+        {
+          name: "VolumeInteraction",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          },
+          optional: true
+        },
+        {
+          name: "VolumeAllComplete",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          },
+          optional: true
+        },
+        {
+          name: "CustomSoundComplete",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "CustomSoundError",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "CustomSoundInteraction",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "CustomSoundAllComplete",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1830,
+    name: "VoiceNotifyConfigResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "VoiceNotifyConfigResp",
+      className: "VoiceNotifyConfigResp",
+      classId: 1830
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceNotifyConfigResp",
+      fields: [
+        {
+          name: "Config",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "VoiceNotifyConfig"
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1831,
+    name: "VoiceCloneReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceCloneReq",
+      className: "VoiceCloneReq",
+      classId: 1831
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceCloneReq",
+      fields: [
+        {
+          name: "AccountId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "AudioData",
+          type: {
+            kind: "scalar",
+            name: "bytes",
+            typeId: 13
+          }
+        },
+        {
+          name: "AudioName",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "VoiceID",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "PromptAudioData",
+          type: {
+            kind: "scalar",
+            name: "bytes",
+            typeId: 13
+          },
+          optional: true
+        },
+        {
+          name: "PromptAudioName",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "PromptText",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "PreviewText",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "NeedNoiseReduction",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          },
+          optional: true
+        },
+        {
+          name: "NeedVolumeNormalization",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1832,
+    name: "VoiceCloneResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceCloneResp",
+      className: "VoiceCloneResp",
+      classId: 1832
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceCloneResp",
+      fields: [
+        {
+          name: "VoiceId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "DemoAudioUrl",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1833,
+    name: "VoiceDesignReq",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceDesignReq",
+      className: "VoiceDesignReq",
+      classId: 1833
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceDesignReq",
+      fields: [
+        {
+          name: "AccountId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Prompt",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "PreviewText",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "VoiceID",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1834,
+    name: "VoiceDesignResp",
+    visibility: "admin",
+    type: {
+      kind: "struct",
+      name: "VoiceDesignResp",
+      className: "VoiceDesignResp",
+      classId: 1834
+    },
+    object: {
+      kind: "struct",
+      name: "VoiceDesignResp",
+      fields: [
+        {
+          name: "VoiceId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "TrialAudio",
+          type: {
+            kind: "scalar",
+            name: "bytes",
+            typeId: 13
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1835,
+    name: "WorkspaceAgentSpawnSwarmReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "WorkspaceAgentSpawnSwarmReq",
+      className: "WorkspaceAgentSpawnSwarmReq",
+      classId: 1835
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceAgentSpawnSwarmReq",
+      fields: [
+        {
+          name: "Description",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Prompt",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "AgentKind",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "MaxTurns",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          },
+          optional: true
+        },
+        {
+          name: "Unit",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "ModelUnit"
+          },
+          optional: true
+        },
+        {
+          name: "ProjectId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "CallerAgentId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1836,
+    name: "WorkspaceAgentSpawnSwarmResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "WorkspaceAgentSpawnSwarmResp",
+      className: "WorkspaceAgentSpawnSwarmResp",
+      classId: 1836
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceAgentSpawnSwarmResp",
+      fields: [
+        {
+          name: "ChildActorId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "DisplayName",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Depth",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1872,
     name: "ProjectMount",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectMount",
       className: "ProjectMount",
-      classId: 1808
+      classId: 1872
     },
     object: {
       kind: "struct",
@@ -33430,14 +33565,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1809,
+    schemaId: 1873,
     name: "ProjectRef",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectRef",
       className: "ProjectRef",
-      classId: 1809
+      classId: 1873
     },
     object: {
       kind: "struct",
@@ -33530,14 +33665,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1810,
+    schemaId: 1874,
     name: "WorkspaceMountReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceMountReq",
       className: "WorkspaceMountReq",
-      classId: 1810
+      classId: 1874
     },
     object: {
       kind: "struct",
@@ -33573,14 +33708,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1811,
+    schemaId: 1875,
     name: "WorkspaceUnmountReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceUnmountReq",
       className: "WorkspaceUnmountReq",
-      classId: 1811
+      classId: 1875
     },
     object: {
       kind: "struct",
@@ -33599,14 +33734,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1812,
+    schemaId: 1876,
     name: "WorkspaceCreateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceCreateReq",
       className: "WorkspaceCreateReq",
-      classId: 1812
+      classId: 1876
     },
     object: {
       kind: "struct",
@@ -33650,14 +33785,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1813,
+    schemaId: 1877,
     name: "WorkspaceMountsEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceMountsEvent",
       className: "WorkspaceMountsEvent",
-      classId: 1813
+      classId: 1877
     },
     object: {
       kind: "struct",
@@ -33680,14 +33815,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1814,
+    schemaId: 1878,
     name: "WorkspaceAgentsChangedEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentsChangedEvent",
       className: "WorkspaceAgentsChangedEvent",
-      classId: 1814
+      classId: 1878
     },
     object: {
       kind: "struct",
@@ -33697,14 +33832,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1815,
+    schemaId: 1879,
     name: "AgentRuntimeState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentRuntimeState",
       className: "AgentRuntimeState",
-      classId: 1815
+      classId: 1879
     },
     object: {
       kind: "struct",
@@ -33895,14 +34030,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1816,
+    schemaId: 1880,
     name: "ComposerHistoryItem",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ComposerHistoryItem",
       className: "ComposerHistoryItem",
-      classId: 1816
+      classId: 1880
     },
     object: {
       kind: "struct",
@@ -33945,14 +34080,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1817,
+    schemaId: 1881,
     name: "AgentListItem",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentListItem",
       className: "AgentListItem",
-      classId: 1817
+      classId: 1881
     },
     object: {
       kind: "struct",
@@ -34226,14 +34361,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1818,
+    schemaId: 1882,
     name: "WorkspaceAgentListState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentListState",
       className: "WorkspaceAgentListState",
-      classId: 1818
+      classId: 1882
     },
     object: {
       kind: "struct",
@@ -34272,14 +34407,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1819,
+    schemaId: 1883,
     name: "WorkspaceAgentListStateEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentListStateEvent",
       className: "WorkspaceAgentListStateEvent",
-      classId: 1819
+      classId: 1883
     },
     object: {
       kind: "struct",
@@ -34298,14 +34433,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1820,
+    schemaId: 1884,
     name: "WorkspaceAgentStatusUpdateReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentStatusUpdateReq",
       className: "WorkspaceAgentStatusUpdateReq",
-      classId: 1820
+      classId: 1884
     },
     object: {
       kind: "struct",
@@ -34513,14 +34648,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1821,
+    schemaId: 1885,
     name: "WorkspaceAddMountReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceAddMountReq",
       className: "WorkspaceAddMountReq",
-      classId: 1821
+      classId: 1885
     },
     object: {
       kind: "struct",
@@ -34555,14 +34690,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1822,
+    schemaId: 1886,
     name: "WorkspaceRemoveMountReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceRemoveMountReq",
       className: "WorkspaceRemoveMountReq",
-      classId: 1822
+      classId: 1886
     },
     object: {
       kind: "struct",
@@ -34589,14 +34724,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1823,
+    schemaId: 1887,
     name: "WorkspaceListAgentsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceListAgentsReq",
       className: "WorkspaceListAgentsReq",
-      classId: 1823
+      classId: 1887
     },
     object: {
       kind: "struct",
@@ -34652,14 +34787,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1824,
+    schemaId: 1888,
     name: "WorkspaceCreateAgentReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceCreateAgentReq",
       className: "WorkspaceCreateAgentReq",
-      classId: 1824
+      classId: 1888
     },
     object: {
       kind: "struct",
@@ -34760,14 +34895,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1825,
+    schemaId: 1889,
     name: "WorkspaceUpdateAgentReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceUpdateAgentReq",
       className: "WorkspaceUpdateAgentReq",
-      classId: 1825
+      classId: 1889
     },
     object: {
       kind: "struct",
@@ -34871,14 +35006,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1826,
+    schemaId: 1890,
     name: "WorkspaceDeleteAgentReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceDeleteAgentReq",
       className: "WorkspaceDeleteAgentReq",
-      classId: 1826
+      classId: 1890
     },
     object: {
       kind: "struct",
@@ -34897,14 +35032,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1827,
+    schemaId: 1891,
     name: "WorkspaceCloneAgentReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceCloneAgentReq",
       className: "WorkspaceCloneAgentReq",
-      classId: 1827
+      classId: 1891
     },
     object: {
       kind: "struct",
@@ -34994,14 +35129,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1828,
+    schemaId: 1892,
     name: "ProjectSpawnAgentReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ProjectSpawnAgentReq",
       className: "ProjectSpawnAgentReq",
-      classId: 1828
+      classId: 1892
     },
     object: {
       kind: "struct",
@@ -35211,14 +35346,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1829,
+    schemaId: 1893,
     name: "ProjectSpawnAgentResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ProjectSpawnAgentResp",
       className: "ProjectSpawnAgentResp",
-      classId: 1829
+      classId: 1893
     },
     object: {
       kind: "struct",
@@ -35237,14 +35372,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1830,
+    schemaId: 1894,
     name: "AgentKindInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentKindInfo",
       className: "AgentKindInfo",
-      classId: 1830
+      classId: 1894
     },
     object: {
       kind: "struct",
@@ -35317,14 +35452,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1831,
+    schemaId: 1895,
     name: "RandomNameConfig",
     visibility: "public",
     type: {
       kind: "struct",
       name: "RandomNameConfig",
       className: "RandomNameConfig",
-      classId: 1831
+      classId: 1895
     },
     object: {
       kind: "struct",
@@ -35369,14 +35504,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1832,
+    schemaId: 1896,
     name: "AgentKindConfig",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentKindConfig",
       className: "AgentKindConfig",
-      classId: 1832
+      classId: 1896
     },
     object: {
       kind: "struct",
@@ -35630,14 +35765,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1833,
+    schemaId: 1897,
     name: "WorkspaceSaveAgentKindConfigReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceSaveAgentKindConfigReq",
       className: "WorkspaceSaveAgentKindConfigReq",
-      classId: 1833
+      classId: 1897
     },
     object: {
       kind: "struct",
@@ -35878,14 +36013,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1834,
+    schemaId: 1898,
     name: "WorkspaceListAgentKindsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceListAgentKindsResp",
       className: "WorkspaceListAgentKindsResp",
-      classId: 1834
+      classId: 1898
     },
     object: {
       kind: "struct",
@@ -35908,14 +36043,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1835,
+    schemaId: 1899,
     name: "WorkspaceGetAgentKindConfigReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGetAgentKindConfigReq",
       className: "WorkspaceGetAgentKindConfigReq",
-      classId: 1835
+      classId: 1899
     },
     object: {
       kind: "struct",
@@ -35934,14 +36069,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1836,
+    schemaId: 1900,
     name: "WorkspaceListAgentKindConfigsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceListAgentKindConfigsResp",
       className: "WorkspaceListAgentKindConfigsResp",
-      classId: 1836
+      classId: 1900
     },
     object: {
       kind: "struct",
@@ -35964,14 +36099,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1837,
+    schemaId: 1901,
     name: "ProjectRefListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectRefListResp",
       className: "ProjectRefListResp",
-      classId: 1837
+      classId: 1901
     },
     object: {
       kind: "struct",
@@ -35994,14 +36129,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1838,
+    schemaId: 1902,
     name: "ActorContextSnapshot",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ActorContextSnapshot",
       className: "ActorContextSnapshot",
-      classId: 1838
+      classId: 1902
     },
     object: {
       kind: "struct",
@@ -36052,14 +36187,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1839,
+    schemaId: 1903,
     name: "AccountSnapshot",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AccountSnapshot",
       className: "AccountSnapshot",
-      classId: 1839
+      classId: 1903
     },
     object: {
       kind: "struct",
@@ -36106,14 +36241,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1840,
+    schemaId: 1904,
     name: "SessionSnapshot",
     visibility: "public",
     type: {
       kind: "struct",
       name: "SessionSnapshot",
       className: "SessionSnapshot",
-      classId: 1840
+      classId: 1904
     },
     object: {
       kind: "struct",
@@ -36188,14 +36323,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1841,
+    schemaId: 1905,
     name: "AccountPreferencesSnapshot",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AccountPreferencesSnapshot",
       className: "AccountPreferencesSnapshot",
-      classId: 1841
+      classId: 1905
     },
     object: {
       kind: "struct",
@@ -36239,14 +36374,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1842,
+    schemaId: 1906,
     name: "SaveAccountPreferencesCommand",
     visibility: "public",
     type: {
       kind: "struct",
       name: "SaveAccountPreferencesCommand",
       className: "SaveAccountPreferencesCommand",
-      classId: 1842
+      classId: 1906
     },
     object: {
       kind: "struct",
@@ -36298,14 +36433,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1843,
+    schemaId: 1907,
     name: "XY",
     visibility: "public",
     type: {
       kind: "struct",
       name: "XY",
       className: "XY",
-      classId: 1843
+      classId: 1907
     },
     object: {
       kind: "struct",
@@ -36332,14 +36467,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1844,
+    schemaId: 1908,
     name: "WH",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WH",
       className: "WH",
-      classId: 1844
+      classId: 1908
     },
     object: {
       kind: "struct",
@@ -36366,14 +36501,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1845,
+    schemaId: 1909,
     name: "WorkspacePanelState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspacePanelState",
       className: "WorkspacePanelState",
-      classId: 1845
+      classId: 1909
     },
     object: {
       kind: "struct",
@@ -36432,14 +36567,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1846,
+    schemaId: 1910,
     name: "WorkspacePanelsState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspacePanelsState",
       className: "WorkspacePanelsState",
-      classId: 1846
+      classId: 1910
     },
     object: {
       kind: "struct",
@@ -36497,14 +36632,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1847,
+    schemaId: 1911,
     name: "WorkspaceDockState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceDockState",
       className: "WorkspaceDockState",
-      classId: 1847
+      classId: 1911
     },
     object: {
       kind: "struct",
@@ -36579,14 +36714,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1848,
+    schemaId: 1912,
     name: "WorkspaceShellLayout",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceShellLayout",
       className: "WorkspaceShellLayout",
-      classId: 1848
+      classId: 1912
     },
     object: {
       kind: "struct",
@@ -36622,14 +36757,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1849,
+    schemaId: 1913,
     name: "WorkspaceAIShellState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAIShellState",
       className: "WorkspaceAIShellState",
-      classId: 1849
+      classId: 1913
     },
     object: {
       kind: "struct",
@@ -36706,14 +36841,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1850,
+    schemaId: 1914,
     name: "WorkspaceProjectBrowserState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceProjectBrowserState",
       className: "WorkspaceProjectBrowserState",
-      classId: 1850
+      classId: 1914
     },
     object: {
       kind: "struct",
@@ -36733,14 +36868,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1851,
+    schemaId: 1915,
     name: "WorkspaceExplorerState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceExplorerState",
       className: "WorkspaceExplorerState",
-      classId: 1851
+      classId: 1915
     },
     object: {
       kind: "struct",
@@ -36782,14 +36917,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1852,
+    schemaId: 1916,
     name: "WorkspaceUIModel",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceUIModel",
       className: "WorkspaceUIModel",
-      classId: 1852
+      classId: 1916
     },
     object: {
       kind: "struct",
@@ -36872,14 +37007,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1853,
+    schemaId: 1917,
     name: "SaveWorkspaceLayoutCommand",
     visibility: "public",
     type: {
       kind: "struct",
       name: "SaveWorkspaceLayoutCommand",
       className: "SaveWorkspaceLayoutCommand",
-      classId: 1853
+      classId: 1917
     },
     object: {
       kind: "struct",
@@ -36922,14 +37057,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1854,
+    schemaId: 1918,
     name: "SaveWorkspacePanelsCommand",
     visibility: "public",
     type: {
       kind: "struct",
       name: "SaveWorkspacePanelsCommand",
       className: "SaveWorkspacePanelsCommand",
-      classId: 1854
+      classId: 1918
     },
     object: {
       kind: "struct",
@@ -36972,14 +37107,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1855,
+    schemaId: 1919,
     name: "SaveWorkspaceDockCommand",
     visibility: "public",
     type: {
       kind: "struct",
       name: "SaveWorkspaceDockCommand",
       className: "SaveWorkspaceDockCommand",
-      classId: 1855
+      classId: 1919
     },
     object: {
       kind: "struct",
@@ -37022,14 +37157,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1856,
+    schemaId: 1920,
     name: "SaveWorkspaceAIShellCommand",
     visibility: "public",
     type: {
       kind: "struct",
       name: "SaveWorkspaceAIShellCommand",
       className: "SaveWorkspaceAIShellCommand",
-      classId: 1856
+      classId: 1920
     },
     object: {
       kind: "struct",
@@ -37072,14 +37207,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1857,
+    schemaId: 1921,
     name: "SaveWorkspaceProjectCardBrowserCommand",
     visibility: "public",
     type: {
       kind: "struct",
       name: "SaveWorkspaceProjectCardBrowserCommand",
       className: "SaveWorkspaceProjectCardBrowserCommand",
-      classId: 1857
+      classId: 1921
     },
     object: {
       kind: "struct",
@@ -37122,14 +37257,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1858,
+    schemaId: 1922,
     name: "SaveWorkspaceExplorerCommand",
     visibility: "public",
     type: {
       kind: "struct",
       name: "SaveWorkspaceExplorerCommand",
       className: "SaveWorkspaceExplorerCommand",
-      classId: 1858
+      classId: 1922
     },
     object: {
       kind: "struct",
@@ -37172,14 +37307,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1859,
+    schemaId: 1923,
     name: "GitFileStatus",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GitFileStatus",
       className: "GitFileStatus",
-      classId: 1859
+      classId: 1923
     },
     object: {
       kind: "struct",
@@ -37214,14 +37349,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1860,
+    schemaId: 1924,
     name: "GitCommitInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GitCommitInfo",
       className: "GitCommitInfo",
-      classId: 1860
+      classId: 1924
     },
     object: {
       kind: "struct",
@@ -37293,14 +37428,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1861,
+    schemaId: 1925,
     name: "GitBranchInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GitBranchInfo",
       className: "GitBranchInfo",
-      classId: 1861
+      classId: 1925
     },
     object: {
       kind: "struct",
@@ -37351,14 +37486,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1862,
+    schemaId: 1926,
     name: "WorkspaceGitStatusReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitStatusReq",
       className: "WorkspaceGitStatusReq",
-      classId: 1862
+      classId: 1926
     },
     object: {
       kind: "struct",
@@ -37386,14 +37521,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1863,
+    schemaId: 1927,
     name: "WorkspaceGitStatusResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitStatusResp",
       className: "WorkspaceGitStatusResp",
-      classId: 1863
+      classId: 1927
     },
     object: {
       kind: "struct",
@@ -37440,14 +37575,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1864,
+    schemaId: 1928,
     name: "WorkspaceGitLogReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitLogReq",
       className: "WorkspaceGitLogReq",
-      classId: 1864
+      classId: 1928
     },
     object: {
       kind: "struct",
@@ -37501,14 +37636,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1865,
+    schemaId: 1929,
     name: "WorkspaceGitLogResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitLogResp",
       className: "WorkspaceGitLogResp",
-      classId: 1865
+      classId: 1929
     },
     object: {
       kind: "struct",
@@ -37531,14 +37666,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1866,
+    schemaId: 1930,
     name: "WorkspaceGitDiffReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitDiffReq",
       className: "WorkspaceGitDiffReq",
-      classId: 1866
+      classId: 1930
     },
     object: {
       kind: "struct",
@@ -37591,14 +37726,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1867,
+    schemaId: 1931,
     name: "WorkspaceGitDiffResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitDiffResp",
       className: "WorkspaceGitDiffResp",
-      classId: 1867
+      classId: 1931
     },
     object: {
       kind: "struct",
@@ -37621,14 +37756,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1868,
+    schemaId: 1932,
     name: "WorkspaceGitAddReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitAddReq",
       className: "WorkspaceGitAddReq",
-      classId: 1868
+      classId: 1932
     },
     object: {
       kind: "struct",
@@ -37668,14 +37803,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1869,
+    schemaId: 1933,
     name: "WorkspaceGitCommitReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitCommitReq",
       className: "WorkspaceGitCommitReq",
-      classId: 1869
+      classId: 1933
     },
     object: {
       kind: "struct",
@@ -37711,14 +37846,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1870,
+    schemaId: 1934,
     name: "WorkspaceGitCommitResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitCommitResp",
       className: "WorkspaceGitCommitResp",
-      classId: 1870
+      classId: 1934
     },
     object: {
       kind: "struct",
@@ -37745,14 +37880,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1871,
+    schemaId: 1935,
     name: "WorkspaceGitPushReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitPushReq",
       className: "WorkspaceGitPushReq",
-      classId: 1871
+      classId: 1935
     },
     object: {
       kind: "struct",
@@ -37788,14 +37923,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1872,
+    schemaId: 1936,
     name: "WorkspaceGitPullReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitPullReq",
       className: "WorkspaceGitPullReq",
-      classId: 1872
+      classId: 1936
     },
     object: {
       kind: "struct",
@@ -37831,14 +37966,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1873,
+    schemaId: 1937,
     name: "WorkspaceGitBranchReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitBranchReq",
       className: "WorkspaceGitBranchReq",
-      classId: 1873
+      classId: 1937
     },
     object: {
       kind: "struct",
@@ -37866,14 +38001,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1874,
+    schemaId: 1938,
     name: "WorkspaceGitBranchResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitBranchResp",
       className: "WorkspaceGitBranchResp",
-      classId: 1874
+      classId: 1938
     },
     object: {
       kind: "struct",
@@ -37896,14 +38031,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1875,
+    schemaId: 1939,
     name: "WorkspaceGitCheckoutReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitCheckoutReq",
       className: "WorkspaceGitCheckoutReq",
-      classId: 1875
+      classId: 1939
     },
     object: {
       kind: "struct",
@@ -37947,14 +38082,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1876,
+    schemaId: 1940,
     name: "WorkspaceGitResetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitResetReq",
       className: "WorkspaceGitResetReq",
-      classId: 1876
+      classId: 1940
     },
     object: {
       kind: "struct",
@@ -37995,14 +38130,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1877,
+    schemaId: 1941,
     name: "GitStashInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GitStashInfo",
       className: "GitStashInfo",
-      classId: 1877
+      classId: 1941
     },
     object: {
       kind: "struct",
@@ -38045,14 +38180,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1878,
+    schemaId: 1942,
     name: "WorkspaceGitStashSaveReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitStashSaveReq",
       className: "WorkspaceGitStashSaveReq",
-      classId: 1878
+      classId: 1942
     },
     object: {
       kind: "struct",
@@ -38089,14 +38224,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1879,
+    schemaId: 1943,
     name: "WorkspaceGitStashPopReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitStashPopReq",
       className: "WorkspaceGitStashPopReq",
-      classId: 1879
+      classId: 1943
     },
     object: {
       kind: "struct",
@@ -38133,14 +38268,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1880,
+    schemaId: 1944,
     name: "WorkspaceGitStashListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitStashListReq",
       className: "WorkspaceGitStashListReq",
-      classId: 1880
+      classId: 1944
     },
     object: {
       kind: "struct",
@@ -38168,14 +38303,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1881,
+    schemaId: 1945,
     name: "WorkspaceGitStashListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitStashListResp",
       className: "WorkspaceGitStashListResp",
-      classId: 1881
+      classId: 1945
     },
     object: {
       kind: "struct",
@@ -38198,14 +38333,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1882,
+    schemaId: 1946,
     name: "WorkspaceGitStashDropReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitStashDropReq",
       className: "WorkspaceGitStashDropReq",
-      classId: 1882
+      classId: 1946
     },
     object: {
       kind: "struct",
@@ -38242,14 +38377,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1883,
+    schemaId: 1947,
     name: "GitRemoteInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GitRemoteInfo",
       className: "GitRemoteInfo",
-      classId: 1883
+      classId: 1947
     },
     object: {
       kind: "struct",
@@ -38280,14 +38415,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1884,
+    schemaId: 1948,
     name: "WorkspaceGitRemoteListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitRemoteListReq",
       className: "WorkspaceGitRemoteListReq",
-      classId: 1884
+      classId: 1948
     },
     object: {
       kind: "struct",
@@ -38315,14 +38450,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1885,
+    schemaId: 1949,
     name: "WorkspaceGitRemoteListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitRemoteListResp",
       className: "WorkspaceGitRemoteListResp",
-      classId: 1885
+      classId: 1949
     },
     object: {
       kind: "struct",
@@ -38345,14 +38480,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1886,
+    schemaId: 1950,
     name: "WorkspaceGitRemoteAddReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitRemoteAddReq",
       className: "WorkspaceGitRemoteAddReq",
-      classId: 1886
+      classId: 1950
     },
     object: {
       kind: "struct",
@@ -38396,14 +38531,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1887,
+    schemaId: 1951,
     name: "WorkspaceGitRemoteRemoveReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitRemoteRemoveReq",
       className: "WorkspaceGitRemoteRemoveReq",
-      classId: 1887
+      classId: 1951
     },
     object: {
       kind: "struct",
@@ -38439,14 +38574,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1888,
+    schemaId: 1952,
     name: "GitBlameLine",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GitBlameLine",
       className: "GitBlameLine",
-      classId: 1888
+      classId: 1952
     },
     object: {
       kind: "struct",
@@ -38505,14 +38640,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1889,
+    schemaId: 1953,
     name: "WorkspaceGitBlameReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitBlameReq",
       className: "WorkspaceGitBlameReq",
-      classId: 1889
+      classId: 1953
     },
     object: {
       kind: "struct",
@@ -38548,14 +38683,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1890,
+    schemaId: 1954,
     name: "WorkspaceGitBlameResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitBlameResp",
       className: "WorkspaceGitBlameResp",
-      classId: 1890
+      classId: 1954
     },
     object: {
       kind: "struct",
@@ -38578,14 +38713,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1891,
+    schemaId: 1955,
     name: "WorkspaceGitConfigGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitConfigGetReq",
       className: "WorkspaceGitConfigGetReq",
-      classId: 1891
+      classId: 1955
     },
     object: {
       kind: "struct",
@@ -38621,14 +38756,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1892,
+    schemaId: 1956,
     name: "WorkspaceGitConfigGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitConfigGetResp",
       className: "WorkspaceGitConfigGetResp",
-      classId: 1892
+      classId: 1956
     },
     object: {
       kind: "struct",
@@ -38647,14 +38782,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1893,
+    schemaId: 1957,
     name: "WorkspaceGitConfigSetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitConfigSetReq",
       className: "WorkspaceGitConfigSetReq",
-      classId: 1893
+      classId: 1957
     },
     object: {
       kind: "struct",
@@ -38706,14 +38841,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1894,
+    schemaId: 1958,
     name: "WorkspaceUpdateProjectReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceUpdateProjectReq",
       className: "WorkspaceUpdateProjectReq",
-      classId: 1894
+      classId: 1958
     },
     object: {
       kind: "struct",
@@ -38786,14 +38921,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1895,
+    schemaId: 1959,
     name: "WorkspaceUpdateProjectResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceUpdateProjectResp",
       className: "WorkspaceUpdateProjectResp",
-      classId: 1895
+      classId: 1959
     },
     object: {
       kind: "struct",
@@ -38812,14 +38947,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1896,
+    schemaId: 1960,
     name: "WorkspaceLoadAgentReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceLoadAgentReq",
       className: "WorkspaceLoadAgentReq",
-      classId: 1896
+      classId: 1960
     },
     object: {
       kind: "struct",
@@ -38838,14 +38973,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1897,
+    schemaId: 1961,
     name: "WorkspaceLogEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceLogEntry",
       className: "WorkspaceLogEntry",
-      classId: 1897
+      classId: 1961
     },
     object: {
       kind: "struct",
@@ -38924,14 +39059,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1898,
+    schemaId: 1962,
     name: "WorkspaceLogsQueryReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceLogsQueryReq",
       className: "WorkspaceLogsQueryReq",
-      classId: 1898
+      classId: 1962
     },
     object: {
       kind: "struct",
@@ -39005,14 +39140,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1899,
+    schemaId: 1963,
     name: "WorkspaceLogsQueryResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceLogsQueryResp",
       className: "WorkspaceLogsQueryResp",
-      classId: 1899
+      classId: 1963
     },
     object: {
       kind: "struct",
@@ -39053,14 +39188,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1900,
+    schemaId: 1964,
     name: "ChildSpawnConfig",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ChildSpawnConfig",
       className: "ChildSpawnConfig",
-      classId: 1900
+      classId: 1964
     },
     object: {
       kind: "struct",
@@ -39140,14 +39275,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1901,
+    schemaId: 1965,
     name: "WorkspaceAgentAccessReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentAccessReq",
       className: "WorkspaceAgentAccessReq",
-      classId: 1901
+      classId: 1965
     },
     object: {
       kind: "struct",
@@ -39166,14 +39301,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1902,
+    schemaId: 1966,
     name: "GitTagInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GitTagInfo",
       className: "GitTagInfo",
-      classId: 1902
+      classId: 1966
     },
     object: {
       kind: "struct",
@@ -39216,14 +39351,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1903,
+    schemaId: 1967,
     name: "GitShowFile",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GitShowFile",
       className: "GitShowFile",
-      classId: 1903
+      classId: 1967
     },
     object: {
       kind: "struct",
@@ -39259,14 +39394,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1904,
+    schemaId: 1968,
     name: "WorkspaceGitShowReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitShowReq",
       className: "WorkspaceGitShowReq",
-      classId: 1904
+      classId: 1968
     },
     object: {
       kind: "struct",
@@ -39302,14 +39437,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1905,
+    schemaId: 1969,
     name: "WorkspaceGitShowResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitShowResp",
       className: "WorkspaceGitShowResp",
-      classId: 1905
+      classId: 1969
     },
     object: {
       kind: "struct",
@@ -39349,14 +39484,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1906,
+    schemaId: 1970,
     name: "WorkspaceGitFetchReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitFetchReq",
       className: "WorkspaceGitFetchReq",
-      classId: 1906
+      classId: 1970
     },
     object: {
       kind: "struct",
@@ -39393,14 +39528,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1907,
+    schemaId: 1971,
     name: "WorkspaceGitDiscardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitDiscardReq",
       className: "WorkspaceGitDiscardReq",
-      classId: 1907
+      classId: 1971
     },
     object: {
       kind: "struct",
@@ -39441,14 +39576,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1908,
+    schemaId: 1972,
     name: "WorkspaceGitAmendReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitAmendReq",
       className: "WorkspaceGitAmendReq",
-      classId: 1908
+      classId: 1972
     },
     object: {
       kind: "struct",
@@ -39494,14 +39629,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1909,
+    schemaId: 1973,
     name: "WorkspaceGitTagListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitTagListReq",
       className: "WorkspaceGitTagListReq",
-      classId: 1909
+      classId: 1973
     },
     object: {
       kind: "struct",
@@ -39529,14 +39664,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1910,
+    schemaId: 1974,
     name: "WorkspaceGitTagListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitTagListResp",
       className: "WorkspaceGitTagListResp",
-      classId: 1910
+      classId: 1974
     },
     object: {
       kind: "struct",
@@ -39559,14 +39694,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1911,
+    schemaId: 1975,
     name: "WorkspaceGitTagCreateReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitTagCreateReq",
       className: "WorkspaceGitTagCreateReq",
-      classId: 1911
+      classId: 1975
     },
     object: {
       kind: "struct",
@@ -39629,14 +39764,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1912,
+    schemaId: 1976,
     name: "WorkspaceGitTagDeleteReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitTagDeleteReq",
       className: "WorkspaceGitTagDeleteReq",
-      classId: 1912
+      classId: 1976
     },
     object: {
       kind: "struct",
@@ -39672,14 +39807,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1913,
+    schemaId: 1977,
     name: "WorkspaceGitMergeReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitMergeReq",
       className: "WorkspaceGitMergeReq",
-      classId: 1913
+      classId: 1977
     },
     object: {
       kind: "struct",
@@ -39733,14 +39868,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1914,
+    schemaId: 1978,
     name: "WorkspaceGitMergeResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGitMergeResp",
       className: "WorkspaceGitMergeResp",
-      classId: 1914
+      classId: 1978
     },
     object: {
       kind: "struct",
@@ -39771,14 +39906,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1915,
+    schemaId: 1979,
     name: "WorkspaceAgentSpawnSchedulerReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentSpawnSchedulerReq",
       className: "WorkspaceAgentSpawnSchedulerReq",
-      classId: 1915
+      classId: 1979
     },
     object: {
       kind: "struct",
@@ -39858,14 +39993,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1916,
+    schemaId: 1980,
     name: "WorkspaceAgentSpawnSchedulerResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentSpawnSchedulerResp",
       className: "WorkspaceAgentSpawnSchedulerResp",
-      classId: 1916
+      classId: 1980
     },
     object: {
       kind: "struct",
@@ -39908,14 +40043,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1920,
+    schemaId: 1984,
     name: "WorkspaceDeleteAgentKindReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceDeleteAgentKindReq",
       className: "WorkspaceDeleteAgentKindReq",
-      classId: 1920
+      classId: 1984
     },
     object: {
       kind: "struct",
@@ -39934,14 +40069,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1921,
+    schemaId: 1985,
     name: "WorkspaceDeleteAgentKindResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceDeleteAgentKindResp",
       className: "WorkspaceDeleteAgentKindResp",
-      classId: 1921
+      classId: 1985
     },
     object: {
       kind: "struct",
@@ -39968,14 +40103,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1922,
+    schemaId: 1986,
     name: "WorkspaceCreateAgentKindReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceCreateAgentKindReq",
       className: "WorkspaceCreateAgentKindReq",
-      classId: 1922
+      classId: 1986
     },
     object: {
       kind: "struct",
@@ -40011,14 +40146,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1923,
+    schemaId: 1987,
     name: "WorkspaceCreateAgentKindResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceCreateAgentKindResp",
       className: "WorkspaceCreateAgentKindResp",
-      classId: 1923
+      classId: 1987
     },
     object: {
       kind: "struct",
@@ -40069,14 +40204,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1924,
+    schemaId: 1988,
     name: "WikiStarredEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiStarredEntry",
       className: "WikiStarredEntry",
-      classId: 1924
+      classId: 1988
     },
     object: {
       kind: "struct",
@@ -40111,14 +40246,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1925,
+    schemaId: 1989,
     name: "WikiListStarredReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiListStarredReq",
       className: "WikiListStarredReq",
-      classId: 1925
+      classId: 1989
     },
     object: {
       kind: "struct",
@@ -40128,14 +40263,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1926,
+    schemaId: 1990,
     name: "WikiListStarredResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiListStarredResp",
       className: "WikiListStarredResp",
-      classId: 1926
+      classId: 1990
     },
     object: {
       kind: "struct",
@@ -40158,14 +40293,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1927,
+    schemaId: 1991,
     name: "WorkspaceHostCallReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceHostCallReq",
       className: "WorkspaceHostCallReq",
-      classId: 1927
+      classId: 1991
     },
     object: {
       kind: "struct",
@@ -40202,14 +40337,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1928,
+    schemaId: 1992,
     name: "WorkspaceHostCallResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WorkspaceHostCallResp",
       className: "WorkspaceHostCallResp",
-      classId: 1928
+      classId: 1992
     },
     object: {
       kind: "struct",
@@ -40238,136 +40373,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1930,
-    name: "WorkspaceAgentSpawnSwarmReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "WorkspaceAgentSpawnSwarmReq",
-      className: "WorkspaceAgentSpawnSwarmReq",
-      classId: 1930
-    },
-    object: {
-      kind: "struct",
-      name: "WorkspaceAgentSpawnSwarmReq",
-      fields: [
-        {
-          name: "Description",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Prompt",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "AgentKind",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "MaxTurns",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          },
-          optional: true
-        },
-        {
-          name: "Unit",
-          type: {
-            kind: "struct",
-            name: "struct",
-            className: "ModelUnit"
-          },
-          optional: true
-        },
-        {
-          name: "ProjectId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "CallerAgentId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1931,
-    name: "WorkspaceAgentSpawnSwarmResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "WorkspaceAgentSpawnSwarmResp",
-      className: "WorkspaceAgentSpawnSwarmResp",
-      classId: 1931
-    },
-    object: {
-      kind: "struct",
-      name: "WorkspaceAgentSpawnSwarmResp",
-      fields: [
-        {
-          name: "ChildActorId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "DisplayName",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Depth",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 2032,
+    schemaId: 2112,
     name: "AppSchemaRef",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppSchemaRef",
       className: "AppSchemaRef",
-      classId: 2032
+      classId: 2112
     },
     object: {
       kind: "struct",
@@ -40403,14 +40416,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2033,
+    schemaId: 2113,
     name: "AppTypeDescriptor",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppTypeDescriptor",
       className: "AppTypeDescriptor",
-      classId: 2033
+      classId: 2113
     },
     object: {
       kind: "struct",
@@ -40492,14 +40505,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2034,
+    schemaId: 2114,
     name: "AppFieldDescriptor",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppFieldDescriptor",
       className: "AppFieldDescriptor",
-      classId: 2034
+      classId: 2114
     },
     object: {
       kind: "struct",
@@ -40553,14 +40566,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2035,
+    schemaId: 2115,
     name: "AppObjectDescriptor",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppObjectDescriptor",
       className: "AppObjectDescriptor",
-      classId: 2035
+      classId: 2115
     },
     object: {
       kind: "struct",
@@ -40608,14 +40621,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2036,
+    schemaId: 2116,
     name: "AppCallableDescriptor",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppCallableDescriptor",
       className: "AppCallableDescriptor",
-      classId: 2036
+      classId: 2116
     },
     object: {
       kind: "struct",
@@ -40753,14 +40766,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2037,
+    schemaId: 2117,
     name: "AppEventDescriptor",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppEventDescriptor",
       className: "AppEventDescriptor",
-      classId: 2037
+      classId: 2117
     },
     object: {
       kind: "struct",
@@ -40805,14 +40818,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2038,
+    schemaId: 2118,
     name: "AppProjectionDescriptor",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppProjectionDescriptor",
       className: "AppProjectionDescriptor",
-      classId: 2038
+      classId: 2118
     },
     object: {
       kind: "struct",
@@ -40848,14 +40861,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2039,
+    schemaId: 2119,
     name: "AppEntrypoint",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppEntrypoint",
       className: "AppEntrypoint",
-      classId: 2039
+      classId: 2119
     },
     object: {
       kind: "struct",
@@ -40908,14 +40921,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2040,
+    schemaId: 2120,
     name: "AppDependency",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppDependency",
       className: "AppDependency",
-      classId: 2040
+      classId: 2120
     },
     object: {
       kind: "struct",
@@ -40951,14 +40964,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2041,
+    schemaId: 2121,
     name: "AgentCapabilityBinding",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentCapabilityBinding",
       className: "AgentCapabilityBinding",
-      classId: 2041
+      classId: 2121
     },
     object: {
       kind: "struct",
@@ -40990,14 +41003,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2042,
+    schemaId: 2122,
     name: "AgentSurfaceBinding",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentSurfaceBinding",
       className: "AgentSurfaceBinding",
-      classId: 2042
+      classId: 2122
     },
     object: {
       kind: "struct",
@@ -41049,14 +41062,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2043,
+    schemaId: 2123,
     name: "FreeAgentBinding",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FreeAgentBinding",
       className: "FreeAgentBinding",
-      classId: 2043
+      classId: 2123
     },
     object: {
       kind: "struct",
@@ -41104,14 +41117,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2044,
+    schemaId: 2124,
     name: "PluginAgentBinding",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginAgentBinding",
       className: "PluginAgentBinding",
-      classId: 2044
+      classId: 2124
     },
     object: {
       kind: "struct",
@@ -41170,14 +41183,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2045,
+    schemaId: 2125,
     name: "AppAgentBinding",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppAgentBinding",
       className: "AppAgentBinding",
-      classId: 2045
+      classId: 2125
     },
     object: {
       kind: "struct",
@@ -41228,14 +41241,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2046,
+    schemaId: 2126,
     name: "AppSecurityPolicy",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppSecurityPolicy",
       className: "AppSecurityPolicy",
-      classId: 2046
+      classId: 2126
     },
     object: {
       kind: "struct",
@@ -41304,14 +41317,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2047,
+    schemaId: 2127,
     name: "AppBundleTool",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppBundleTool",
       className: "AppBundleTool",
-      classId: 2047
+      classId: 2127
     },
     object: {
       kind: "struct",
@@ -41366,14 +41379,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2048,
+    schemaId: 2128,
     name: "AppBundle",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppBundle",
       className: "AppBundle",
-      classId: 2048
+      classId: 2128
     },
     object: {
       kind: "struct",
@@ -41440,14 +41453,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2049,
+    schemaId: 2129,
     name: "AppManifest",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManifest",
       className: "AppManifest",
-      classId: 2049
+      classId: 2129
     },
     object: {
       kind: "struct",
@@ -41643,14 +41656,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2052,
+    schemaId: 2132,
     name: "AppStatus",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppStatus",
       className: "AppStatus",
-      classId: 2052
+      classId: 2132
     },
     object: {
       kind: "struct",
@@ -41887,14 +41900,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2053,
+    schemaId: 2133,
     name: "AppLifecycleEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppLifecycleEvent",
       className: "AppLifecycleEvent",
-      classId: 2053
+      classId: 2133
     },
     object: {
       kind: "struct",
@@ -41964,14 +41977,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2096,
+    schemaId: 2176,
     name: "AppManagerRegisterReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerRegisterReq",
       className: "AppManagerRegisterReq",
-      classId: 2096
+      classId: 2176
     },
     object: {
       kind: "struct",
@@ -42105,14 +42118,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2097,
+    schemaId: 2177,
     name: "AppManagerUnregisterReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerUnregisterReq",
       className: "AppManagerUnregisterReq",
-      classId: 2097
+      classId: 2177
     },
     object: {
       kind: "struct",
@@ -42131,14 +42144,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2098,
+    schemaId: 2178,
     name: "AppManagerGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerGetReq",
       className: "AppManagerGetReq",
-      classId: 2098
+      classId: 2178
     },
     object: {
       kind: "struct",
@@ -42157,14 +42170,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2099,
+    schemaId: 2179,
     name: "AppManagerGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerGetResp",
       className: "AppManagerGetResp",
-      classId: 2099
+      classId: 2179
     },
     object: {
       kind: "struct",
@@ -42183,14 +42196,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2100,
+    schemaId: 2180,
     name: "AppManagerListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerListReq",
       className: "AppManagerListReq",
-      classId: 2100
+      classId: 2180
     },
     object: {
       kind: "struct",
@@ -42200,14 +42213,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2101,
+    schemaId: 2181,
     name: "AppManagerListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerListResp",
       className: "AppManagerListResp",
-      classId: 2101
+      classId: 2181
     },
     object: {
       kind: "struct",
@@ -42230,14 +42243,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2102,
+    schemaId: 2182,
     name: "AppManagerInvokeReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerInvokeReq",
       className: "AppManagerInvokeReq",
-      classId: 2102
+      classId: 2182
     },
     object: {
       kind: "struct",
@@ -42371,14 +42384,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2103,
+    schemaId: 2183,
     name: "AppManagerInvokeResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerInvokeResp",
       className: "AppManagerInvokeResp",
-      classId: 2103
+      classId: 2183
     },
     object: {
       kind: "struct",
@@ -42397,14 +42410,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2104,
+    schemaId: 2184,
     name: "AppManagerCastReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerCastReq",
       className: "AppManagerCastReq",
-      classId: 2104
+      classId: 2184
     },
     object: {
       kind: "struct",
@@ -42475,14 +42488,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2105,
+    schemaId: 2185,
     name: "AppManagerCastResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerCastResp",
       className: "AppManagerCastResp",
-      classId: 2105
+      classId: 2185
     },
     object: {
       kind: "struct",
@@ -42501,14 +42514,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2106,
+    schemaId: 2186,
     name: "AppManagerEmitReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerEmitReq",
       className: "AppManagerEmitReq",
-      classId: 2106
+      classId: 2186
     },
     object: {
       kind: "struct",
@@ -42579,14 +42592,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2107,
+    schemaId: 2187,
     name: "AppManagerEmitResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerEmitResp",
       className: "AppManagerEmitResp",
-      classId: 2107
+      classId: 2187
     },
     object: {
       kind: "struct",
@@ -42605,14 +42618,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2108,
+    schemaId: 2188,
     name: "AppEventMessage",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppEventMessage",
       className: "AppEventMessage",
-      classId: 2108
+      classId: 2188
     },
     object: {
       kind: "struct",
@@ -42656,14 +42669,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2109,
+    schemaId: 2189,
     name: "AppManagerAuditReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerAuditReq",
       className: "AppManagerAuditReq",
-      classId: 2109
+      classId: 2189
     },
     object: {
       kind: "struct",
@@ -42692,14 +42705,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2110,
+    schemaId: 2190,
     name: "AppManagerAuditResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerAuditResp",
       className: "AppManagerAuditResp",
-      classId: 2110
+      classId: 2190
     },
     object: {
       kind: "struct",
@@ -42722,14 +42735,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2111,
+    schemaId: 2191,
     name: "AppAuditRecord",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppAuditRecord",
       className: "AppAuditRecord",
-      classId: 2111
+      classId: 2191
     },
     object: {
       kind: "struct",
@@ -42838,14 +42851,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2144,
+    schemaId: 2224,
     name: "WikiTriggerTimerCardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiTriggerTimerCardReq",
       className: "WikiTriggerTimerCardReq",
-      classId: 2144
+      classId: 2224
     },
     object: {
       kind: "struct",
@@ -42864,14 +42877,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2145,
+    schemaId: 2225,
     name: "WikiTriggerTimerCardResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiTriggerTimerCardResp",
       className: "WikiTriggerTimerCardResp",
-      classId: 2145
+      classId: 2225
     },
     object: {
       kind: "struct",
@@ -42890,14 +42903,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2146,
+    schemaId: 2226,
     name: "WikiToggleTimerReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiToggleTimerReq",
       className: "WikiToggleTimerReq",
-      classId: 2146
+      classId: 2226
     },
     object: {
       kind: "struct",
@@ -42924,14 +42937,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2147,
+    schemaId: 2227,
     name: "WikiToggleTimerResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiToggleTimerResp",
       className: "WikiToggleTimerResp",
-      classId: 2147
+      classId: 2227
     },
     object: {
       kind: "struct",
@@ -42958,14 +42971,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2148,
+    schemaId: 2228,
     name: "WikiGetCardHierarchyReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiGetCardHierarchyReq",
       className: "WikiGetCardHierarchyReq",
-      classId: 2148
+      classId: 2228
     },
     object: {
       kind: "struct",
@@ -42993,14 +43006,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2149,
+    schemaId: 2229,
     name: "WikiGetCardHierarchyResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiGetCardHierarchyResp",
       className: "WikiGetCardHierarchyResp",
-      classId: 2149
+      classId: 2229
     },
     object: {
       kind: "struct",
@@ -43019,14 +43032,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2150,
+    schemaId: 2230,
     name: "WikiOpenCardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiOpenCardReq",
       className: "WikiOpenCardReq",
-      classId: 2150
+      classId: 2230
     },
     object: {
       kind: "struct",
@@ -43045,14 +43058,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2151,
+    schemaId: 2231,
     name: "WikiCloseCardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiCloseCardReq",
       className: "WikiCloseCardReq",
-      classId: 2151
+      classId: 2231
     },
     object: {
       kind: "struct",
@@ -43071,14 +43084,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2152,
+    schemaId: 2232,
     name: "WikiSearchCardContentReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSearchCardContentReq",
       className: "WikiSearchCardContentReq",
-      classId: 2152
+      classId: 2232
     },
     object: {
       kind: "struct",
@@ -43245,14 +43258,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2153,
+    schemaId: 2233,
     name: "WikiCardContentMatch",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiCardContentMatch",
       className: "WikiCardContentMatch",
-      classId: 2153
+      classId: 2233
     },
     object: {
       kind: "struct",
@@ -43289,14 +43302,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2154,
+    schemaId: 2234,
     name: "WikiSearchCardContentResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiSearchCardContentResp",
       className: "WikiSearchCardContentResp",
-      classId: 2154
+      classId: 2234
     },
     object: {
       kind: "struct",
@@ -43327,14 +43340,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2155,
+    schemaId: 2235,
     name: "WikiWorkflowFilter",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiWorkflowFilter",
       className: "WikiWorkflowFilter",
-      classId: 2155
+      classId: 2235
     },
     object: {
       kind: "struct",
@@ -43393,14 +43406,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2156,
+    schemaId: 2236,
     name: "WikiCardTreeNode",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiCardTreeNode",
       className: "WikiCardTreeNode",
-      classId: 2156
+      classId: 2236
     },
     object: {
       kind: "struct",
@@ -43463,14 +43476,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2240,
+    schemaId: 2320,
     name: "PluginAbi",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginAbi",
       className: "PluginAbi",
-      classId: 2240
+      classId: 2320
     },
     object: {
       kind: "struct",
@@ -43562,14 +43575,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2247,
+    schemaId: 2327,
     name: "PluginInvokeReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginInvokeReq",
       className: "PluginInvokeReq",
-      classId: 2247
+      classId: 2327
     },
     object: {
       kind: "struct",
@@ -43676,14 +43689,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2248,
+    schemaId: 2328,
     name: "PluginInvokeResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginInvokeResp",
       className: "PluginInvokeResp",
-      classId: 2248
+      classId: 2328
     },
     object: {
       kind: "struct",
@@ -43702,14 +43715,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2249,
+    schemaId: 2329,
     name: "PluginInvokeChunk",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginInvokeChunk",
       className: "PluginInvokeChunk",
-      classId: 2249
+      classId: 2329
     },
     object: {
       kind: "struct",
@@ -43737,14 +43750,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2250,
+    schemaId: 2330,
     name: "PluginEventDeliverReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginEventDeliverReq",
       className: "PluginEventDeliverReq",
-      classId: 2250
+      classId: 2330
     },
     object: {
       kind: "struct",
@@ -43771,14 +43784,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2251,
+    schemaId: 2331,
     name: "PluginEventDeliverResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginEventDeliverResp",
       className: "PluginEventDeliverResp",
-      classId: 2251
+      classId: 2331
     },
     object: {
       kind: "struct",
@@ -43810,14 +43823,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2253,
+    schemaId: 2333,
     name: "PluginLogPutReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginLogPutReq",
       className: "PluginLogPutReq",
-      classId: 2253
+      classId: 2333
     },
     object: {
       kind: "struct",
@@ -43861,14 +43874,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2254,
+    schemaId: 2334,
     name: "PluginLogEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginLogEntry",
       className: "PluginLogEntry",
-      classId: 2254
+      classId: 2334
     },
     object: {
       kind: "struct",
@@ -43911,14 +43924,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2255,
+    schemaId: 2335,
     name: "PluginLogsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginLogsReq",
       className: "PluginLogsReq",
-      classId: 2255
+      classId: 2335
     },
     object: {
       kind: "struct",
@@ -43946,14 +43959,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2256,
+    schemaId: 2336,
     name: "PluginLogsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginLogsResp",
       className: "PluginLogsResp",
-      classId: 2256
+      classId: 2336
     },
     object: {
       kind: "struct",
@@ -44020,14 +44033,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2353,
+    schemaId: 2433,
     name: "WikiCardChangedEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiCardChangedEvent",
       className: "WikiCardChangedEvent",
-      classId: 2353
+      classId: 2433
     },
     object: {
       kind: "struct",
@@ -44054,14 +44067,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2354,
+    schemaId: 2434,
     name: "GraphChangedEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GraphChangedEvent",
       className: "GraphChangedEvent",
-      classId: 2354
+      classId: 2434
     },
     object: {
       kind: "struct",
@@ -44096,14 +44109,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2401,
+    schemaId: 2481,
     name: "FrontendErrorReport",
     visibility: "public",
     type: {
       kind: "struct",
       name: "FrontendErrorReport",
       className: "FrontendErrorReport",
-      classId: 2401
+      classId: 2481
     },
     object: {
       kind: "struct",
@@ -44170,14 +44183,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2448,
+    schemaId: 2528,
     name: "ComponentRef",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ComponentRef",
       className: "ComponentRef",
-      classId: 2448
+      classId: 2528
     },
     object: {
       kind: "struct",
@@ -44222,14 +44235,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2449,
+    schemaId: 2529,
     name: "ComponentDependency",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ComponentDependency",
       className: "ComponentDependency",
-      classId: 2449
+      classId: 2529
     },
     object: {
       kind: "struct",
@@ -44266,14 +44279,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2450,
+    schemaId: 2530,
     name: "ComponentPromptContribution",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ComponentPromptContribution",
       className: "ComponentPromptContribution",
-      classId: 2450
+      classId: 2530
     },
     object: {
       kind: "struct",
@@ -44335,14 +44348,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2451,
+    schemaId: 2531,
     name: "ComponentToolContribution",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ComponentToolContribution",
       className: "ComponentToolContribution",
-      classId: 2451
+      classId: 2531
     },
     object: {
       kind: "struct",
@@ -44422,14 +44435,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2452,
+    schemaId: 2532,
     name: "ComponentDescriptor",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ComponentDescriptor",
       className: "ComponentDescriptor",
-      classId: 2452
+      classId: 2532
     },
     object: {
       kind: "struct",
@@ -44528,14 +44541,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2453,
+    schemaId: 2533,
     name: "ComponentVisual",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ComponentVisual",
       className: "ComponentVisual",
-      classId: 2453
+      classId: 2533
     },
     object: {
       kind: "struct",
@@ -44609,14 +44622,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2454,
+    schemaId: 2534,
     name: "AgentComponentMount",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentMount",
       className: "AgentComponentMount",
-      classId: 2454
+      classId: 2534
     },
     object: {
       kind: "struct",
@@ -44733,14 +44746,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2455,
+    schemaId: 2535,
     name: "ComponentDiagnostic",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ComponentDiagnostic",
       className: "ComponentDiagnostic",
-      classId: 2455
+      classId: 2535
     },
     object: {
       kind: "struct",
@@ -44784,14 +44797,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2456,
+    schemaId: 2536,
     name: "AgentComponentSnapshot",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentSnapshot",
       className: "AgentComponentSnapshot",
-      classId: 2456
+      classId: 2536
     },
     object: {
       kind: "struct",
@@ -44868,14 +44881,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2496,
+    schemaId: 2576,
     name: "AgentComponentMountReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentMountReq",
       className: "AgentComponentMountReq",
-      classId: 2496
+      classId: 2576
     },
     object: {
       kind: "struct",
@@ -44921,14 +44934,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2497,
+    schemaId: 2577,
     name: "AgentComponentMountResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentMountResp",
       className: "AgentComponentMountResp",
-      classId: 2497
+      classId: 2577
     },
     object: {
       kind: "struct",
@@ -44947,14 +44960,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2498,
+    schemaId: 2578,
     name: "AgentComponentUnmountReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentUnmountReq",
       className: "AgentComponentUnmountReq",
-      classId: 2498
+      classId: 2578
     },
     object: {
       kind: "struct",
@@ -44982,14 +44995,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2499,
+    schemaId: 2579,
     name: "AgentComponentUnmountResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentUnmountResp",
       className: "AgentComponentUnmountResp",
-      classId: 2499
+      classId: 2579
     },
     object: {
       kind: "struct",
@@ -45008,14 +45021,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2500,
+    schemaId: 2580,
     name: "AgentComponentSetEnabledReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentSetEnabledReq",
       className: "AgentComponentSetEnabledReq",
-      classId: 2500
+      classId: 2580
     },
     object: {
       kind: "struct",
@@ -45042,14 +45055,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2501,
+    schemaId: 2581,
     name: "AgentComponentSetEnabledResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentSetEnabledResp",
       className: "AgentComponentSetEnabledResp",
-      classId: 2501
+      classId: 2581
     },
     object: {
       kind: "struct",
@@ -45068,14 +45081,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2502,
+    schemaId: 2582,
     name: "AgentComponentListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentListReq",
       className: "AgentComponentListReq",
-      classId: 2502
+      classId: 2582
     },
     object: {
       kind: "struct",
@@ -45085,14 +45098,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2503,
+    schemaId: 2583,
     name: "AgentComponentListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentListResp",
       className: "AgentComponentListResp",
-      classId: 2503
+      classId: 2583
     },
     object: {
       kind: "struct",
@@ -45115,14 +45128,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2504,
+    schemaId: 2584,
     name: "AgentComponentSnapshotReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentSnapshotReq",
       className: "AgentComponentSnapshotReq",
-      classId: 2504
+      classId: 2584
     },
     object: {
       kind: "struct",
@@ -45132,14 +45145,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2505,
+    schemaId: 2585,
     name: "AgentComponentSnapshotResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentComponentSnapshotResp",
       className: "AgentComponentSnapshotResp",
-      classId: 2505
+      classId: 2585
     },
     object: {
       kind: "struct",
@@ -45158,14 +45171,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2544,
+    schemaId: 2624,
     name: "ProjectComponentListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectComponentListReq",
       className: "ProjectComponentListReq",
-      classId: 2544
+      classId: 2624
     },
     object: {
       kind: "struct",
@@ -45175,14 +45188,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2545,
+    schemaId: 2625,
     name: "ProjectComponentListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectComponentListResp",
       className: "ProjectComponentListResp",
-      classId: 2545
+      classId: 2625
     },
     object: {
       kind: "struct",
@@ -45205,14 +45218,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2546,
+    schemaId: 2626,
     name: "ProjectComponentGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectComponentGetReq",
       className: "ProjectComponentGetReq",
-      classId: 2546
+      classId: 2626
     },
     object: {
       kind: "struct",
@@ -45231,14 +45244,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2547,
+    schemaId: 2627,
     name: "ProjectComponentGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectComponentGetResp",
       className: "ProjectComponentGetResp",
-      classId: 2547
+      classId: 2627
     },
     object: {
       kind: "struct",
@@ -45257,14 +45270,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2592,
+    schemaId: 2672,
     name: "AgentModesUnloadAllReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentModesUnloadAllReq",
       className: "AgentModesUnloadAllReq",
-      classId: 2592
+      classId: 2672
     },
     object: {
       kind: "struct",
@@ -45274,14 +45287,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2593,
+    schemaId: 2673,
     name: "AgentModesUnloadAllResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentModesUnloadAllResp",
       className: "AgentModesUnloadAllResp",
-      classId: 2593
+      classId: 2673
     },
     object: {
       kind: "struct",
@@ -45304,14 +45317,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2640,
+    schemaId: 2720,
     name: "AgentSchedulerBindReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentSchedulerBindReq",
       className: "AgentSchedulerBindReq",
-      classId: 2640
+      classId: 2720
     },
     object: {
       kind: "struct",
@@ -45339,14 +45352,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2641,
+    schemaId: 2721,
     name: "AgentSchedulerBindResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentSchedulerBindResp",
       className: "AgentSchedulerBindResp",
-      classId: 2641
+      classId: 2721
     },
     object: {
       kind: "struct",
@@ -45369,14 +45382,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2642,
+    schemaId: 2722,
     name: "AgentSchedulerUnbindReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentSchedulerUnbindReq",
       className: "AgentSchedulerUnbindReq",
-      classId: 2642
+      classId: 2722
     },
     object: {
       kind: "struct",
@@ -45395,14 +45408,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2643,
+    schemaId: 2723,
     name: "AgentSchedulerUnbindResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentSchedulerUnbindResp",
       className: "AgentSchedulerUnbindResp",
-      classId: 2643
+      classId: 2723
     },
     object: {
       kind: "struct",
@@ -45425,14 +45438,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2688,
+    schemaId: 2768,
     name: "AgentSkillUseReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentSkillUseReq",
       className: "AgentSkillUseReq",
-      classId: 2688
+      classId: 2768
     },
     object: {
       kind: "struct",
@@ -45478,14 +45491,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2689,
+    schemaId: 2769,
     name: "AgentSkillUseResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentSkillUseResp",
       className: "AgentSkillUseResp",
-      classId: 2689
+      classId: 2769
     },
     object: {
       kind: "struct",
@@ -45540,14 +45553,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2736,
+    schemaId: 2816,
     name: "AgentPauseReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentPauseReq",
       className: "AgentPauseReq",
-      classId: 2736
+      classId: 2816
     },
     object: {
       kind: "struct",
@@ -45584,14 +45597,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2737,
+    schemaId: 2817,
     name: "AgentPauseResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentPauseResp",
       className: "AgentPauseResp",
-      classId: 2737
+      classId: 2817
     },
     object: {
       kind: "struct",
@@ -45610,14 +45623,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2738,
+    schemaId: 2818,
     name: "AgentResumeReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentResumeReq",
       className: "AgentResumeReq",
-      classId: 2738
+      classId: 2818
     },
     object: {
       kind: "struct",
@@ -45654,14 +45667,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2739,
+    schemaId: 2819,
     name: "AgentResumeResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentResumeResp",
       className: "AgentResumeResp",
-      classId: 2739
+      classId: 2819
     },
     object: {
       kind: "struct",
@@ -45680,14 +45693,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2740,
+    schemaId: 2820,
     name: "AgentUnloadReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentUnloadReq",
       className: "AgentUnloadReq",
-      classId: 2740
+      classId: 2820
     },
     object: {
       kind: "struct",
@@ -45706,14 +45719,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2741,
+    schemaId: 2821,
     name: "AgentUnloadResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentUnloadResp",
       className: "AgentUnloadResp",
-      classId: 2741
+      classId: 2821
     },
     object: {
       kind: "struct",
@@ -45732,14 +45745,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2784,
+    schemaId: 2864,
     name: "WikiDispatchPlanReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiDispatchPlanReq",
       className: "WikiDispatchPlanReq",
-      classId: 2784
+      classId: 2864
     },
     object: {
       kind: "struct",
@@ -45775,14 +45788,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2785,
+    schemaId: 2865,
     name: "WikiDispatchPlanResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WikiDispatchPlanResp",
       className: "WikiDispatchPlanResp",
-      classId: 2785
+      classId: 2865
     },
     object: {
       kind: "struct",
@@ -45809,14 +45822,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2832,
+    schemaId: 2912,
     name: "AppManagerAgentActionReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerAgentActionReq",
       className: "AppManagerAgentActionReq",
-      classId: 2832
+      classId: 2912
     },
     object: {
       kind: "struct",
@@ -45915,14 +45928,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2833,
+    schemaId: 2913,
     name: "AppManagerAgentActionResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerAgentActionResp",
       className: "AppManagerAgentActionResp",
-      classId: 2833
+      classId: 2913
     },
     object: {
       kind: "struct",
@@ -45941,14 +45954,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2834,
+    schemaId: 2914,
     name: "AppManagerReloadReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerReloadReq",
       className: "AppManagerReloadReq",
-      classId: 2834
+      classId: 2914
     },
     object: {
       kind: "struct",
@@ -46118,14 +46131,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2835,
+    schemaId: 2915,
     name: "AppManagerReloadResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerReloadResp",
       className: "AppManagerReloadResp",
-      classId: 2835
+      classId: 2915
     },
     object: {
       kind: "struct",
@@ -46152,14 +46165,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2928,
+    schemaId: 3008,
     name: "AIStatsRecord",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsRecord",
       className: "AIStatsRecord",
-      classId: 2928
+      classId: 3008
     },
     object: {
       kind: "struct",
@@ -46357,14 +46370,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2929,
+    schemaId: 3009,
     name: "TurnRequestStat",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TurnRequestStat",
       className: "TurnRequestStat",
-      classId: 2929
+      classId: 3009
     },
     object: {
       kind: "struct",
@@ -46498,14 +46511,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2930,
+    schemaId: 3010,
     name: "AIStatsCostRate",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsCostRate",
       className: "AIStatsCostRate",
-      classId: 2930
+      classId: 3010
     },
     object: {
       kind: "struct",
@@ -46594,14 +46607,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2931,
+    schemaId: 3011,
     name: "AIStatsCostTier",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsCostTier",
       className: "AIStatsCostTier",
-      classId: 2931
+      classId: 3011
     },
     object: {
       kind: "struct",
@@ -46653,14 +46666,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2932,
+    schemaId: 3012,
     name: "AIStatsCounters",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsCounters",
       className: "AIStatsCounters",
-      classId: 2932
+      classId: 3012
     },
     object: {
       kind: "struct",
@@ -46783,14 +46796,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2936,
+    schemaId: 3016,
     name: "AIStatsProviderAggregate",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsProviderAggregate",
       className: "AIStatsProviderAggregate",
-      classId: 2936
+      classId: 3016
     },
     object: {
       kind: "struct",
@@ -46825,14 +46838,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2937,
+    schemaId: 3017,
     name: "AIStatsModelAggregate",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsModelAggregate",
       className: "AIStatsModelAggregate",
-      classId: 2937
+      classId: 3017
     },
     object: {
       kind: "struct",
@@ -46875,14 +46888,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2940,
+    schemaId: 3020,
     name: "AIStatsQueryReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsQueryReq",
       className: "AIStatsQueryReq",
-      classId: 2940
+      classId: 3020
     },
     object: {
       kind: "struct",
@@ -46963,14 +46976,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2941,
+    schemaId: 3021,
     name: "AIStatsQueryResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsQueryResp",
       className: "AIStatsQueryResp",
-      classId: 2941
+      classId: 3021
     },
     object: {
       kind: "struct",
@@ -47009,14 +47022,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2942,
+    schemaId: 3022,
     name: "AIStatsCostConfigureReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIStatsCostConfigureReq",
       className: "AIStatsCostConfigureReq",
-      classId: 2942
+      classId: 3022
     },
     object: {
       kind: "struct",
@@ -47035,14 +47048,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2943,
+    schemaId: 3023,
     name: "AIStatsCostConfigureResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIStatsCostConfigureResp",
       className: "AIStatsCostConfigureResp",
-      classId: 2943
+      classId: 3023
     },
     object: {
       kind: "struct",
@@ -47061,14 +47074,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2944,
+    schemaId: 3024,
     name: "AIStatsCostListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsCostListReq",
       className: "AIStatsCostListReq",
-      classId: 2944
+      classId: 3024
     },
     object: {
       kind: "struct",
@@ -47097,14 +47110,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2945,
+    schemaId: 3025,
     name: "AIStatsCostListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsCostListResp",
       className: "AIStatsCostListResp",
-      classId: 2945
+      classId: 3025
     },
     object: {
       kind: "struct",
@@ -47127,14 +47140,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2946,
+    schemaId: 3026,
     name: "AIStatsExportReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsExportReq",
       className: "AIStatsExportReq",
-      classId: 2946
+      classId: 3026
     },
     object: {
       kind: "struct",
@@ -47197,14 +47210,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2947,
+    schemaId: 3027,
     name: "AIStatsExportResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsExportResp",
       className: "AIStatsExportResp",
-      classId: 2947
+      classId: 3027
     },
     object: {
       kind: "struct",
@@ -47223,14 +47236,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2948,
+    schemaId: 3028,
     name: "AgentSessionStatsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentSessionStatsReq",
       className: "AgentSessionStatsReq",
-      classId: 2948
+      classId: 3028
     },
     object: {
       kind: "struct",
@@ -47268,14 +47281,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2949,
+    schemaId: 3029,
     name: "AgentSessionStatsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AgentSessionStatsResp",
       className: "AgentSessionStatsResp",
-      classId: 2949
+      classId: 3029
     },
     object: {
       kind: "struct",
@@ -47318,14 +47331,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2950,
+    schemaId: 3030,
     name: "AIStatsBackfillReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIStatsBackfillReq",
       className: "AIStatsBackfillReq",
-      classId: 2950
+      classId: 3030
     },
     object: {
       kind: "struct",
@@ -47371,14 +47384,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2951,
+    schemaId: 3031,
     name: "AIStatsBackfillResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIStatsBackfillResp",
       className: "AIStatsBackfillResp",
-      classId: 2951
+      classId: 3031
     },
     object: {
       kind: "struct",
@@ -47397,14 +47410,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2952,
+    schemaId: 3032,
     name: "AIStatsAggregatesReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsAggregatesReq",
       className: "AIStatsAggregatesReq",
-      classId: 2952
+      classId: 3032
     },
     object: {
       kind: "struct",
@@ -47424,14 +47437,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2953,
+    schemaId: 3033,
     name: "AIStatsAggregatesResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsAggregatesResp",
       className: "AIStatsAggregatesResp",
-      classId: 2953
+      classId: 3033
     },
     object: {
       kind: "struct",
@@ -47474,14 +47487,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2954,
+    schemaId: 3034,
     name: "AIStatsBucket",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsBucket",
       className: "AIStatsBucket",
-      classId: 2954
+      classId: 3034
     },
     object: {
       kind: "struct",
@@ -47639,14 +47652,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2955,
+    schemaId: 3035,
     name: "AIStatsModelStat",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsModelStat",
       className: "AIStatsModelStat",
-      classId: 2955
+      classId: 3035
     },
     object: {
       kind: "struct",
@@ -47785,14 +47798,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2956,
+    schemaId: 3036,
     name: "AIStatsSeriesReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsSeriesReq",
       className: "AIStatsSeriesReq",
-      classId: 2956
+      classId: 3036
     },
     object: {
       kind: "struct",
@@ -47863,14 +47876,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2957,
+    schemaId: 3037,
     name: "AIStatsSeriesResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIStatsSeriesResp",
       className: "AIStatsSeriesResp",
-      classId: 2957
+      classId: 3037
     },
     object: {
       kind: "struct",
@@ -47945,14 +47958,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2992,
+    schemaId: 3072,
     name: "AppManagerProjectPackageReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerProjectPackageReq",
       className: "AppManagerProjectPackageReq",
-      classId: 2992
+      classId: 3072
     },
     object: {
       kind: "struct",
@@ -48007,14 +48020,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 2993,
+    schemaId: 3073,
     name: "AppManagerProjectPackageResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerProjectPackageResp",
       className: "AppManagerProjectPackageResp",
-      classId: 2993
+      classId: 3073
     },
     object: {
       kind: "struct",
@@ -48102,14 +48115,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3040,
+    schemaId: 3120,
     name: "AppManagerRegisterProjectReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerRegisterProjectReq",
       className: "AppManagerRegisterProjectReq",
-      classId: 3040
+      classId: 3120
     },
     object: {
       kind: "struct",
@@ -48165,14 +48178,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3041,
+    schemaId: 3121,
     name: "AppManagerRegisterProjectResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerRegisterProjectResp",
       className: "AppManagerRegisterProjectResp",
-      classId: 3041
+      classId: 3121
     },
     object: {
       kind: "struct",
@@ -48204,14 +48217,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3042,
+    schemaId: 3122,
     name: "AppManagerReloadProjectReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerReloadProjectReq",
       className: "AppManagerReloadProjectReq",
-      classId: 3042
+      classId: 3122
     },
     object: {
       kind: "struct",
@@ -48293,14 +48306,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3043,
+    schemaId: 3123,
     name: "AppManagerReloadProjectResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerReloadProjectResp",
       className: "AppManagerReloadProjectResp",
-      classId: 3043
+      classId: 3123
     },
     object: {
       kind: "struct",
@@ -48327,14 +48340,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3089,
+    schemaId: 3169,
     name: "NativeBuildResult",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "NativeBuildResult",
       className: "NativeBuildResult",
-      classId: 3089
+      classId: 3169
     },
     object: {
       kind: "struct",
@@ -48377,14 +48390,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3090,
+    schemaId: 3170,
     name: "NativeBuildReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "NativeBuildReq",
       className: "NativeBuildReq",
-      classId: 3090
+      classId: 3170
     },
     object: {
       kind: "struct",
@@ -48492,14 +48505,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3091,
+    schemaId: 3171,
     name: "NativeBuildResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "NativeBuildResp",
       className: "NativeBuildResp",
-      classId: 3091
+      classId: 3171
     },
     object: {
       kind: "struct",
@@ -48534,14 +48547,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3092,
+    schemaId: 3172,
     name: "PluginArtifactLoadReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginArtifactLoadReq",
       className: "PluginArtifactLoadReq",
-      classId: 3092
+      classId: 3172
     },
     object: {
       kind: "struct",
@@ -48615,20 +48628,29 @@ export const schemaEntries: SchemaEntry[] = [
             typeId: 12
           },
           optional: true
+        },
+        {
+          name: "Dev",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          },
+          optional: true
         }
       ]
     }
   },
   {
     namespace: "system",
-    schemaId: 3093,
+    schemaId: 3173,
     name: "PluginArtifactLoadResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginArtifactLoadResp",
       className: "PluginArtifactLoadResp",
-      classId: 3093
+      classId: 3173
     },
     object: {
       kind: "struct",
@@ -48672,14 +48694,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3094,
+    schemaId: 3174,
     name: "PluginArtifactReloadPrepareReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginArtifactReloadPrepareReq",
       className: "PluginArtifactReloadPrepareReq",
-      classId: 3094
+      classId: 3174
     },
     object: {
       kind: "struct",
@@ -48777,14 +48799,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3095,
+    schemaId: 3175,
     name: "PluginArtifactReloadPrepareResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginArtifactReloadPrepareResp",
       className: "PluginArtifactReloadPrepareResp",
-      classId: 3095
+      classId: 3175
     },
     object: {
       kind: "struct",
@@ -48827,14 +48849,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3096,
+    schemaId: 3176,
     name: "PluginArtifactReloadCommitReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginArtifactReloadCommitReq",
       className: "PluginArtifactReloadCommitReq",
-      classId: 3096
+      classId: 3176
     },
     object: {
       kind: "struct",
@@ -48853,14 +48875,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3097,
+    schemaId: 3177,
     name: "PluginArtifactReloadCommitResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginArtifactReloadCommitResp",
       className: "PluginArtifactReloadCommitResp",
-      classId: 3097
+      classId: 3177
     },
     object: {
       kind: "struct",
@@ -48904,14 +48926,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3098,
+    schemaId: 3178,
     name: "PluginArtifactReloadAbortReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginArtifactReloadAbortReq",
       className: "PluginArtifactReloadAbortReq",
-      classId: 3098
+      classId: 3178
     },
     object: {
       kind: "struct",
@@ -48930,14 +48952,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3099,
+    schemaId: 3179,
     name: "PluginArtifactReloadAbortResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginArtifactReloadAbortResp",
       className: "PluginArtifactReloadAbortResp",
-      classId: 3099
+      classId: 3179
     },
     object: {
       kind: "struct",
@@ -48947,14 +48969,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3100,
+    schemaId: 3180,
     name: "PluginArtifactUnloadReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginArtifactUnloadReq",
       className: "PluginArtifactUnloadReq",
-      classId: 3100
+      classId: 3180
     },
     object: {
       kind: "struct",
@@ -48991,14 +49013,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3101,
+    schemaId: 3181,
     name: "PluginArtifactUnloadResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginArtifactUnloadResp",
       className: "PluginArtifactUnloadResp",
-      classId: 3101
+      classId: 3181
     },
     object: {
       kind: "struct",
@@ -49017,14 +49039,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3102,
+    schemaId: 3182,
     name: "PluginAssetsPutReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginAssetsPutReq",
       className: "PluginAssetsPutReq",
-      classId: 3102
+      classId: 3182
     },
     object: {
       kind: "struct",
@@ -49060,14 +49082,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3103,
+    schemaId: 3183,
     name: "PluginAssetsPutResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginAssetsPutResp",
       className: "PluginAssetsPutResp",
-      classId: 3103
+      classId: 3183
     },
     object: {
       kind: "struct",
@@ -49086,14 +49108,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3104,
+    schemaId: 3184,
     name: "PluginAssetsRemoveReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginAssetsRemoveReq",
       className: "PluginAssetsRemoveReq",
-      classId: 3104
+      classId: 3184
     },
     object: {
       kind: "struct",
@@ -49112,14 +49134,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3105,
+    schemaId: 3185,
     name: "PluginAssetsRemoveResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginAssetsRemoveResp",
       className: "PluginAssetsRemoveResp",
-      classId: 3105
+      classId: 3185
     },
     object: {
       kind: "struct",
@@ -49138,14 +49160,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3106,
+    schemaId: 3186,
     name: "PluginStateGetReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateGetReq",
       className: "PluginStateGetReq",
-      classId: 3106
+      classId: 3186
     },
     object: {
       kind: "struct",
@@ -49172,14 +49194,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3107,
+    schemaId: 3187,
     name: "PluginStateGetResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateGetResp",
       className: "PluginStateGetResp",
-      classId: 3107
+      classId: 3187
     },
     object: {
       kind: "struct",
@@ -49207,14 +49229,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3108,
+    schemaId: 3188,
     name: "PluginStateSetReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateSetReq",
       className: "PluginStateSetReq",
-      classId: 3108
+      classId: 3188
     },
     object: {
       kind: "struct",
@@ -49249,14 +49271,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3109,
+    schemaId: 3189,
     name: "PluginStateSetResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateSetResp",
       className: "PluginStateSetResp",
-      classId: 3109
+      classId: 3189
     },
     object: {
       kind: "struct",
@@ -49266,14 +49288,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3110,
+    schemaId: 3190,
     name: "PluginStateDeleteReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateDeleteReq",
       className: "PluginStateDeleteReq",
-      classId: 3110
+      classId: 3190
     },
     object: {
       kind: "struct",
@@ -49300,14 +49322,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3111,
+    schemaId: 3191,
     name: "PluginStateDeleteResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateDeleteResp",
       className: "PluginStateDeleteResp",
-      classId: 3111
+      classId: 3191
     },
     object: {
       kind: "struct",
@@ -49326,14 +49348,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3112,
+    schemaId: 3192,
     name: "PluginStateListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateListReq",
       className: "PluginStateListReq",
-      classId: 3112
+      classId: 3192
     },
     object: {
       kind: "struct",
@@ -49361,14 +49383,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3113,
+    schemaId: 3193,
     name: "PluginStateListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateListResp",
       className: "PluginStateListResp",
-      classId: 3113
+      classId: 3193
     },
     object: {
       kind: "struct",
@@ -49391,14 +49413,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3114,
+    schemaId: 3194,
     name: "PluginStateAppendReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateAppendReq",
       className: "PluginStateAppendReq",
-      classId: 3114
+      classId: 3194
     },
     object: {
       kind: "struct",
@@ -49433,14 +49455,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3115,
+    schemaId: 3195,
     name: "PluginStateAppendResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateAppendResp",
       className: "PluginStateAppendResp",
-      classId: 3115
+      classId: 3195
     },
     object: {
       kind: "struct",
@@ -49450,14 +49472,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3116,
+    schemaId: 3196,
     name: "PluginStateGetManyReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateGetManyReq",
       className: "PluginStateGetManyReq",
-      classId: 3116
+      classId: 3196
     },
     object: {
       kind: "struct",
@@ -49488,14 +49510,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3117,
+    schemaId: 3197,
     name: "PluginStateGetManyResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateGetManyResp",
       className: "PluginStateGetManyResp",
-      classId: 3117
+      classId: 3197
     },
     object: {
       kind: "struct",
@@ -49523,14 +49545,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3118,
+    schemaId: 3198,
     name: "PluginStateSetManyReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateSetManyReq",
       className: "PluginStateSetManyReq",
-      classId: 3118
+      classId: 3198
     },
     object: {
       kind: "struct",
@@ -49566,14 +49588,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3119,
+    schemaId: 3199,
     name: "PluginStateSetManyResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStateSetManyResp",
       className: "PluginStateSetManyResp",
-      classId: 3119
+      classId: 3199
     },
     object: {
       kind: "struct",
@@ -49583,14 +49605,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3120,
+    schemaId: 3200,
     name: "PluginStatePurgeReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStatePurgeReq",
       className: "PluginStatePurgeReq",
-      classId: 3120
+      classId: 3200
     },
     object: {
       kind: "struct",
@@ -49609,14 +49631,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3121,
+    schemaId: 3201,
     name: "PluginStatePurgeResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginStatePurgeResp",
       className: "PluginStatePurgeResp",
-      classId: 3121
+      classId: 3201
     },
     object: {
       kind: "struct",
@@ -49635,14 +49657,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3122,
+    schemaId: 3202,
     name: "PluginAppDataUsageItem",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginAppDataUsageItem",
       className: "PluginAppDataUsageItem",
-      classId: 3122
+      classId: 3202
     },
     object: {
       kind: "struct",
@@ -49694,14 +49716,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3123,
+    schemaId: 3203,
     name: "PluginAppDataUsageReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginAppDataUsageReq",
       className: "PluginAppDataUsageReq",
-      classId: 3123
+      classId: 3203
     },
     object: {
       kind: "struct",
@@ -49721,14 +49743,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3124,
+    schemaId: 3204,
     name: "PluginAppDataUsageResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginAppDataUsageResp",
       className: "PluginAppDataUsageResp",
-      classId: 3124
+      classId: 3204
     },
     object: {
       kind: "struct",
@@ -49767,14 +49789,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3168,
+    schemaId: 3248,
     name: "SshHostView",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SshHostView",
       className: "SshHostView",
-      classId: 3168
+      classId: 3248
     },
     object: {
       kind: "struct",
@@ -49857,14 +49879,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3216,
+    schemaId: 3296,
     name: "AppSessionCreateReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppSessionCreateReq",
       className: "AppSessionCreateReq",
-      classId: 3216
+      classId: 3296
     },
     object: {
       kind: "struct",
@@ -49900,14 +49922,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3217,
+    schemaId: 3297,
     name: "AppSessionCreateResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppSessionCreateResp",
       className: "AppSessionCreateResp",
-      classId: 3217
+      classId: 3297
     },
     object: {
       kind: "struct",
@@ -50018,14 +50040,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3218,
+    schemaId: 3298,
     name: "AppSessionResolveReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppSessionResolveReq",
       className: "AppSessionResolveReq",
-      classId: 3218
+      classId: 3298
     },
     object: {
       kind: "struct",
@@ -50044,14 +50066,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3219,
+    schemaId: 3299,
     name: "AppSessionResolveResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppSessionResolveResp",
       className: "AppSessionResolveResp",
-      classId: 3219
+      classId: 3299
     },
     object: {
       kind: "struct",
@@ -50136,14 +50158,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3220,
+    schemaId: 3300,
     name: "AppSessionRevokeReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppSessionRevokeReq",
       className: "AppSessionRevokeReq",
-      classId: 3220
+      classId: 3300
     },
     object: {
       kind: "struct",
@@ -50162,14 +50184,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3221,
+    schemaId: 3301,
     name: "AppSessionRevokeResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppSessionRevokeResp",
       className: "AppSessionRevokeResp",
-      classId: 3221
+      classId: 3301
     },
     object: {
       kind: "struct",
@@ -50179,14 +50201,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3222,
+    schemaId: 3302,
     name: "AppRouteTokenReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppRouteTokenReq",
       className: "AppRouteTokenReq",
-      classId: 3222
+      classId: 3302
     },
     object: {
       kind: "struct",
@@ -50248,14 +50270,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3223,
+    schemaId: 3303,
     name: "AppRouteTokenResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppRouteTokenResp",
       className: "AppRouteTokenResp",
-      classId: 3223
+      classId: 3303
     },
     object: {
       kind: "struct",
@@ -50282,14 +50304,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3312,
+    schemaId: 3392,
     name: "CardRef",
     visibility: "public",
     type: {
       kind: "struct",
       name: "CardRef",
       className: "CardRef",
-      classId: 3312
+      classId: 3392
     },
     object: {
       kind: "struct",
@@ -50353,14 +50375,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3360,
+    schemaId: 3440,
     name: "ProjectCardMountReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ProjectCardMountReq",
       className: "ProjectCardMountReq",
-      classId: 3360
+      classId: 3440
     },
     object: {
       kind: "struct",
@@ -50379,14 +50401,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3361,
+    schemaId: 3441,
     name: "ProjectCardMountResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ProjectCardMountResp",
       className: "ProjectCardMountResp",
-      classId: 3361
+      classId: 3441
     },
     object: {
       kind: "struct",
@@ -50405,14 +50427,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3362,
+    schemaId: 3442,
     name: "ProjectCardUnmountReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ProjectCardUnmountReq",
       className: "ProjectCardUnmountReq",
-      classId: 3362
+      classId: 3442
     },
     object: {
       kind: "struct",
@@ -50431,14 +50453,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3363,
+    schemaId: 3443,
     name: "ProjectCardUnmountResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ProjectCardUnmountResp",
       className: "ProjectCardUnmountResp",
-      classId: 3363
+      classId: 3443
     },
     object: {
       kind: "struct",
@@ -50457,14 +50479,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3364,
+    schemaId: 3444,
     name: "ProjectCardListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectCardListReq",
       className: "ProjectCardListReq",
-      classId: 3364
+      classId: 3444
     },
     object: {
       kind: "struct",
@@ -50474,14 +50496,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3365,
+    schemaId: 3445,
     name: "ProjectCardListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ProjectCardListResp",
       className: "ProjectCardListResp",
-      classId: 3365
+      classId: 3445
     },
     object: {
       kind: "struct",
@@ -50504,14 +50526,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3505,
+    schemaId: 3585,
     name: "WorkspaceAistatsActorIdResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAistatsActorIdResp",
       className: "WorkspaceAistatsActorIdResp",
-      classId: 3505
+      classId: 3585
     },
     object: {
       kind: "struct",
@@ -50539,14 +50561,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3552,
+    schemaId: 3632,
     name: "SlashCommand",
     visibility: "public",
     type: {
       kind: "struct",
       name: "SlashCommand",
       className: "SlashCommand",
-      classId: 3552
+      classId: 3632
     },
     object: {
       kind: "struct",
@@ -50573,14 +50595,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3554,
+    schemaId: 3634,
     name: "WorkspaceSlashCommandsListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceSlashCommandsListResp",
       className: "WorkspaceSlashCommandsListResp",
-      classId: 3554
+      classId: 3634
     },
     object: {
       kind: "struct",
@@ -50603,14 +50625,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3600,
+    schemaId: 3680,
     name: "BuiltinMode",
     visibility: "public",
     type: {
       kind: "struct",
       name: "BuiltinMode",
       className: "BuiltinMode",
-      classId: 3600
+      classId: 3680
     },
     object: {
       kind: "struct",
@@ -50653,14 +50675,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3602,
+    schemaId: 3682,
     name: "WorkspaceBuiltinModesListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceBuiltinModesListResp",
       className: "WorkspaceBuiltinModesListResp",
-      classId: 3602
+      classId: 3682
     },
     object: {
       kind: "struct",
@@ -50683,14 +50705,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3648,
+    schemaId: 3728,
     name: "MemorySaveReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MemorySaveReq",
       className: "MemorySaveReq",
-      classId: 3648
+      classId: 3728
     },
     object: {
       kind: "struct",
@@ -50718,14 +50740,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3649,
+    schemaId: 3729,
     name: "MemorySaveResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MemorySaveResp",
       className: "MemorySaveResp",
-      classId: 3649
+      classId: 3729
     },
     object: {
       kind: "struct",
@@ -50744,14 +50766,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3650,
+    schemaId: 3730,
     name: "MemoryRecallReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MemoryRecallReq",
       className: "MemoryRecallReq",
-      classId: 3650
+      classId: 3730
     },
     object: {
       kind: "struct",
@@ -50789,14 +50811,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3651,
+    schemaId: 3731,
     name: "MemoryRecallResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MemoryRecallResp",
       className: "MemoryRecallResp",
-      classId: 3651
+      classId: 3731
     },
     object: {
       kind: "struct",
@@ -50819,14 +50841,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3653,
+    schemaId: 3733,
     name: "MemorySnapshotReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MemorySnapshotReq",
       className: "MemorySnapshotReq",
-      classId: 3653
+      classId: 3733
     },
     object: {
       kind: "struct",
@@ -50836,14 +50858,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3654,
+    schemaId: 3734,
     name: "MemorySnapshotResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MemorySnapshotResp",
       className: "MemorySnapshotResp",
-      classId: 3654
+      classId: 3734
     },
     object: {
       kind: "struct",
@@ -50894,14 +50916,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3655,
+    schemaId: 3735,
     name: "MemoryNode",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MemoryNode",
       className: "MemoryNode",
-      classId: 3655
+      classId: 3735
     },
     object: {
       kind: "struct",
@@ -51000,14 +51022,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3656,
+    schemaId: 3736,
     name: "MemoryEdge",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MemoryEdge",
       className: "MemoryEdge",
-      classId: 3656
+      classId: 3736
     },
     object: {
       kind: "struct",
@@ -51042,14 +51064,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3696,
+    schemaId: 3776,
     name: "GuideStep",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuideStep",
       className: "GuideStep",
-      classId: 3696
+      classId: 3776
     },
     object: {
       kind: "struct",
@@ -51129,14 +51151,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3697,
+    schemaId: 3777,
     name: "TutorialSpec",
     visibility: "public",
     type: {
       kind: "struct",
       name: "TutorialSpec",
       className: "TutorialSpec",
-      classId: 3697
+      classId: 3777
     },
     object: {
       kind: "struct",
@@ -51192,14 +51214,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3698,
+    schemaId: 3778,
     name: "UiInteractionRecord",
     visibility: "public",
     type: {
       kind: "struct",
       name: "UiInteractionRecord",
       className: "UiInteractionRecord",
-      classId: 3698
+      classId: 3778
     },
     object: {
       kind: "struct",
@@ -51269,14 +51291,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3699,
+    schemaId: 3779,
     name: "InterfaceManagerControlReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InterfaceManagerControlReq",
       className: "InterfaceManagerControlReq",
-      classId: 3699
+      classId: 3779
     },
     object: {
       kind: "struct",
@@ -51419,20 +51441,108 @@ export const schemaEntries: SchemaEntry[] = [
             typeId: 2
           },
           optional: true
+        },
+        {
+          name: "PanelOp",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "PanelOpSpec"
+          },
+          optional: true
         }
       ]
     }
   },
   {
     namespace: "system",
-    schemaId: 3700,
+    schemaId: 3780,
+    name: "PanelOpSpec",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "PanelOpSpec",
+      className: "PanelOpSpec",
+      classId: 3780
+    },
+    object: {
+      kind: "struct",
+      name: "PanelOpSpec",
+      fields: [
+        {
+          name: "RequestId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Op",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Selector",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Text",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Expr",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "TimeoutMs",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          },
+          optional: true
+        },
+        {
+          name: "MaxChars",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 3781,
     name: "InterfaceManagerControlResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InterfaceManagerControlResp",
       className: "InterfaceManagerControlResp",
-      classId: 3700
+      classId: 3781
     },
     object: {
       kind: "struct",
@@ -51495,14 +51605,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3701,
+    schemaId: 3782,
     name: "InterfaceManagerEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "InterfaceManagerEvent",
       className: "InterfaceManagerEvent",
-      classId: 3701
+      classId: 3782
     },
     object: {
       kind: "struct",
@@ -51636,20 +51746,29 @@ export const schemaEntries: SchemaEntry[] = [
             typeId: 12
           },
           optional: true
+        },
+        {
+          name: "PanelOp",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "PanelOpSpec"
+          },
+          optional: true
         }
       ]
     }
   },
   {
     namespace: "system",
-    schemaId: 3702,
+    schemaId: 3783,
     name: "ReportInteractionReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ReportInteractionReq",
       className: "ReportInteractionReq",
-      classId: 3702
+      classId: 3783
     },
     object: {
       kind: "struct",
@@ -51703,14 +51822,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3703,
+    schemaId: 3784,
     name: "ReportInteractionResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ReportInteractionResp",
       className: "ReportInteractionResp",
-      classId: 3703
+      classId: 3784
     },
     object: {
       kind: "struct",
@@ -51729,14 +51848,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3704,
+    schemaId: 3785,
     name: "QueryInteractionsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "QueryInteractionsReq",
       className: "QueryInteractionsReq",
-      classId: 3704
+      classId: 3785
     },
     object: {
       kind: "struct",
@@ -51783,14 +51902,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3705,
+    schemaId: 3786,
     name: "QueryInteractionsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "QueryInteractionsResp",
       className: "QueryInteractionsResp",
-      classId: 3705
+      classId: 3786
     },
     object: {
       kind: "struct",
@@ -51813,14 +51932,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3706,
+    schemaId: 3787,
     name: "GuideAnchor",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuideAnchor",
       className: "GuideAnchor",
-      classId: 3706
+      classId: 3787
     },
     object: {
       kind: "struct",
@@ -51873,14 +51992,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3744,
+    schemaId: 3824,
     name: "VoiceHotwordsBinding",
     visibility: "public",
     type: {
       kind: "struct",
       name: "VoiceHotwordsBinding",
       className: "VoiceHotwordsBinding",
-      classId: 3744
+      classId: 3824
     },
     object: {
       kind: "struct",
@@ -51919,14 +52038,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3745,
+    schemaId: 3825,
     name: "VoiceHotwordsSetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "VoiceHotwordsSetReq",
       className: "VoiceHotwordsSetReq",
-      classId: 3745
+      classId: 3825
     },
     object: {
       kind: "struct",
@@ -51965,14 +52084,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3746,
+    schemaId: 3826,
     name: "VoiceHotwordsSetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "VoiceHotwordsSetResp",
       className: "VoiceHotwordsSetResp",
-      classId: 3746
+      classId: 3826
     },
     object: {
       kind: "struct",
@@ -51991,14 +52110,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3747,
+    schemaId: 3827,
     name: "VoiceHotwordsGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "VoiceHotwordsGetReq",
       className: "VoiceHotwordsGetReq",
-      classId: 3747
+      classId: 3827
     },
     object: {
       kind: "struct",
@@ -52025,14 +52144,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3748,
+    schemaId: 3828,
     name: "VoiceHotwordsGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "VoiceHotwordsGetResp",
       className: "VoiceHotwordsGetResp",
-      classId: 3748
+      classId: 3828
     },
     object: {
       kind: "struct",
@@ -52051,14 +52170,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3749,
+    schemaId: 3829,
     name: "VoiceHotwordsDeleteReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "VoiceHotwordsDeleteReq",
       className: "VoiceHotwordsDeleteReq",
-      classId: 3749
+      classId: 3829
     },
     object: {
       kind: "struct",
@@ -52085,14 +52204,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3750,
+    schemaId: 3830,
     name: "VoiceHotwordsDeleteResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "VoiceHotwordsDeleteResp",
       className: "VoiceHotwordsDeleteResp",
-      classId: 3750
+      classId: 3830
     },
     object: {
       kind: "struct",
@@ -52102,14 +52221,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3792,
+    schemaId: 3872,
     name: "WorkspaceAgentSpawnAssignReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentSpawnAssignReq",
       className: "WorkspaceAgentSpawnAssignReq",
-      classId: 3792
+      classId: 3872
     },
     object: {
       kind: "struct",
@@ -52209,14 +52328,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3793,
+    schemaId: 3873,
     name: "WorkspaceAgentSpawnAssignResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentSpawnAssignResp",
       className: "WorkspaceAgentSpawnAssignResp",
-      classId: 3793
+      classId: 3873
     },
     object: {
       kind: "struct",
@@ -52251,14 +52370,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3794,
+    schemaId: 3874,
     name: "WorkspaceAgentAssignReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentAssignReq",
       className: "WorkspaceAgentAssignReq",
-      classId: 3794
+      classId: 3874
     },
     object: {
       kind: "struct",
@@ -52321,14 +52440,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3795,
+    schemaId: 3875,
     name: "WorkspaceAgentAssignResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentAssignResp",
       className: "WorkspaceAgentAssignResp",
-      classId: 3795
+      classId: 3875
     },
     object: {
       kind: "struct",
@@ -52347,14 +52466,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3796,
+    schemaId: 3876,
     name: "WorkspaceAgentReviewReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentReviewReq",
       className: "WorkspaceAgentReviewReq",
-      classId: 3796
+      classId: 3876
     },
     object: {
       kind: "struct",
@@ -52408,14 +52527,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3797,
+    schemaId: 3877,
     name: "WorkspaceAgentReviewResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentReviewResp",
       className: "WorkspaceAgentReviewResp",
-      classId: 3797
+      classId: 3877
     },
     object: {
       kind: "struct",
@@ -52451,14 +52570,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3798,
+    schemaId: 3878,
     name: "WorkspaceAgentTerminateReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentTerminateReq",
       className: "WorkspaceAgentTerminateReq",
-      classId: 3798
+      classId: 3878
     },
     object: {
       kind: "struct",
@@ -52495,14 +52614,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3799,
+    schemaId: 3879,
     name: "WorkspaceAgentTerminateResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentTerminateResp",
       className: "WorkspaceAgentTerminateResp",
-      classId: 3799
+      classId: 3879
     },
     object: {
       kind: "struct",
@@ -52521,14 +52640,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3800,
+    schemaId: 3880,
     name: "WorkspaceAgentSpawnByTypeReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentSpawnByTypeReq",
       className: "WorkspaceAgentSpawnByTypeReq",
-      classId: 3800
+      classId: 3880
     },
     object: {
       kind: "struct",
@@ -52648,14 +52767,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3801,
+    schemaId: 3881,
     name: "WorkspaceAgentSpawnByTypeResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentSpawnByTypeResp",
       className: "WorkspaceAgentSpawnByTypeResp",
-      classId: 3801
+      classId: 3881
     },
     object: {
       kind: "struct",
@@ -52682,14 +52801,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3802,
+    schemaId: 3882,
     name: "WorkspaceWorkflowStartReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceWorkflowStartReq",
       className: "WorkspaceWorkflowStartReq",
-      classId: 3802
+      classId: 3882
     },
     object: {
       kind: "struct",
@@ -52734,14 +52853,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3803,
+    schemaId: 3883,
     name: "WorkspaceWorkflowStartResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceWorkflowStartResp",
       className: "WorkspaceWorkflowStartResp",
-      classId: 3803
+      classId: 3883
     },
     object: {
       kind: "struct",
@@ -52760,14 +52879,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3804,
+    schemaId: 3884,
     name: "WorkspaceGateApproveReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGateApproveReq",
       className: "WorkspaceGateApproveReq",
-      classId: 3804
+      classId: 3884
     },
     object: {
       kind: "struct",
@@ -52838,14 +52957,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3805,
+    schemaId: 3885,
     name: "WorkspaceGateApproveResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGateApproveResp",
       className: "WorkspaceGateApproveResp",
-      classId: 3805
+      classId: 3885
     },
     object: {
       kind: "struct",
@@ -52872,14 +52991,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3806,
+    schemaId: 3886,
     name: "WorkspaceGateRejectReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGateRejectReq",
       className: "WorkspaceGateRejectReq",
-      classId: 3806
+      classId: 3886
     },
     object: {
       kind: "struct",
@@ -52932,14 +53051,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3807,
+    schemaId: 3887,
     name: "WorkspaceGateRejectResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceGateRejectResp",
       className: "WorkspaceGateRejectResp",
-      classId: 3807
+      classId: 3887
     },
     object: {
       kind: "struct",
@@ -52966,14 +53085,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3840,
+    schemaId: 3920,
     name: "PluginDomReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginDomReq",
       className: "PluginDomReq",
-      classId: 3840
+      classId: 3920
     },
     object: {
       kind: "struct",
@@ -52992,14 +53111,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3841,
+    schemaId: 3921,
     name: "PluginDomResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginDomResp",
       className: "PluginDomResp",
-      classId: 3841
+      classId: 3921
     },
     object: {
       kind: "struct",
@@ -53053,14 +53172,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3842,
+    schemaId: 3922,
     name: "PluginDomPutReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginDomPutReq",
       className: "PluginDomPutReq",
-      classId: 3842
+      classId: 3922
     },
     object: {
       kind: "struct",
@@ -53095,14 +53214,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3843,
+    schemaId: 3923,
     name: "PluginDomPutResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PluginDomPutResp",
       className: "PluginDomPutResp",
-      classId: 3843
+      classId: 3923
     },
     object: {
       kind: "struct",
@@ -53112,14 +53231,238 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3888,
+    schemaId: 3968,
+    name: "PluginPanelOpReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "PluginPanelOpReq",
+      className: "PluginPanelOpReq",
+      classId: 3968
+    },
+    object: {
+      kind: "struct",
+      name: "PluginPanelOpReq",
+      fields: [
+        {
+          name: "PluginId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Op",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Selector",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Text",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Expr",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "TimeoutMs",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          },
+          optional: true
+        },
+        {
+          name: "MaxChars",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 3969,
+    name: "PluginPanelOpResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "PluginPanelOpResp",
+      className: "PluginPanelOpResp",
+      classId: 3969
+    },
+    object: {
+      kind: "struct",
+      name: "PluginPanelOpResp",
+      fields: [
+        {
+          name: "PluginId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "RequestId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Ok",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "Result",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Reason",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 3970,
+    name: "PluginPanelOpPutReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "PluginPanelOpPutReq",
+      className: "PluginPanelOpPutReq",
+      classId: 3970
+    },
+    object: {
+      kind: "struct",
+      name: "PluginPanelOpPutReq",
+      fields: [
+        {
+          name: "PluginId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "RequestId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Ok",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "Result",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Reason",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Ts",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 3971,
+    name: "PluginPanelOpPutResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "PluginPanelOpPutResp",
+      className: "PluginPanelOpPutResp",
+      classId: 3971
+    },
+    object: {
+      kind: "struct",
+      name: "PluginPanelOpPutResp",
+      fields: []
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 4016,
     name: "GlassCapability",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassCapability",
       className: "GlassCapability",
-      classId: 3888
+      classId: 4016
     },
     object: {
       kind: "struct",
@@ -53160,14 +53503,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3889,
+    schemaId: 4017,
     name: "GlassRenderFrame",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassRenderFrame",
       className: "GlassRenderFrame",
-      classId: 3889
+      classId: 4017
     },
     object: {
       kind: "struct",
@@ -53223,14 +53566,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3890,
+    schemaId: 4018,
     name: "GlassBootstrapReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassBootstrapReq",
       className: "GlassBootstrapReq",
-      classId: 3890
+      classId: 4018
     },
     object: {
       kind: "struct",
@@ -53290,14 +53633,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3891,
+    schemaId: 4019,
     name: "GlassBootstrapResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassBootstrapResp",
       className: "GlassBootstrapResp",
-      classId: 3891
+      classId: 4019
     },
     object: {
       kind: "struct",
@@ -53356,14 +53699,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3892,
+    schemaId: 4020,
     name: "GlassSessionClaimReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSessionClaimReq",
       className: "GlassSessionClaimReq",
-      classId: 3892
+      classId: 4020
     },
     object: {
       kind: "struct",
@@ -53403,14 +53746,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3893,
+    schemaId: 4021,
     name: "GlassSessionClaimResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSessionClaimResp",
       className: "GlassSessionClaimResp",
-      classId: 3893
+      classId: 4021
     },
     object: {
       kind: "struct",
@@ -53478,14 +53821,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3894,
+    schemaId: 4022,
     name: "GlassLifecycleEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassLifecycleEvent",
       className: "GlassLifecycleEvent",
-      classId: 3894
+      classId: 4022
     },
     object: {
       kind: "struct",
@@ -53546,14 +53889,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3895,
+    schemaId: 4023,
     name: "GlassSessionState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSessionState",
       className: "GlassSessionState",
-      classId: 3895
+      classId: 4023
     },
     object: {
       kind: "struct",
@@ -53635,14 +53978,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3896,
+    schemaId: 4024,
     name: "GlassGetStateReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassGetStateReq",
       className: "GlassGetStateReq",
-      classId: 3896
+      classId: 4024
     },
     object: {
       kind: "struct",
@@ -53652,14 +53995,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3897,
+    schemaId: 4025,
     name: "GlassGetStateResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassGetStateResp",
       className: "GlassGetStateResp",
-      classId: 3897
+      classId: 4025
     },
     object: {
       kind: "struct",
@@ -53687,14 +54030,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3898,
+    schemaId: 4026,
     name: "GlassSpeechStartReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSpeechStartReq",
       className: "GlassSpeechStartReq",
-      classId: 3898
+      classId: 4026
     },
     object: {
       kind: "struct",
@@ -53756,14 +54099,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3899,
+    schemaId: 4027,
     name: "GlassSpeechChunkReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSpeechChunkReq",
       className: "GlassSpeechChunkReq",
-      classId: 3899
+      classId: 4027
     },
     object: {
       kind: "struct",
@@ -53814,14 +54157,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3900,
+    schemaId: 4028,
     name: "GlassSpeechEndReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSpeechEndReq",
       className: "GlassSpeechEndReq",
-      classId: 3900
+      classId: 4028
     },
     object: {
       kind: "struct",
@@ -53856,14 +54199,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3901,
+    schemaId: 4029,
     name: "GlassSpeechAck",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSpeechAck",
       className: "GlassSpeechAck",
-      classId: 3901
+      classId: 4029
     },
     object: {
       kind: "struct",
@@ -53925,14 +54268,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3902,
+    schemaId: 4030,
     name: "GlassSpeechStartResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSpeechStartResp",
       className: "GlassSpeechStartResp",
-      classId: 3902
+      classId: 4030
     },
     object: {
       kind: "struct",
@@ -53967,14 +54310,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3903,
+    schemaId: 4031,
     name: "GlassSpeechEndResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSpeechEndResp",
       className: "GlassSpeechEndResp",
-      classId: 3903
+      classId: 4031
     },
     object: {
       kind: "struct",
@@ -54009,14 +54352,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3904,
+    schemaId: 4032,
     name: "GlassTranscript",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassTranscript",
       className: "GlassTranscript",
-      classId: 3904
+      classId: 4032
     },
     object: {
       kind: "struct",
@@ -54084,14 +54427,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3905,
+    schemaId: 4033,
     name: "GlassTranscriptEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassTranscriptEvent",
       className: "GlassTranscriptEvent",
-      classId: 3905
+      classId: 4033
     },
     object: {
       kind: "struct",
@@ -54110,14 +54453,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3910,
+    schemaId: 4038,
     name: "GlassRenderEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassRenderEvent",
       className: "GlassRenderEvent",
-      classId: 3910
+      classId: 4038
     },
     object: {
       kind: "struct",
@@ -54161,14 +54504,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3913,
+    schemaId: 4041,
     name: "GlassSpeakEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSpeakEvent",
       className: "GlassSpeakEvent",
-      classId: 3913
+      classId: 4041
     },
     object: {
       kind: "struct",
@@ -54228,14 +54571,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3917,
+    schemaId: 4045,
     name: "GlassDebugTimelineEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassDebugTimelineEntry",
       className: "GlassDebugTimelineEntry",
-      classId: 3917
+      classId: 4045
     },
     object: {
       kind: "struct",
@@ -54272,14 +54615,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3918,
+    schemaId: 4046,
     name: "GlassDebugStats",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassDebugStats",
       className: "GlassDebugStats",
-      classId: 3918
+      classId: 4046
     },
     object: {
       kind: "struct",
@@ -54338,14 +54681,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3919,
+    schemaId: 4047,
     name: "GlassDebugState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassDebugState",
       className: "GlassDebugState",
-      classId: 3919
+      classId: 4047
     },
     object: {
       kind: "struct",
@@ -54445,14 +54788,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3920,
+    schemaId: 4048,
     name: "GlassDebugReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassDebugReq",
       className: "GlassDebugReq",
-      classId: 3920
+      classId: 4048
     },
     object: {
       kind: "struct",
@@ -54462,14 +54805,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3921,
+    schemaId: 4049,
     name: "GlassDebugResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassDebugResp",
       className: "GlassDebugResp",
-      classId: 3921
+      classId: 4049
     },
     object: {
       kind: "struct",
@@ -54488,14 +54831,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3922,
+    schemaId: 4050,
     name: "GlassEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassEvent",
       className: "GlassEvent",
-      classId: 3922
+      classId: 4050
     },
     object: {
       kind: "struct",
@@ -54624,14 +54967,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3930,
+    schemaId: 4058,
     name: "GlassInboxSnapshot",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassInboxSnapshot",
       className: "GlassInboxSnapshot",
-      classId: 3930
+      classId: 4058
     },
     object: {
       kind: "struct",
@@ -54702,14 +55045,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3933,
+    schemaId: 4061,
     name: "GlassEventEnqueuedEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassEventEnqueuedEvent",
       className: "GlassEventEnqueuedEvent",
-      classId: 3933
+      classId: 4061
     },
     object: {
       kind: "struct",
@@ -54728,14 +55071,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3934,
+    schemaId: 4062,
     name: "GlassEventDeliveredEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassEventDeliveredEvent",
       className: "GlassEventDeliveredEvent",
-      classId: 3934
+      classId: 4062
     },
     object: {
       kind: "struct",
@@ -54754,14 +55097,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3935,
+    schemaId: 4063,
     name: "GlassEventCompletedEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassEventCompletedEvent",
       className: "GlassEventCompletedEvent",
-      classId: 3935
+      classId: 4063
     },
     object: {
       kind: "struct",
@@ -54780,14 +55123,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3936,
+    schemaId: 4064,
     name: "GlassDeliveryLogEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassDeliveryLogEntry",
       className: "GlassDeliveryLogEntry",
-      classId: 3936
+      classId: 4064
     },
     object: {
       kind: "struct",
@@ -54832,14 +55175,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 3937,
+    schemaId: 4065,
     name: "GlassHudStatus",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassHudStatus",
       className: "GlassHudStatus",
-      classId: 3937
+      classId: 4065
     },
     object: {
       kind: "struct",
@@ -54920,14 +55263,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4032,
+    schemaId: 4160,
     name: "GlassSceneBox",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSceneBox",
       className: "GlassSceneBox",
-      classId: 4032
+      classId: 4160
     },
     object: {
       kind: "struct",
@@ -54970,14 +55313,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4033,
+    schemaId: 4161,
     name: "GlassSceneOption",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSceneOption",
       className: "GlassSceneOption",
-      classId: 4033
+      classId: 4161
     },
     object: {
       kind: "struct",
@@ -55004,14 +55347,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4034,
+    schemaId: 4162,
     name: "GlassSceneElement",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassSceneElement",
       className: "GlassSceneElement",
-      classId: 4034
+      classId: 4162
     },
     object: {
       kind: "struct",
@@ -55158,14 +55501,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4035,
+    schemaId: 4163,
     name: "GlassScene",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassScene",
       className: "GlassScene",
-      classId: 4035
+      classId: 4163
     },
     object: {
       kind: "struct",
@@ -55205,14 +55548,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4036,
+    schemaId: 4164,
     name: "GlassInteractionEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassInteractionEvent",
       className: "GlassInteractionEvent",
-      classId: 4036
+      classId: 4164
     },
     object: {
       kind: "struct",
@@ -55281,14 +55624,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4037,
+    schemaId: 4165,
     name: "GlassInteractionReportReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassInteractionReportReq",
       className: "GlassInteractionReportReq",
-      classId: 4037
+      classId: 4165
     },
     object: {
       kind: "struct",
@@ -55348,14 +55691,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4038,
+    schemaId: 4166,
     name: "GlassInteractionReportResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassInteractionReportResp",
       className: "GlassInteractionReportResp",
-      classId: 4038
+      classId: 4166
     },
     object: {
       kind: "struct",
@@ -55390,14 +55733,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4080,
+    schemaId: 4208,
     name: "GlassTelemetryReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassTelemetryReq",
       className: "GlassTelemetryReq",
-      classId: 4080
+      classId: 4208
     },
     object: {
       kind: "struct",
@@ -55442,14 +55785,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4081,
+    schemaId: 4209,
     name: "GlassTelemetryResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassTelemetryResp",
       className: "GlassTelemetryResp",
-      classId: 4081
+      classId: 4209
     },
     object: {
       kind: "struct",
@@ -55468,14 +55811,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4128,
+    schemaId: 4256,
     name: "GlassDebugSimulateReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassDebugSimulateReq",
       className: "GlassDebugSimulateReq",
-      classId: 4128
+      classId: 4256
     },
     object: {
       kind: "struct",
@@ -55579,14 +55922,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4129,
+    schemaId: 4257,
     name: "GlassDebugSimulateResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GlassDebugSimulateResp",
       className: "GlassDebugSimulateResp",
-      classId: 4129
+      classId: 4257
     },
     object: {
       kind: "struct",
@@ -55614,14 +55957,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4176,
+    schemaId: 4304,
     name: "McpStdioTransport",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpStdioTransport",
       className: "McpStdioTransport",
-      classId: 4176
+      classId: 4304
     },
     object: {
       kind: "struct",
@@ -55669,14 +56012,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4177,
+    schemaId: 4305,
     name: "McpHttpTransport",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpHttpTransport",
       className: "McpHttpTransport",
-      classId: 4177
+      classId: 4305
     },
     object: {
       kind: "struct",
@@ -55721,14 +56064,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4178,
+    schemaId: 4306,
     name: "McpServerConfig",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpServerConfig",
       className: "McpServerConfig",
-      classId: 4178
+      classId: 4306
     },
     object: {
       kind: "struct",
@@ -55789,14 +56132,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4179,
+    schemaId: 4307,
     name: "McpServerStatus",
     visibility: "public",
     type: {
       kind: "struct",
       name: "McpServerStatus",
       className: "McpServerStatus",
-      classId: 4179
+      classId: 4307
     },
     object: {
       kind: "struct",
@@ -55840,14 +56183,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4180,
+    schemaId: 4308,
     name: "McpEnvVarEntry",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpEnvVarEntry",
       className: "McpEnvVarEntry",
-      classId: 4180
+      classId: 4308
     },
     object: {
       kind: "struct",
@@ -55874,14 +56217,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4181,
+    schemaId: 4309,
     name: "McpStdioTransportView",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpStdioTransportView",
       className: "McpStdioTransportView",
-      classId: 4181
+      classId: 4309
     },
     object: {
       kind: "struct",
@@ -55924,14 +56267,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4182,
+    schemaId: 4310,
     name: "McpHttpTransportView",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpHttpTransportView",
       className: "McpHttpTransportView",
-      classId: 4182
+      classId: 4310
     },
     object: {
       kind: "struct",
@@ -55971,14 +56314,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4183,
+    schemaId: 4311,
     name: "McpServerView",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpServerView",
       className: "McpServerView",
-      classId: 4183
+      classId: 4311
     },
     object: {
       kind: "struct",
@@ -56047,14 +56390,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4185,
+    schemaId: 4313,
     name: "McpListServersResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpListServersResp",
       className: "McpListServersResp",
-      classId: 4185
+      classId: 4313
     },
     object: {
       kind: "struct",
@@ -56077,14 +56420,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4186,
+    schemaId: 4314,
     name: "McpAddServerReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpAddServerReq",
       className: "McpAddServerReq",
-      classId: 4186
+      classId: 4314
     },
     object: {
       kind: "struct",
@@ -56103,14 +56446,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4187,
+    schemaId: 4315,
     name: "McpAddServerResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpAddServerResp",
       className: "McpAddServerResp",
-      classId: 4187
+      classId: 4315
     },
     object: {
       kind: "struct",
@@ -56129,14 +56472,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4188,
+    schemaId: 4316,
     name: "McpUpdateServerReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpUpdateServerReq",
       className: "McpUpdateServerReq",
-      classId: 4188
+      classId: 4316
     },
     object: {
       kind: "struct",
@@ -56163,14 +56506,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4189,
+    schemaId: 4317,
     name: "McpUpdateServerResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpUpdateServerResp",
       className: "McpUpdateServerResp",
-      classId: 4189
+      classId: 4317
     },
     object: {
       kind: "struct",
@@ -56189,14 +56532,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4190,
+    schemaId: 4318,
     name: "McpRemoveServerReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpRemoveServerReq",
       className: "McpRemoveServerReq",
-      classId: 4190
+      classId: 4318
     },
     object: {
       kind: "struct",
@@ -56215,14 +56558,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4191,
+    schemaId: 4319,
     name: "McpRemoveServerResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpRemoveServerResp",
       className: "McpRemoveServerResp",
-      classId: 4191
+      classId: 4319
     },
     object: {
       kind: "struct",
@@ -56232,14 +56575,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4192,
+    schemaId: 4320,
     name: "McpConnectReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpConnectReq",
       className: "McpConnectReq",
-      classId: 4192
+      classId: 4320
     },
     object: {
       kind: "struct",
@@ -56258,14 +56601,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4193,
+    schemaId: 4321,
     name: "McpConnectResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpConnectResp",
       className: "McpConnectResp",
-      classId: 4193
+      classId: 4321
     },
     object: {
       kind: "struct",
@@ -56284,14 +56627,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4194,
+    schemaId: 4322,
     name: "McpDisconnectReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpDisconnectReq",
       className: "McpDisconnectReq",
-      classId: 4194
+      classId: 4322
     },
     object: {
       kind: "struct",
@@ -56310,14 +56653,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4195,
+    schemaId: 4323,
     name: "McpDisconnectResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpDisconnectResp",
       className: "McpDisconnectResp",
-      classId: 4195
+      classId: 4323
     },
     object: {
       kind: "struct",
@@ -56336,14 +56679,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4196,
+    schemaId: 4324,
     name: "McpReconnectReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpReconnectReq",
       className: "McpReconnectReq",
-      classId: 4196
+      classId: 4324
     },
     object: {
       kind: "struct",
@@ -56362,14 +56705,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4197,
+    schemaId: 4325,
     name: "McpReconnectResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpReconnectResp",
       className: "McpReconnectResp",
-      classId: 4197
+      classId: 4325
     },
     object: {
       kind: "struct",
@@ -56388,14 +56731,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4198,
+    schemaId: 4326,
     name: "McpToolContent",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpToolContent",
       className: "McpToolContent",
-      classId: 4198
+      classId: 4326
     },
     object: {
       kind: "struct",
@@ -56440,14 +56783,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4199,
+    schemaId: 4327,
     name: "McpCallToolReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpCallToolReq",
       className: "McpCallToolReq",
-      classId: 4199
+      classId: 4327
     },
     object: {
       kind: "struct",
@@ -56491,14 +56834,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4200,
+    schemaId: 4328,
     name: "McpCallToolResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpCallToolResp",
       className: "McpCallToolResp",
-      classId: 4200
+      classId: 4328
     },
     object: {
       kind: "struct",
@@ -56539,14 +56882,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4201,
+    schemaId: 4329,
     name: "McpServerStatusEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "McpServerStatusEvent",
       className: "McpServerStatusEvent",
-      classId: 4201
+      classId: 4329
     },
     object: {
       kind: "struct",
@@ -56565,14 +56908,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4202,
+    schemaId: 4330,
     name: "McpToolView",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpToolView",
       className: "McpToolView",
-      classId: 4202
+      classId: 4330
     },
     object: {
       kind: "struct",
@@ -56607,14 +56950,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4203,
+    schemaId: 4331,
     name: "McpServerTools",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpServerTools",
       className: "McpServerTools",
-      classId: 4203
+      classId: 4331
     },
     object: {
       kind: "struct",
@@ -56653,14 +56996,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4205,
+    schemaId: 4333,
     name: "McpDiscoverToolsResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "McpDiscoverToolsResp",
       className: "McpDiscoverToolsResp",
-      classId: 4205
+      classId: 4333
     },
     object: {
       kind: "struct",
@@ -56683,14 +57026,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4240,
+    schemaId: 4368,
     name: "BrowserCrawlStartReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "BrowserCrawlStartReq",
       className: "BrowserCrawlStartReq",
-      classId: 4240
+      classId: 4368
     },
     object: {
       kind: "struct",
@@ -56737,14 +57080,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4241,
+    schemaId: 4369,
     name: "BrowserCrawlStartResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "BrowserCrawlStartResp",
       className: "BrowserCrawlStartResp",
-      classId: 4241
+      classId: 4369
     },
     object: {
       kind: "struct",
@@ -56763,14 +57106,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4242,
+    schemaId: 4370,
     name: "BrowserCrawlStatusReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "BrowserCrawlStatusReq",
       className: "BrowserCrawlStatusReq",
-      classId: 4242
+      classId: 4370
     },
     object: {
       kind: "struct",
@@ -56789,14 +57132,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4243,
+    schemaId: 4371,
     name: "BrowserCrawlStatusResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "BrowserCrawlStatusResp",
       className: "BrowserCrawlStatusResp",
-      classId: 4243
+      classId: 4371
     },
     object: {
       kind: "struct",
@@ -56848,14 +57191,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4244,
+    schemaId: 4372,
     name: "BrowserCrawlResultsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "BrowserCrawlResultsReq",
       className: "BrowserCrawlResultsReq",
-      classId: 4244
+      classId: 4372
     },
     object: {
       kind: "struct",
@@ -56892,14 +57235,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4245,
+    schemaId: 4373,
     name: "BrowserCrawlResultsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "BrowserCrawlResultsResp",
       className: "BrowserCrawlResultsResp",
-      classId: 4245
+      classId: 4373
     },
     object: {
       kind: "struct",
@@ -56938,14 +57281,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4246,
+    schemaId: 4374,
     name: "BrowserCrawlPageResult",
     visibility: "public",
     type: {
       kind: "struct",
       name: "BrowserCrawlPageResult",
       className: "BrowserCrawlPageResult",
-      classId: 4246
+      classId: 4374
     },
     object: {
       kind: "struct",
@@ -56992,14 +57335,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4247,
+    schemaId: 4375,
     name: "BrowserCrawlHandoffReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "BrowserCrawlHandoffReq",
       className: "BrowserCrawlHandoffReq",
-      classId: 4247
+      classId: 4375
     },
     object: {
       kind: "struct",
@@ -57018,14 +57361,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4248,
+    schemaId: 4376,
     name: "BrowserCrawlHandoffResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "BrowserCrawlHandoffResp",
       className: "BrowserCrawlHandoffResp",
-      classId: 4248
+      classId: 4376
     },
     object: {
       kind: "struct",
@@ -57060,14 +57403,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4249,
+    schemaId: 4377,
     name: "BrowserCrawlConfig",
     visibility: "public",
     type: {
       kind: "struct",
       name: "BrowserCrawlConfig",
       className: "BrowserCrawlConfig",
-      classId: 4249
+      classId: 4377
     },
     object: {
       kind: "struct",
@@ -57181,14 +57524,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4288,
+    schemaId: 4416,
     name: "GuidanceCapabilityEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuidanceCapabilityEntry",
       className: "GuidanceCapabilityEntry",
-      classId: 4288
+      classId: 4416
     },
     object: {
       kind: "struct",
@@ -57253,14 +57596,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4289,
+    schemaId: 4417,
     name: "GuidanceCapabilityProfile",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuidanceCapabilityProfile",
       className: "GuidanceCapabilityProfile",
-      classId: 4289
+      classId: 4417
     },
     object: {
       kind: "struct",
@@ -57300,14 +57643,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4290,
+    schemaId: 4418,
     name: "GuidanceRecord",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuidanceRecord",
       className: "GuidanceRecord",
-      classId: 4290
+      classId: 4418
     },
     object: {
       kind: "struct",
@@ -57370,14 +57713,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4291,
+    schemaId: 4419,
     name: "GuidanceProfileQueryReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuidanceProfileQueryReq",
       className: "GuidanceProfileQueryReq",
-      classId: 4291
+      classId: 4419
     },
     object: {
       kind: "struct",
@@ -57396,14 +57739,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4292,
+    schemaId: 4420,
     name: "GuidanceProfileQueryResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuidanceProfileQueryResp",
       className: "GuidanceProfileQueryResp",
-      classId: 4292
+      classId: 4420
     },
     object: {
       kind: "struct",
@@ -57436,14 +57779,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4293,
+    schemaId: 4421,
     name: "GuidanceProfileUpdateReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuidanceProfileUpdateReq",
       className: "GuidanceProfileUpdateReq",
-      classId: 4293
+      classId: 4421
     },
     object: {
       kind: "struct",
@@ -57487,14 +57830,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4294,
+    schemaId: 4422,
     name: "GuidanceProfileUpdateResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuidanceProfileUpdateResp",
       className: "GuidanceProfileUpdateResp",
-      classId: 4294
+      classId: 4422
     },
     object: {
       kind: "struct",
@@ -57513,14 +57856,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4295,
+    schemaId: 4423,
     name: "GuidanceProfileClearReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuidanceProfileClearReq",
       className: "GuidanceProfileClearReq",
-      classId: 4295
+      classId: 4423
     },
     object: {
       kind: "struct",
@@ -57548,14 +57891,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4296,
+    schemaId: 4424,
     name: "GuidanceProfileClearResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuidanceProfileClearResp",
       className: "GuidanceProfileClearResp",
-      classId: 4296
+      classId: 4424
     },
     object: {
       kind: "struct",
@@ -57582,14 +57925,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4297,
+    schemaId: 4425,
     name: "GuidanceProfileIncrementReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuidanceProfileIncrementReq",
       className: "GuidanceProfileIncrementReq",
-      classId: 4297
+      classId: 4425
     },
     object: {
       kind: "struct",
@@ -57633,14 +57976,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4298,
+    schemaId: 4426,
     name: "GuidanceProfileIncrementResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "GuidanceProfileIncrementResp",
       className: "GuidanceProfileIncrementResp",
-      classId: 4298
+      classId: 4426
     },
     object: {
       kind: "struct",
@@ -57659,14 +58002,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4336,
+    schemaId: 4464,
     name: "AppManagerRetryCleanupReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerRetryCleanupReq",
       className: "AppManagerRetryCleanupReq",
-      classId: 4336
+      classId: 4464
     },
     object: {
       kind: "struct",
@@ -57685,14 +58028,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4337,
+    schemaId: 4465,
     name: "AppManagerRetryCleanupResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerRetryCleanupResp",
       className: "AppManagerRetryCleanupResp",
-      classId: 4337
+      classId: 4465
     },
     object: {
       kind: "struct",
@@ -57720,14 +58063,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4384,
+    schemaId: 4512,
     name: "EntitlementsView",
     visibility: "public",
     type: {
       kind: "struct",
       name: "EntitlementsView",
       className: "EntitlementsView",
-      classId: 4384
+      classId: 4512
     },
     object: {
       kind: "struct",
@@ -57795,14 +58138,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4385,
+    schemaId: 4513,
     name: "CloudAccountStatus",
     visibility: "public",
     type: {
       kind: "struct",
       name: "CloudAccountStatus",
       className: "CloudAccountStatus",
-      classId: 4385
+      classId: 4513
     },
     object: {
       kind: "struct",
@@ -57898,14 +58241,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4386,
+    schemaId: 4514,
     name: "CloudAccountLinkReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "CloudAccountLinkReq",
       className: "CloudAccountLinkReq",
-      classId: 4386
+      classId: 4514
     },
     object: {
       kind: "struct",
@@ -57966,14 +58309,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4387,
+    schemaId: 4515,
     name: "CloudAccountUnlinkResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "CloudAccountUnlinkResp",
       className: "CloudAccountUnlinkResp",
-      classId: 4387
+      classId: 4515
     },
     object: {
       kind: "struct",
@@ -57983,14 +58326,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4388,
+    schemaId: 4516,
     name: "CloudAccountGetEntitlementsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "CloudAccountGetEntitlementsResp",
       className: "CloudAccountGetEntitlementsResp",
-      classId: 4388
+      classId: 4516
     },
     object: {
       kind: "struct",
@@ -58017,14 +58360,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4389,
+    schemaId: 4517,
     name: "ContentListItem",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ContentListItem",
       className: "ContentListItem",
-      classId: 4389
+      classId: 4517
     },
     object: {
       kind: "struct",
@@ -58134,14 +58477,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4390,
+    schemaId: 4518,
     name: "ContentSearchReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ContentSearchReq",
       className: "ContentSearchReq",
-      classId: 4390
+      classId: 4518
     },
     object: {
       kind: "struct",
@@ -58197,14 +58540,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4391,
+    schemaId: 4519,
     name: "ContentSearchResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ContentSearchResp",
       className: "ContentSearchResp",
-      classId: 4391
+      classId: 4519
     },
     object: {
       kind: "struct",
@@ -58251,14 +58594,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4392,
+    schemaId: 4520,
     name: "ContentDetailReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ContentDetailReq",
       className: "ContentDetailReq",
-      classId: 4392
+      classId: 4520
     },
     object: {
       kind: "struct",
@@ -58277,14 +58620,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4393,
+    schemaId: 4521,
     name: "ContentDetailResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ContentDetailResp",
       className: "ContentDetailResp",
-      classId: 4393
+      classId: 4521
     },
     object: {
       kind: "struct",
@@ -58311,14 +58654,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4394,
+    schemaId: 4522,
     name: "ContentInstallReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ContentInstallReq",
       className: "ContentInstallReq",
-      classId: 4394
+      classId: 4522
     },
     object: {
       kind: "struct",
@@ -58345,14 +58688,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4395,
+    schemaId: 4523,
     name: "ContentInstallResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ContentInstallResp",
       className: "ContentInstallResp",
-      classId: 4395
+      classId: 4523
     },
     object: {
       kind: "struct",
@@ -58403,14 +58746,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4396,
+    schemaId: 4524,
     name: "ContentRiskAssessment",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ContentRiskAssessment",
       className: "ContentRiskAssessment",
-      classId: 4396
+      classId: 4524
     },
     object: {
       kind: "struct",
@@ -58465,14 +58808,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4397,
+    schemaId: 4525,
     name: "PassView",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PassView",
       className: "PassView",
-      classId: 4397
+      classId: 4525
     },
     object: {
       kind: "struct",
@@ -58509,14 +58852,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4398,
+    schemaId: 4526,
     name: "CdkeyRedeemReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "CdkeyRedeemReq",
       className: "CdkeyRedeemReq",
-      classId: 4398
+      classId: 4526
     },
     object: {
       kind: "struct",
@@ -58535,14 +58878,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4399,
+    schemaId: 4527,
     name: "CdkeyRedeemResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "CdkeyRedeemResp",
       className: "CdkeyRedeemResp",
-      classId: 4399
+      classId: 4527
     },
     object: {
       kind: "struct",
@@ -58585,14 +58928,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4401,
+    schemaId: 4529,
     name: "CloudAccountSessionTokenResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "CloudAccountSessionTokenResp",
       className: "CloudAccountSessionTokenResp",
-      classId: 4401
+      classId: 4529
     },
     object: {
       kind: "struct",
@@ -58619,14 +58962,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4432,
+    schemaId: 4576,
     name: "WebSearchReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebSearchReq",
       className: "WebSearchReq",
-      classId: 4432
+      classId: 4576
     },
     object: {
       kind: "struct",
@@ -58672,14 +59015,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4433,
+    schemaId: 4577,
     name: "WebSearchResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebSearchResp",
       className: "WebSearchResp",
-      classId: 4433
+      classId: 4577
     },
     object: {
       kind: "struct",
@@ -58710,14 +59053,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4434,
+    schemaId: 4578,
     name: "WebSearchResult",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebSearchResult",
       className: "WebSearchResult",
-      classId: 4434
+      classId: 4578
     },
     object: {
       kind: "struct",
@@ -58779,14 +59122,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4435,
+    schemaId: 4579,
     name: "WebSearchProviderInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebSearchProviderInfo",
       className: "WebSearchProviderInfo",
-      classId: 4435
+      classId: 4579
     },
     object: {
       kind: "struct",
@@ -58821,14 +59164,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4437,
+    schemaId: 4581,
     name: "WebSearchProviderListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebSearchProviderListResp",
       className: "WebSearchProviderListResp",
-      classId: 4437
+      classId: 4581
     },
     object: {
       kind: "struct",
@@ -58851,14 +59194,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4439,
+    schemaId: 4583,
     name: "WebSearchAccountView",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebSearchAccountView",
       className: "WebSearchAccountView",
-      classId: 4439
+      classId: 4583
     },
     object: {
       kind: "struct",
@@ -58910,14 +59253,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4440,
+    schemaId: 4584,
     name: "WebSearchAccountListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebSearchAccountListReq",
       className: "WebSearchAccountListReq",
-      classId: 4440
+      classId: 4584
     },
     object: {
       kind: "struct",
@@ -58927,14 +59270,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4441,
+    schemaId: 4585,
     name: "WebSearchAccountListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebSearchAccountListResp",
       className: "WebSearchAccountListResp",
-      classId: 4441
+      classId: 4585
     },
     object: {
       kind: "struct",
@@ -58966,14 +59309,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4442,
+    schemaId: 4586,
     name: "WebSearchAccountCreateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WebSearchAccountCreateReq",
       className: "WebSearchAccountCreateReq",
-      classId: 4442
+      classId: 4586
     },
     object: {
       kind: "struct",
@@ -59018,14 +59361,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4443,
+    schemaId: 4587,
     name: "WebSearchAccountCreateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WebSearchAccountCreateResp",
       className: "WebSearchAccountCreateResp",
-      classId: 4443
+      classId: 4587
     },
     object: {
       kind: "struct",
@@ -59044,14 +59387,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4444,
+    schemaId: 4588,
     name: "WebSearchAccountUpdateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WebSearchAccountUpdateReq",
       className: "WebSearchAccountUpdateReq",
-      classId: 4444
+      classId: 4588
     },
     object: {
       kind: "struct",
@@ -59106,14 +59449,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4445,
+    schemaId: 4589,
     name: "WebSearchAccountUpdateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WebSearchAccountUpdateResp",
       className: "WebSearchAccountUpdateResp",
-      classId: 4445
+      classId: 4589
     },
     object: {
       kind: "struct",
@@ -59132,14 +59475,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4446,
+    schemaId: 4590,
     name: "WebSearchAccountDeleteReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WebSearchAccountDeleteReq",
       className: "WebSearchAccountDeleteReq",
-      classId: 4446
+      classId: 4590
     },
     object: {
       kind: "struct",
@@ -59158,14 +59501,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4447,
+    schemaId: 4591,
     name: "WebSearchAccountDeleteResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WebSearchAccountDeleteResp",
       className: "WebSearchAccountDeleteResp",
-      classId: 4447
+      classId: 4591
     },
     object: {
       kind: "struct",
@@ -59175,14 +59518,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4448,
+    schemaId: 4592,
     name: "WebSearchAccountActivateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WebSearchAccountActivateReq",
       className: "WebSearchAccountActivateReq",
-      classId: 4448
+      classId: 4592
     },
     object: {
       kind: "struct",
@@ -59201,14 +59544,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4449,
+    schemaId: 4593,
     name: "WebSearchAccountActivateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "WebSearchAccountActivateResp",
       className: "WebSearchAccountActivateResp",
-      classId: 4449
+      classId: 4593
     },
     object: {
       kind: "struct",
@@ -59227,14 +59570,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4450,
+    schemaId: 4594,
     name: "WebFetchReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebFetchReq",
       className: "WebFetchReq",
-      classId: 4450
+      classId: 4594
     },
     object: {
       kind: "struct",
@@ -59262,14 +59605,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4451,
+    schemaId: 4595,
     name: "WebFetchMeta",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebFetchMeta",
       className: "WebFetchMeta",
-      classId: 4451
+      classId: 4595
     },
     object: {
       kind: "struct",
@@ -59304,14 +59647,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4452,
+    schemaId: 4596,
     name: "WebFetchResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebFetchResp",
       className: "WebFetchResp",
-      classId: 4452
+      classId: 4596
     },
     object: {
       kind: "struct",
@@ -59362,14 +59705,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4453,
+    schemaId: 4597,
     name: "WebDownloadReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebDownloadReq",
       className: "WebDownloadReq",
-      classId: 4453
+      classId: 4597
     },
     object: {
       kind: "struct",
@@ -59405,14 +59748,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4454,
+    schemaId: 4598,
     name: "WebDownloadResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WebDownloadResp",
       className: "WebDownloadResp",
-      classId: 4454
+      classId: 4598
     },
     object: {
       kind: "struct",
@@ -59455,14 +59798,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4497,
+    schemaId: 4641,
     name: "MediaAccountView",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MediaAccountView",
       className: "MediaAccountView",
-      classId: 4497
+      classId: 4641
     },
     object: {
       kind: "struct",
@@ -59540,14 +59883,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4498,
+    schemaId: 4642,
     name: "MediaAccountListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MediaAccountListReq",
       className: "MediaAccountListReq",
-      classId: 4498
+      classId: 4642
     },
     object: {
       kind: "struct",
@@ -59567,14 +59910,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4499,
+    schemaId: 4643,
     name: "MediaAccountListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "MediaAccountListResp",
       className: "MediaAccountListResp",
-      classId: 4499
+      classId: 4643
     },
     object: {
       kind: "struct",
@@ -59633,14 +59976,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4500,
+    schemaId: 4644,
     name: "MediaAccountCreateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "MediaAccountCreateReq",
       className: "MediaAccountCreateReq",
-      classId: 4500
+      classId: 4644
     },
     object: {
       kind: "struct",
@@ -59711,14 +60054,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4501,
+    schemaId: 4645,
     name: "MediaAccountCreateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "MediaAccountCreateResp",
       className: "MediaAccountCreateResp",
-      classId: 4501
+      classId: 4645
     },
     object: {
       kind: "struct",
@@ -59737,14 +60080,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4502,
+    schemaId: 4646,
     name: "MediaAccountUpdateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "MediaAccountUpdateReq",
       className: "MediaAccountUpdateReq",
-      classId: 4502
+      classId: 4646
     },
     object: {
       kind: "struct",
@@ -59817,14 +60160,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4503,
+    schemaId: 4647,
     name: "MediaAccountUpdateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "MediaAccountUpdateResp",
       className: "MediaAccountUpdateResp",
-      classId: 4503
+      classId: 4647
     },
     object: {
       kind: "struct",
@@ -59843,14 +60186,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4504,
+    schemaId: 4648,
     name: "MediaAccountDeleteReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "MediaAccountDeleteReq",
       className: "MediaAccountDeleteReq",
-      classId: 4504
+      classId: 4648
     },
     object: {
       kind: "struct",
@@ -59869,14 +60212,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4505,
+    schemaId: 4649,
     name: "MediaAccountDeleteResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "MediaAccountDeleteResp",
       className: "MediaAccountDeleteResp",
-      classId: 4505
+      classId: 4649
     },
     object: {
       kind: "struct",
@@ -59886,14 +60229,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4506,
+    schemaId: 4650,
     name: "MediaAccountActivateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "MediaAccountActivateReq",
       className: "MediaAccountActivateReq",
-      classId: 4506
+      classId: 4650
     },
     object: {
       kind: "struct",
@@ -59920,14 +60263,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4507,
+    schemaId: 4651,
     name: "MediaAccountActivateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "MediaAccountActivateResp",
       className: "MediaAccountActivateResp",
-      classId: 4507
+      classId: 4651
     },
     object: {
       kind: "struct",
@@ -59946,14 +60289,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4544,
+    schemaId: 4688,
     name: "PuppetNode",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetNode",
       className: "PuppetNode",
-      classId: 4544
+      classId: 4688
     },
     object: {
       kind: "struct",
@@ -60053,14 +60396,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4545,
+    schemaId: 4689,
     name: "PuppetDocument",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetDocument",
       className: "PuppetDocument",
-      classId: 4545
+      classId: 4689
     },
     object: {
       kind: "struct",
@@ -60172,14 +60515,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4546,
+    schemaId: 4690,
     name: "PuppetDocumentSnapshot",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetDocumentSnapshot",
       className: "PuppetDocumentSnapshot",
-      classId: 4546
+      classId: 4690
     },
     object: {
       kind: "struct",
@@ -60214,14 +60557,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4547,
+    schemaId: 4691,
     name: "PuppetDocumentSnapshotReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetDocumentSnapshotReq",
       className: "PuppetDocumentSnapshotReq",
-      classId: 4547
+      classId: 4691
     },
     object: {
       kind: "struct",
@@ -60231,14 +60574,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4548,
+    schemaId: 4692,
     name: "PuppetDocumentSnapshotResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetDocumentSnapshotResp",
       className: "PuppetDocumentSnapshotResp",
-      classId: 4548
+      classId: 4692
     },
     object: {
       kind: "struct",
@@ -60257,14 +60600,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4549,
+    schemaId: 4693,
     name: "PuppetStagedAsset",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetStagedAsset",
       className: "PuppetStagedAsset",
-      classId: 4549
+      classId: 4693
     },
     object: {
       kind: "struct",
@@ -60395,14 +60738,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4550,
+    schemaId: 4694,
     name: "PuppetAssetListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetAssetListReq",
       className: "PuppetAssetListReq",
-      classId: 4550
+      classId: 4694
     },
     object: {
       kind: "struct",
@@ -60422,14 +60765,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4551,
+    schemaId: 4695,
     name: "PuppetAssetListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetAssetListResp",
       className: "PuppetAssetListResp",
-      classId: 4551
+      classId: 4695
     },
     object: {
       kind: "struct",
@@ -60452,14 +60795,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4552,
+    schemaId: 4696,
     name: "PuppetAssetStageReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetAssetStageReq",
       className: "PuppetAssetStageReq",
-      classId: 4552
+      classId: 4696
     },
     object: {
       kind: "struct",
@@ -60531,14 +60874,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4553,
+    schemaId: 4697,
     name: "PuppetAssetStageResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetAssetStageResp",
       className: "PuppetAssetStageResp",
-      classId: 4553
+      classId: 4697
     },
     object: {
       kind: "struct",
@@ -60557,14 +60900,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4554,
+    schemaId: 4698,
     name: "PuppetAssetCommitReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetAssetCommitReq",
       className: "PuppetAssetCommitReq",
-      classId: 4554
+      classId: 4698
     },
     object: {
       kind: "struct",
@@ -60591,14 +60934,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4555,
+    schemaId: 4699,
     name: "PuppetAssetCommitResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetAssetCommitResp",
       className: "PuppetAssetCommitResp",
-      classId: 4555
+      classId: 4699
     },
     object: {
       kind: "struct",
@@ -60625,14 +60968,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4556,
+    schemaId: 4700,
     name: "PuppetAssetRejectReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetAssetRejectReq",
       className: "PuppetAssetRejectReq",
-      classId: 4556
+      classId: 4700
     },
     object: {
       kind: "struct",
@@ -60660,14 +61003,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4557,
+    schemaId: 4701,
     name: "PuppetAssetRejectResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetAssetRejectResp",
       className: "PuppetAssetRejectResp",
-      classId: 4557
+      classId: 4701
     },
     object: {
       kind: "struct",
@@ -60686,14 +61029,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4558,
+    schemaId: 4702,
     name: "PuppetRevision",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetRevision",
       className: "PuppetRevision",
-      classId: 4558
+      classId: 4702
     },
     object: {
       kind: "struct",
@@ -60791,14 +61134,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4559,
+    schemaId: 4703,
     name: "PuppetRevisionLogReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetRevisionLogReq",
       className: "PuppetRevisionLogReq",
-      classId: 4559
+      classId: 4703
     },
     object: {
       kind: "struct",
@@ -60818,14 +61161,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4560,
+    schemaId: 4704,
     name: "PuppetRevisionLogResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetRevisionLogResp",
       className: "PuppetRevisionLogResp",
-      classId: 4560
+      classId: 4704
     },
     object: {
       kind: "struct",
@@ -60848,14 +61191,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4561,
+    schemaId: 4705,
     name: "PuppetEditCommand",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetEditCommand",
       className: "PuppetEditCommand",
-      classId: 4561
+      classId: 4705
     },
     object: {
       kind: "struct",
@@ -60917,14 +61260,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4562,
+    schemaId: 4706,
     name: "PuppetEditReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetEditReq",
       className: "PuppetEditReq",
-      classId: 4562
+      classId: 4706
     },
     object: {
       kind: "struct",
@@ -60943,14 +61286,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4563,
+    schemaId: 4707,
     name: "PuppetEditResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetEditResp",
       className: "PuppetEditResp",
-      classId: 4563
+      classId: 4707
     },
     object: {
       kind: "struct",
@@ -60999,14 +61342,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4577,
+    schemaId: 4721,
     name: "PuppetMesh",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetMesh",
       className: "PuppetMesh",
-      classId: 4577
+      classId: 4721
     },
     object: {
       kind: "struct",
@@ -61056,14 +61399,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4580,
+    schemaId: 4724,
     name: "PuppetAssetReadReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetAssetReadReq",
       className: "PuppetAssetReadReq",
-      classId: 4580
+      classId: 4724
     },
     object: {
       kind: "struct",
@@ -61082,14 +61425,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4581,
+    schemaId: 4725,
     name: "PuppetAssetReadResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetAssetReadResp",
       className: "PuppetAssetReadResp",
-      classId: 4581
+      classId: 4725
     },
     object: {
       kind: "struct",
@@ -61143,14 +61486,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4582,
+    schemaId: 4726,
     name: "PuppetDocumentRevertToReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetDocumentRevertToReq",
       className: "PuppetDocumentRevertToReq",
-      classId: 4582
+      classId: 4726
     },
     object: {
       kind: "struct",
@@ -61169,14 +61512,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4583,
+    schemaId: 4727,
     name: "PuppetDocumentRevertToResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetDocumentRevertToResp",
       className: "PuppetDocumentRevertToResp",
-      classId: 4583
+      classId: 4727
     },
     object: {
       kind: "struct",
@@ -61220,14 +61563,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4584,
+    schemaId: 4728,
     name: "PuppetParam",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetParam",
       className: "PuppetParam",
-      classId: 4584
+      classId: 4728
     },
     object: {
       kind: "struct",
@@ -61315,14 +61658,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4585,
+    schemaId: 4729,
     name: "PuppetParamBinding",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetParamBinding",
       className: "PuppetParamBinding",
-      classId: 4585
+      classId: 4729
     },
     object: {
       kind: "struct",
@@ -61375,14 +61718,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4588,
+    schemaId: 4732,
     name: "PuppetParamListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetParamListReq",
       className: "PuppetParamListReq",
-      classId: 4588
+      classId: 4732
     },
     object: {
       kind: "struct",
@@ -61392,14 +61735,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4589,
+    schemaId: 4733,
     name: "PuppetParamListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetParamListResp",
       className: "PuppetParamListResp",
-      classId: 4589
+      classId: 4733
     },
     object: {
       kind: "struct",
@@ -61434,14 +61777,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4593,
+    schemaId: 4737,
     name: "PuppetViewportCaptureReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetViewportCaptureReq",
       className: "PuppetViewportCaptureReq",
-      classId: 4593
+      classId: 4737
     },
     object: {
       kind: "struct",
@@ -61488,14 +61831,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4594,
+    schemaId: 4738,
     name: "PuppetViewportCaptureResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PuppetViewportCaptureResp",
       className: "PuppetViewportCaptureResp",
-      classId: 4594
+      classId: 4738
     },
     object: {
       kind: "struct",
@@ -61548,14 +61891,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4640,
+    schemaId: 4784,
     name: "AppManagerCallableInfoReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerCallableInfoReq",
       className: "AppManagerCallableInfoReq",
-      classId: 4640
+      classId: 4784
     },
     object: {
       kind: "struct",
@@ -61575,14 +61918,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4641,
+    schemaId: 4785,
     name: "AppManagerCallableParam",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerCallableParam",
       className: "AppManagerCallableParam",
-      classId: 4641
+      classId: 4785
     },
     object: {
       kind: "struct",
@@ -61625,14 +61968,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4642,
+    schemaId: 4786,
     name: "AppManagerCallableInfoEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerCallableInfoEntry",
       className: "AppManagerCallableInfoEntry",
-      classId: 4642
+      classId: 4786
     },
     object: {
       kind: "struct",
@@ -61687,14 +62030,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4643,
+    schemaId: 4787,
     name: "AppManagerCallableInfoResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerCallableInfoResp",
       className: "AppManagerCallableInfoResp",
-      classId: 4643
+      classId: 4787
     },
     object: {
       kind: "struct",
@@ -61717,14 +62060,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4644,
+    schemaId: 4788,
     name: "AppManagerDevGuideReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerDevGuideReq",
       className: "AppManagerDevGuideReq",
-      classId: 4644
+      classId: 4788
     },
     object: {
       kind: "struct",
@@ -61744,14 +62087,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4645,
+    schemaId: 4789,
     name: "AppManagerDevGuideStep",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerDevGuideStep",
       className: "AppManagerDevGuideStep",
-      classId: 4645
+      classId: 4789
     },
     object: {
       kind: "struct",
@@ -61798,14 +62141,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4646,
+    schemaId: 4790,
     name: "AppManagerDevGuideError",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerDevGuideError",
       className: "AppManagerDevGuideError",
-      classId: 4646
+      classId: 4790
     },
     object: {
       kind: "struct",
@@ -61840,14 +62183,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4647,
+    schemaId: 4791,
     name: "AppManagerDevGuideResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerDevGuideResp",
       className: "AppManagerDevGuideResp",
-      classId: 4647
+      classId: 4791
     },
     object: {
       kind: "struct",
@@ -61918,14 +62261,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4689,
+    schemaId: 4833,
     name: "ImAccountView",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ImAccountView",
       className: "ImAccountView",
-      classId: 4689
+      classId: 4833
     },
     object: {
       kind: "struct",
@@ -62025,14 +62368,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4690,
+    schemaId: 4834,
     name: "ImAccountListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImAccountListReq",
       className: "ImAccountListReq",
-      classId: 4690
+      classId: 4834
     },
     object: {
       kind: "struct",
@@ -62042,14 +62385,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4691,
+    schemaId: 4835,
     name: "ImAccountListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImAccountListResp",
       className: "ImAccountListResp",
-      classId: 4691
+      classId: 4835
     },
     object: {
       kind: "struct",
@@ -62072,14 +62415,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4692,
+    schemaId: 4836,
     name: "ImAccountCreateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImAccountCreateReq",
       className: "ImAccountCreateReq",
-      classId: 4692
+      classId: 4836
     },
     object: {
       kind: "struct",
@@ -62145,14 +62488,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4693,
+    schemaId: 4837,
     name: "ImAccountCreateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImAccountCreateResp",
       className: "ImAccountCreateResp",
-      classId: 4693
+      classId: 4837
     },
     object: {
       kind: "struct",
@@ -62171,14 +62514,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4694,
+    schemaId: 4838,
     name: "ImAccountUpdateReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImAccountUpdateReq",
       className: "ImAccountUpdateReq",
-      classId: 4694
+      classId: 4838
     },
     object: {
       kind: "struct",
@@ -62246,14 +62589,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4695,
+    schemaId: 4839,
     name: "ImAccountUpdateResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImAccountUpdateResp",
       className: "ImAccountUpdateResp",
-      classId: 4695
+      classId: 4839
     },
     object: {
       kind: "struct",
@@ -62272,14 +62615,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4696,
+    schemaId: 4840,
     name: "ImAccountDeleteReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImAccountDeleteReq",
       className: "ImAccountDeleteReq",
-      classId: 4696
+      classId: 4840
     },
     object: {
       kind: "struct",
@@ -62298,14 +62641,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4697,
+    schemaId: 4841,
     name: "ImAccountDeleteResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImAccountDeleteResp",
       className: "ImAccountDeleteResp",
-      classId: 4697
+      classId: 4841
     },
     object: {
       kind: "struct",
@@ -62315,14 +62658,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4698,
+    schemaId: 4842,
     name: "ImRoute",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImRoute",
       className: "ImRoute",
-      classId: 4698
+      classId: 4842
     },
     object: {
       kind: "struct",
@@ -62366,14 +62709,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4699,
+    schemaId: 4843,
     name: "ImRouteListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImRouteListReq",
       className: "ImRouteListReq",
-      classId: 4699
+      classId: 4843
     },
     object: {
       kind: "struct",
@@ -62383,14 +62726,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4700,
+    schemaId: 4844,
     name: "ImRouteListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImRouteListResp",
       className: "ImRouteListResp",
-      classId: 4700
+      classId: 4844
     },
     object: {
       kind: "struct",
@@ -62413,14 +62756,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4701,
+    schemaId: 4845,
     name: "ImRouteSetReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImRouteSetReq",
       className: "ImRouteSetReq",
-      classId: 4701
+      classId: 4845
     },
     object: {
       kind: "struct",
@@ -62447,14 +62790,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4702,
+    schemaId: 4846,
     name: "ImRouteSetResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImRouteSetResp",
       className: "ImRouteSetResp",
-      classId: 4702
+      classId: 4846
     },
     object: {
       kind: "struct",
@@ -62473,14 +62816,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4703,
+    schemaId: 4847,
     name: "ImRouteDeleteReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImRouteDeleteReq",
       className: "ImRouteDeleteReq",
-      classId: 4703
+      classId: 4847
     },
     object: {
       kind: "struct",
@@ -62499,14 +62842,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4704,
+    schemaId: 4848,
     name: "ImRouteDeleteResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "ImRouteDeleteResp",
       className: "ImRouteDeleteResp",
-      classId: 4704
+      classId: 4848
     },
     object: {
       kind: "struct",
@@ -62516,14 +62859,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4705,
+    schemaId: 4849,
     name: "ImStatusReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ImStatusReq",
       className: "ImStatusReq",
-      classId: 4705
+      classId: 4849
     },
     object: {
       kind: "struct",
@@ -62533,14 +62876,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4706,
+    schemaId: 4850,
     name: "ImStatusResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ImStatusResp",
       className: "ImStatusResp",
-      classId: 4706
+      classId: 4850
     },
     object: {
       kind: "struct",
@@ -62563,14 +62906,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4707,
+    schemaId: 4851,
     name: "ImSendReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ImSendReq",
       className: "ImSendReq",
-      classId: 4707
+      classId: 4851
     },
     object: {
       kind: "struct",
@@ -62605,14 +62948,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4708,
+    schemaId: 4852,
     name: "ImSendResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ImSendResp",
       className: "ImSendResp",
-      classId: 4708
+      classId: 4852
     },
     object: {
       kind: "struct",
@@ -62631,14 +62974,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4752,
+    schemaId: 4896,
     name: "AppManagerDevGenerateReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerDevGenerateReq",
       className: "AppManagerDevGenerateReq",
-      classId: 4752
+      classId: 4896
     },
     object: {
       kind: "struct",
@@ -62685,14 +63028,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4753,
+    schemaId: 4897,
     name: "AppManagerDevGenerateFileEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerDevGenerateFileEntry",
       className: "AppManagerDevGenerateFileEntry",
-      classId: 4753
+      classId: 4897
     },
     object: {
       kind: "struct",
@@ -62719,14 +63062,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4754,
+    schemaId: 4898,
     name: "AppManagerDevGenerateResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerDevGenerateResp",
       className: "AppManagerDevGenerateResp",
-      classId: 4754
+      classId: 4898
     },
     object: {
       kind: "struct",
@@ -62803,14 +63146,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4800,
+    schemaId: 4944,
     name: "AppManagerDevGateReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerDevGateReq",
       className: "AppManagerDevGateReq",
-      classId: 4800
+      classId: 4944
     },
     object: {
       kind: "struct",
@@ -62848,14 +63191,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4801,
+    schemaId: 4945,
     name: "AppManagerGateError",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerGateError",
       className: "AppManagerGateError",
-      classId: 4801
+      classId: 4945
     },
     object: {
       kind: "struct",
@@ -62890,14 +63233,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4802,
+    schemaId: 4946,
     name: "AppManagerGateResult",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerGateResult",
       className: "AppManagerGateResult",
-      classId: 4802
+      classId: 4946
     },
     object: {
       kind: "struct",
@@ -62933,14 +63276,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4803,
+    schemaId: 4947,
     name: "AppManagerDevGateResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerDevGateResp",
       className: "AppManagerDevGateResp",
-      classId: 4803
+      classId: 4947
     },
     object: {
       kind: "struct",
@@ -62980,14 +63323,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4848,
+    schemaId: 4992,
     name: "SetProtectedFilesReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SetProtectedFilesReq",
       className: "SetProtectedFilesReq",
-      classId: 4848
+      classId: 4992
     },
     object: {
       kind: "struct",
@@ -63019,14 +63362,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4849,
+    schemaId: 4993,
     name: "SetProtectedFilesResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "SetProtectedFilesResp",
       className: "SetProtectedFilesResp",
-      classId: 4849
+      classId: 4993
     },
     object: {
       kind: "struct",
@@ -63045,14 +63388,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4896,
+    schemaId: 5040,
     name: "ShellCandidate",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellCandidate",
       className: "ShellCandidate",
-      classId: 4896
+      classId: 5040
     },
     object: {
       kind: "struct",
@@ -63100,14 +63443,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4897,
+    schemaId: 5041,
     name: "ShellEnvProbeResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellEnvProbeResp",
       className: "ShellEnvProbeResp",
-      classId: 4897
+      classId: 5041
     },
     object: {
       kind: "struct",
@@ -63146,14 +63489,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4898,
+    schemaId: 5042,
     name: "ShellPrefSaveReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellPrefSaveReq",
       className: "ShellPrefSaveReq",
-      classId: 4898
+      classId: 5042
     },
     object: {
       kind: "struct",
@@ -63180,14 +63523,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4899,
+    schemaId: 5043,
     name: "ShellPrefSaveResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellPrefSaveResp",
       className: "ShellPrefSaveResp",
-      classId: 4899
+      classId: 5043
     },
     object: {
       kind: "struct",
@@ -63214,14 +63557,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4944,
+    schemaId: 5088,
     name: "ModelDefault",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ModelDefault",
       className: "ModelDefault",
-      classId: 4944
+      classId: 5088
     },
     object: {
       kind: "struct",
@@ -63284,14 +63627,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4946,
+    schemaId: 5090,
     name: "AIManagerModelDefaultsGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIManagerModelDefaultsGetResp",
       className: "AIManagerModelDefaultsGetResp",
-      classId: 4946
+      classId: 5090
     },
     object: {
       kind: "struct",
@@ -63314,14 +63657,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4947,
+    schemaId: 5091,
     name: "AIManagerModelDefaultsSetReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerModelDefaultsSetReq",
       className: "AIManagerModelDefaultsSetReq",
-      classId: 4947
+      classId: 5091
     },
     object: {
       kind: "struct",
@@ -63344,14 +63687,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4948,
+    schemaId: 5092,
     name: "AIManagerModelDefaultsSetResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AIManagerModelDefaultsSetResp",
       className: "AIManagerModelDefaultsSetResp",
-      classId: 4948
+      classId: 5092
     },
     object: {
       kind: "struct",
@@ -63378,14 +63721,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4950,
+    schemaId: 5094,
     name: "AIManagerFetchOpenRouterModelsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AIManagerFetchOpenRouterModelsResp",
       className: "AIManagerFetchOpenRouterModelsResp",
-      classId: 4950
+      classId: 5094
     },
     object: {
       kind: "struct",
@@ -63408,14 +63751,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4992,
+    schemaId: 5136,
     name: "LspPositionParams",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspPositionParams",
       className: "LspPositionParams",
-      classId: 4992
+      classId: 5136
     },
     object: {
       kind: "struct",
@@ -63466,14 +63809,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4993,
+    schemaId: 5137,
     name: "LspRangeParams",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspRangeParams",
       className: "LspRangeParams",
-      classId: 4993
+      classId: 5137
     },
     object: {
       kind: "struct",
@@ -63540,14 +63883,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4994,
+    schemaId: 5138,
     name: "LspDidOpenReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspDidOpenReq",
       className: "LspDidOpenReq",
-      classId: 4994
+      classId: 5138
     },
     object: {
       kind: "struct",
@@ -63606,14 +63949,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4995,
+    schemaId: 5139,
     name: "LspDidChangeReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspDidChangeReq",
       className: "LspDidChangeReq",
-      classId: 4995
+      classId: 5139
     },
     object: {
       kind: "struct",
@@ -63664,14 +64007,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4996,
+    schemaId: 5140,
     name: "LspDidCloseReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspDidCloseReq",
       className: "LspDidCloseReq",
-      classId: 4996
+      classId: 5140
     },
     object: {
       kind: "struct",
@@ -63706,14 +64049,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4997,
+    schemaId: 5141,
     name: "LspUriReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspUriReq",
       className: "LspUriReq",
-      classId: 4997
+      classId: 5141
     },
     object: {
       kind: "struct",
@@ -63748,14 +64091,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4998,
+    schemaId: 5142,
     name: "LspInitializeReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspInitializeReq",
       className: "LspInitializeReq",
-      classId: 4998
+      classId: 5142
     },
     object: {
       kind: "struct",
@@ -63782,14 +64125,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4999,
+    schemaId: 5143,
     name: "LspRenameReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspRenameReq",
       className: "LspRenameReq",
-      classId: 4999
+      classId: 5143
     },
     object: {
       kind: "struct",
@@ -63848,14 +64191,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5000,
+    schemaId: 5144,
     name: "LspReferencesReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspReferencesReq",
       className: "LspReferencesReq",
-      classId: 5000
+      classId: 5144
     },
     object: {
       kind: "struct",
@@ -63914,14 +64257,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5001,
+    schemaId: 5145,
     name: "LspShutdownReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspShutdownReq",
       className: "LspShutdownReq",
-      classId: 5001
+      classId: 5145
     },
     object: {
       kind: "struct",
@@ -63948,14 +64291,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5002,
+    schemaId: 5146,
     name: "LspClearCacheReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspClearCacheReq",
       className: "LspClearCacheReq",
-      classId: 5002
+      classId: 5146
     },
     object: {
       kind: "struct",
@@ -63974,14 +64317,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5003,
+    schemaId: 5147,
     name: "LspJsonResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspJsonResp",
       className: "LspJsonResp",
-      classId: 5003
+      classId: 5147
     },
     object: {
       kind: "struct",
@@ -64000,14 +64343,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5004,
+    schemaId: 5148,
     name: "LspDiagnosticsEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspDiagnosticsEvent",
       className: "LspDiagnosticsEvent",
-      classId: 5004
+      classId: 5148
     },
     object: {
       kind: "struct",
@@ -64042,14 +64385,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5005,
+    schemaId: 5149,
     name: "LspLanguageState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspLanguageState",
       className: "LspLanguageState",
-      classId: 5005
+      classId: 5149
     },
     object: {
       kind: "struct",
@@ -64076,14 +64419,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5006,
+    schemaId: 5150,
     name: "LspStateResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspStateResp",
       className: "LspStateResp",
-      classId: 5006
+      classId: 5150
     },
     object: {
       kind: "struct",
@@ -64106,14 +64449,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5007,
+    schemaId: 5151,
     name: "LspStateSaveReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspStateSaveReq",
       className: "LspStateSaveReq",
-      classId: 5007
+      classId: 5151
     },
     object: {
       kind: "struct",
@@ -64140,14 +64483,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5008,
+    schemaId: 5152,
     name: "LspStatusReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspStatusReq",
       className: "LspStatusReq",
-      classId: 5008
+      classId: 5152
     },
     object: {
       kind: "struct",
@@ -64166,14 +64509,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5009,
+    schemaId: 5153,
     name: "LspLanguageInstallState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspLanguageInstallState",
       className: "LspLanguageInstallState",
-      classId: 5009
+      classId: 5153
     },
     object: {
       kind: "struct",
@@ -64227,14 +64570,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5010,
+    schemaId: 5154,
     name: "LspStatusResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspStatusResp",
       className: "LspStatusResp",
-      classId: 5010
+      classId: 5154
     },
     object: {
       kind: "struct",
@@ -64257,14 +64600,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5011,
+    schemaId: 5155,
     name: "LspInstallReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspInstallReq",
       className: "LspInstallReq",
-      classId: 5011
+      classId: 5155
     },
     object: {
       kind: "struct",
@@ -64283,14 +64626,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5012,
+    schemaId: 5156,
     name: "LspInstallResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspInstallResp",
       className: "LspInstallResp",
-      classId: 5012
+      classId: 5156
     },
     object: {
       kind: "struct",
@@ -64309,14 +64652,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5013,
+    schemaId: 5157,
     name: "LspInstallProgressEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "LspInstallProgressEvent",
       className: "LspInstallProgressEvent",
-      classId: 5013
+      classId: 5157
     },
     object: {
       kind: "struct",
@@ -64360,14 +64703,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5056,
+    schemaId: 5200,
     name: "ShellSessionOpenReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellSessionOpenReq",
       className: "ShellSessionOpenReq",
-      classId: 5056
+      classId: 5200
     },
     object: {
       kind: "struct",
@@ -64405,14 +64748,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5057,
+    schemaId: 5201,
     name: "ShellSessionOpenResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellSessionOpenResp",
       className: "ShellSessionOpenResp",
-      classId: 5057
+      classId: 5201
     },
     object: {
       kind: "struct",
@@ -64439,14 +64782,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5058,
+    schemaId: 5202,
     name: "ShellSessionWriteReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellSessionWriteReq",
       className: "ShellSessionWriteReq",
-      classId: 5058
+      classId: 5202
     },
     object: {
       kind: "struct",
@@ -64473,14 +64816,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5059,
+    schemaId: 5203,
     name: "ShellSessionWriteResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellSessionWriteResp",
       className: "ShellSessionWriteResp",
-      classId: 5059
+      classId: 5203
     },
     object: {
       kind: "struct",
@@ -64490,14 +64833,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5060,
+    schemaId: 5204,
     name: "ShellSessionResizeReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellSessionResizeReq",
       className: "ShellSessionResizeReq",
-      classId: 5060
+      classId: 5204
     },
     object: {
       kind: "struct",
@@ -64532,14 +64875,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5061,
+    schemaId: 5205,
     name: "ShellSessionResizeResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellSessionResizeResp",
       className: "ShellSessionResizeResp",
-      classId: 5061
+      classId: 5205
     },
     object: {
       kind: "struct",
@@ -64549,14 +64892,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5062,
+    schemaId: 5206,
     name: "ShellSessionCloseReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellSessionCloseReq",
       className: "ShellSessionCloseReq",
-      classId: 5062
+      classId: 5206
     },
     object: {
       kind: "struct",
@@ -64575,14 +64918,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5063,
+    schemaId: 5207,
     name: "ShellSessionCloseResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellSessionCloseResp",
       className: "ShellSessionCloseResp",
-      classId: 5063
+      classId: 5207
     },
     object: {
       kind: "struct",
@@ -64592,14 +64935,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5064,
+    schemaId: 5208,
     name: "ShellSessionOutputEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellSessionOutputEvent",
       className: "ShellSessionOutputEvent",
-      classId: 5064
+      classId: 5208
     },
     object: {
       kind: "struct",
@@ -64660,14 +65003,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5104,
+    schemaId: 5248,
     name: "WorkspaceLogStreamEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceLogStreamEntry",
       className: "WorkspaceLogStreamEntry",
-      classId: 5104
+      classId: 5248
     },
     object: {
       kind: "struct",
@@ -64752,14 +65095,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5105,
+    schemaId: 5249,
     name: "WorkspaceLogStreamEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceLogStreamEvent",
       className: "WorkspaceLogStreamEvent",
-      classId: 5105
+      classId: 5249
     },
     object: {
       kind: "struct",
@@ -64782,14 +65125,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5152,
+    schemaId: 5296,
     name: "ShellSessionFetchReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellSessionFetchReq",
       className: "ShellSessionFetchReq",
-      classId: 5152
+      classId: 5296
     },
     object: {
       kind: "struct",
@@ -64816,14 +65159,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5153,
+    schemaId: 5297,
     name: "ShellSessionFetchResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ShellSessionFetchResp",
       className: "ShellSessionFetchResp",
-      classId: 5153
+      classId: 5297
     },
     object: {
       kind: "struct",
@@ -64863,14 +65206,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5200,
+    schemaId: 5344,
     name: "DebugCommandsListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "DebugCommandsListResp",
       className: "DebugCommandsListResp",
-      classId: 5200
+      classId: 5344
     },
     object: {
       kind: "struct",
@@ -64893,14 +65236,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5201,
+    schemaId: 5345,
     name: "DebugCommandExecReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "DebugCommandExecReq",
       className: "DebugCommandExecReq",
-      classId: 5201
+      classId: 5345
     },
     object: {
       kind: "struct",
@@ -64931,14 +65274,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5202,
+    schemaId: 5346,
     name: "DebugCommandExecResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "DebugCommandExecResp",
       className: "DebugCommandExecResp",
-      classId: 5202
+      classId: 5346
     },
     object: {
       kind: "struct",
@@ -64957,14 +65300,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5344,
+    schemaId: 5488,
     name: "WorkspaceAgentLoadedReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentLoadedReq",
       className: "WorkspaceAgentLoadedReq",
-      classId: 5344
+      classId: 5488
     },
     object: {
       kind: "struct",
@@ -64999,14 +65342,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5345,
+    schemaId: 5489,
     name: "WorkspaceAgentLoadedResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkspaceAgentLoadedResp",
       className: "WorkspaceAgentLoadedResp",
-      classId: 5345
+      classId: 5489
     },
     object: {
       kind: "struct",
@@ -65016,14 +65359,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5392,
+    schemaId: 5536,
     name: "AppManagerPluginLoadReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerPluginLoadReq",
       className: "AppManagerPluginLoadReq",
-      classId: 5392
+      classId: 5536
     },
     object: {
       kind: "struct",
@@ -65042,14 +65385,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5393,
+    schemaId: 5537,
     name: "AppManagerPluginLoadResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerPluginLoadResp",
       className: "AppManagerPluginLoadResp",
-      classId: 5393
+      classId: 5537
     },
     object: {
       kind: "struct",
@@ -65068,14 +65411,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5394,
+    schemaId: 5538,
     name: "AppManagerPluginUnloadReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerPluginUnloadReq",
       className: "AppManagerPluginUnloadReq",
-      classId: 5394
+      classId: 5538
     },
     object: {
       kind: "struct",
@@ -65094,14 +65437,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5395,
+    schemaId: 5539,
     name: "AppManagerPluginUnloadResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerPluginUnloadResp",
       className: "AppManagerPluginUnloadResp",
-      classId: 5395
+      classId: 5539
     },
     object: {
       kind: "struct",
@@ -65120,14 +65463,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5440,
+    schemaId: 5584,
     name: "AppManagerInstallLocalReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerInstallLocalReq",
       className: "AppManagerInstallLocalReq",
-      classId: 5440
+      classId: 5584
     },
     object: {
       kind: "struct",
@@ -65156,14 +65499,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5441,
+    schemaId: 5585,
     name: "AppManagerInstallLocalResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerInstallLocalResp",
       className: "AppManagerInstallLocalResp",
-      classId: 5441
+      classId: 5585
     },
     object: {
       kind: "struct",
@@ -65182,14 +65525,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5488,
+    schemaId: 5632,
     name: "AppManagerIconNamesReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerIconNamesReq",
       className: "AppManagerIconNamesReq",
-      classId: 5488
+      classId: 5632
     },
     object: {
       kind: "struct",
@@ -65218,14 +65561,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5489,
+    schemaId: 5633,
     name: "AppManagerIconEntry",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerIconEntry",
       className: "AppManagerIconEntry",
-      classId: 5489
+      classId: 5633
     },
     object: {
       kind: "struct",
@@ -65272,14 +65615,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5490,
+    schemaId: 5634,
     name: "AppManagerIconNamesResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerIconNamesResp",
       className: "AppManagerIconNamesResp",
-      classId: 5490
+      classId: 5634
     },
     object: {
       kind: "struct",
@@ -65302,14 +65645,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5536,
+    schemaId: 5680,
     name: "AppManagerOpenViewReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerOpenViewReq",
       className: "AppManagerOpenViewReq",
-      classId: 5536
+      classId: 5680
     },
     object: {
       kind: "struct",
@@ -65337,14 +65680,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5537,
+    schemaId: 5681,
     name: "AppManagerOpenViewResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerOpenViewResp",
       className: "AppManagerOpenViewResp",
-      classId: 5537
+      classId: 5681
     },
     object: {
       kind: "struct",
@@ -65381,14 +65724,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5584,
+    schemaId: 5728,
     name: "AppManagerComponentListReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerComponentListReq",
       className: "AppManagerComponentListReq",
-      classId: 5584
+      classId: 5728
     },
     object: {
       kind: "struct",
@@ -65398,14 +65741,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5585,
+    schemaId: 5729,
     name: "AppManagerComponentListResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerComponentListResp",
       className: "AppManagerComponentListResp",
-      classId: 5585
+      classId: 5729
     },
     object: {
       kind: "struct",
@@ -65428,14 +65771,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5586,
+    schemaId: 5730,
     name: "AppManagerComponentGetReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerComponentGetReq",
       className: "AppManagerComponentGetReq",
-      classId: 5586
+      classId: 5730
     },
     object: {
       kind: "struct",
@@ -65454,14 +65797,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5587,
+    schemaId: 5731,
     name: "AppManagerComponentGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerComponentGetResp",
       className: "AppManagerComponentGetResp",
-      classId: 5587
+      classId: 5731
     },
     object: {
       kind: "struct",
@@ -65480,14 +65823,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5632,
+    schemaId: 5776,
     name: "AppManagerSdkVendorReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerSdkVendorReq",
       className: "AppManagerSdkVendorReq",
-      classId: 5632
+      classId: 5776
     },
     object: {
       kind: "struct",
@@ -65525,14 +65868,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5633,
+    schemaId: 5777,
     name: "AppManagerSdkVendorResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerSdkVendorResp",
       className: "AppManagerSdkVendorResp",
-      classId: 5633
+      classId: 5777
     },
     object: {
       kind: "struct",
@@ -65569,14 +65912,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5680,
+    schemaId: 5824,
     name: "MediaProviderModelSetReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "MediaProviderModelSetReq",
       className: "MediaProviderModelSetReq",
-      classId: 5680
+      classId: 5824
     },
     object: {
       kind: "struct",
@@ -65622,14 +65965,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5681,
+    schemaId: 5825,
     name: "MediaProviderModelSetResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "MediaProviderModelSetResp",
       className: "MediaProviderModelSetResp",
-      classId: 5681
+      classId: 5825
     },
     object: {
       kind: "struct",
@@ -65675,14 +66018,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5728,
+    schemaId: 5872,
     name: "AppManagerHostProtocolReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerHostProtocolReq",
       className: "AppManagerHostProtocolReq",
-      classId: 5728
+      classId: 5872
     },
     object: {
       kind: "struct",
@@ -65711,14 +66054,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5729,
+    schemaId: 5873,
     name: "AppManagerHostCallInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerHostCallInfo",
       className: "AppManagerHostCallInfo",
-      classId: 5729
+      classId: 5873
     },
     object: {
       kind: "struct",
@@ -65805,14 +66148,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5730,
+    schemaId: 5874,
     name: "AppManagerHostCapabilityInfo",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerHostCapabilityInfo",
       className: "AppManagerHostCapabilityInfo",
-      classId: 5730
+      classId: 5874
     },
     object: {
       kind: "struct",
@@ -65870,14 +66213,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5731,
+    schemaId: 5875,
     name: "AppManagerHostProtocolResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerHostProtocolResp",
       className: "AppManagerHostProtocolResp",
-      classId: 5731
+      classId: 5875
     },
     object: {
       kind: "struct",
@@ -65900,14 +66243,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5776,
+    schemaId: 5920,
     name: "AppManagerPluginEmitReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerPluginEmitReq",
       className: "AppManagerPluginEmitReq",
-      classId: 5776
+      classId: 5920
     },
     object: {
       kind: "struct",
@@ -65942,14 +66285,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5777,
+    schemaId: 5921,
     name: "AppManagerPluginEmitResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerPluginEmitResp",
       className: "AppManagerPluginEmitResp",
-      classId: 5777
+      classId: 5921
     },
     object: {
       kind: "struct",
@@ -65968,14 +66311,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5872,
+    schemaId: 6016,
     name: "PluginProxyAttachReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginProxyAttachReq",
       className: "PluginProxyAttachReq",
-      classId: 5872
+      classId: 6016
     },
     object: {
       kind: "struct",
@@ -66010,14 +66353,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5873,
+    schemaId: 6017,
     name: "PluginProxyAttachResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginProxyAttachResp",
       className: "PluginProxyAttachResp",
-      classId: 5873
+      classId: 6017
     },
     object: {
       kind: "struct",
@@ -66027,14 +66370,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5874,
+    schemaId: 6018,
     name: "PluginProxyDetachReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginProxyDetachReq",
       className: "PluginProxyDetachReq",
-      classId: 5874
+      classId: 6018
     },
     object: {
       kind: "struct",
@@ -66053,14 +66396,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5875,
+    schemaId: 6019,
     name: "PluginProxyDetachResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PluginProxyDetachResp",
       className: "PluginProxyDetachResp",
-      classId: 5875
+      classId: 6019
     },
     object: {
       kind: "struct",
@@ -66070,14 +66413,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5921,
+    schemaId: 6065,
     name: "DbProfileView",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbProfileView",
       className: "DbProfileView",
-      classId: 5921
+      classId: 6065
     },
     object: {
       kind: "struct",
@@ -66181,14 +66524,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5922,
+    schemaId: 6066,
     name: "DbProfileSaveReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbProfileSaveReq",
       className: "DbProfileSaveReq",
-      classId: 5922
+      classId: 6066
     },
     object: {
       kind: "struct",
@@ -66295,14 +66638,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5923,
+    schemaId: 6067,
     name: "DbProfileSaveResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbProfileSaveResp",
       className: "DbProfileSaveResp",
-      classId: 5923
+      classId: 6067
     },
     object: {
       kind: "struct",
@@ -66321,14 +66664,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5924,
+    schemaId: 6068,
     name: "DbProfileListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbProfileListReq",
       className: "DbProfileListReq",
-      classId: 5924
+      classId: 6068
     },
     object: {
       kind: "struct",
@@ -66338,14 +66681,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5925,
+    schemaId: 6069,
     name: "DbProfileListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbProfileListResp",
       className: "DbProfileListResp",
-      classId: 5925
+      classId: 6069
     },
     object: {
       kind: "struct",
@@ -66368,14 +66711,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5926,
+    schemaId: 6070,
     name: "DbProfileGetReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbProfileGetReq",
       className: "DbProfileGetReq",
-      classId: 5926
+      classId: 6070
     },
     object: {
       kind: "struct",
@@ -66394,14 +66737,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5927,
+    schemaId: 6071,
     name: "DbProfileGetResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbProfileGetResp",
       className: "DbProfileGetResp",
-      classId: 5927
+      classId: 6071
     },
     object: {
       kind: "struct",
@@ -66420,14 +66763,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5928,
+    schemaId: 6072,
     name: "DbProfileRemoveReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbProfileRemoveReq",
       className: "DbProfileRemoveReq",
-      classId: 5928
+      classId: 6072
     },
     object: {
       kind: "struct",
@@ -66446,14 +66789,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5929,
+    schemaId: 6073,
     name: "DbProfileRemoveResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbProfileRemoveResp",
       className: "DbProfileRemoveResp",
-      classId: 5929
+      classId: 6073
     },
     object: {
       kind: "struct",
@@ -66463,14 +66806,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5968,
+    schemaId: 6112,
     name: "AppManagerRegistrationPreviewReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerRegistrationPreviewReq",
       className: "AppManagerRegistrationPreviewReq",
-      classId: 5968
+      classId: 6112
     },
     object: {
       kind: "struct",
@@ -66544,14 +66887,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 5969,
+    schemaId: 6113,
     name: "AppManagerRegistrationPreviewResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerRegistrationPreviewResp",
       className: "AppManagerRegistrationPreviewResp",
-      classId: 5969
+      classId: 6113
     },
     object: {
       kind: "struct",
@@ -66570,14 +66913,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6016,
+    schemaId: 6160,
     name: "AppManagerPanelTopologyReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerPanelTopologyReq",
       className: "AppManagerPanelTopologyReq",
-      classId: 6016
+      classId: 6160
     },
     object: {
       kind: "struct",
@@ -66596,14 +66939,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6017,
+    schemaId: 6161,
     name: "AppManagerPanelTopologyResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "AppManagerPanelTopologyResp",
       className: "AppManagerPanelTopologyResp",
-      classId: 6017
+      classId: 6161
     },
     object: {
       kind: "struct",
@@ -66686,14 +67029,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6064,
+    schemaId: 6208,
     name: "AppManagerAppExportReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerAppExportReq",
       className: "AppManagerAppExportReq",
-      classId: 6064
+      classId: 6208
     },
     object: {
       kind: "struct",
@@ -66739,14 +67082,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6065,
+    schemaId: 6209,
     name: "AppManagerAppExportResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "AppManagerAppExportResp",
       className: "AppManagerAppExportResp",
-      classId: 6065
+      classId: 6209
     },
     object: {
       kind: "struct",
@@ -66781,14 +67124,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6160,
+    schemaId: 6256,
     name: "DbTreeNode",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbTreeNode",
       className: "DbTreeNode",
-      classId: 6160
+      classId: 6256
     },
     object: {
       kind: "struct",
@@ -66841,14 +67184,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6161,
+    schemaId: 6257,
     name: "DbRows",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbRows",
       className: "DbRows",
-      classId: 6161
+      classId: 6257
     },
     object: {
       kind: "struct",
@@ -66904,14 +67247,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6162,
+    schemaId: 6258,
     name: "DbDialTestReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbDialTestReq",
       className: "DbDialTestReq",
-      classId: 6162
+      classId: 6258
     },
     object: {
       kind: "struct",
@@ -66930,14 +67273,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6163,
+    schemaId: 6259,
     name: "DbDialTestResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbDialTestResp",
       className: "DbDialTestResp",
-      classId: 6163
+      classId: 6259
     },
     object: {
       kind: "struct",
@@ -66982,14 +67325,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6164,
+    schemaId: 6260,
     name: "DbTreeReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbTreeReq",
       className: "DbTreeReq",
-      classId: 6164
+      classId: 6260
     },
     object: {
       kind: "struct",
@@ -67025,14 +67368,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6165,
+    schemaId: 6261,
     name: "DbTreeResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbTreeResp",
       className: "DbTreeResp",
-      classId: 6165
+      classId: 6261
     },
     object: {
       kind: "struct",
@@ -67072,14 +67415,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6166,
+    schemaId: 6262,
     name: "DbReadReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbReadReq",
       className: "DbReadReq",
-      classId: 6166
+      classId: 6262
     },
     object: {
       kind: "struct",
@@ -67124,14 +67467,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6167,
+    schemaId: 6263,
     name: "DbQueryReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbQueryReq",
       className: "DbQueryReq",
-      classId: 6167
+      classId: 6263
     },
     object: {
       kind: "struct",
@@ -67167,14 +67510,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6168,
+    schemaId: 6264,
     name: "DbCloseReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbCloseReq",
       className: "DbCloseReq",
-      classId: 6168
+      classId: 6264
     },
     object: {
       kind: "struct",
@@ -67193,14 +67536,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6169,
+    schemaId: 6265,
     name: "DbCloseResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbCloseResp",
       className: "DbCloseResp",
-      classId: 6169
+      classId: 6265
     },
     object: {
       kind: "struct",
@@ -67210,14 +67553,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6170,
+    schemaId: 6266,
     name: "DbColumnDef",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbColumnDef",
       className: "DbColumnDef",
-      classId: 6170
+      classId: 6266
     },
     object: {
       kind: "struct",
@@ -67279,14 +67622,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6171,
+    schemaId: 6267,
     name: "DbIndexDef",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbIndexDef",
       className: "DbIndexDef",
-      classId: 6171
+      classId: 6267
     },
     object: {
       kind: "struct",
@@ -67321,14 +67664,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6172,
+    schemaId: 6268,
     name: "DbDescribeReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbDescribeReq",
       className: "DbDescribeReq",
-      classId: 6172
+      classId: 6268
     },
     object: {
       kind: "struct",
@@ -67355,14 +67698,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6173,
+    schemaId: 6269,
     name: "DbDescribeResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbDescribeResp",
       className: "DbDescribeResp",
-      classId: 6173
+      classId: 6269
     },
     object: {
       kind: "struct",
@@ -67397,14 +67740,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6174,
+    schemaId: 6270,
     name: "DbObjectEntry",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectEntry",
       className: "DbObjectEntry",
-      classId: 6174
+      classId: 6270
     },
     object: {
       kind: "struct",
@@ -67465,14 +67808,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6175,
+    schemaId: 6271,
     name: "DbObjectListReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectListReq",
       className: "DbObjectListReq",
-      classId: 6175
+      classId: 6271
     },
     object: {
       kind: "struct",
@@ -67517,14 +67860,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6176,
+    schemaId: 6272,
     name: "DbObjectListResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectListResp",
       className: "DbObjectListResp",
-      classId: 6176
+      classId: 6272
     },
     object: {
       kind: "struct",
@@ -67564,14 +67907,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6177,
+    schemaId: 6273,
     name: "DbObjectReadReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectReadReq",
       className: "DbObjectReadReq",
-      classId: 6177
+      classId: 6273
     },
     object: {
       kind: "struct",
@@ -67598,14 +67941,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6178,
+    schemaId: 6274,
     name: "DbObjectReadResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectReadResp",
       className: "DbObjectReadResp",
-      classId: 6178
+      classId: 6274
     },
     object: {
       kind: "struct",
@@ -67658,14 +68001,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6179,
+    schemaId: 6275,
     name: "DbObjectWriteReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectWriteReq",
       className: "DbObjectWriteReq",
-      classId: 6179
+      classId: 6275
     },
     object: {
       kind: "struct",
@@ -67709,14 +68052,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6180,
+    schemaId: 6276,
     name: "DbObjectWriteResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectWriteResp",
       className: "DbObjectWriteResp",
-      classId: 6180
+      classId: 6276
     },
     object: {
       kind: "struct",
@@ -67735,14 +68078,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6181,
+    schemaId: 6277,
     name: "DbObjectDeleteReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectDeleteReq",
       className: "DbObjectDeleteReq",
-      classId: 6181
+      classId: 6277
     },
     object: {
       kind: "struct",
@@ -67769,14 +68112,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6182,
+    schemaId: 6278,
     name: "DbObjectDeleteResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectDeleteResp",
       className: "DbObjectDeleteResp",
-      classId: 6182
+      classId: 6278
     },
     object: {
       kind: "struct",
@@ -67786,14 +68129,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6183,
+    schemaId: 6279,
     name: "DbObjectMkdirReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectMkdirReq",
       className: "DbObjectMkdirReq",
-      classId: 6183
+      classId: 6279
     },
     object: {
       kind: "struct",
@@ -67828,14 +68171,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6184,
+    schemaId: 6280,
     name: "DbObjectMkdirResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectMkdirResp",
       className: "DbObjectMkdirResp",
-      classId: 6184
+      classId: 6280
     },
     object: {
       kind: "struct",
@@ -67845,14 +68188,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6185,
+    schemaId: 6281,
     name: "DbObjectStatReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectStatReq",
       className: "DbObjectStatReq",
-      classId: 6185
+      classId: 6281
     },
     object: {
       kind: "struct",
@@ -67879,14 +68222,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6186,
+    schemaId: 6282,
     name: "DbObjectStatResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "DbObjectStatResp",
       className: "DbObjectStatResp",
-      classId: 6186
+      classId: 6282
     },
     object: {
       kind: "struct",
@@ -67931,14 +68274,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6208,
+    schemaId: 6320,
     name: "ToastCard",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ToastCard",
       className: "ToastCard",
-      classId: 6208
+      classId: 6320
     },
     object: {
       kind: "struct",
@@ -68053,14 +68396,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6209,
+    schemaId: 6321,
     name: "ToastShowReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ToastShowReq",
       className: "ToastShowReq",
-      classId: 6209
+      classId: 6321
     },
     object: {
       kind: "struct",
@@ -68160,14 +68503,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6210,
+    schemaId: 6322,
     name: "ToastShowResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ToastShowResp",
       className: "ToastShowResp",
-      classId: 6210
+      classId: 6322
     },
     object: {
       kind: "struct",
@@ -68186,14 +68529,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6211,
+    schemaId: 6323,
     name: "ToastDismissReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ToastDismissReq",
       className: "ToastDismissReq",
-      classId: 6211
+      classId: 6323
     },
     object: {
       kind: "struct",
@@ -68212,14 +68555,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6212,
+    schemaId: 6324,
     name: "ToastDismissResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ToastDismissResp",
       className: "ToastDismissResp",
-      classId: 6212
+      classId: 6324
     },
     object: {
       kind: "struct",
@@ -68229,14 +68572,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6213,
+    schemaId: 6325,
     name: "ToastCardRemovedEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ToastCardRemovedEvent",
       className: "ToastCardRemovedEvent",
-      classId: 6213
+      classId: 6325
     },
     object: {
       kind: "struct",
@@ -68255,14 +68598,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6214,
+    schemaId: 6326,
     name: "ToastStateReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ToastStateReq",
       className: "ToastStateReq",
-      classId: 6214
+      classId: 6326
     },
     object: {
       kind: "struct",
@@ -68272,14 +68615,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6215,
+    schemaId: 6327,
     name: "ToastStateResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ToastStateResp",
       className: "ToastStateResp",
-      classId: 6215
+      classId: 6327
     },
     object: {
       kind: "struct",
@@ -68302,14 +68645,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6216,
+    schemaId: 6328,
     name: "ToastActionReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ToastActionReq",
       className: "ToastActionReq",
-      classId: 6216
+      classId: 6328
     },
     object: {
       kind: "struct",
@@ -68328,14 +68671,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6217,
+    schemaId: 6329,
     name: "ToastActionResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ToastActionResp",
       className: "ToastActionResp",
-      classId: 6217
+      classId: 6329
     },
     object: {
       kind: "struct",
@@ -68345,14 +68688,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6218,
+    schemaId: 6330,
     name: "ToastActionTriggeredEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "ToastActionTriggeredEvent",
       className: "ToastActionTriggeredEvent",
-      classId: 6218
+      classId: 6330
     },
     object: {
       kind: "struct",
@@ -68414,14 +68757,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6256,
+    schemaId: 6368,
     name: "CookieBridgePairingInfoReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "CookieBridgePairingInfoReq",
       className: "CookieBridgePairingInfoReq",
-      classId: 6256
+      classId: 6368
     },
     object: {
       kind: "struct",
@@ -68431,14 +68774,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6257,
+    schemaId: 6369,
     name: "CookieBridgePairingInfoResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "CookieBridgePairingInfoResp",
       className: "CookieBridgePairingInfoResp",
-      classId: 6257
+      classId: 6369
     },
     object: {
       kind: "struct",
@@ -68489,14 +68832,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6258,
+    schemaId: 6370,
     name: "CookieBridgeRegenTokenReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "CookieBridgeRegenTokenReq",
       className: "CookieBridgeRegenTokenReq",
-      classId: 6258
+      classId: 6370
     },
     object: {
       kind: "struct",
@@ -68506,14 +68849,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6259,
+    schemaId: 6371,
     name: "CookieBridgeRegenTokenResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "CookieBridgeRegenTokenResp",
       className: "CookieBridgeRegenTokenResp",
-      classId: 6259
+      classId: 6371
     },
     object: {
       kind: "struct",
@@ -68532,14 +68875,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6400,
+    schemaId: 6416,
     name: "WorkbenchCardState",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchCardState",
       className: "WorkbenchCardState",
-      classId: 6400
+      classId: 6416
     },
     object: {
       kind: "struct",
@@ -68660,14 +69003,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6401,
+    schemaId: 6417,
     name: "WorkbenchSnapshot",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchSnapshot",
       className: "WorkbenchSnapshot",
-      classId: 6401
+      classId: 6417
     },
     object: {
       kind: "struct",
@@ -68716,14 +69059,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6402,
+    schemaId: 6418,
     name: "WorkbenchSnapshotReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchSnapshotReq",
       className: "WorkbenchSnapshotReq",
-      classId: 6402
+      classId: 6418
     },
     object: {
       kind: "struct",
@@ -68743,14 +69086,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6403,
+    schemaId: 6419,
     name: "WorkbenchCardRefReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchCardRefReq",
       className: "WorkbenchCardRefReq",
-      classId: 6403
+      classId: 6419
     },
     object: {
       kind: "struct",
@@ -68769,14 +69112,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6404,
+    schemaId: 6420,
     name: "WorkbenchSetHiddenReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchSetHiddenReq",
       className: "WorkbenchSetHiddenReq",
-      classId: 6404
+      classId: 6420
     },
     object: {
       kind: "struct",
@@ -68803,14 +69146,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6405,
+    schemaId: 6421,
     name: "WorkbenchSetPinnedReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchSetPinnedReq",
       className: "WorkbenchSetPinnedReq",
-      classId: 6405
+      classId: 6421
     },
     object: {
       kind: "struct",
@@ -68837,14 +69180,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6406,
+    schemaId: 6422,
     name: "WorkbenchUpsertCardReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchUpsertCardReq",
       className: "WorkbenchUpsertCardReq",
-      classId: 6406
+      classId: 6422
     },
     object: {
       kind: "struct",
@@ -68943,14 +69286,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6407,
+    schemaId: 6423,
     name: "WorkbenchSetFrozenReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchSetFrozenReq",
       className: "WorkbenchSetFrozenReq",
-      classId: 6407
+      classId: 6423
     },
     object: {
       kind: "struct",
@@ -68969,14 +69312,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6408,
+    schemaId: 6424,
     name: "WorkbenchSetMaximizedReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchSetMaximizedReq",
       className: "WorkbenchSetMaximizedReq",
-      classId: 6408
+      classId: 6424
     },
     object: {
       kind: "struct",
@@ -69004,14 +69347,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6496,
+    schemaId: 6512,
     name: "WorkbenchAttentionEvent",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchAttentionEvent",
       className: "WorkbenchAttentionEvent",
-      classId: 6496
+      classId: 6512
     },
     object: {
       kind: "struct",
@@ -69054,14 +69397,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6497,
+    schemaId: 6513,
     name: "WorkbenchAttentionReportReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchAttentionReportReq",
       className: "WorkbenchAttentionReportReq",
-      classId: 6497
+      classId: 6513
     },
     object: {
       kind: "struct",
@@ -69081,14 +69424,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6498,
+    schemaId: 6514,
     name: "WorkbenchAttentionReportResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "WorkbenchAttentionReportResp",
       className: "WorkbenchAttentionReportResp",
-      classId: 6498
+      classId: 6514
     },
     object: {
       kind: "struct",
@@ -69141,14 +69484,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6657,
+    schemaId: 6561,
     name: "StoreClientConfigView",
     visibility: "public",
     type: {
       kind: "struct",
       name: "StoreClientConfigView",
       className: "StoreClientConfigView",
-      classId: 6657
+      classId: 6561
     },
     object: {
       kind: "struct",
@@ -69191,14 +69534,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6659,
+    schemaId: 6563,
     name: "StoreClientConfigGetResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "StoreClientConfigGetResp",
       className: "StoreClientConfigGetResp",
-      classId: 6659
+      classId: 6563
     },
     object: {
       kind: "struct",
@@ -69217,14 +69560,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6660,
+    schemaId: 6564,
     name: "StoreClientConfigSetReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "StoreClientConfigSetReq",
       className: "StoreClientConfigSetReq",
-      classId: 6660
+      classId: 6564
     },
     object: {
       kind: "struct",
@@ -69271,14 +69614,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6661,
+    schemaId: 6565,
     name: "StoreClientConfigSetResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "StoreClientConfigSetResp",
       className: "StoreClientConfigSetResp",
-      classId: 6661
+      classId: 6565
     },
     object: {
       kind: "struct",
@@ -69297,14 +69640,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6663,
+    schemaId: 6567,
     name: "StoreIndexResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "StoreIndexResp",
       className: "StoreIndexResp",
-      classId: 6663
+      classId: 6567
     },
     object: {
       kind: "struct",
@@ -69363,14 +69706,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6664,
+    schemaId: 6568,
     name: "StorePluginView",
     visibility: "public",
     type: {
       kind: "struct",
       name: "StorePluginView",
       className: "StorePluginView",
-      classId: 6664
+      classId: 6568
     },
     object: {
       kind: "struct",
@@ -69457,14 +69800,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6665,
+    schemaId: 6569,
     name: "StoreVersionView",
     visibility: "public",
     type: {
       kind: "struct",
       name: "StoreVersionView",
       className: "StoreVersionView",
-      classId: 6665
+      classId: 6569
     },
     object: {
       kind: "struct",
@@ -69556,14 +69899,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6666,
+    schemaId: 6570,
     name: "StoreCommunityView",
     visibility: "public",
     type: {
       kind: "struct",
       name: "StoreCommunityView",
       className: "StoreCommunityView",
-      classId: 6666
+      classId: 6570
     },
     object: {
       kind: "struct",
@@ -69710,14 +70053,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6667,
+    schemaId: 6571,
     name: "StoreInstallReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "StoreInstallReq",
       className: "StoreInstallReq",
-      classId: 6667
+      classId: 6571
     },
     object: {
       kind: "struct",
@@ -69753,14 +70096,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6668,
+    schemaId: 6572,
     name: "StoreInstallResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "StoreInstallResp",
       className: "StoreInstallResp",
-      classId: 6668
+      classId: 6572
     },
     object: {
       kind: "struct",
@@ -69803,14 +70146,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6688,
+    schemaId: 6608,
     name: "PolicyQuestion",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PolicyQuestion",
       className: "PolicyQuestion",
-      classId: 6688
+      classId: 6608
     },
     object: {
       kind: "struct",
@@ -69868,14 +70211,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6689,
+    schemaId: 6609,
     name: "PolicyDecideReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PolicyDecideReq",
       className: "PolicyDecideReq",
-      classId: 6689
+      classId: 6609
     },
     object: {
       kind: "struct",
@@ -69920,14 +70263,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6690,
+    schemaId: 6610,
     name: "PolicyAnswer",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PolicyAnswer",
       className: "PolicyAnswer",
-      classId: 6690
+      classId: 6610
     },
     object: {
       kind: "struct",
@@ -70016,14 +70359,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6691,
+    schemaId: 6611,
     name: "PolicyDecideResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PolicyDecideResp",
       className: "PolicyDecideResp",
-      classId: 6691
+      classId: 6611
     },
     object: {
       kind: "struct",
@@ -70093,14 +70436,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6692,
+    schemaId: 6612,
     name: "PolicyJevConfig",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PolicyJevConfig",
       className: "PolicyJevConfig",
-      classId: 6692
+      classId: 6612
     },
     object: {
       kind: "struct",
@@ -70138,14 +70481,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6693,
+    schemaId: 6613,
     name: "PolicyLLMConfig",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PolicyLLMConfig",
       className: "PolicyLLMConfig",
-      classId: 6693
+      classId: 6613
     },
     object: {
       kind: "struct",
@@ -70165,14 +70508,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6694,
+    schemaId: 6614,
     name: "PolicyConfigureReq",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PolicyConfigureReq",
       className: "PolicyConfigureReq",
-      classId: 6694
+      classId: 6614
     },
     object: {
       kind: "struct",
@@ -70210,14 +70553,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6695,
+    schemaId: 6615,
     name: "PolicyConfigureResp",
     visibility: "admin",
     type: {
       kind: "struct",
       name: "PolicyConfigureResp",
       className: "PolicyConfigureResp",
-      classId: 6695
+      classId: 6615
     },
     object: {
       kind: "struct",
@@ -70236,14 +70579,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6696,
+    schemaId: 6616,
     name: "PolicyStatusReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PolicyStatusReq",
       className: "PolicyStatusReq",
-      classId: 6696
+      classId: 6616
     },
     object: {
       kind: "struct",
@@ -70253,14 +70596,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 6697,
+    schemaId: 6617,
     name: "PolicyStatusResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "PolicyStatusResp",
       className: "PolicyStatusResp",
-      classId: 6697
+      classId: 6617
     },
     object: {
       kind: "struct",

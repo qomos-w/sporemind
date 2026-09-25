@@ -69,6 +69,21 @@ port.onmessage = (e: MessageEvent) => {
     }
     return
   }
+  if (msg && typeof msg === 'object' && msg.type === 'sporemind:panel-op' && typeof msg.requestId === 'string') {
+    const req = msg as PanelOpMsg
+    void runPanelOp(req)
+      .then((res) => {
+        try {
+          port.postMessage({ type: 'sporemind:panel-op-result', requestId: req.requestId, ok: res.ok, result: res.result, reason: res.reason })
+        } catch { /* port closing */ }
+      })
+      .catch((err: unknown) => {
+        try {
+          port.postMessage({ type: 'sporemind:panel-op-result', requestId: req.requestId, ok: false, reason: String(err) })
+        } catch { /* port closing */ }
+      })
+    return
+  }
   if (msg && typeof msg === 'object' && msg.type === 'sporemind:dispose') {
     dispose(msg.reason ?? 'host detach')
     return
@@ -561,6 +576,278 @@ function serializeDocument(doc: Document): string {
   let result = lines.join('\n')
   if (truncated) result += SNAPSHOT_TRUNCATION_MARKER
   return result
+}
+
+// --- Panel operations ------------------------------------------------------
+// Dev-loop precise panel control (pluginhost.panel_op relayed by the host
+// page over this port). Same trust model as the dom snapshot: ops only ever
+// arrive on the host-side MessagePort, which exists solely after the host
+// handshake — the host gates the op (dev-registered plugins only). All
+// results are bounded sender-side (project rule) and matched by requestId.
+
+const PANEL_OP_TIMEOUT_DEFAULT_MS = 5000
+const PANEL_OP_TIMEOUT_MAX_MS = 15000
+const PANEL_OP_DOM_DEFAULT_CHARS = 16384
+const PANEL_OP_EVAL_DEFAULT_CHARS = 4096
+const PANEL_OP_MAX_CHARS = 131072
+const PANEL_OP_DOM_MAX_DEPTH = 14
+const PANEL_OP_DOM_MAX_ELEMENTS = 1200
+const PANEL_OP_TEXT_MAX = 160
+
+interface PanelOpResult {
+  ok: boolean
+  result?: string
+  reason?: string
+}
+
+interface PanelOpMsg {
+  requestId: string
+  op: string
+  selector?: string
+  text?: string
+  expr?: string
+  timeoutMs?: number
+  maxChars?: number
+}
+
+function clampTimeout(ms: number | undefined): number {
+  if (!ms || ms <= 0) return PANEL_OP_TIMEOUT_DEFAULT_MS
+  return Math.min(ms, PANEL_OP_TIMEOUT_MAX_MS)
+}
+
+function clampChars(chars: number | undefined, dflt: number): number {
+  if (!chars || chars <= 0) return dflt
+  return Math.min(chars, PANEL_OP_MAX_CHARS)
+}
+
+function safeJSONStringify(value: unknown, maxChars: number): string {
+  const seen = new WeakSet<object>()
+  let s: string
+  try {
+    s = JSON.stringify(value, (_k, v: unknown) => {
+      if (typeof v === 'object' && v !== null) {
+        if (seen.has(v as object)) return '[Circular]'
+        seen.add(v as object)
+      }
+      return v
+    }) ?? 'null'
+  } catch (err) {
+    s = `unserializable: ${String(value)} (${String(err)})`
+  }
+  return truncateStr(s, maxChars)
+}
+
+function describeElement(el: Element): string {
+  let desc = el.tagName.toLowerCase()
+  if (el.id) desc += `#${el.id}`
+  if (el.classList.length > 0) desc += `.${Array.from(el.classList).slice(0, 3).join('.')}`
+  return desc
+}
+
+function findSelector(selector: string): Element | null {
+  try {
+    return document.querySelector(selector)
+  } catch {
+    return null
+  }
+}
+
+function isInteractive(el: Element): boolean {
+  const tag = el.tagName.toLowerCase()
+  if (tag === 'a' || tag === 'button' || tag === 'input' || tag === 'select' || tag === 'textarea' || tag === 'option' || tag === 'label') return true
+  if (el.hasAttribute('contenteditable')) return true
+  const role = el.getAttribute('role')
+  if (role === 'button' || role === 'link' || role === 'tab' || role === 'menuitem' || role === 'checkbox' || role === 'radio' || role === 'switch' || role === 'textbox') return true
+  return el.hasAttribute('onclick')
+}
+
+// dom op serializer: like serializeDocument but with [k] action markers on
+// interactive elements (so a follow-up click/type op can target a stable
+// selector), a caller-chosen root, and a caller-chosen char budget.
+function serializePanelDom(root: Element, maxChars: number): string {
+  const lines: string[] = []
+  let totalLen = 0
+  let elementCount = 0
+  let marker = 0
+  let truncated = false
+
+  function addLine(line: string): boolean {
+    const sep = lines.length > 0 ? 1 : 0
+    if (totalLen + sep + line.length + SNAPSHOT_TRUNCATION_MARKER.length > maxChars) {
+      truncated = true
+      return false
+    }
+    lines.push(line)
+    totalLen += sep + line.length
+    return true
+  }
+
+  function walk(el: Element, depth: number): void {
+    if (truncated) return
+    if (depth > PANEL_OP_DOM_MAX_DEPTH) { truncated = true; return }
+    if (elementCount >= PANEL_OP_DOM_MAX_ELEMENTS) { truncated = true; return }
+    elementCount++
+
+    const tag = el.tagName.toLowerCase()
+    const indent = '  '.repeat(depth)
+    let desc = tag
+    if (el.id) desc += `#${el.id}`
+    if (el.classList.length > 0) desc += `.${Array.from(el.classList).slice(0, 4).join('.')}`
+    for (const attr of Array.from(el.attributes)) {
+      if (attr.name.startsWith('data-')) desc += ` [${attr.name}${attr.value ? `=${truncateStr(attr.value, PANEL_OP_TEXT_MAX)}` : ''}]`
+    }
+    if (tag === 'a' && el instanceof HTMLAnchorElement && el.getAttribute('href')) {
+      desc += ` ->${truncateStr(el.getAttribute('href') || '', PANEL_OP_TEXT_MAX)}`
+    }
+    if (tag !== 'script' && tag !== 'style') {
+      const text = ownText(el)
+      if (text) desc += ` "${truncateStr(text, PANEL_OP_TEXT_MAX)}"`
+    }
+    if (isInteractive(el)) {
+      marker++
+      desc = `${indent}[${marker - 1}] ${desc}`
+    } else {
+      desc = indent + desc
+    }
+    if (!addLine(desc)) return
+
+    if (tag !== 'script' && tag !== 'style') {
+      for (const child of Array.from(el.children)) {
+        walk(child, depth + 1)
+        if (truncated) return
+      }
+    }
+  }
+
+  walk(root, 0)
+
+  let out = lines.join('\n')
+  if (truncated) out += SNAPSHOT_TRUNCATION_MARKER
+  return out
+}
+
+function opDom(msg: PanelOpMsg): PanelOpResult {
+  const root = msg.selector ? findSelector(msg.selector) : document.documentElement
+  if (!root) return { ok: false, reason: `selector not found: ${msg.selector}` }
+  return { ok: true, result: serializePanelDom(root, clampChars(msg.maxChars, PANEL_OP_DOM_DEFAULT_CHARS)) }
+}
+
+async function opEval(msg: PanelOpMsg): Promise<PanelOpResult> {
+  if (!msg.expr) return { ok: false, reason: 'eval requires expr' }
+  const timeoutMs = clampTimeout(msg.timeoutMs)
+  const stmtStart = /^\s*(?:return|const|let|var|function|for|while|if|switch|try|class|throw)\b/
+  const body = !stmtStart.test(msg.expr) && !msg.expr.includes(';')
+    ? `return (${msg.expr})`
+    : msg.expr
+  let fn: () => Promise<unknown>
+  try {
+    // eslint-disable-next-line no-new-func
+    fn = new Function(`"use strict";\nreturn (async () => {\n${body}\n})()`) as () => Promise<unknown>
+  } catch (err) {
+    return { ok: false, reason: `syntax error: ${String(err)}` }
+  }
+  let timer: ReturnType<typeof setTimeout> | undefined
+  try {
+    const value = await Promise.race([
+      fn(),
+      new Promise<never>((_resolve, reject) => {
+        timer = setTimeout(() => reject(new Error(`eval timeout after ${timeoutMs}ms`)), timeoutMs)
+      }),
+    ])
+    return { ok: true, result: safeJSONStringify(value, clampChars(msg.maxChars, PANEL_OP_EVAL_DEFAULT_CHARS)) }
+  } catch (err) {
+    return { ok: false, reason: err instanceof Error ? err.message : String(err) }
+  } finally {
+    if (timer !== undefined) clearTimeout(timer)
+  }
+}
+
+function opClick(msg: PanelOpMsg): PanelOpResult {
+  if (!msg.selector) return { ok: false, reason: 'click requires selector' }
+  const el = findSelector(msg.selector)
+  if (!el) return { ok: false, reason: `selector not found: ${msg.selector}` }
+  try {
+    el.scrollIntoView({ block: 'center', inline: 'center' })
+  } catch { /* detached or unsupported; the synthetic events still carry coordinates */ }
+  const r = el.getBoundingClientRect()
+  const base: MouseEventInit = {
+    bubbles: true,
+    cancelable: true,
+    view: window,
+    clientX: r.x + r.width / 2,
+    clientY: r.y + r.height / 2,
+    button: 0,
+  }
+  const mk = (type: string): Event => {
+    if (typeof PointerEvent === 'function') return new PointerEvent(type, { ...base, pointerId: 1, pointerType: 'mouse', isPrimary: true })
+    return new MouseEvent(type, base)
+  }
+  el.dispatchEvent(mk('pointerdown'))
+  el.dispatchEvent(new MouseEvent('mousedown', base))
+  if (typeof (el as HTMLElement).focus === 'function') (el as HTMLElement).focus()
+  el.dispatchEvent(mk('pointerup'))
+  el.dispatchEvent(new MouseEvent('mouseup', base))
+  el.dispatchEvent(new MouseEvent('click', base))
+  return { ok: true, result: `clicked ${describeElement(el)}` }
+}
+
+function fireInputEvents(el: Element): void {
+  el.dispatchEvent(new Event('input', { bubbles: true }))
+  el.dispatchEvent(new Event('change', { bubbles: true }))
+}
+
+function opType(msg: PanelOpMsg): PanelOpResult {
+  if (!msg.selector) return { ok: false, reason: 'type requires selector' }
+  if (msg.text === undefined) return { ok: false, reason: 'type requires text' }
+  const el = findSelector(msg.selector)
+  if (!el) return { ok: false, reason: `selector not found: ${msg.selector}` }
+  if (typeof (el as HTMLElement).focus === 'function') (el as HTMLElement).focus()
+  if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+    // Native value setter so React/Vue controlled components observe the change.
+    const proto = el instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype
+    const setter = Object.getOwnPropertyDescriptor(proto, 'value')?.set
+    if (setter) setter.call(el, msg.text)
+    else el.value = msg.text
+    fireInputEvents(el)
+    return { ok: true, result: `typed ${msg.text.length} chars into ${describeElement(el)}` }
+  }
+  if (el.hasAttribute('contenteditable')) {
+    el.textContent = msg.text
+    fireInputEvents(el)
+    return { ok: true, result: `typed ${msg.text.length} chars into contenteditable ${describeElement(el)}` }
+  }
+  return { ok: false, reason: `not a typeable element: ${describeElement(el)}` }
+}
+
+async function opWait(msg: PanelOpMsg): Promise<PanelOpResult> {
+  if (!msg.selector) return { ok: false, reason: 'wait requires selector' }
+  const timeoutMs = clampTimeout(msg.timeoutMs)
+  const start = Date.now()
+  for (;;) {
+    const el = findSelector(msg.selector)
+    if (el) {
+      const textOk = !msg.text || (el.textContent || '').includes(msg.text)
+      const visible = (el as HTMLElement).offsetParent !== null || el.getClientRects().length > 0
+      if (textOk && visible) {
+        return { ok: true, result: `matched ${describeElement(el)} after ${Date.now() - start}ms` }
+      }
+    }
+    if (Date.now() - start >= timeoutMs) {
+      return { ok: false, reason: `timeout after ${timeoutMs}ms waiting for ${msg.selector}${msg.text ? ` containing "${truncateStr(msg.text, 60)}"` : ''}` }
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100))
+  }
+}
+
+async function runPanelOp(msg: PanelOpMsg): Promise<PanelOpResult> {
+  switch (msg.op) {
+    case 'dom': return opDom(msg)
+    case 'eval': return opEval(msg)
+    case 'click': return opClick(msg)
+    case 'type': return opType(msg)
+    case 'wait': return opWait(msg)
+    default: return { ok: false, reason: `unknown op: ${msg.op}` }
+  }
 }
 
 ;(window as any).sporemind = host

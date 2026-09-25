@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "delete",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4703,
-    finalSchemaId: 4704,
+    reqSchemaId: 4847,
+    finalSchemaId: 4848,
     req: {
       kind: "struct",
       name: "ImRouteDeleteReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "list",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4699,
-    finalSchemaId: 4700,
+    reqSchemaId: 4843,
+    finalSchemaId: 4844,
     req: {
       kind: "struct",
       name: "ImRouteListReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "set",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4701,
-    finalSchemaId: 4702,
+    reqSchemaId: 4845,
+    finalSchemaId: 4846,
     req: {
       kind: "struct",
       name: "ImRouteSetReq",

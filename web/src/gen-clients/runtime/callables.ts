@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "build_info",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 898,
-    finalSchemaId: 899,
+    reqSchemaId: 914,
+    finalSchemaId: 915,
     req: {
       kind: "struct",
       name: "RuntimeBuildInfoReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "list_services",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 896,
-    finalSchemaId: 897,
+    reqSchemaId: 912,
+    finalSchemaId: 913,
     req: {
       kind: "struct",
       name: "RuntimeListServicesReq",

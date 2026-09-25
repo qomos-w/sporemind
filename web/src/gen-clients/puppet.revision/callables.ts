@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "log",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4559,
-    finalSchemaId: 4560,
+    reqSchemaId: 4703,
+    finalSchemaId: 4704,
     req: {
       kind: "struct",
       name: "PuppetRevisionLogReq",

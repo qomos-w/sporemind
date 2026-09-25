@@ -43,6 +43,7 @@ type PluginDescriptor struct {
 	TrustClass   string
 	Signer       string
 	Trusted      bool // trusted plugins run in-process; untrusted require OOP transport
+	Dev          bool // loaded via the appmanager dev loop; gates panel ops (dev-only)
 	LoadedAt     time.Time
 	Status       string // loading | active | error | unloaded
 	Error        string
@@ -63,6 +64,12 @@ type Actor struct {
 	actor.Host
 
 	Plugins []PluginDescriptor `gospore:"component,public"`
+
+	// panelOps holds in-flight panel-op results (the push side of
+	// pluginhost.panel_op / panel_op_put), matched by RequestId. Mutex-guarded
+	// because puts arrive on stateless invoke goroutines.
+	panelOpsMu sync.Mutex
+	panelOps   map[string]*pendingPanelOp
 
 	mu             sync.RWMutex
 	handlers       map[string]HandlerFunc
@@ -285,6 +292,7 @@ func (a *Actor) ReplaceArtifact(oldCallIDs []string, handlers map[string]Handler
 	found := false
 	for i := range a.Plugins {
 		if a.Plugins[i].ID == desc.ID {
+			full.Dev = a.Plugins[i].Dev // Dev (panel-op gate) survives artifact swaps
 			a.Plugins[i] = full
 			found = true
 			break
@@ -326,6 +334,7 @@ func (a *Actor) RegisterDescriptor(desc pluginhost.PluginDescriptorData) {
 	}
 	for i, p := range a.Plugins {
 		if p.ID == full.ID {
+			full.Dev = p.Dev // Dev (panel-op gate) is sticky across descriptor re-registration
 			a.Plugins[i] = full
 			return
 		}
@@ -425,6 +434,8 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 			// verdict so the registry reflects reality (same tell discipline
 			// as process-state transitions; appmanager starts before us).
 			a.reportProcessStateToAppManager(pluginID, "failed", err.Error(), "")
+		} else {
+			a.markPanelOpDev(pluginID, req.Dev)
 		}
 	}
 
@@ -456,6 +467,16 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	_ = ctx.Register("pluginhost.plugin_dom", a.handlePluginDom, actor.Public(),
 		actor.WithDescription("Request a plugin panel's serialized DOM: asks the mounted iframe through the bridge port to serialize, then waits for the webview push. Use it for layout and rendering diagnosis (structure, not pixels)."))
 	_ = ctx.Register("pluginhost.plugin_dom_put", a.handlePluginDomPut, actor.Public())
+	// Panel operations (dev-only plugins): browser-use-style precise control
+	// of a mounted plugin panel iframe — dom (bounded serialization),
+	// eval (bounded async JS), click, type, wait. Routed through
+	// interfacemanager to the host webview and the plugin's bridge port;
+	// results return via panel_op_put matched by RequestId. Same PureContext
+	// exposure rationale as plugin_dom; the handler gates on the descriptor
+	// Dev flag set by the appmanager dev loop.
+	_ = ctx.Register("pluginhost.panel_op", a.handlePanelOp, actor.Public(),
+		actor.WithDescription("Run a precise operation on a mounted dev-registered plugin panel: Op=dom|eval|click|type|wait (dom: serialize DOM with [k] action markers; eval: run bounded async JS and return JSON; click/type: target a CSS selector; wait: await a selector/text). Requires a plugin registered via the dev loop."))
+	_ = ctx.Register("pluginhost.panel_op_put", a.handlePanelOpPut, actor.Public())
 	_ = ctx.Register("pluginhost.register_actor", a.handleRegisterActor, actor.AdminOnly())
 	_ = ctx.Register("pluginhost.unregister_actor", a.handleUnregisterActor, actor.AdminOnly())
 	_ = ctx.Register("pluginhost.invoke", a.handleInvoke, actor.Public())

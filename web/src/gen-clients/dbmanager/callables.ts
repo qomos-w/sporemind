@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "profile_get",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 5926,
-    finalSchemaId: 5927,
+    reqSchemaId: 6070,
+    finalSchemaId: 6071,
     req: {
       kind: "struct",
       name: "DbProfileGetReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "profile_list",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 5924,
-    finalSchemaId: 5925,
+    reqSchemaId: 6068,
+    finalSchemaId: 6069,
     req: {
       kind: "struct",
       name: "DbProfileListReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "profile_remove",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 5928,
-    finalSchemaId: 5929,
+    reqSchemaId: 6072,
+    finalSchemaId: 6073,
     req: {
       kind: "struct",
       name: "DbProfileRemoveReq",
@@ -62,8 +62,8 @@ export const callableEntries: CallableEntry[] = [
     name: "profile_save",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 5922,
-    finalSchemaId: 5923,
+    reqSchemaId: 6066,
+    finalSchemaId: 6067,
     req: {
       kind: "struct",
       name: "DbProfileSaveReq",

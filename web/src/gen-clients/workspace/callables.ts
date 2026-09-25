@@ -9,7 +9,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1839,
+    finalSchemaId: 1903,
     req: {
       kind: "void",
       name: "void"
@@ -25,8 +25,8 @@ export const callableEntries: CallableEntry[] = [
     name: "add_mount",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1821,
-    finalSchemaId: 1809,
+    reqSchemaId: 1885,
+    finalSchemaId: 1873,
     req: {
       kind: "struct",
       name: "WorkspaceAddMountReq",
@@ -43,8 +43,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_access",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1901,
-    finalSchemaId: 1818,
+    reqSchemaId: 1965,
+    finalSchemaId: 1882,
     req: {
       kind: "struct",
       name: "WorkspaceAgentAccessReq",
@@ -61,8 +61,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_assign",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3794,
-    finalSchemaId: 3795,
+    reqSchemaId: 3874,
+    finalSchemaId: 3875,
     req: {
       kind: "struct",
       name: "WorkspaceAgentAssignReq",
@@ -80,7 +80,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1818,
+    finalSchemaId: 1882,
     req: {
       kind: "void",
       name: "void"
@@ -96,8 +96,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_loaded",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 5344,
-    finalSchemaId: 5345,
+    reqSchemaId: 5488,
+    finalSchemaId: 5489,
     req: {
       kind: "struct",
       name: "WorkspaceAgentLoadedReq",
@@ -114,8 +114,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_pause",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2736,
-    finalSchemaId: 2737,
+    reqSchemaId: 2816,
+    finalSchemaId: 2817,
     req: {
       kind: "struct",
       name: "AgentPauseReq",
@@ -150,8 +150,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_resume",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2738,
-    finalSchemaId: 2739,
+    reqSchemaId: 2818,
+    finalSchemaId: 2819,
     req: {
       kind: "struct",
       name: "AgentResumeReq",
@@ -168,8 +168,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_review",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3796,
-    finalSchemaId: 3797,
+    reqSchemaId: 3876,
+    finalSchemaId: 3877,
     req: {
       kind: "struct",
       name: "WorkspaceAgentReviewReq",
@@ -204,8 +204,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_spawn_assign",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3792,
-    finalSchemaId: 3793,
+    reqSchemaId: 3872,
+    finalSchemaId: 3873,
     req: {
       kind: "struct",
       name: "WorkspaceAgentSpawnAssignReq",
@@ -222,8 +222,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_spawn_by_type",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3800,
-    finalSchemaId: 3801,
+    reqSchemaId: 3880,
+    finalSchemaId: 3881,
     req: {
       kind: "struct",
       name: "WorkspaceAgentSpawnByTypeReq",
@@ -240,8 +240,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_spawn_scheduler",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1915,
-    finalSchemaId: 1916,
+    reqSchemaId: 1979,
+    finalSchemaId: 1980,
     req: {
       kind: "struct",
       name: "WorkspaceAgentSpawnSchedulerReq",
@@ -258,8 +258,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_spawn_swarm",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1930,
-    finalSchemaId: 1931,
+    reqSchemaId: 1835,
+    finalSchemaId: 1836,
     req: {
       kind: "struct",
       name: "WorkspaceAgentSpawnSwarmReq",
@@ -276,8 +276,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_status_update",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1820,
-    finalSchemaId: 1818,
+    reqSchemaId: 1884,
+    finalSchemaId: 1882,
     req: {
       kind: "struct",
       name: "WorkspaceAgentStatusUpdateReq",
@@ -294,8 +294,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_terminate",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3798,
-    finalSchemaId: 3799,
+    reqSchemaId: 3878,
+    finalSchemaId: 3879,
     req: {
       kind: "struct",
       name: "WorkspaceAgentTerminateReq",
@@ -312,8 +312,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_unload",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2740,
-    finalSchemaId: 2741,
+    reqSchemaId: 2820,
+    finalSchemaId: 2821,
     req: {
       kind: "struct",
       name: "AgentUnloadReq",
@@ -348,7 +348,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 3505,
+    finalSchemaId: 3585,
     req: {
       kind: "void",
       name: "void"
@@ -365,7 +365,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 3602,
+    finalSchemaId: 3682,
     req: {
       kind: "void",
       name: "void"
@@ -381,7 +381,7 @@ export const callableEntries: CallableEntry[] = [
     name: "clone_agent",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1827,
+    reqSchemaId: 1891,
     finalSchemaId: 354,
     req: {
       kind: "struct",
@@ -399,8 +399,8 @@ export const callableEntries: CallableEntry[] = [
     name: "component_get",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2546,
-    finalSchemaId: 2547,
+    reqSchemaId: 2626,
+    finalSchemaId: 2627,
     req: {
       kind: "struct",
       name: "ProjectComponentGetReq",
@@ -417,8 +417,8 @@ export const callableEntries: CallableEntry[] = [
     name: "create",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1812,
-    finalSchemaId: 1809,
+    reqSchemaId: 1876,
+    finalSchemaId: 1873,
     req: {
       kind: "struct",
       name: "WorkspaceCreateReq",
@@ -435,7 +435,7 @@ export const callableEntries: CallableEntry[] = [
     name: "create_agent",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1824,
+    reqSchemaId: 1888,
     finalSchemaId: 354,
     req: {
       kind: "struct",
@@ -453,8 +453,8 @@ export const callableEntries: CallableEntry[] = [
     name: "create_agent_kind",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1922,
-    finalSchemaId: 1923,
+    reqSchemaId: 1986,
+    finalSchemaId: 1987,
     req: {
       kind: "struct",
       name: "WorkspaceCreateAgentKindReq",
@@ -471,8 +471,8 @@ export const callableEntries: CallableEntry[] = [
     name: "debug_command_exec",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 5201,
-    finalSchemaId: 5202,
+    reqSchemaId: 5345,
+    finalSchemaId: 5346,
     req: {
       kind: "struct",
       name: "DebugCommandExecReq",
@@ -490,7 +490,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 5200,
+    finalSchemaId: 5344,
     req: {
       kind: "void",
       name: "void"
@@ -506,7 +506,7 @@ export const callableEntries: CallableEntry[] = [
     name: "delete_agent",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1826,
+    reqSchemaId: 1890,
     finalSchemaId: 354,
     req: {
       kind: "struct",
@@ -524,8 +524,8 @@ export const callableEntries: CallableEntry[] = [
     name: "delete_agent_kind",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1920,
-    finalSchemaId: 1921,
+    reqSchemaId: 1984,
+    finalSchemaId: 1985,
     req: {
       kind: "struct",
       name: "WorkspaceDeleteAgentKindReq",
@@ -542,8 +542,8 @@ export const callableEntries: CallableEntry[] = [
     name: "gate_approve",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3804,
-    finalSchemaId: 3805,
+    reqSchemaId: 3884,
+    finalSchemaId: 3885,
     req: {
       kind: "struct",
       name: "WorkspaceGateApproveReq",
@@ -560,8 +560,8 @@ export const callableEntries: CallableEntry[] = [
     name: "gate_reject",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3806,
-    finalSchemaId: 3807,
+    reqSchemaId: 3886,
+    finalSchemaId: 3887,
     req: {
       kind: "struct",
       name: "WorkspaceGateRejectReq",
@@ -578,8 +578,8 @@ export const callableEntries: CallableEntry[] = [
     name: "get_agent_kind_config",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1835,
-    finalSchemaId: 1832,
+    reqSchemaId: 1899,
+    finalSchemaId: 1896,
     req: {
       kind: "struct",
       name: "WorkspaceGetAgentKindConfigReq",
@@ -596,7 +596,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_add",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1868,
+    reqSchemaId: 1932,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -613,7 +613,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_amend",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1908,
+    reqSchemaId: 1972,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -630,8 +630,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_blame",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1889,
-    finalSchemaId: 1890,
+    reqSchemaId: 1953,
+    finalSchemaId: 1954,
     req: {
       kind: "struct",
       name: "WorkspaceGitBlameReq",
@@ -648,8 +648,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_branch",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1873,
-    finalSchemaId: 1874,
+    reqSchemaId: 1937,
+    finalSchemaId: 1938,
     req: {
       kind: "struct",
       name: "WorkspaceGitBranchReq",
@@ -666,7 +666,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_checkout",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1875,
+    reqSchemaId: 1939,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -683,8 +683,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_commit",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1869,
-    finalSchemaId: 1870,
+    reqSchemaId: 1933,
+    finalSchemaId: 1934,
     req: {
       kind: "struct",
       name: "WorkspaceGitCommitReq",
@@ -701,8 +701,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_config_get",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1891,
-    finalSchemaId: 1892,
+    reqSchemaId: 1955,
+    finalSchemaId: 1956,
     req: {
       kind: "struct",
       name: "WorkspaceGitConfigGetReq",
@@ -719,7 +719,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_config_set",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1893,
+    reqSchemaId: 1957,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -736,8 +736,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_diff",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1866,
-    finalSchemaId: 1867,
+    reqSchemaId: 1930,
+    finalSchemaId: 1931,
     req: {
       kind: "struct",
       name: "WorkspaceGitDiffReq",
@@ -754,7 +754,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_discard",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1907,
+    reqSchemaId: 1971,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -771,7 +771,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_fetch",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1906,
+    reqSchemaId: 1970,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -788,8 +788,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_log",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1864,
-    finalSchemaId: 1865,
+    reqSchemaId: 1928,
+    finalSchemaId: 1929,
     req: {
       kind: "struct",
       name: "WorkspaceGitLogReq",
@@ -806,8 +806,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_merge",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1913,
-    finalSchemaId: 1914,
+    reqSchemaId: 1977,
+    finalSchemaId: 1978,
     req: {
       kind: "struct",
       name: "WorkspaceGitMergeReq",
@@ -824,7 +824,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_pull",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1872,
+    reqSchemaId: 1936,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -841,7 +841,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_push",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1871,
+    reqSchemaId: 1935,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -858,7 +858,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_remote_add",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1886,
+    reqSchemaId: 1950,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -875,8 +875,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_remote_list",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1884,
-    finalSchemaId: 1885,
+    reqSchemaId: 1948,
+    finalSchemaId: 1949,
     req: {
       kind: "struct",
       name: "WorkspaceGitRemoteListReq",
@@ -893,7 +893,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_remote_remove",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1887,
+    reqSchemaId: 1951,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -910,7 +910,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_reset",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1876,
+    reqSchemaId: 1940,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -927,8 +927,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_show",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1904,
-    finalSchemaId: 1905,
+    reqSchemaId: 1968,
+    finalSchemaId: 1969,
     req: {
       kind: "struct",
       name: "WorkspaceGitShowReq",
@@ -945,7 +945,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_stash_drop",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1882,
+    reqSchemaId: 1946,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -962,8 +962,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_stash_list",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1880,
-    finalSchemaId: 1881,
+    reqSchemaId: 1944,
+    finalSchemaId: 1945,
     req: {
       kind: "struct",
       name: "WorkspaceGitStashListReq",
@@ -980,7 +980,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_stash_pop",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1879,
+    reqSchemaId: 1943,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -997,7 +997,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_stash_save",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1878,
+    reqSchemaId: 1942,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -1014,8 +1014,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_status",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1862,
-    finalSchemaId: 1863,
+    reqSchemaId: 1926,
+    finalSchemaId: 1927,
     req: {
       kind: "struct",
       name: "WorkspaceGitStatusReq",
@@ -1032,7 +1032,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_tag_create",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1911,
+    reqSchemaId: 1975,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -1049,7 +1049,7 @@ export const callableEntries: CallableEntry[] = [
     name: "git_tag_delete",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1912,
+    reqSchemaId: 1976,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -1066,8 +1066,8 @@ export const callableEntries: CallableEntry[] = [
     name: "git_tag_list",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1909,
-    finalSchemaId: 1910,
+    reqSchemaId: 1973,
+    finalSchemaId: 1974,
     req: {
       kind: "struct",
       name: "WorkspaceGitTagListReq",
@@ -1084,8 +1084,8 @@ export const callableEntries: CallableEntry[] = [
     name: "host_call",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1927,
-    finalSchemaId: 1928,
+    reqSchemaId: 1991,
+    finalSchemaId: 1992,
     req: {
       kind: "struct",
       name: "WorkspaceHostCallReq",
@@ -1103,7 +1103,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1836,
+    finalSchemaId: 1900,
     req: {
       kind: "void",
       name: "void"
@@ -1120,7 +1120,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1834,
+    finalSchemaId: 1898,
     req: {
       kind: "void",
       name: "void"
@@ -1136,7 +1136,7 @@ export const callableEntries: CallableEntry[] = [
     name: "list_agents",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1823,
+    reqSchemaId: 1887,
     finalSchemaId: 356,
     req: {
       kind: "struct",
@@ -1155,7 +1155,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1837,
+    finalSchemaId: 1901,
     req: {
       kind: "void",
       name: "void"
@@ -1171,7 +1171,7 @@ export const callableEntries: CallableEntry[] = [
     name: "load_agent",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1896,
+    reqSchemaId: 1960,
     finalSchemaId: 354,
     req: {
       kind: "struct",
@@ -1189,8 +1189,8 @@ export const callableEntries: CallableEntry[] = [
     name: "logs_query",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1898,
-    finalSchemaId: 1899,
+    reqSchemaId: 1962,
+    finalSchemaId: 1963,
     req: {
       kind: "struct",
       name: "WorkspaceLogsQueryReq",
@@ -1207,8 +1207,8 @@ export const callableEntries: CallableEntry[] = [
     name: "mount",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1810,
-    finalSchemaId: 1809,
+    reqSchemaId: 1874,
+    finalSchemaId: 1873,
     req: {
       kind: "struct",
       name: "WorkspaceMountReq",
@@ -1226,7 +1226,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1841,
+    finalSchemaId: 1905,
     req: {
       kind: "void",
       name: "void"
@@ -1242,8 +1242,8 @@ export const callableEntries: CallableEntry[] = [
     name: "preferences_save",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1842,
-    finalSchemaId: 1841,
+    reqSchemaId: 1906,
+    finalSchemaId: 1905,
     req: {
       kind: "struct",
       name: "SaveAccountPreferencesCommand",
@@ -1260,8 +1260,8 @@ export const callableEntries: CallableEntry[] = [
     name: "remove_mount",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1822,
-    finalSchemaId: 1809,
+    reqSchemaId: 1886,
+    finalSchemaId: 1873,
     req: {
       kind: "struct",
       name: "WorkspaceRemoveMountReq",
@@ -1278,7 +1278,7 @@ export const callableEntries: CallableEntry[] = [
     name: "report_error",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2401,
+    reqSchemaId: 2481,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -1295,8 +1295,8 @@ export const callableEntries: CallableEntry[] = [
     name: "save_agent_kind_config",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1833,
-    finalSchemaId: 1832,
+    reqSchemaId: 1897,
+    finalSchemaId: 1896,
     req: {
       kind: "struct",
       name: "WorkspaceSaveAgentKindConfigReq",
@@ -1314,7 +1314,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1840,
+    finalSchemaId: 1904,
     req: {
       kind: "void",
       name: "void"
@@ -1331,7 +1331,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4897,
+    finalSchemaId: 5041,
     req: {
       kind: "void",
       name: "void"
@@ -1347,8 +1347,8 @@ export const callableEntries: CallableEntry[] = [
     name: "shell_pref_save",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4898,
-    finalSchemaId: 4899,
+    reqSchemaId: 5042,
+    finalSchemaId: 5043,
     req: {
       kind: "struct",
       name: "ShellPrefSaveReq",
@@ -1366,7 +1366,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 3554,
+    finalSchemaId: 3634,
     req: {
       kind: "void",
       name: "void"
@@ -1400,7 +1400,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1852,
+    finalSchemaId: 1916,
     req: {
       kind: "void",
       name: "void"
@@ -1416,8 +1416,8 @@ export const callableEntries: CallableEntry[] = [
     name: "ui_save_ai_shell",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1856,
-    finalSchemaId: 1852,
+    reqSchemaId: 1920,
+    finalSchemaId: 1916,
     req: {
       kind: "struct",
       name: "SaveWorkspaceAIShellCommand",
@@ -1434,8 +1434,8 @@ export const callableEntries: CallableEntry[] = [
     name: "ui_save_dock",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1855,
-    finalSchemaId: 1852,
+    reqSchemaId: 1919,
+    finalSchemaId: 1916,
     req: {
       kind: "struct",
       name: "SaveWorkspaceDockCommand",
@@ -1452,8 +1452,8 @@ export const callableEntries: CallableEntry[] = [
     name: "ui_save_explorer",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1858,
-    finalSchemaId: 1852,
+    reqSchemaId: 1922,
+    finalSchemaId: 1916,
     req: {
       kind: "struct",
       name: "SaveWorkspaceExplorerCommand",
@@ -1470,8 +1470,8 @@ export const callableEntries: CallableEntry[] = [
     name: "ui_save_layout",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1853,
-    finalSchemaId: 1852,
+    reqSchemaId: 1917,
+    finalSchemaId: 1916,
     req: {
       kind: "struct",
       name: "SaveWorkspaceLayoutCommand",
@@ -1488,8 +1488,8 @@ export const callableEntries: CallableEntry[] = [
     name: "ui_save_panels",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1854,
-    finalSchemaId: 1852,
+    reqSchemaId: 1918,
+    finalSchemaId: 1916,
     req: {
       kind: "struct",
       name: "SaveWorkspacePanelsCommand",
@@ -1506,8 +1506,8 @@ export const callableEntries: CallableEntry[] = [
     name: "ui_save_project_card_browser",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1857,
-    finalSchemaId: 1852,
+    reqSchemaId: 1921,
+    finalSchemaId: 1916,
     req: {
       kind: "struct",
       name: "SaveWorkspaceProjectCardBrowserCommand",
@@ -1524,8 +1524,8 @@ export const callableEntries: CallableEntry[] = [
     name: "unmount",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1811,
-    finalSchemaId: 1809,
+    reqSchemaId: 1875,
+    finalSchemaId: 1873,
     req: {
       kind: "struct",
       name: "WorkspaceUnmountReq",
@@ -1542,7 +1542,7 @@ export const callableEntries: CallableEntry[] = [
     name: "update_agent",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1825,
+    reqSchemaId: 1889,
     finalSchemaId: 354,
     req: {
       kind: "struct",
@@ -1560,8 +1560,8 @@ export const callableEntries: CallableEntry[] = [
     name: "update_project",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1894,
-    finalSchemaId: 1895,
+    reqSchemaId: 1958,
+    finalSchemaId: 1959,
     req: {
       kind: "struct",
       name: "WorkspaceUpdateProjectReq",
@@ -1578,8 +1578,8 @@ export const callableEntries: CallableEntry[] = [
     name: "wiki_create_card",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1256,
-    finalSchemaId: 1257,
+    reqSchemaId: 1272,
+    finalSchemaId: 1273,
     req: {
       kind: "struct",
       name: "WikiCreateCardReq",
@@ -1596,8 +1596,8 @@ export const callableEntries: CallableEntry[] = [
     name: "wiki_delete_card",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1260,
-    finalSchemaId: 1261,
+    reqSchemaId: 1276,
+    finalSchemaId: 1277,
     req: {
       kind: "struct",
       name: "WikiDeleteCardReq",
@@ -1614,8 +1614,8 @@ export const callableEntries: CallableEntry[] = [
     name: "wiki_edit_card",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1258,
-    finalSchemaId: 1259,
+    reqSchemaId: 1274,
+    finalSchemaId: 1275,
     req: {
       kind: "struct",
       name: "WikiEditCardReq",
@@ -1632,8 +1632,8 @@ export const callableEntries: CallableEntry[] = [
     name: "wiki_get_card",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1254,
-    finalSchemaId: 1255,
+    reqSchemaId: 1270,
+    finalSchemaId: 1271,
     req: {
       kind: "struct",
       name: "WikiGetCardReq",
@@ -1650,8 +1650,8 @@ export const callableEntries: CallableEntry[] = [
     name: "wiki_list_cards",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1252,
-    finalSchemaId: 1253,
+    reqSchemaId: 1268,
+    finalSchemaId: 1269,
     req: {
       kind: "struct",
       name: "WikiListCardsReq",
@@ -1668,8 +1668,8 @@ export const callableEntries: CallableEntry[] = [
     name: "wiki_list_starred",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1925,
-    finalSchemaId: 1926,
+    reqSchemaId: 1989,
+    finalSchemaId: 1990,
     req: {
       kind: "struct",
       name: "WikiListStarredReq",
@@ -1686,8 +1686,8 @@ export const callableEntries: CallableEntry[] = [
     name: "wiki_search_card_content",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2152,
-    finalSchemaId: 2154,
+    reqSchemaId: 2232,
+    finalSchemaId: 2234,
     req: {
       kind: "struct",
       name: "WikiSearchCardContentReq",
@@ -1704,8 +1704,8 @@ export const callableEntries: CallableEntry[] = [
     name: "workflow_start",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3802,
-    finalSchemaId: 3803,
+    reqSchemaId: 3882,
+    finalSchemaId: 3883,
     req: {
       kind: "struct",
       name: "WorkspaceWorkflowStartReq",

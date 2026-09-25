@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "edit",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 730,
-    finalSchemaId: 732,
+    reqSchemaId: 746,
+    finalSchemaId: 748,
     req: {
       kind: "struct",
       name: "FileSystemEditReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "glob",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 733,
-    finalSchemaId: 734,
+    reqSchemaId: 749,
+    finalSchemaId: 750,
     req: {
       kind: "struct",
       name: "FileSystemGlobReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "grep",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 735,
-    finalSchemaId: 738,
+    reqSchemaId: 751,
+    finalSchemaId: 754,
     req: {
       kind: "struct",
       name: "FileSystemGrepReq",
@@ -62,7 +62,7 @@ export const callableEntries: CallableEntry[] = [
     name: "list",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 722,
+    reqSchemaId: 738,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -80,8 +80,8 @@ export const callableEntries: CallableEntry[] = [
     name: "list_json",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 722,
-    finalSchemaId: 721,
+    reqSchemaId: 738,
+    finalSchemaId: 737,
     req: {
       kind: "struct",
       name: "FileSystemListReq",
@@ -98,8 +98,8 @@ export const callableEntries: CallableEntry[] = [
     name: "read",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 723,
-    finalSchemaId: 724,
+    reqSchemaId: 739,
+    finalSchemaId: 740,
     req: {
       kind: "struct",
       name: "FileSystemReadReq",
@@ -116,8 +116,8 @@ export const callableEntries: CallableEntry[] = [
     name: "read_base64",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 725,
-    finalSchemaId: 746,
+    reqSchemaId: 741,
+    finalSchemaId: 762,
     req: {
       kind: "struct",
       name: "FileSystemReadBase64Req",
@@ -134,8 +134,8 @@ export const callableEntries: CallableEntry[] = [
     name: "read_chunk",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 726,
-    finalSchemaId: 727,
+    reqSchemaId: 742,
+    finalSchemaId: 743,
     req: {
       kind: "struct",
       name: "FileSystemReadChunkReq",
@@ -152,8 +152,8 @@ export const callableEntries: CallableEntry[] = [
     name: "rm",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 739,
-    finalSchemaId: 740,
+    reqSchemaId: 755,
+    finalSchemaId: 756,
     req: {
       kind: "struct",
       name: "FileSystemRmReq",
@@ -171,7 +171,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 748,
+    finalSchemaId: 764,
     req: {
       kind: "void",
       name: "void"
@@ -187,7 +187,7 @@ export const callableEntries: CallableEntry[] = [
     name: "write",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 728,
+    reqSchemaId: 744,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -204,8 +204,8 @@ export const callableEntries: CallableEntry[] = [
     name: "write_base64",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 747,
-    finalSchemaId: 729,
+    reqSchemaId: 763,
+    finalSchemaId: 745,
     req: {
       kind: "struct",
       name: "FileSystemWriteBase64Req",

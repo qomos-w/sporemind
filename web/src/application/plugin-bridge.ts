@@ -65,11 +65,12 @@ const activePorts = new Map<MessagePort, PortState>()
 
 /**
  * pluginID → host-side port of the plugin's first mounted view. Kept separate
- * from activePorts (keyed by port) so the interfacemanager snapshot trigger
- * can reach the right iframe. A plugin with multiple mounted views snapshots
- * the first — the snapshot is an app-level aid, not per-view state.
+ * from activePorts (keyed by port) so the interfacemanager panel-op /
+ * dom-snapshot triggers can reach the right iframe. A plugin with multiple
+ * mounted views targets the first — these are app-level aids, not per-view
+ * state.
  */
-const domSnapshotPorts = new Map<string, MessagePort>()
+const appBridgePorts = new Map<string, MessagePort>()
 
 /** Result of binding a plugin iframe source to a host-managed session. */
 export interface PluginBridgeBinding {
@@ -255,6 +256,25 @@ async function handlePortMessage(port: MessagePort, msg: unknown) {
     }
     return
   }
+  // Panel op result push from the plugin iframe: same lowercase non-envelope
+  // convention as the dom snapshot, but matched by requestId (an op can fail
+  // without a result, so Ok/Reason ride along).
+  if (frameType === 'sporemind:panel-op-result') {
+    const requestId: unknown = m.RequestId ?? m.requestId
+    if (typeof requestId === 'string' && requestId !== '') {
+      void pluginhostClient
+        .panelOpPut(client, {
+          PluginId: state.session.AppId,
+          RequestId: requestId,
+          Ok: m.Ok === true || m.ok === true,
+          Result: typeof m.Result === 'string' ? m.Result : (typeof m.result === 'string' ? m.result : undefined),
+          Reason: typeof m.Reason === 'string' ? m.Reason : (typeof m.reason === 'string' ? m.reason : undefined),
+          Ts: Date.now(),
+        })
+        .catch(() => {})
+    }
+    return
+  }
 
   if (!m.Type) return
 
@@ -310,8 +330,8 @@ export async function handlePluginBridgeHandshake(source: PluginBridgeSource, po
   }
   console.info(`[plugin-bridge] handshake_ok app=${state.session.AppId} view=${state.session.ViewId}`)
   activePorts.set(port, state)
-  if (!domSnapshotPorts.has(state.session.AppId)) {
-    domSnapshotPorts.set(state.session.AppId, port)
+  if (!appBridgePorts.has(state.session.AppId)) {
+    appBridgePorts.set(state.session.AppId, port)
   }
   port.onmessage = (e: MessageEvent) => {
     void handlePortMessage(port, e.data)
@@ -329,14 +349,14 @@ export async function handlePluginBridgeHandshake(source: PluginBridgeSource, po
  */
 export function detachPluginBridgePort(port: MessagePort): void {
   activePorts.delete(port)
-  for (const [appID, snapshotPort] of domSnapshotPorts) {
+  for (const [appID, snapshotPort] of appBridgePorts) {
     if (snapshotPort !== port) continue
-    domSnapshotPorts.delete(appID)
+    appBridgePorts.delete(appID)
     // Promote another active port of the same app so a surviving view keeps
     // answering snapshot requests.
     for (const [candidatePort, candidateState] of activePorts) {
       if (candidateState.session.AppId === appID) {
-        domSnapshotPorts.set(appID, candidatePort)
+        appBridgePorts.set(appID, candidatePort)
         break
       }
     }
@@ -351,7 +371,7 @@ export function detachPluginBridgePort(port: MessagePort): void {
  * plugin is mounted (panel closed or iframe not yet handshaken).
  */
 export function requestPluginDomSnapshot(pluginID: string): boolean {
-  const port = domSnapshotPorts.get(pluginID)
+  const port = appBridgePorts.get(pluginID)
   if (!port) return false
   try {
     port.postMessage({ type: 'sporemind:dom-snapshot-request' })
@@ -361,9 +381,50 @@ export function requestPluginDomSnapshot(pluginID: string): boolean {
   }
 }
 
+/** Panel op envelope relayed to the plugin iframe over the bridge port. */
+export interface PanelOpRelay {
+  requestId: string
+  op: string
+  selector?: string
+  text?: string
+  expr?: string
+  timeoutMs?: number
+  maxChars?: number
+}
+
+/**
+ * Relay a panel operation to the mounted plugin iframe. Fire-and-forget like
+ * the dom snapshot: the iframe replies with a 'sporemind:panel-op-result'
+ * port frame which the bridge pushes to pluginhost.panel_op_put, matched by
+ * requestId. Returns false when no view of the plugin is mounted — callers
+ * should push an immediate failure result so the backend poll does not burn
+ * its whole budget.
+ */
+export function requestPluginPanelOp(pluginID: string, op: PanelOpRelay): boolean {
+  const port = appBridgePorts.get(pluginID)
+  if (!port) return false
+  try {
+    port.postMessage({ type: 'sporemind:panel-op', ...op })
+    return true
+  } catch {
+    return false
+  }
+}
+
+/**
+ * Push an immediate panel-op failure to pluginhost.panel_op_put (used when no
+ * bridge port exists — the backend poll then fails fast instead of burning
+ * its whole budget).
+ */
+export function pushPanelOpFailure(pluginID: string, requestId: string, reason: string): void {
+  void pluginhostClient
+    .panelOpPut(client, { PluginId: pluginID, RequestId: requestId, Ok: false, Reason: reason, Ts: Date.now() })
+    .catch(() => {})
+}
+
 /** Test-only: close and drop every registered bridge port and snapshot binding. */
 export function _resetPluginBridgePortsForTest(): void {
   for (const port of activePorts.keys()) port.close()
   activePorts.clear()
-  domSnapshotPorts.clear()
+  appBridgePorts.clear()
 }

@@ -114,6 +114,27 @@ struct InterfaceManagerControlReq {
     // For action="create_tutorial": when true the frontend starts the tutorial
     // immediately after registration, without a confirmation step.
     optional AutoPlay: bool
+    // For action="request_plugin_panel_op": the panel op envelope relayed to
+    // the plugin iframe over the management-plane bridge port. AppId names the
+    // target plugin; PanelOp.RequestId matches the pluginhost.panel_op_put
+    // result push.
+    optional PanelOp: PanelOpSpec
+}
+
+
+// PanelOpSpec is the transport envelope for a plugin panel operation relayed
+// from pluginhost.panel_op through interfacemanager.control to the host
+// webview and then to the plugin iframe's bridge port. Field semantics match
+// PluginPanelOpReq in the pluginhost.panelop namespace (kept separate because
+// .spore files cannot reference types across namespaces).
+struct PanelOpSpec {
+    RequestId:  string
+    Op:         string
+    optional Selector:  string
+    optional Text:      string
+    optional Expr:      string
+    optional TimeoutMs: long
+    optional MaxChars:  long
 }
 
 
@@ -156,6 +177,9 @@ struct InterfaceManagerEvent {
     // For action="create_tutorial": id of the registered tutorial.
     // For action="delete_tutorial": id of the removed tutorial.
     optional TutorialId:  string
+    // For action="request_plugin_panel_op": the panel op envelope, forwarded
+    // verbatim to the frontend so it can relay it to the plugin bridge port.
+    optional PanelOp:     PanelOpSpec
 }
 
 // ReportInteractionReq records a user interaction with the UI.

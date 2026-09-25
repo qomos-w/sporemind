@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "control",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3699,
-    finalSchemaId: 3700,
+    reqSchemaId: 3779,
+    finalSchemaId: 3781,
     req: {
       kind: "struct",
       name: "InterfaceManagerControlReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "query_interactions",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3704,
-    finalSchemaId: 3705,
+    reqSchemaId: 3785,
+    finalSchemaId: 3786,
     req: {
       kind: "struct",
       name: "QueryInteractionsReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "report_interaction",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3702,
-    finalSchemaId: 3703,
+    reqSchemaId: 3783,
+    finalSchemaId: 3784,
     req: {
       kind: "struct",
       name: "ReportInteractionReq",

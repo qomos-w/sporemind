@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "send",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4707,
-    finalSchemaId: 4708,
+    reqSchemaId: 4851,
+    finalSchemaId: 4852,
     req: {
       kind: "struct",
       name: "ImSendReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "status",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4705,
-    finalSchemaId: 4706,
+    reqSchemaId: 4849,
+    finalSchemaId: 4850,
     req: {
       kind: "struct",
       name: "ImStatusReq",

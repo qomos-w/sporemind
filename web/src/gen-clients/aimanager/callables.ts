@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "aggregator_configure",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1425,
-    finalSchemaId: 1426,
+    reqSchemaId: 1473,
+    finalSchemaId: 1474,
     req: {
       kind: "struct",
       name: "AIManagerAggregatorConfigureReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "aggregator_get",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1427,
-    finalSchemaId: 1428,
+    reqSchemaId: 1475,
+    finalSchemaId: 1476,
     req: {
       kind: "struct",
       name: "AIManagerAggregatorGetReq",
@@ -61,8 +61,8 @@ export const callableEntries: CallableEntry[] = [
     name: "aggregator_set_disabled",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1454,
-    finalSchemaId: 1455,
+    reqSchemaId: 1502,
+    finalSchemaId: 1503,
     req: {
       kind: "struct",
       name: "AIManagerAggregatorSetDisabledReq",
@@ -80,7 +80,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "admin",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1432,
+    finalSchemaId: 1480,
     req: {
       kind: "void",
       name: "void"
@@ -96,8 +96,8 @@ export const callableEntries: CallableEntry[] = [
     name: "config_import",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1433,
-    finalSchemaId: 1434,
+    reqSchemaId: 1481,
+    finalSchemaId: 1482,
     req: {
       kind: "struct",
       name: "AIManagerConfigImportReq",
@@ -115,7 +115,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4950,
+    finalSchemaId: 5094,
     req: {
       kind: "void",
       name: "void"
@@ -131,8 +131,8 @@ export const callableEntries: CallableEntry[] = [
     name: "list_units",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1456,
-    finalSchemaId: 1457,
+    reqSchemaId: 1504,
+    finalSchemaId: 1505,
     req: {
       kind: "struct",
       name: "AIManagerListUnitsReq",
@@ -150,7 +150,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4946,
+    finalSchemaId: 5090,
     req: {
       kind: "void",
       name: "void"
@@ -166,8 +166,8 @@ export const callableEntries: CallableEntry[] = [
     name: "model_defaults_set",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4947,
-    finalSchemaId: 4948,
+    reqSchemaId: 5091,
+    finalSchemaId: 5092,
     req: {
       kind: "struct",
       name: "AIManagerModelDefaultsSetReq",
@@ -185,7 +185,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1417,
+    finalSchemaId: 1465,
     req: {
       kind: "void",
       name: "void"
@@ -201,8 +201,8 @@ export const callableEntries: CallableEntry[] = [
     name: "provider_configure",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1413,
-    finalSchemaId: 1414,
+    reqSchemaId: 1461,
+    finalSchemaId: 1462,
     req: {
       kind: "struct",
       name: "AIManagerProviderConfigureReq",
@@ -219,8 +219,8 @@ export const callableEntries: CallableEntry[] = [
     name: "provider_fetch_models",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1418,
-    finalSchemaId: 1419,
+    reqSchemaId: 1466,
+    finalSchemaId: 1467,
     req: {
       kind: "struct",
       name: "AIManagerProviderFetchModelsReq",
@@ -238,7 +238,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1416,
+    finalSchemaId: 1464,
     req: {
       kind: "void",
       name: "void"
@@ -254,8 +254,8 @@ export const callableEntries: CallableEntry[] = [
     name: "provider_record_probe",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1447,
-    finalSchemaId: 1448,
+    reqSchemaId: 1495,
+    finalSchemaId: 1496,
     req: {
       kind: "struct",
       name: "AIManagerProviderRecordProbeReq",
@@ -272,8 +272,8 @@ export const callableEntries: CallableEntry[] = [
     name: "provider_reset_health",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1445,
-    finalSchemaId: 1446,
+    reqSchemaId: 1493,
+    finalSchemaId: 1494,
     req: {
       kind: "struct",
       name: "AIManagerProviderResetHealthReq",
@@ -290,8 +290,8 @@ export const callableEntries: CallableEntry[] = [
     name: "provider_set_disabled",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1452,
-    finalSchemaId: 1453,
+    reqSchemaId: 1500,
+    finalSchemaId: 1501,
     req: {
       kind: "struct",
       name: "AIManagerProviderSetDisabledReq",
@@ -308,8 +308,8 @@ export const callableEntries: CallableEntry[] = [
     name: "provider_set_token_plan",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1441,
-    finalSchemaId: 1442,
+    reqSchemaId: 1489,
+    finalSchemaId: 1490,
     req: {
       kind: "struct",
       name: "AIManagerProviderSetTokenPlanReq",
@@ -327,7 +327,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1451,
+    finalSchemaId: 1499,
     req: {
       kind: "void",
       name: "void"

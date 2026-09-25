@@ -617,11 +617,11 @@ func TestHandleAgentSpawnByType_ReviewerPlanEvidence(t *testing.T) {
 // TestWorkspaceSpawnByType_SchemaRegistration verifies the generated schema
 // types exist and are registered with correct IDs.
 func TestWorkspaceSpawnByType_SchemaRegistration(t *testing.T) {
-	if gen.WorkspaceAgentSpawnByTypeReqSchemaID != 3800 {
-		t.Errorf("expected 3800, got %d", gen.WorkspaceAgentSpawnByTypeReqSchemaID)
+	if gen.WorkspaceAgentSpawnByTypeReqSchemaID != 3880 {
+		t.Errorf("expected 3880, got %d", gen.WorkspaceAgentSpawnByTypeReqSchemaID)
 	}
-	if gen.WorkspaceAgentSpawnByTypeRespSchemaID != 3801 {
-		t.Errorf("expected 3801, got %d", gen.WorkspaceAgentSpawnByTypeRespSchemaID)
+	if gen.WorkspaceAgentSpawnByTypeRespSchemaID != 3881 {
+		t.Errorf("expected 3881, got %d", gen.WorkspaceAgentSpawnByTypeRespSchemaID)
 	}
 }
 

@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "capability_discover",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 944,
-    finalSchemaId: 946,
+    reqSchemaId: 960,
+    finalSchemaId: 962,
     req: {
       kind: "struct",
       name: "OracleCapabilityDiscoverReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "capability_explain",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 947,
-    finalSchemaId: 948,
+    reqSchemaId: 963,
+    finalSchemaId: 964,
     req: {
       kind: "struct",
       name: "OracleCapabilityExplainReq",
@@ -60,8 +60,8 @@ export const callableEntries: CallableEntry[] = [
     name: "get_diagnostic",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 954,
-    finalSchemaId: 949,
+    reqSchemaId: 970,
+    finalSchemaId: 965,
     req: {
       kind: "struct",
       name: "OracleGetDiagnosticReq",
@@ -78,8 +78,8 @@ export const callableEntries: CallableEntry[] = [
     name: "list_diagnostics",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 952,
-    finalSchemaId: 953,
+    reqSchemaId: 968,
+    finalSchemaId: 969,
     req: {
       kind: "struct",
       name: "OracleListDiagnosticsReq",
@@ -112,7 +112,7 @@ export const callableEntries: CallableEntry[] = [
     name: "report_diagnostic",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 950,
+    reqSchemaId: 966,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -129,8 +129,8 @@ export const callableEntries: CallableEntry[] = [
     name: "search_services",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 955,
-    finalSchemaId: 956,
+    reqSchemaId: 971,
+    finalSchemaId: 972,
     req: {
       kind: "struct",
       name: "OracleSearchServicesReq",

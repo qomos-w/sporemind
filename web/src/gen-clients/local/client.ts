@@ -14,25 +14,25 @@ export const agentConfigure_meta = {
 } as const;
 
 export async function agentPause(client: GosporeClient, req: systemTypes.AgentPauseReq, opts?: InvokeOptions): Promise<systemTypes.AgentPauseResp> {
-  return client.invoke<systemTypes.AgentPauseReq, systemTypes.AgentPauseResp>("agent_pause", req, { reqSchemaId: 2736, resSchemaId: 2737, ...opts });
+  return client.invoke<systemTypes.AgentPauseReq, systemTypes.AgentPauseResp>("agent_pause", req, { reqSchemaId: 2816, resSchemaId: 2817, ...opts });
 }
 
 export const agentPause_meta = {
   callable: "agent_pause",
   name: "agent_pause",
-  reqSchemaId: 2736,
-  resSchemaId: 2737,
+  reqSchemaId: 2816,
+  resSchemaId: 2817,
 } as const;
 
 export async function agentResume(client: GosporeClient, req: systemTypes.AgentResumeReq, opts?: InvokeOptions): Promise<systemTypes.AgentResumeResp> {
-  return client.invoke<systemTypes.AgentResumeReq, systemTypes.AgentResumeResp>("agent_resume", req, { reqSchemaId: 2738, resSchemaId: 2739, ...opts });
+  return client.invoke<systemTypes.AgentResumeReq, systemTypes.AgentResumeResp>("agent_resume", req, { reqSchemaId: 2818, resSchemaId: 2819, ...opts });
 }
 
 export const agentResume_meta = {
   callable: "agent_resume",
   name: "agent_resume",
-  reqSchemaId: 2738,
-  resSchemaId: 2739,
+  reqSchemaId: 2818,
+  resSchemaId: 2819,
 } as const;
 
 export async function agentStatus(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.AgentStatusResp> {
@@ -84,7 +84,7 @@ export const compactionConfigure_meta = {
 } as const;
 
 export async function compiledPrompt(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.PromptArtifact> {
-  return client.invoke<void, systemTypes.PromptArtifact>("compiled_prompt", undefined, { resSchemaId: 1348, ...opts });
+  return client.invoke<void, systemTypes.PromptArtifact>("compiled_prompt", undefined, { resSchemaId: 1396, ...opts });
 }
 
 export async function completeMessage(client: GosporeClient, req: systemTypes.CompleteMessageReq, opts?: InvokeOptions): Promise<systemTypes.SummarizeResp> {
@@ -99,58 +99,58 @@ export const completeMessage_meta = {
 } as const;
 
 export async function componentList(client: GosporeClient, req: systemTypes.AgentComponentListReq, opts?: InvokeOptions): Promise<systemTypes.AgentComponentListResp> {
-  return client.invoke<systemTypes.AgentComponentListReq, systemTypes.AgentComponentListResp>("component_list", req, { reqSchemaId: 2502, resSchemaId: 2503, ...opts });
+  return client.invoke<systemTypes.AgentComponentListReq, systemTypes.AgentComponentListResp>("component_list", req, { reqSchemaId: 2582, resSchemaId: 2583, ...opts });
 }
 
 export const componentList_meta = {
   callable: "component_list",
   name: "component_list",
-  reqSchemaId: 2502,
-  resSchemaId: 2503,
+  reqSchemaId: 2582,
+  resSchemaId: 2583,
 } as const;
 
 export async function componentMount(client: GosporeClient, req: systemTypes.AgentComponentMountReq, opts?: InvokeOptions): Promise<systemTypes.AgentComponentMountResp> {
-  return client.invoke<systemTypes.AgentComponentMountReq, systemTypes.AgentComponentMountResp>("component_mount", req, { reqSchemaId: 2496, resSchemaId: 2497, ...opts });
+  return client.invoke<systemTypes.AgentComponentMountReq, systemTypes.AgentComponentMountResp>("component_mount", req, { reqSchemaId: 2576, resSchemaId: 2577, ...opts });
 }
 
 export const componentMount_meta = {
   callable: "component_mount",
   name: "component_mount",
-  reqSchemaId: 2496,
-  resSchemaId: 2497,
+  reqSchemaId: 2576,
+  resSchemaId: 2577,
 } as const;
 
 export async function componentSetEnabled(client: GosporeClient, req: systemTypes.AgentComponentSetEnabledReq, opts?: InvokeOptions): Promise<systemTypes.AgentComponentSetEnabledResp> {
-  return client.invoke<systemTypes.AgentComponentSetEnabledReq, systemTypes.AgentComponentSetEnabledResp>("component_set_enabled", req, { reqSchemaId: 2500, resSchemaId: 2501, ...opts });
+  return client.invoke<systemTypes.AgentComponentSetEnabledReq, systemTypes.AgentComponentSetEnabledResp>("component_set_enabled", req, { reqSchemaId: 2580, resSchemaId: 2581, ...opts });
 }
 
 export const componentSetEnabled_meta = {
   callable: "component_set_enabled",
   name: "component_set_enabled",
-  reqSchemaId: 2500,
-  resSchemaId: 2501,
+  reqSchemaId: 2580,
+  resSchemaId: 2581,
 } as const;
 
 export async function componentSnapshot(client: GosporeClient, req: systemTypes.AgentComponentSnapshotReq, opts?: InvokeOptions): Promise<systemTypes.AgentComponentSnapshotResp> {
-  return client.invoke<systemTypes.AgentComponentSnapshotReq, systemTypes.AgentComponentSnapshotResp>("component_snapshot", req, { reqSchemaId: 2504, resSchemaId: 2505, ...opts });
+  return client.invoke<systemTypes.AgentComponentSnapshotReq, systemTypes.AgentComponentSnapshotResp>("component_snapshot", req, { reqSchemaId: 2584, resSchemaId: 2585, ...opts });
 }
 
 export const componentSnapshot_meta = {
   callable: "component_snapshot",
   name: "component_snapshot",
-  reqSchemaId: 2504,
-  resSchemaId: 2505,
+  reqSchemaId: 2584,
+  resSchemaId: 2585,
 } as const;
 
 export async function componentUnmount(client: GosporeClient, req: systemTypes.AgentComponentUnmountReq, opts?: InvokeOptions): Promise<systemTypes.AgentComponentUnmountResp> {
-  return client.invoke<systemTypes.AgentComponentUnmountReq, systemTypes.AgentComponentUnmountResp>("component_unmount", req, { reqSchemaId: 2498, resSchemaId: 2499, ...opts });
+  return client.invoke<systemTypes.AgentComponentUnmountReq, systemTypes.AgentComponentUnmountResp>("component_unmount", req, { reqSchemaId: 2578, resSchemaId: 2579, ...opts });
 }
 
 export const componentUnmount_meta = {
   callable: "component_unmount",
   name: "component_unmount",
-  reqSchemaId: 2498,
-  resSchemaId: 2499,
+  reqSchemaId: 2578,
+  resSchemaId: 2579,
 } as const;
 
 export async function contextBudget(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.TurnContextBudgetPayload> {
@@ -158,47 +158,47 @@ export async function contextBudget(client: GosporeClient, opts?: InvokeOptions)
 }
 
 export async function coordinatorGuidanceProfileClear(client: GosporeClient, req: systemTypes.GuidanceProfileClearReq, opts?: InvokeOptions): Promise<systemTypes.GuidanceProfileClearResp> {
-  return client.invoke<systemTypes.GuidanceProfileClearReq, systemTypes.GuidanceProfileClearResp>("coordinator_guidance_profile_clear", req, { reqSchemaId: 4295, resSchemaId: 4296, ...opts });
+  return client.invoke<systemTypes.GuidanceProfileClearReq, systemTypes.GuidanceProfileClearResp>("coordinator_guidance_profile_clear", req, { reqSchemaId: 4423, resSchemaId: 4424, ...opts });
 }
 
 export const coordinatorGuidanceProfileClear_meta = {
   callable: "coordinator_guidance_profile_clear",
   name: "coordinator_guidance_profile_clear",
-  reqSchemaId: 4295,
-  resSchemaId: 4296,
+  reqSchemaId: 4423,
+  resSchemaId: 4424,
 } as const;
 
 export async function coordinatorGuidanceProfileIncrement(client: GosporeClient, req: systemTypes.GuidanceProfileIncrementReq, opts?: InvokeOptions): Promise<systemTypes.GuidanceProfileIncrementResp> {
-  return client.invoke<systemTypes.GuidanceProfileIncrementReq, systemTypes.GuidanceProfileIncrementResp>("coordinator_guidance_profile_increment", req, { reqSchemaId: 4297, resSchemaId: 4298, ...opts });
+  return client.invoke<systemTypes.GuidanceProfileIncrementReq, systemTypes.GuidanceProfileIncrementResp>("coordinator_guidance_profile_increment", req, { reqSchemaId: 4425, resSchemaId: 4426, ...opts });
 }
 
 export const coordinatorGuidanceProfileIncrement_meta = {
   callable: "coordinator_guidance_profile_increment",
   name: "coordinator_guidance_profile_increment",
-  reqSchemaId: 4297,
-  resSchemaId: 4298,
+  reqSchemaId: 4425,
+  resSchemaId: 4426,
 } as const;
 
 export async function coordinatorGuidanceProfileQuery(client: GosporeClient, req: systemTypes.GuidanceProfileQueryReq, opts?: InvokeOptions): Promise<systemTypes.GuidanceProfileQueryResp> {
-  return client.invoke<systemTypes.GuidanceProfileQueryReq, systemTypes.GuidanceProfileQueryResp>("coordinator_guidance_profile_query", req, { reqSchemaId: 4291, resSchemaId: 4292, ...opts });
+  return client.invoke<systemTypes.GuidanceProfileQueryReq, systemTypes.GuidanceProfileQueryResp>("coordinator_guidance_profile_query", req, { reqSchemaId: 4419, resSchemaId: 4420, ...opts });
 }
 
 export const coordinatorGuidanceProfileQuery_meta = {
   callable: "coordinator_guidance_profile_query",
   name: "coordinator_guidance_profile_query",
-  reqSchemaId: 4291,
-  resSchemaId: 4292,
+  reqSchemaId: 4419,
+  resSchemaId: 4420,
 } as const;
 
 export async function coordinatorGuidanceProfileUpdate(client: GosporeClient, req: systemTypes.GuidanceProfileUpdateReq, opts?: InvokeOptions): Promise<systemTypes.GuidanceProfileUpdateResp> {
-  return client.invoke<systemTypes.GuidanceProfileUpdateReq, systemTypes.GuidanceProfileUpdateResp>("coordinator_guidance_profile_update", req, { reqSchemaId: 4293, resSchemaId: 4294, ...opts });
+  return client.invoke<systemTypes.GuidanceProfileUpdateReq, systemTypes.GuidanceProfileUpdateResp>("coordinator_guidance_profile_update", req, { reqSchemaId: 4421, resSchemaId: 4422, ...opts });
 }
 
 export const coordinatorGuidanceProfileUpdate_meta = {
   callable: "coordinator_guidance_profile_update",
   name: "coordinator_guidance_profile_update",
-  reqSchemaId: 4293,
-  resSchemaId: 4294,
+  reqSchemaId: 4421,
+  resSchemaId: 4422,
 } as const;
 
 export async function frontendDebug(client: GosporeClient, req: systemTypes.AgentFrontendDebugReq, opts?: InvokeOptions): Promise<systemTypes.AgentFrontendDebugResp> {
@@ -224,7 +224,7 @@ export const inspectActor_meta = {
 } as const;
 
 export async function inspectPages(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.InspectPagesResp> {
-  return client.invoke<void, systemTypes.InspectPagesResp>("inspect_pages", undefined, { resSchemaId: 844, ...opts });
+  return client.invoke<void, systemTypes.InspectPagesResp>("inspect_pages", undefined, { resSchemaId: 860, ...opts });
 }
 
 export async function invokeCallable(client: GosporeClient, req: systemTypes.AgentInvokeCallableReq, opts?: InvokeOptions): Promise<systemTypes.AgentInvokeCallableResp> {
@@ -254,36 +254,36 @@ export async function memoryDream(client: GosporeClient, opts?: InvokeOptions): 
 }
 
 export async function memoryRecall(client: GosporeClient, req: systemTypes.MemoryRecallReq, opts?: InvokeOptions): Promise<systemTypes.MemoryRecallResp> {
-  return client.invoke<systemTypes.MemoryRecallReq, systemTypes.MemoryRecallResp>("memory_recall", req, { reqSchemaId: 3650, resSchemaId: 3651, ...opts });
+  return client.invoke<systemTypes.MemoryRecallReq, systemTypes.MemoryRecallResp>("memory_recall", req, { reqSchemaId: 3730, resSchemaId: 3731, ...opts });
 }
 
 export const memoryRecall_meta = {
   callable: "memory_recall",
   name: "memory_recall",
-  reqSchemaId: 3650,
-  resSchemaId: 3651,
+  reqSchemaId: 3730,
+  resSchemaId: 3731,
 } as const;
 
 export async function memorySave(client: GosporeClient, req: systemTypes.MemorySaveReq, opts?: InvokeOptions): Promise<systemTypes.MemorySaveResp> {
-  return client.invoke<systemTypes.MemorySaveReq, systemTypes.MemorySaveResp>("memory_save", req, { reqSchemaId: 3648, resSchemaId: 3649, ...opts });
+  return client.invoke<systemTypes.MemorySaveReq, systemTypes.MemorySaveResp>("memory_save", req, { reqSchemaId: 3728, resSchemaId: 3729, ...opts });
 }
 
 export const memorySave_meta = {
   callable: "memory_save",
   name: "memory_save",
-  reqSchemaId: 3648,
-  resSchemaId: 3649,
+  reqSchemaId: 3728,
+  resSchemaId: 3729,
 } as const;
 
 export async function memorySnapshot(client: GosporeClient, req: systemTypes.MemorySnapshotReq, opts?: InvokeOptions): Promise<systemTypes.MemorySnapshotResp> {
-  return client.invoke<systemTypes.MemorySnapshotReq, systemTypes.MemorySnapshotResp>("memory_snapshot", req, { reqSchemaId: 3653, resSchemaId: 3654, ...opts });
+  return client.invoke<systemTypes.MemorySnapshotReq, systemTypes.MemorySnapshotResp>("memory_snapshot", req, { reqSchemaId: 3733, resSchemaId: 3734, ...opts });
 }
 
 export const memorySnapshot_meta = {
   callable: "memory_snapshot",
   name: "memory_snapshot",
-  reqSchemaId: 3653,
-  resSchemaId: 3654,
+  reqSchemaId: 3733,
+  resSchemaId: 3734,
 } as const;
 
 export async function messageClear(client: GosporeClient, opts?: InvokeOptions): Promise<void> {
@@ -317,14 +317,14 @@ export const messagesList_meta = {
 } as const;
 
 export async function modesUnloadAll(client: GosporeClient, req: systemTypes.AgentModesUnloadAllReq, opts?: InvokeOptions): Promise<systemTypes.AgentModesUnloadAllResp> {
-  return client.invoke<systemTypes.AgentModesUnloadAllReq, systemTypes.AgentModesUnloadAllResp>("modes_unload_all", req, { reqSchemaId: 2592, resSchemaId: 2593, ...opts });
+  return client.invoke<systemTypes.AgentModesUnloadAllReq, systemTypes.AgentModesUnloadAllResp>("modes_unload_all", req, { reqSchemaId: 2672, resSchemaId: 2673, ...opts });
 }
 
 export const modesUnloadAll_meta = {
   callable: "modes_unload_all",
   name: "modes_unload_all",
-  reqSchemaId: 2592,
-  resSchemaId: 2593,
+  reqSchemaId: 2672,
+  resSchemaId: 2673,
 } as const;
 
 export async function openGlobalBrowser(client: GosporeClient, req: systemTypes.AgentOpenGlobalBrowserReq, opts?: InvokeOptions): Promise<systemTypes.AgentOpenGlobalBrowserResp> {
@@ -360,7 +360,7 @@ export const permissionModeSet_meta = {
 } as const;
 
 export async function promptArtifact(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.PromptArtifact> {
-  return client.invoke<void, systemTypes.PromptArtifact>("prompt_artifact", undefined, { resSchemaId: 1348, ...opts });
+  return client.invoke<void, systemTypes.PromptArtifact>("prompt_artifact", undefined, { resSchemaId: 1396, ...opts });
 }
 
 export async function readSnapshot(client: GosporeClient, req: systemTypes.readSnapshotReq, opts?: InvokeOptions): Promise<systemTypes.readSnapshotResp> {
@@ -375,25 +375,25 @@ export const readSnapshot_meta = {
 } as const;
 
 export async function schedulerBind(client: GosporeClient, req: systemTypes.AgentSchedulerBindReq, opts?: InvokeOptions): Promise<systemTypes.AgentSchedulerBindResp> {
-  return client.invoke<systemTypes.AgentSchedulerBindReq, systemTypes.AgentSchedulerBindResp>("scheduler_bind", req, { reqSchemaId: 2640, resSchemaId: 2641, ...opts });
+  return client.invoke<systemTypes.AgentSchedulerBindReq, systemTypes.AgentSchedulerBindResp>("scheduler_bind", req, { reqSchemaId: 2720, resSchemaId: 2721, ...opts });
 }
 
 export const schedulerBind_meta = {
   callable: "scheduler_bind",
   name: "scheduler_bind",
-  reqSchemaId: 2640,
-  resSchemaId: 2641,
+  reqSchemaId: 2720,
+  resSchemaId: 2721,
 } as const;
 
 export async function schedulerUnbind(client: GosporeClient, req: systemTypes.AgentSchedulerUnbindReq, opts?: InvokeOptions): Promise<systemTypes.AgentSchedulerUnbindResp> {
-  return client.invoke<systemTypes.AgentSchedulerUnbindReq, systemTypes.AgentSchedulerUnbindResp>("scheduler_unbind", req, { reqSchemaId: 2642, resSchemaId: 2643, ...opts });
+  return client.invoke<systemTypes.AgentSchedulerUnbindReq, systemTypes.AgentSchedulerUnbindResp>("scheduler_unbind", req, { reqSchemaId: 2722, resSchemaId: 2723, ...opts });
 }
 
 export const schedulerUnbind_meta = {
   callable: "scheduler_unbind",
   name: "scheduler_unbind",
-  reqSchemaId: 2642,
-  resSchemaId: 2643,
+  reqSchemaId: 2722,
+  resSchemaId: 2723,
 } as const;
 
 export async function sessionExportRange(client: GosporeClient, req: systemTypes.AgentSessionExportRangeReq, opts?: InvokeOptions): Promise<systemTypes.AgentSessionExportRangeResp> {
@@ -445,14 +445,14 @@ export const sessionImportTurns_meta = {
 } as const;
 
 export async function sessionStats(client: GosporeClient, req: systemTypes.AgentSessionStatsReq, opts?: InvokeOptions): Promise<systemTypes.AgentSessionStatsResp> {
-  return client.invoke<systemTypes.AgentSessionStatsReq, systemTypes.AgentSessionStatsResp>("session_stats", req, { reqSchemaId: 2948, resSchemaId: 2949, ...opts });
+  return client.invoke<systemTypes.AgentSessionStatsReq, systemTypes.AgentSessionStatsResp>("session_stats", req, { reqSchemaId: 3028, resSchemaId: 3029, ...opts });
 }
 
 export const sessionStats_meta = {
   callable: "session_stats",
   name: "session_stats",
-  reqSchemaId: 2948,
-  resSchemaId: 2949,
+  reqSchemaId: 3028,
+  resSchemaId: 3029,
 } as const;
 
 export async function sessionSummary(client: GosporeClient, req: systemTypes.AgentSessionSummaryReq, opts?: InvokeOptions): Promise<systemTypes.AgentSessionSummaryResp> {
@@ -493,14 +493,14 @@ export const skillMount_meta = {
 } as const;
 
 export async function skillUse(client: GosporeClient, req: systemTypes.AgentSkillUseReq, opts?: InvokeOptions): Promise<systemTypes.AgentSkillUseResp> {
-  return client.invoke<systemTypes.AgentSkillUseReq, systemTypes.AgentSkillUseResp>("skill_use", req, { reqSchemaId: 2688, resSchemaId: 2689, ...opts });
+  return client.invoke<systemTypes.AgentSkillUseReq, systemTypes.AgentSkillUseResp>("skill_use", req, { reqSchemaId: 2768, resSchemaId: 2769, ...opts });
 }
 
 export const skillUse_meta = {
   callable: "skill_use",
   name: "skill_use",
-  reqSchemaId: 2688,
-  resSchemaId: 2689,
+  reqSchemaId: 2768,
+  resSchemaId: 2769,
 } as const;
 
 export async function storageConfigure(client: GosporeClient, req: systemTypes.AgentStorageConfigureReq, opts?: InvokeOptions): Promise<systemTypes.AgentStorageConfigureResp> {

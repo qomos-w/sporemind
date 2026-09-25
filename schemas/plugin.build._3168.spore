@@ -61,6 +61,12 @@ struct PluginArtifactLoadReq {
     optional OnLoadConfig: bytes
     optional AgentId: string
     optional RequestId: string
+    // Dev marks a load originating from the appmanager dev loop
+    // (register_project / reload_project). Dev-loaded plugins accept panel
+    // operations (pluginhost.panel_op) on their mounted views; installed
+    // plugins never do. Sticky in the pluginhost descriptor: idempotent
+    // re-loads without the flag keep a dev plugin dev.
+    optional Dev: bool
 }
 
 struct PluginArtifactLoadResp {

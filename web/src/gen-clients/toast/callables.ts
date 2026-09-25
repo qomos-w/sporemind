@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "action",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 6216,
-    finalSchemaId: 6217,
+    reqSchemaId: 6328,
+    finalSchemaId: 6329,
     req: {
       kind: "struct",
       name: "ToastActionReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "dismiss",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 6211,
-    finalSchemaId: 6212,
+    reqSchemaId: 6323,
+    finalSchemaId: 6324,
     req: {
       kind: "struct",
       name: "ToastDismissReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "show",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 6209,
-    finalSchemaId: 6210,
+    reqSchemaId: 6321,
+    finalSchemaId: 6322,
     req: {
       kind: "struct",
       name: "ToastShowReq",
@@ -62,8 +62,8 @@ export const callableEntries: CallableEntry[] = [
     name: "state",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 6214,
-    finalSchemaId: 6215,
+    reqSchemaId: 6326,
+    finalSchemaId: 6327,
     req: {
       kind: "struct",
       name: "ToastStateReq",

@@ -9,7 +9,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 6659,
+    finalSchemaId: 6563,
     req: {
       kind: "void",
       name: "void"
@@ -25,8 +25,8 @@ export const callableEntries: CallableEntry[] = [
     name: "config_set",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 6660,
-    finalSchemaId: 6661,
+    reqSchemaId: 6564,
+    finalSchemaId: 6565,
     req: {
       kind: "struct",
       name: "StoreClientConfigSetReq",
@@ -44,7 +44,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 6663,
+    finalSchemaId: 6567,
     req: {
       kind: "void",
       name: "void"
@@ -60,8 +60,8 @@ export const callableEntries: CallableEntry[] = [
     name: "install",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 6667,
-    finalSchemaId: 6668,
+    reqSchemaId: 6571,
+    finalSchemaId: 6572,
     req: {
       kind: "struct",
       name: "StoreInstallReq",

@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "create",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 790,
-    finalSchemaId: 789,
+    reqSchemaId: 806,
+    finalSchemaId: 805,
     req: {
       kind: "struct",
       name: "FrpManagerCreateReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "detect",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 798,
-    finalSchemaId: 799,
+    reqSchemaId: 814,
+    finalSchemaId: 815,
     req: {
       kind: "struct",
       name: "FrpManagerDetectReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "get",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 792,
-    finalSchemaId: 789,
+    reqSchemaId: 808,
+    finalSchemaId: 805,
     req: {
       kind: "struct",
       name: "FrpManagerGetReq",
@@ -63,7 +63,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 793,
+    finalSchemaId: 809,
     req: {
       kind: "void",
       name: "void"
@@ -79,8 +79,8 @@ export const callableEntries: CallableEntry[] = [
     name: "remove",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 791,
-    finalSchemaId: 789,
+    reqSchemaId: 807,
+    finalSchemaId: 805,
     req: {
       kind: "struct",
       name: "FrpManagerRemoveReq",
@@ -97,8 +97,8 @@ export const callableEntries: CallableEntry[] = [
     name: "start",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 796,
-    finalSchemaId: 789,
+    reqSchemaId: 812,
+    finalSchemaId: 805,
     req: {
       kind: "struct",
       name: "FrpManagerStartReq",
@@ -115,8 +115,8 @@ export const callableEntries: CallableEntry[] = [
     name: "stop",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 797,
-    finalSchemaId: 789,
+    reqSchemaId: 813,
+    finalSchemaId: 805,
     req: {
       kind: "struct",
       name: "FrpManagerStopReq",
@@ -133,8 +133,8 @@ export const callableEntries: CallableEntry[] = [
     name: "update",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 795,
-    finalSchemaId: 789,
+    reqSchemaId: 811,
+    finalSchemaId: 805,
     req: {
       kind: "struct",
       name: "FrpManagerUpdateReq",

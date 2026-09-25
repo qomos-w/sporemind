@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "configure",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 6694,
-    finalSchemaId: 6695,
+    reqSchemaId: 6614,
+    finalSchemaId: 6615,
     req: {
       kind: "struct",
       name: "PolicyConfigureReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "decide",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 6689,
-    finalSchemaId: 6691,
+    reqSchemaId: 6609,
+    finalSchemaId: 6611,
     req: {
       kind: "struct",
       name: "PolicyDecideReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "status",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 6696,
-    finalSchemaId: 6697,
+    reqSchemaId: 6616,
+    finalSchemaId: 6617,
     req: {
       kind: "struct",
       name: "PolicyStatusReq",

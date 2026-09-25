@@ -4,13 +4,13 @@ import type { InvokeOptions } from "@qomos/gospore-client";
 import type * as systemTypes from "../system/types";
 
 export async function capture(client: GosporeClient, req: systemTypes.PuppetViewportCaptureReq, opts?: InvokeOptions): Promise<systemTypes.PuppetViewportCaptureResp> {
-  return client.invoke<systemTypes.PuppetViewportCaptureReq, systemTypes.PuppetViewportCaptureResp>("puppet.viewport.capture", req, { reqSchemaId: 4593, resSchemaId: 4594, ...opts });
+  return client.invoke<systemTypes.PuppetViewportCaptureReq, systemTypes.PuppetViewportCaptureResp>("puppet.viewport.capture", req, { reqSchemaId: 4737, resSchemaId: 4738, ...opts });
 }
 
 export const capture_meta = {
   callable: "puppet.viewport.capture",
   name: "capture",
-  reqSchemaId: 4593,
-  resSchemaId: 4594,
+  reqSchemaId: 4737,
+  resSchemaId: 4738,
 } as const;
 

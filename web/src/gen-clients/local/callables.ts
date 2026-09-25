@@ -25,8 +25,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_pause",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2736,
-    finalSchemaId: 2737,
+    reqSchemaId: 2816,
+    finalSchemaId: 2817,
     req: {
       kind: "struct",
       name: "AgentPauseReq",
@@ -43,8 +43,8 @@ export const callableEntries: CallableEntry[] = [
     name: "agent_resume",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2738,
-    finalSchemaId: 2739,
+    reqSchemaId: 2818,
+    finalSchemaId: 2819,
     req: {
       kind: "struct",
       name: "AgentResumeReq",
@@ -151,7 +151,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1348,
+    finalSchemaId: 1396,
     req: {
       kind: "void",
       name: "void"
@@ -185,8 +185,8 @@ export const callableEntries: CallableEntry[] = [
     name: "component_list",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2502,
-    finalSchemaId: 2503,
+    reqSchemaId: 2582,
+    finalSchemaId: 2583,
     req: {
       kind: "struct",
       name: "AgentComponentListReq",
@@ -203,8 +203,8 @@ export const callableEntries: CallableEntry[] = [
     name: "component_mount",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2496,
-    finalSchemaId: 2497,
+    reqSchemaId: 2576,
+    finalSchemaId: 2577,
     req: {
       kind: "struct",
       name: "AgentComponentMountReq",
@@ -221,8 +221,8 @@ export const callableEntries: CallableEntry[] = [
     name: "component_set_enabled",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2500,
-    finalSchemaId: 2501,
+    reqSchemaId: 2580,
+    finalSchemaId: 2581,
     req: {
       kind: "struct",
       name: "AgentComponentSetEnabledReq",
@@ -239,8 +239,8 @@ export const callableEntries: CallableEntry[] = [
     name: "component_snapshot",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2504,
-    finalSchemaId: 2505,
+    reqSchemaId: 2584,
+    finalSchemaId: 2585,
     req: {
       kind: "struct",
       name: "AgentComponentSnapshotReq",
@@ -257,8 +257,8 @@ export const callableEntries: CallableEntry[] = [
     name: "component_unmount",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2498,
-    finalSchemaId: 2499,
+    reqSchemaId: 2578,
+    finalSchemaId: 2579,
     req: {
       kind: "struct",
       name: "AgentComponentUnmountReq",
@@ -292,8 +292,8 @@ export const callableEntries: CallableEntry[] = [
     name: "coordinator_guidance_profile_clear",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4295,
-    finalSchemaId: 4296,
+    reqSchemaId: 4423,
+    finalSchemaId: 4424,
     req: {
       kind: "struct",
       name: "GuidanceProfileClearReq",
@@ -310,8 +310,8 @@ export const callableEntries: CallableEntry[] = [
     name: "coordinator_guidance_profile_increment",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4297,
-    finalSchemaId: 4298,
+    reqSchemaId: 4425,
+    finalSchemaId: 4426,
     req: {
       kind: "struct",
       name: "GuidanceProfileIncrementReq",
@@ -328,8 +328,8 @@ export const callableEntries: CallableEntry[] = [
     name: "coordinator_guidance_profile_query",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4291,
-    finalSchemaId: 4292,
+    reqSchemaId: 4419,
+    finalSchemaId: 4420,
     req: {
       kind: "struct",
       name: "GuidanceProfileQueryReq",
@@ -346,8 +346,8 @@ export const callableEntries: CallableEntry[] = [
     name: "coordinator_guidance_profile_update",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4293,
-    finalSchemaId: 4294,
+    reqSchemaId: 4421,
+    finalSchemaId: 4422,
     req: {
       kind: "struct",
       name: "GuidanceProfileUpdateReq",
@@ -401,7 +401,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 844,
+    finalSchemaId: 860,
     req: {
       kind: "void",
       name: "void"
@@ -479,8 +479,8 @@ export const callableEntries: CallableEntry[] = [
     name: "memory_recall",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3650,
-    finalSchemaId: 3651,
+    reqSchemaId: 3730,
+    finalSchemaId: 3731,
     req: {
       kind: "struct",
       name: "MemoryRecallReq",
@@ -497,8 +497,8 @@ export const callableEntries: CallableEntry[] = [
     name: "memory_save",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3648,
-    finalSchemaId: 3649,
+    reqSchemaId: 3728,
+    finalSchemaId: 3729,
     req: {
       kind: "struct",
       name: "MemorySaveReq",
@@ -515,8 +515,8 @@ export const callableEntries: CallableEntry[] = [
     name: "memory_snapshot",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3653,
-    finalSchemaId: 3654,
+    reqSchemaId: 3733,
+    finalSchemaId: 3734,
     req: {
       kind: "struct",
       name: "MemorySnapshotReq",
@@ -602,8 +602,8 @@ export const callableEntries: CallableEntry[] = [
     name: "modes_unload_all",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2592,
-    finalSchemaId: 2593,
+    reqSchemaId: 2672,
+    finalSchemaId: 2673,
     req: {
       kind: "struct",
       name: "AgentModesUnloadAllReq",
@@ -674,7 +674,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1348,
+    finalSchemaId: 1396,
     req: {
       kind: "void",
       name: "void"
@@ -708,8 +708,8 @@ export const callableEntries: CallableEntry[] = [
     name: "scheduler_bind",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2640,
-    finalSchemaId: 2641,
+    reqSchemaId: 2720,
+    finalSchemaId: 2721,
     req: {
       kind: "struct",
       name: "AgentSchedulerBindReq",
@@ -726,8 +726,8 @@ export const callableEntries: CallableEntry[] = [
     name: "scheduler_unbind",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2642,
-    finalSchemaId: 2643,
+    reqSchemaId: 2722,
+    finalSchemaId: 2723,
     req: {
       kind: "struct",
       name: "AgentSchedulerUnbindReq",
@@ -833,8 +833,8 @@ export const callableEntries: CallableEntry[] = [
     name: "session_stats",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2948,
-    finalSchemaId: 2949,
+    reqSchemaId: 3028,
+    finalSchemaId: 3029,
     req: {
       kind: "struct",
       name: "AgentSessionStatsReq",
@@ -922,8 +922,8 @@ export const callableEntries: CallableEntry[] = [
     name: "skill_use",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2688,
-    finalSchemaId: 2689,
+    reqSchemaId: 2768,
+    finalSchemaId: 2769,
     req: {
       kind: "struct",
       name: "AgentSkillUseReq",

@@ -15,14 +15,14 @@ export const create_meta = {
 } as const;
 
 export async function exportCookies(client: GosporeClient, req: systemTypes.BrowserManagerExportCookiesReq, opts?: InvokeOptions): Promise<systemTypes.BrowserManagerExportCookiesResp> {
-  return client.invoke<systemTypes.BrowserManagerExportCookiesReq, systemTypes.BrowserManagerExportCookiesResp>("browsermanager.export_cookies", req, { reqSchemaId: 673, resSchemaId: 674, ...opts });
+  return client.invoke<systemTypes.BrowserManagerExportCookiesReq, systemTypes.BrowserManagerExportCookiesResp>("browsermanager.export_cookies", req, { reqSchemaId: 689, resSchemaId: 690, ...opts });
 }
 
 export const exportCookies_meta = {
   callable: "browsermanager.export_cookies",
   name: "export_cookies",
-  reqSchemaId: 673,
-  resSchemaId: 674,
+  reqSchemaId: 689,
+  resSchemaId: 690,
 } as const;
 
 export async function get(client: GosporeClient, req: systemTypes.BrowserManagerGetReq, opts?: InvokeOptions): Promise<systemTypes.BrowserInstance> {
@@ -37,14 +37,14 @@ export const get_meta = {
 } as const;
 
 export async function importCookies(client: GosporeClient, req: systemTypes.BrowserManagerImportCookiesReq, opts?: InvokeOptions): Promise<systemTypes.BrowserManagerImportCookiesResp> {
-  return client.invoke<systemTypes.BrowserManagerImportCookiesReq, systemTypes.BrowserManagerImportCookiesResp>("browsermanager.import_cookies", req, { reqSchemaId: 675, resSchemaId: 676, ...opts });
+  return client.invoke<systemTypes.BrowserManagerImportCookiesReq, systemTypes.BrowserManagerImportCookiesResp>("browsermanager.import_cookies", req, { reqSchemaId: 691, resSchemaId: 692, ...opts });
 }
 
 export const importCookies_meta = {
   callable: "browsermanager.import_cookies",
   name: "import_cookies",
-  reqSchemaId: 675,
-  resSchemaId: 676,
+  reqSchemaId: 691,
+  resSchemaId: 692,
 } as const;
 
 export async function list(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.BrowserManagerListResp> {

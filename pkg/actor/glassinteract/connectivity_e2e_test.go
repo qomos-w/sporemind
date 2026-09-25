@@ -35,12 +35,12 @@ import (
 // clients). The MentraOS TBC codec keys off these; the server side resolves
 // the same IDs through the app schema set.
 const (
-	schemaClaimReq       = 3892
-	schemaClaimResp      = 3893
-	schemaGetStateReq    = 3896
-	schemaGetStateResp   = 3897
-	schemaTelemetryReq   = 4080
-	schemaTelemetryResp  = 4081
+	schemaClaimReq       = 4020
+	schemaClaimResp      = 4021
+	schemaGetStateReq    = 4024
+	schemaGetStateResp   = 4025
+	schemaTelemetryReq   = 4208
+	schemaTelemetryResp  = 4209
 	glassBootstrapCallID = "glass_interact.bootstrap"
 	glassClaimCallID     = "glass_interact.session_claim"
 	glassGetStateCallID  = "glass_interact.session_get_state"

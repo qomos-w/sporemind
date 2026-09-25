@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "appdata_usage",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3123,
-    finalSchemaId: 3124,
+    reqSchemaId: 3203,
+    finalSchemaId: 3204,
     req: {
       kind: "struct",
       name: "PluginAppDataUsageReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "artifact_load",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3092,
-    finalSchemaId: 3093,
+    reqSchemaId: 3172,
+    finalSchemaId: 3173,
     req: {
       kind: "struct",
       name: "PluginArtifactLoadReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "artifact_reload_abort",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3098,
-    finalSchemaId: 3099,
+    reqSchemaId: 3178,
+    finalSchemaId: 3179,
     req: {
       kind: "struct",
       name: "PluginArtifactReloadAbortReq",
@@ -62,8 +62,8 @@ export const callableEntries: CallableEntry[] = [
     name: "artifact_reload_commit",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3096,
-    finalSchemaId: 3097,
+    reqSchemaId: 3176,
+    finalSchemaId: 3177,
     req: {
       kind: "struct",
       name: "PluginArtifactReloadCommitReq",
@@ -80,8 +80,8 @@ export const callableEntries: CallableEntry[] = [
     name: "artifact_reload_prepare",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3094,
-    finalSchemaId: 3095,
+    reqSchemaId: 3174,
+    finalSchemaId: 3175,
     req: {
       kind: "struct",
       name: "PluginArtifactReloadPrepareReq",
@@ -98,8 +98,8 @@ export const callableEntries: CallableEntry[] = [
     name: "artifact_unload",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3100,
-    finalSchemaId: 3101,
+    reqSchemaId: 3180,
+    finalSchemaId: 3181,
     req: {
       kind: "struct",
       name: "PluginArtifactUnloadReq",
@@ -116,8 +116,8 @@ export const callableEntries: CallableEntry[] = [
     name: "assets_put",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3102,
-    finalSchemaId: 3103,
+    reqSchemaId: 3182,
+    finalSchemaId: 3183,
     req: {
       kind: "struct",
       name: "PluginAssetsPutReq",
@@ -134,8 +134,8 @@ export const callableEntries: CallableEntry[] = [
     name: "assets_remove",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3104,
-    finalSchemaId: 3105,
+    reqSchemaId: 3184,
+    finalSchemaId: 3185,
     req: {
       kind: "struct",
       name: "PluginAssetsRemoveReq",
@@ -152,8 +152,8 @@ export const callableEntries: CallableEntry[] = [
     name: "event_deliver",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 2250,
-    finalSchemaId: 2251,
+    reqSchemaId: 2330,
+    finalSchemaId: 2331,
     req: {
       kind: "struct",
       name: "PluginEventDeliverReq",
@@ -170,8 +170,8 @@ export const callableEntries: CallableEntry[] = [
     name: "invoke",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2247,
-    finalSchemaId: 2248,
+    reqSchemaId: 2327,
+    finalSchemaId: 2328,
     req: {
       kind: "struct",
       name: "PluginInvokeReq",
@@ -188,8 +188,8 @@ export const callableEntries: CallableEntry[] = [
     name: "invoke_stream",
     visibility: "public",
     mode: "streaming",
-    reqSchemaId: 2247,
-    chunkSchemaId: 2249,
+    reqSchemaId: 2327,
+    chunkSchemaId: 2329,
     finalSchemaId: 0,
     req: {
       kind: "struct",
@@ -229,8 +229,8 @@ export const callableEntries: CallableEntry[] = [
     name: "native_build",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3090,
-    finalSchemaId: 3091,
+    reqSchemaId: 3170,
+    finalSchemaId: 3171,
     req: {
       kind: "struct",
       name: "NativeBuildReq",
@@ -244,11 +244,47 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "pluginhost",
+    name: "panel_op",
+    visibility: "public",
+    mode: "unary",
+    reqSchemaId: 3968,
+    finalSchemaId: 3969,
+    req: {
+      kind: "struct",
+      name: "PluginPanelOpReq",
+      className: "PluginPanelOpReq"
+    },
+    final: {
+      kind: "struct",
+      name: "PluginPanelOpResp",
+      className: "PluginPanelOpResp"
+    }
+  },
+  {
+    namespace: "pluginhost",
+    name: "panel_op_put",
+    visibility: "public",
+    mode: "unary",
+    reqSchemaId: 3970,
+    finalSchemaId: 3971,
+    req: {
+      kind: "struct",
+      name: "PluginPanelOpPutReq",
+      className: "PluginPanelOpPutReq"
+    },
+    final: {
+      kind: "struct",
+      name: "PluginPanelOpPutResp",
+      className: "PluginPanelOpPutResp"
+    }
+  },
+  {
+    namespace: "pluginhost",
     name: "plugin_dom",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3840,
-    finalSchemaId: 3841,
+    reqSchemaId: 3920,
+    finalSchemaId: 3921,
     req: {
       kind: "struct",
       name: "PluginDomReq",
@@ -265,8 +301,8 @@ export const callableEntries: CallableEntry[] = [
     name: "plugin_dom_put",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3842,
-    finalSchemaId: 3843,
+    reqSchemaId: 3922,
+    finalSchemaId: 3923,
     req: {
       kind: "struct",
       name: "PluginDomPutReq",
@@ -283,8 +319,8 @@ export const callableEntries: CallableEntry[] = [
     name: "plugin_log_put",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2253,
-    finalSchemaId: 2256,
+    reqSchemaId: 2333,
+    finalSchemaId: 2336,
     req: {
       kind: "struct",
       name: "PluginLogPutReq",
@@ -301,8 +337,8 @@ export const callableEntries: CallableEntry[] = [
     name: "plugin_logs",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 2255,
-    finalSchemaId: 2256,
+    reqSchemaId: 2335,
+    finalSchemaId: 2336,
     req: {
       kind: "struct",
       name: "PluginLogsReq",
@@ -319,8 +355,8 @@ export const callableEntries: CallableEntry[] = [
     name: "proxy_attach",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 5872,
-    finalSchemaId: 5873,
+    reqSchemaId: 6016,
+    finalSchemaId: 6017,
     req: {
       kind: "struct",
       name: "PluginProxyAttachReq",
@@ -337,8 +373,8 @@ export const callableEntries: CallableEntry[] = [
     name: "proxy_detach",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 5874,
-    finalSchemaId: 5875,
+    reqSchemaId: 6018,
+    finalSchemaId: 6019,
     req: {
       kind: "struct",
       name: "PluginProxyDetachReq",
@@ -373,8 +409,8 @@ export const callableEntries: CallableEntry[] = [
     name: "state_append",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3114,
-    finalSchemaId: 3115,
+    reqSchemaId: 3194,
+    finalSchemaId: 3195,
     req: {
       kind: "struct",
       name: "PluginStateAppendReq",
@@ -391,8 +427,8 @@ export const callableEntries: CallableEntry[] = [
     name: "state_delete",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3110,
-    finalSchemaId: 3111,
+    reqSchemaId: 3190,
+    finalSchemaId: 3191,
     req: {
       kind: "struct",
       name: "PluginStateDeleteReq",
@@ -409,8 +445,8 @@ export const callableEntries: CallableEntry[] = [
     name: "state_get",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3106,
-    finalSchemaId: 3107,
+    reqSchemaId: 3186,
+    finalSchemaId: 3187,
     req: {
       kind: "struct",
       name: "PluginStateGetReq",
@@ -427,8 +463,8 @@ export const callableEntries: CallableEntry[] = [
     name: "state_get_many",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3116,
-    finalSchemaId: 3117,
+    reqSchemaId: 3196,
+    finalSchemaId: 3197,
     req: {
       kind: "struct",
       name: "PluginStateGetManyReq",
@@ -445,8 +481,8 @@ export const callableEntries: CallableEntry[] = [
     name: "state_list",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3112,
-    finalSchemaId: 3113,
+    reqSchemaId: 3192,
+    finalSchemaId: 3193,
     req: {
       kind: "struct",
       name: "PluginStateListReq",
@@ -463,8 +499,8 @@ export const callableEntries: CallableEntry[] = [
     name: "state_purge",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3120,
-    finalSchemaId: 3121,
+    reqSchemaId: 3200,
+    finalSchemaId: 3201,
     req: {
       kind: "struct",
       name: "PluginStatePurgeReq",
@@ -481,8 +517,8 @@ export const callableEntries: CallableEntry[] = [
     name: "state_set",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3108,
-    finalSchemaId: 3109,
+    reqSchemaId: 3188,
+    finalSchemaId: 3189,
     req: {
       kind: "struct",
       name: "PluginStateSetReq",
@@ -499,8 +535,8 @@ export const callableEntries: CallableEntry[] = [
     name: "state_set_many",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 3118,
-    finalSchemaId: 3119,
+    reqSchemaId: 3198,
+    finalSchemaId: 3199,
     req: {
       kind: "struct",
       name: "PluginStateSetManyReq",

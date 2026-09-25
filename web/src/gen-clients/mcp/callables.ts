@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "add_server",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4186,
-    finalSchemaId: 4187,
+    reqSchemaId: 4314,
+    finalSchemaId: 4315,
     req: {
       kind: "struct",
       name: "McpAddServerReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "call_tool",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4199,
-    finalSchemaId: 4200,
+    reqSchemaId: 4327,
+    finalSchemaId: 4328,
     req: {
       kind: "struct",
       name: "McpCallToolReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "connect",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4192,
-    finalSchemaId: 4193,
+    reqSchemaId: 4320,
+    finalSchemaId: 4321,
     req: {
       kind: "struct",
       name: "McpConnectReq",
@@ -62,8 +62,8 @@ export const callableEntries: CallableEntry[] = [
     name: "disconnect",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4194,
-    finalSchemaId: 4195,
+    reqSchemaId: 4322,
+    finalSchemaId: 4323,
     req: {
       kind: "struct",
       name: "McpDisconnectReq",
@@ -81,7 +81,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "admin",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4205,
+    finalSchemaId: 4333,
     req: {
       kind: "void",
       name: "void"
@@ -98,7 +98,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "admin",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4185,
+    finalSchemaId: 4313,
     req: {
       kind: "void",
       name: "void"
@@ -114,8 +114,8 @@ export const callableEntries: CallableEntry[] = [
     name: "reconnect",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4196,
-    finalSchemaId: 4197,
+    reqSchemaId: 4324,
+    finalSchemaId: 4325,
     req: {
       kind: "struct",
       name: "McpReconnectReq",
@@ -132,8 +132,8 @@ export const callableEntries: CallableEntry[] = [
     name: "remove_server",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4190,
-    finalSchemaId: 4191,
+    reqSchemaId: 4318,
+    finalSchemaId: 4319,
     req: {
       kind: "struct",
       name: "McpRemoveServerReq",
@@ -150,8 +150,8 @@ export const callableEntries: CallableEntry[] = [
     name: "update_server",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4188,
-    finalSchemaId: 4189,
+    reqSchemaId: 4316,
+    finalSchemaId: 4317,
     req: {
       kind: "struct",
       name: "McpUpdateServerReq",

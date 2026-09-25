@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "handoff",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4247,
-    finalSchemaId: 4248,
+    reqSchemaId: 4375,
+    finalSchemaId: 4376,
     req: {
       kind: "struct",
       name: "BrowserCrawlHandoffReq",
@@ -97,8 +97,8 @@ export const callableEntries: CallableEntry[] = [
     name: "results",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4244,
-    finalSchemaId: 4245,
+    reqSchemaId: 4372,
+    finalSchemaId: 4373,
     req: {
       kind: "struct",
       name: "BrowserCrawlResultsReq",
@@ -115,8 +115,8 @@ export const callableEntries: CallableEntry[] = [
     name: "start",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4240,
-    finalSchemaId: 4241,
+    reqSchemaId: 4368,
+    finalSchemaId: 4369,
     req: {
       kind: "struct",
       name: "BrowserCrawlStartReq",
@@ -133,8 +133,8 @@ export const callableEntries: CallableEntry[] = [
     name: "status",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4242,
-    finalSchemaId: 4243,
+    reqSchemaId: 4370,
+    finalSchemaId: 4371,
     req: {
       kind: "struct",
       name: "BrowserCrawlStatusReq",

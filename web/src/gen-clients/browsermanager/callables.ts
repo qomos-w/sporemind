@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "export_cookies",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 673,
-    finalSchemaId: 674,
+    reqSchemaId: 689,
+    finalSchemaId: 690,
     req: {
       kind: "struct",
       name: "BrowserManagerExportCookiesReq",
@@ -62,8 +62,8 @@ export const callableEntries: CallableEntry[] = [
     name: "import_cookies",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 675,
-    finalSchemaId: 676,
+    reqSchemaId: 691,
+    finalSchemaId: 692,
     req: {
       kind: "struct",
       name: "BrowserManagerImportCookiesReq",

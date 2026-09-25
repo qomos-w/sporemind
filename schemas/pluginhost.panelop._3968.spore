@@ -1,0 +1,56 @@
+// @ts-export
+// Panel operations for dev-registered plugins: browser-use-style precise
+// control of a mounted plugin panel iframe. pluginhost.panel_op routes the op
+// through interfacemanager to the host webview, which relays it to the plugin
+// iframe over the management-plane bridge port (the iframe is cross-origin to
+// the host page, so the bridge is the only channel). The iframe executes the
+// op and the host shell pushes the result back via pluginhost.panel_op_put,
+// matched by RequestId. Gate: only plugins loaded with Dev=true (the
+// appmanager dev loop) accept panel ops — never enabled for installed
+// third-party plugins.
+
+struct PluginPanelOpReq {
+    PluginId: string
+    // One of: "dom" | "eval" | "click" | "type" | "wait".
+    Op: string
+    // CSS selector. dom: serialization root (default document). click/type:
+    // target element (required). wait: element to await (with Text optional
+    // as an extra substring condition on its text content).
+    optional Selector: string
+    // op=type: value to set on the target (required). op=wait: required
+    // substring of the awaited element's text (element-only wait when empty).
+    optional Text: string
+    // op=eval: body of an async function executed inside the panel; return a
+    // value with `return`. Result is JSON-serialized (bounded by MaxChars).
+    optional Expr: string
+    // op=eval/wait: budget in ms (default 5000, cap 15000).
+    optional TimeoutMs: long
+    // op=dom: max serialized chars (default 16384, cap 131072).
+    // op=eval: max JSON result chars (default 4096, cap 131072).
+    optional MaxChars: long
+}
+
+// PluginPanelOpResp is the agent-facing result. Ok=false + Reason explains
+// failure: unknown plugin, not dev-registered, invalid op params, no bridge
+// port (panel not mounted or handshake incomplete), op error, or timeout.
+struct PluginPanelOpResp {
+    PluginId: string
+    RequestId: string
+    Ok: bool
+    optional Result: string
+    optional Reason: string
+}
+
+// PluginPanelOpPutReq is the host-shell push carrying the iframe's op result,
+// matched by RequestId against a pending pluginhost.panel_op call.
+struct PluginPanelOpPutReq {
+    PluginId: string
+    RequestId: string
+    Ok: bool
+    optional Result: string
+    optional Reason: string
+    Ts: long          // client ms epoch
+}
+
+struct PluginPanelOpPutResp {
+}

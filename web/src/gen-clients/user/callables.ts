@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "auth_login",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1683,
-    finalSchemaId: 1684,
+    reqSchemaId: 1747,
+    finalSchemaId: 1748,
     req: {
       kind: "struct",
       name: "AuthLoginReq",
@@ -27,7 +27,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1681,
+    finalSchemaId: 1745,
     req: {
       kind: "void",
       name: "void"
@@ -43,8 +43,8 @@ export const callableEntries: CallableEntry[] = [
     name: "auth_refresh",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1685,
-    finalSchemaId: 1686,
+    reqSchemaId: 1749,
+    finalSchemaId: 1750,
     req: {
       kind: "struct",
       name: "AuthRefreshReq",
@@ -61,8 +61,8 @@ export const callableEntries: CallableEntry[] = [
     name: "auth_register",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1682,
-    finalSchemaId: 1681,
+    reqSchemaId: 1746,
+    finalSchemaId: 1745,
     req: {
       kind: "struct",
       name: "AuthRegisterReq",
@@ -79,8 +79,8 @@ export const callableEntries: CallableEntry[] = [
     name: "create",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1689,
-    finalSchemaId: 1681,
+    reqSchemaId: 1753,
+    finalSchemaId: 1745,
     req: {
       kind: "struct",
       name: "AccountCreateReq",
@@ -97,8 +97,8 @@ export const callableEntries: CallableEntry[] = [
     name: "group_create",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1695,
-    finalSchemaId: 1693,
+    reqSchemaId: 1759,
+    finalSchemaId: 1757,
     req: {
       kind: "struct",
       name: "GroupCreateReq",
@@ -116,7 +116,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1694,
+    finalSchemaId: 1758,
     req: {
       kind: "void",
       name: "void"
@@ -132,8 +132,8 @@ export const callableEntries: CallableEntry[] = [
     name: "group_remove",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1697,
-    finalSchemaId: 1693,
+    reqSchemaId: 1761,
+    finalSchemaId: 1757,
     req: {
       kind: "struct",
       name: "GroupDeleteReq",
@@ -150,8 +150,8 @@ export const callableEntries: CallableEntry[] = [
     name: "group_update",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1696,
-    finalSchemaId: 1693,
+    reqSchemaId: 1760,
+    finalSchemaId: 1757,
     req: {
       kind: "struct",
       name: "GroupUpdateReq",
@@ -169,7 +169,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1688,
+    finalSchemaId: 1752,
     req: {
       kind: "void",
       name: "void"
@@ -186,7 +186,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1699,
+    finalSchemaId: 1763,
     req: {
       kind: "void",
       name: "void"
@@ -202,8 +202,8 @@ export const callableEntries: CallableEntry[] = [
     name: "permission_update",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1700,
-    finalSchemaId: 1699,
+    reqSchemaId: 1764,
+    finalSchemaId: 1763,
     req: {
       kind: "struct",
       name: "PermissionUpdateReq",
@@ -220,8 +220,8 @@ export const callableEntries: CallableEntry[] = [
     name: "remove",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1691,
-    finalSchemaId: 1681,
+    reqSchemaId: 1755,
+    finalSchemaId: 1745,
     req: {
       kind: "struct",
       name: "AccountDeleteReq",
@@ -238,8 +238,8 @@ export const callableEntries: CallableEntry[] = [
     name: "reset_password",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1692,
-    finalSchemaId: 1681,
+    reqSchemaId: 1756,
+    finalSchemaId: 1745,
     req: {
       kind: "struct",
       name: "AccountResetPasswordReq",
@@ -256,8 +256,8 @@ export const callableEntries: CallableEntry[] = [
     name: "update",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1690,
-    finalSchemaId: 1681,
+    reqSchemaId: 1754,
+    finalSchemaId: 1745,
     req: {
       kind: "struct",
       name: "AccountUpdateReq",

@@ -332,6 +332,7 @@ func TestCallableIDsForBundles_PluginDevBundle(t *testing.T) {
 		"pluginhost.list_plugins",
 		"pluginhost.plugin_logs",
 		"pluginhost.plugin_dom",
+		"pluginhost.panel_op",
 		"appmanager.callable_info",
 		"appmanager.dev_guide",
 		"appmanager.host_protocol",

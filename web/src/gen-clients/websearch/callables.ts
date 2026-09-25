@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "account_activate",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4448,
-    finalSchemaId: 4449,
+    reqSchemaId: 4592,
+    finalSchemaId: 4593,
     req: {
       kind: "struct",
       name: "WebSearchAccountActivateReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "account_create",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4442,
-    finalSchemaId: 4443,
+    reqSchemaId: 4586,
+    finalSchemaId: 4587,
     req: {
       kind: "struct",
       name: "WebSearchAccountCreateReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "account_delete",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4446,
-    finalSchemaId: 4447,
+    reqSchemaId: 4590,
+    finalSchemaId: 4591,
     req: {
       kind: "struct",
       name: "WebSearchAccountDeleteReq",
@@ -62,8 +62,8 @@ export const callableEntries: CallableEntry[] = [
     name: "account_list",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4440,
-    finalSchemaId: 4441,
+    reqSchemaId: 4584,
+    finalSchemaId: 4585,
     req: {
       kind: "struct",
       name: "WebSearchAccountListReq",
@@ -80,8 +80,8 @@ export const callableEntries: CallableEntry[] = [
     name: "account_update",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4444,
-    finalSchemaId: 4445,
+    reqSchemaId: 4588,
+    finalSchemaId: 4589,
     req: {
       kind: "struct",
       name: "WebSearchAccountUpdateReq",
@@ -98,8 +98,8 @@ export const callableEntries: CallableEntry[] = [
     name: "download",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4453,
-    finalSchemaId: 4454,
+    reqSchemaId: 4597,
+    finalSchemaId: 4598,
     req: {
       kind: "struct",
       name: "WebDownloadReq",
@@ -116,8 +116,8 @@ export const callableEntries: CallableEntry[] = [
     name: "fetch",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4450,
-    finalSchemaId: 4452,
+    reqSchemaId: 4594,
+    finalSchemaId: 4596,
     req: {
       kind: "struct",
       name: "WebFetchReq",
@@ -135,7 +135,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4437,
+    finalSchemaId: 4581,
     req: {
       kind: "void",
       name: "void"
@@ -151,8 +151,8 @@ export const callableEntries: CallableEntry[] = [
     name: "search",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4432,
-    finalSchemaId: 4433,
+    reqSchemaId: 4576,
+    finalSchemaId: 4577,
     req: {
       kind: "struct",
       name: "WebSearchReq",

@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "content_detail",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4392,
-    finalSchemaId: 4393,
+    reqSchemaId: 4520,
+    finalSchemaId: 4521,
     req: {
       kind: "struct",
       name: "ContentDetailReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "content_install",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4394,
-    finalSchemaId: 4395,
+    reqSchemaId: 4522,
+    finalSchemaId: 4523,
     req: {
       kind: "struct",
       name: "ContentInstallReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "content_search",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4390,
-    finalSchemaId: 4391,
+    reqSchemaId: 4518,
+    finalSchemaId: 4519,
     req: {
       kind: "struct",
       name: "ContentSearchReq",
@@ -63,7 +63,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4388,
+    finalSchemaId: 4516,
     req: {
       kind: "void",
       name: "void"
@@ -79,8 +79,8 @@ export const callableEntries: CallableEntry[] = [
     name: "link",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4386,
-    finalSchemaId: 4385,
+    reqSchemaId: 4514,
+    finalSchemaId: 4513,
     req: {
       kind: "struct",
       name: "CloudAccountLinkReq",
@@ -97,8 +97,8 @@ export const callableEntries: CallableEntry[] = [
     name: "redeem",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4398,
-    finalSchemaId: 4399,
+    reqSchemaId: 4526,
+    finalSchemaId: 4527,
     req: {
       kind: "struct",
       name: "CdkeyRedeemReq",
@@ -116,7 +116,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "admin",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4401,
+    finalSchemaId: 4529,
     req: {
       kind: "void",
       name: "void"
@@ -133,7 +133,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4385,
+    finalSchemaId: 4513,
     req: {
       kind: "void",
       name: "void"
@@ -150,7 +150,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4385,
+    finalSchemaId: 4513,
     req: {
       kind: "void",
       name: "void"
@@ -167,7 +167,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 4387,
+    finalSchemaId: 4515,
     req: {
       kind: "void",
       name: "void"

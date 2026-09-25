@@ -4,47 +4,47 @@ import type { InvokeOptions } from "@qomos/gospore-client";
 import type * as systemTypes from "../system/types";
 
 export async function action(client: GosporeClient, req: systemTypes.ToastActionReq, opts?: InvokeOptions): Promise<systemTypes.ToastActionResp> {
-  return client.invoke<systemTypes.ToastActionReq, systemTypes.ToastActionResp>("toast.action", req, { reqSchemaId: 6216, resSchemaId: 6217, ...opts });
+  return client.invoke<systemTypes.ToastActionReq, systemTypes.ToastActionResp>("toast.action", req, { reqSchemaId: 6328, resSchemaId: 6329, ...opts });
 }
 
 export const action_meta = {
   callable: "toast.action",
   name: "action",
-  reqSchemaId: 6216,
-  resSchemaId: 6217,
+  reqSchemaId: 6328,
+  resSchemaId: 6329,
 } as const;
 
 export async function dismiss(client: GosporeClient, req: systemTypes.ToastDismissReq, opts?: InvokeOptions): Promise<systemTypes.ToastDismissResp> {
-  return client.invoke<systemTypes.ToastDismissReq, systemTypes.ToastDismissResp>("toast.dismiss", req, { reqSchemaId: 6211, resSchemaId: 6212, ...opts });
+  return client.invoke<systemTypes.ToastDismissReq, systemTypes.ToastDismissResp>("toast.dismiss", req, { reqSchemaId: 6323, resSchemaId: 6324, ...opts });
 }
 
 export const dismiss_meta = {
   callable: "toast.dismiss",
   name: "dismiss",
-  reqSchemaId: 6211,
-  resSchemaId: 6212,
+  reqSchemaId: 6323,
+  resSchemaId: 6324,
 } as const;
 
 export async function show(client: GosporeClient, req: systemTypes.ToastShowReq, opts?: InvokeOptions): Promise<systemTypes.ToastShowResp> {
-  return client.invoke<systemTypes.ToastShowReq, systemTypes.ToastShowResp>("toast.show", req, { reqSchemaId: 6209, resSchemaId: 6210, ...opts });
+  return client.invoke<systemTypes.ToastShowReq, systemTypes.ToastShowResp>("toast.show", req, { reqSchemaId: 6321, resSchemaId: 6322, ...opts });
 }
 
 export const show_meta = {
   callable: "toast.show",
   name: "show",
-  reqSchemaId: 6209,
-  resSchemaId: 6210,
+  reqSchemaId: 6321,
+  resSchemaId: 6322,
 } as const;
 
 export async function state(client: GosporeClient, req: systemTypes.ToastStateReq, opts?: InvokeOptions): Promise<systemTypes.ToastStateResp> {
-  return client.invoke<systemTypes.ToastStateReq, systemTypes.ToastStateResp>("toast.state", req, { reqSchemaId: 6214, resSchemaId: 6215, ...opts });
+  return client.invoke<systemTypes.ToastStateReq, systemTypes.ToastStateResp>("toast.state", req, { reqSchemaId: 6326, resSchemaId: 6327, ...opts });
 }
 
 export const state_meta = {
   callable: "toast.state",
   name: "state",
-  reqSchemaId: 6214,
-  resSchemaId: 6215,
+  reqSchemaId: 6326,
+  resSchemaId: 6327,
 } as const;
 
 export type ToastActionTriggeredHandler = (payload: systemTypes.ToastActionTriggeredEvent) => void;

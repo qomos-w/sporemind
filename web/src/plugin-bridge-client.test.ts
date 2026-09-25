@@ -388,3 +388,133 @@ describe('plugin-bridge-client (management plane)', () => {
     expect(fetchMock).not.toHaveBeenCalled()
   })
 })
+
+describe('plugin-bridge-client (panel ops)', () => {
+  beforeEach(() => {
+    vi.resetModules()
+    vi.restoreAllMocks()
+    console.log = REAL_CONSOLE.log
+    console.info = REAL_CONSOLE.info
+    console.warn = REAL_CONSOLE.warn
+    console.error = REAL_CONSOLE.error
+    console.debug = REAL_CONSOLE.debug
+    MockEventSource.instances = []
+    MockWebSocket.instances = []
+    vi.stubGlobal('EventSource', MockEventSource)
+    vi.stubGlobal('WebSocket', MockWebSocket)
+    delete (window as any).__sporemindEventChannels
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: true }))
+    delete (window as any).sporemind
+    hostPort = undefined
+    vi.spyOn(window.parent, 'postMessage').mockImplementation(((_msg: unknown, _target: unknown, transfer?: MessagePort[]) => {
+      if (Array.isArray(transfer) && transfer[0]) {
+        hostPort = transfer[0]
+      }
+    }) as any)
+  })
+
+  async function runOp(msg: Record<string, unknown>): Promise<any> {
+    const { port, frames } = await importClient()
+    port.postMessage({ type: 'sporemind:panel-op', requestId: 't-1', ...msg })
+    await vi.waitFor(() => {
+      expect(frames.some((f) => f?.type === 'sporemind:panel-op-result' && f.requestId === 't-1')).toBe(true)
+    })
+    return frames.find((f) => f?.type === 'sporemind:panel-op-result' && f.requestId === 't-1')
+  }
+
+  it('dom op: marks interactive elements with [k] and honors the selector root', async () => {
+    document.body.innerHTML = `
+      <div id="root">
+        <p>intro</p>
+        <button id="go" class="primary">Save</button>
+        <a href="/next" id="lnk">next</a>
+      </div>
+      <div id="other"><button id="hidden">Elsewhere</button></div>`
+    const reply = await runOp({ op: 'dom', selector: '#root' })
+    expect(reply.ok).toBe(true)
+    expect(reply.result).toContain('[0] button#go.primary "Save"')
+    expect(reply.result).toContain('a#lnk')
+    // Selector scoping: the outside button is not part of the subtree.
+    expect(reply.result).not.toContain('#hidden')
+  })
+
+  it('dom op: defaults to the whole document', async () => {
+    document.body.innerHTML = `<div id="only"><span>text</span></div>`
+    const reply = await runOp({ op: 'dom' })
+    expect(reply.ok).toBe(true)
+    expect(reply.result).toContain('span "text"')
+  })
+
+  it('eval op: returns JSON for expression and statement forms', async () => {
+    const expr = await runOp({ op: 'eval', expr: '2 + 3' })
+    expect(expr.ok).toBe(true)
+    expect(expr.result).toBe('5')
+
+    const stmt = await runOp({ op: 'eval', expr: 'const v = [1, {a: 2}]; return v' })
+    expect(stmt.ok).toBe(true)
+    expect(stmt.result).toBe('[1,{"a":2}]')
+  })
+
+  it('eval op: reports thrown errors as ok=false', async () => {
+    const reply = await runOp({ op: 'eval', expr: 'throw new Error("kaboom")' })
+    expect(reply.ok).toBe(false)
+    expect(String(reply.reason)).toContain('kaboom')
+  })
+
+  it('click op: dispatches a click the page can observe', async () => {
+    document.body.innerHTML = `<button id="go">Go</button>`
+    let clicked = 0
+    document.getElementById('go')!.addEventListener('click', () => { clicked++ })
+    const reply = await runOp({ op: 'click', selector: '#go' })
+    expect(reply.ok).toBe(true)
+    expect(clicked).toBe(1)
+  })
+
+  it('click op: unknown selector fails with a reason', async () => {
+    const reply = await runOp({ op: 'click', selector: '#nope' })
+    expect(reply.ok).toBe(false)
+    expect(String(reply.reason)).toContain('selector not found')
+  })
+
+  it('type op: sets the value through the native setter and fires input/change', async () => {
+    document.body.innerHTML = `<input id="q" />`
+    const events: string[] = []
+    const input = document.getElementById('q') as HTMLInputElement
+    input.addEventListener('input', () => events.push('input'))
+    input.addEventListener('change', () => events.push('change'))
+    const reply = await runOp({ op: 'type', selector: '#q', text: 'hello panel' })
+    expect(reply.ok).toBe(true)
+    expect(input.value).toBe('hello panel')
+    expect(events).toEqual(['input', 'change'])
+  })
+
+  it('type op: rejects non-typeable targets', async () => {
+    document.body.innerHTML = `<div id="plain">nope</div>`
+    const reply = await runOp({ op: 'type', selector: '#plain', text: 'x' })
+    expect(reply.ok).toBe(false)
+    expect(String(reply.reason)).toContain('not a typeable element')
+  })
+
+  it('wait op: resolves when the selector appears later', async () => {
+    document.body.innerHTML = `<div id="host"></div>`
+    setTimeout(() => {
+      document.getElementById('host')!.innerHTML = `<span id="done">Finished!</span>`
+    }, 250)
+    const reply = await runOp({ op: 'wait', selector: '#done', text: 'Finished', timeoutMs: 3000 })
+    expect(reply.ok).toBe(true)
+    expect(String(reply.result)).toContain('matched span#done')
+  })
+
+  it('wait op: times out with a reason when nothing appears', async () => {
+    document.body.innerHTML = `<div id="empty"></div>`
+    const reply = await runOp({ op: 'wait', selector: '#never', timeoutMs: 300 })
+    expect(reply.ok).toBe(false)
+    expect(String(reply.reason)).toContain('timeout after 300ms')
+  })
+
+  it('unknown op replies ok=false without touching the document', async () => {
+    const reply = await runOp({ op: 'screenshot' })
+    expect(reply.ok).toBe(false)
+    expect(String(reply.reason)).toContain('unknown op')
+  })
+})

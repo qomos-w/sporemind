@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "capture",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4593,
-    finalSchemaId: 4594,
+    reqSchemaId: 4737,
+    finalSchemaId: 4738,
     req: {
       kind: "struct",
       name: "PuppetViewportCaptureReq",

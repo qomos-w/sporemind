@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "pairing_info",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 6256,
-    finalSchemaId: 6257,
+    reqSchemaId: 6368,
+    finalSchemaId: 6369,
     req: {
       kind: "struct",
       name: "CookieBridgePairingInfoReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "regen_token",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 6258,
-    finalSchemaId: 6259,
+    reqSchemaId: 6370,
+    finalSchemaId: 6371,
     req: {
       kind: "struct",
       name: "CookieBridgeRegenTokenReq",

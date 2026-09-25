@@ -145,7 +145,7 @@ func TestBrowserCrawlStart_StartToolParamsDocumentInlineConfig(t *testing.T) {
 	// crawl card instead of filling Config inline.
 	ci := gen.CallableInterface{
 		Name:        "crawl.start",
-		ReqSchemaID: 4240,
+		ReqSchemaID: 4368,
 	}
 	for name, desc := range descs {
 		ci.Params = append(ci.Params, gen.CallableParam{Name: name, Description: desc})

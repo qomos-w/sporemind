@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "edit",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4562,
-    finalSchemaId: 4563,
+    reqSchemaId: 4706,
+    finalSchemaId: 4707,
     req: {
       kind: "struct",
       name: "PuppetEditReq",

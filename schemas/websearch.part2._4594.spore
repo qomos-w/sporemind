@@ -31,7 +31,7 @@ struct WebFetchResp {
 // this file's base (3038) would collide with im._3042.spore, which already
 // occupies 3042. IDs 3514/3515 are the first contiguous free slots after the
 // current global maximum.
-@schema(4453)
+@schema(4597)
 struct WebDownloadReq {
     Url:            string
     SavePath:       string
@@ -39,7 +39,7 @@ struct WebDownloadReq {
 }
 
 // WebDownloadResp — result of downloading a file.
-@schema(4454)
+@schema(4598)
 struct WebDownloadResp {
     SavedPath:       string
     BytesDownloaded: int

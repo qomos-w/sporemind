@@ -4135,6 +4135,7 @@ export interface InterfaceManagerControlReq {
   Title?: string | undefined;
   Description?: string | undefined;
   AutoPlay?: boolean | undefined;
+  PanelOp?: PanelOpSpec | undefined;
 }
 
 export interface InterfaceManagerControlResp {
@@ -4160,6 +4161,7 @@ export interface InterfaceManagerEvent {
   Tutorial?: TutorialSpec | undefined;
   AutoPlay?: boolean | undefined;
   TutorialId?: string | undefined;
+  PanelOp?: PanelOpSpec | undefined;
 }
 
 export interface InvokeDiagnostics {
@@ -4805,6 +4807,16 @@ export interface OracleSearchServicesResp {
   Items: ServiceInfo[];
 }
 
+export interface PanelOpSpec {
+  RequestId: string;
+  Op: string;
+  Selector?: string | undefined;
+  Text?: string | undefined;
+  Expr?: string | undefined;
+  TimeoutMs?: number | undefined;
+  MaxChars?: number | undefined;
+}
+
 export interface PassView {
   Type: string;
   StartsAt?: string | undefined;
@@ -4886,6 +4898,7 @@ export interface PluginArtifactLoadReq {
   OnLoadConfig?: Uint8Array | undefined;
   AgentId?: string | undefined;
   RequestId?: string | undefined;
+  Dev?: boolean | undefined;
 }
 
 export interface PluginArtifactLoadResp {
@@ -4975,6 +4988,7 @@ export interface PluginDescriptor {
   TrustClass: string;
   Signer: string;
   Trusted: boolean;
+  Dev: boolean;
   LoadedAt: string;
   Status: string;
   Error: string;
@@ -5060,6 +5074,36 @@ export interface PluginLogsResp {
   Entries?: PluginLogEntry[] | undefined;
   ProcessState?: string | undefined;
   Crash?: string | undefined;
+}
+
+export interface PluginPanelOpPutReq {
+  PluginId: string;
+  RequestId: string;
+  Ok: boolean;
+  Result?: string | undefined;
+  Reason?: string | undefined;
+  Ts: number;
+}
+
+export interface PluginPanelOpPutResp {
+}
+
+export interface PluginPanelOpReq {
+  PluginId: string;
+  Op: string;
+  Selector?: string | undefined;
+  Text?: string | undefined;
+  Expr?: string | undefined;
+  TimeoutMs?: number | undefined;
+  MaxChars?: number | undefined;
+}
+
+export interface PluginPanelOpResp {
+  PluginId: string;
+  RequestId: string;
+  Ok: boolean;
+  Result?: string | undefined;
+  Reason?: string | undefined;
 }
 
 export interface PluginProxyAttachReq {

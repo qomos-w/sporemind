@@ -56,6 +56,9 @@ func (a *Actor) handleArtifactLoad(ctx actor.Context, req gen.PluginArtifactLoad
 	a.recordAppDataGrant(req.Manifest.ID, req.OnLoadConfig)
 	a.ArtifactLoads[req.Manifest.ID] = req
 	a.mu.Unlock()
+	// Dev is sticky on the descriptor (panel-op gate): it must be set before
+	// Save so the persisted Plugins list carries it across restarts.
+	a.markPanelOpDev(req.Manifest.ID, req.Dev)
 	if err := a.Save(); err != nil {
 		_, _ = a.loader.Unload(ctx.Lifecycle(), gen.PluginArtifactUnloadReq{PluginID: req.Manifest.ID})
 		return gen.PluginArtifactLoadResp{}, fmt.Errorf("pluginhost: persist artifact load: %w", err)

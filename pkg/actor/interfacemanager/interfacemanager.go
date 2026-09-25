@@ -210,6 +210,7 @@ func (a *Actor) handleControl(ctx actor.Context, req domain.InterfaceManagerCont
 		GuideID:     req.GuideID,
 		AppID:       req.AppID,
 		ViewID:      req.ViewID,
+		PanelOp:     req.PanelOp,
 	}
 	resp := domain.InterfaceManagerControlResp{Accepted: true}
 
@@ -370,6 +371,21 @@ func validateControl(a *Actor, req domain.InterfaceManagerControlReq) error {
 	case "request_plugin_dom_snapshot":
 		if req.AppID == "" {
 			return fmt.Errorf("interfacemanager.control: action %q requires AppId", req.Action)
+		}
+	case "request_plugin_panel_op":
+		if req.AppID == "" {
+			return fmt.Errorf("interfacemanager.control: action %q requires AppId", req.Action)
+		}
+		if req.PanelOp == nil {
+			return fmt.Errorf("interfacemanager.control: action %q requires PanelOp", req.Action)
+		}
+		if req.PanelOp.RequestID == "" {
+			return fmt.Errorf("interfacemanager.control: action %q requires PanelOp.RequestId", req.Action)
+		}
+		switch req.PanelOp.Op {
+		case "dom", "eval", "click", "type", "wait":
+		default:
+			return fmt.Errorf("interfacemanager.control: invalid PanelOp.Op %q", req.PanelOp.Op)
 		}
 	case "show_guide":
 		if len(req.Steps) == 0 {

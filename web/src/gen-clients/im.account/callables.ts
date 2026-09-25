@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "create",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4692,
-    finalSchemaId: 4693,
+    reqSchemaId: 4836,
+    finalSchemaId: 4837,
     req: {
       kind: "struct",
       name: "ImAccountCreateReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "delete",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4696,
-    finalSchemaId: 4697,
+    reqSchemaId: 4840,
+    finalSchemaId: 4841,
     req: {
       kind: "struct",
       name: "ImAccountDeleteReq",
@@ -44,8 +44,8 @@ export const callableEntries: CallableEntry[] = [
     name: "list",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4690,
-    finalSchemaId: 4691,
+    reqSchemaId: 4834,
+    finalSchemaId: 4835,
     req: {
       kind: "struct",
       name: "ImAccountListReq",
@@ -62,8 +62,8 @@ export const callableEntries: CallableEntry[] = [
     name: "update",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 4694,
-    finalSchemaId: 4695,
+    reqSchemaId: 4838,
+    finalSchemaId: 4839,
     req: {
       kind: "struct",
       name: "ImAccountUpdateReq",

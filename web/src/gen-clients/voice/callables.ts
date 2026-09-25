@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "activate_account",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1754,
-    finalSchemaId: 1755,
+    reqSchemaId: 1818,
+    finalSchemaId: 1819,
     req: {
       kind: "struct",
       name: "VoiceAccountActivateReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "clone",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1767,
-    finalSchemaId: 1768,
+    reqSchemaId: 1831,
+    finalSchemaId: 1832,
     req: {
       kind: "struct",
       name: "VoiceCloneReq",
@@ -45,7 +45,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "admin",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1762,
+    finalSchemaId: 1826,
     req: {
       kind: "void",
       name: "void"
@@ -61,8 +61,8 @@ export const callableEntries: CallableEntry[] = [
     name: "config_import",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1763,
-    finalSchemaId: 1764,
+    reqSchemaId: 1827,
+    finalSchemaId: 1828,
     req: {
       kind: "struct",
       name: "VoiceConfigImportReq",
@@ -79,8 +79,8 @@ export const callableEntries: CallableEntry[] = [
     name: "create_account",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1748,
-    finalSchemaId: 1749,
+    reqSchemaId: 1812,
+    finalSchemaId: 1813,
     req: {
       kind: "struct",
       name: "VoiceAccountCreateReq",
@@ -97,8 +97,8 @@ export const callableEntries: CallableEntry[] = [
     name: "delete_account",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1752,
-    finalSchemaId: 1753,
+    reqSchemaId: 1816,
+    finalSchemaId: 1817,
     req: {
       kind: "struct",
       name: "VoiceAccountDeleteReq",
@@ -115,8 +115,8 @@ export const callableEntries: CallableEntry[] = [
     name: "delete_hotwords",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3749,
-    finalSchemaId: 3750,
+    reqSchemaId: 3829,
+    finalSchemaId: 3830,
     req: {
       kind: "struct",
       name: "VoiceHotwordsDeleteReq",
@@ -133,8 +133,8 @@ export const callableEntries: CallableEntry[] = [
     name: "design",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1769,
-    finalSchemaId: 1770,
+    reqSchemaId: 1833,
+    finalSchemaId: 1834,
     req: {
       kind: "struct",
       name: "VoiceDesignReq",
@@ -151,8 +151,8 @@ export const callableEntries: CallableEntry[] = [
     name: "get_hotwords",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3747,
-    finalSchemaId: 3748,
+    reqSchemaId: 3827,
+    finalSchemaId: 3828,
     req: {
       kind: "struct",
       name: "VoiceHotwordsGetReq",
@@ -170,7 +170,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 1766,
+    finalSchemaId: 1830,
     req: {
       kind: "void",
       name: "void"
@@ -186,8 +186,8 @@ export const callableEntries: CallableEntry[] = [
     name: "list_accounts",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1746,
-    finalSchemaId: 1747,
+    reqSchemaId: 1810,
+    finalSchemaId: 1811,
     req: {
       kind: "struct",
       name: "VoiceAccountListReq",
@@ -204,8 +204,8 @@ export const callableEntries: CallableEntry[] = [
     name: "recognize",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1757,
-    finalSchemaId: 1758,
+    reqSchemaId: 1821,
+    finalSchemaId: 1822,
     req: {
       kind: "struct",
       name: "VoiceRecognizeReq",
@@ -222,8 +222,8 @@ export const callableEntries: CallableEntry[] = [
     name: "set_hotwords",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 3745,
-    finalSchemaId: 3746,
+    reqSchemaId: 3825,
+    finalSchemaId: 3826,
     req: {
       kind: "struct",
       name: "VoiceHotwordsSetReq",
@@ -240,8 +240,8 @@ export const callableEntries: CallableEntry[] = [
     name: "set_notify_config",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1765,
-    finalSchemaId: 1766,
+    reqSchemaId: 1829,
+    finalSchemaId: 1830,
     req: {
       kind: "struct",
       name: "VoiceNotifyConfig",
@@ -258,8 +258,8 @@ export const callableEntries: CallableEntry[] = [
     name: "synthesize",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1759,
-    finalSchemaId: 1760,
+    reqSchemaId: 1823,
+    finalSchemaId: 1824,
     req: {
       kind: "struct",
       name: "VoiceSynthesizeReq",
@@ -276,8 +276,8 @@ export const callableEntries: CallableEntry[] = [
     name: "update_account",
     visibility: "admin",
     mode: "unary",
-    reqSchemaId: 1750,
-    finalSchemaId: 1751,
+    reqSchemaId: 1814,
+    finalSchemaId: 1815,
     req: {
       kind: "struct",
       name: "VoiceAccountUpdateReq",

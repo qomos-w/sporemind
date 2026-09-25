@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { handlePluginBridgeHandshake, bindPluginBridgeSource, requestPluginDomSnapshot, detachPluginBridgePort, _resetPluginBridgePortsForTest, type PluginBridgeSource } from './plugin-bridge'
+import { handlePluginBridgeHandshake, bindPluginBridgeSource, requestPluginDomSnapshot, requestPluginPanelOp, pushPanelOpFailure, detachPluginBridgePort, _resetPluginBridgePortsForTest, type PluginBridgeSource } from './plugin-bridge'
 import * as appmanagerSessionClient from '../gen-clients/appmanager/client'
 import * as appmanagerAgentClient from '../gen-clients/appmanager/client'
 import * as pluginhostClient from '../gen-clients/pluginhost/client'
@@ -19,6 +19,7 @@ vi.mock('../gen-clients/appmanager/client', () => ({
 vi.mock('../gen-clients/pluginhost/client', () => ({
   pluginLogPut: vi.fn(),
   pluginDomPut: vi.fn(),
+  panelOpPut: vi.fn(),
 }))
 
 const SESSION_CREATE_RESP = {
@@ -520,5 +521,68 @@ describe('plugin-bridge host: agent-action error path', () => {
       expect(lastReply(port.messages)).toMatchObject({ Type: 'sporemind.agent-action-response', RequestId: 'ag-err', Ok: false })
     })
     expect(String(lastReply(port.messages).Error)).toContain('not allowed')
+  })
+})
+
+describe('plugin-bridge host: panel op routing', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    _resetPluginBridgePortsForTest()
+    vi.mocked(appmanagerSessionClient.sessionCreate).mockResolvedValue(SESSION_CREATE_RESP)
+    vi.mocked(appmanagerSessionClient.sessionResolve).mockResolvedValue(SESSION_RESOLVE_RESP)
+    vi.mocked(pluginhostClient.panelOpPut).mockClear()
+  })
+
+  it('returns false when no view of the plugin is mounted', () => {
+    expect(requestPluginPanelOp('trusted.app', { requestId: 'r1', op: 'dom' })).toBe(false)
+  })
+
+  it('posts the op frame on the registered port and pushes the result to panel_op_put', async () => {
+    const { port } = await makeBoundPort()
+    expect(requestPluginPanelOp('trusted.app', { requestId: 'r-op', op: 'click', selector: '#go' })).toBe(true)
+    expect(port.messages[0]).toMatchObject({ type: 'sporemind:panel-op', requestId: 'r-op', op: 'click', selector: '#go' })
+
+    vi.mocked(pluginhostClient.panelOpPut).mockResolvedValue({} as never)
+    port.dispatch({ type: 'sporemind:panel-op-result', requestId: 'r-op', ok: true, result: 'clicked button#go' })
+
+    await vi.waitFor(() => {
+      expect(pluginhostClient.panelOpPut).toHaveBeenCalled()
+    })
+    const req = vi.mocked(pluginhostClient.panelOpPut).mock.calls[0]![1]
+    expect(req).toMatchObject({ PluginId: 'trusted.app', RequestId: 'r-op', Ok: true, Result: 'clicked button#go' })
+    expect(typeof req.Ts).toBe('number')
+  })
+
+  it('routes failure results (ok=false + reason) through the same push', async () => {
+    const { port } = await makeBoundPort()
+    requestPluginPanelOp('trusted.app', { requestId: 'r-fail', op: 'eval', expr: 'boom()' })
+    vi.mocked(pluginhostClient.panelOpPut).mockResolvedValue({} as never)
+    port.dispatch({ type: 'sporemind:panel-op-result', requestId: 'r-fail', ok: false, reason: 'boom is not defined' })
+    await vi.waitFor(() => {
+      expect(pluginhostClient.panelOpPut).toHaveBeenCalled()
+    })
+    expect(vi.mocked(pluginhostClient.panelOpPut).mock.calls[0]![1]).toMatchObject({ Ok: false, Reason: 'boom is not defined' })
+  })
+
+  it('ignores result frames without a requestId', async () => {
+    const { port } = await makeBoundPort()
+    vi.mocked(pluginhostClient.panelOpPut).mockResolvedValue({} as never)
+    port.dispatch({ type: 'sporemind:panel-op-result', ok: true })
+    await new Promise((r) => setTimeout(r, 20))
+    expect(pluginhostClient.panelOpPut).not.toHaveBeenCalled()
+  })
+
+  it('pushPanelOpFailure reports the no-port condition immediately', async () => {
+    vi.mocked(pluginhostClient.panelOpPut).mockResolvedValue({} as never)
+    pushPanelOpFailure('trusted.app', 'r-np', 'no bridge port: panel not mounted or handshake incomplete')
+    await vi.waitFor(() => {
+      expect(pluginhostClient.panelOpPut).toHaveBeenCalled()
+    })
+    expect(vi.mocked(pluginhostClient.panelOpPut).mock.calls[0]![1]).toMatchObject({
+      PluginId: 'trusted.app',
+      RequestId: 'r-np',
+      Ok: false,
+      Reason: 'no bridge port: panel not mounted or handshake incomplete',
+    })
   })
 })

@@ -162,7 +162,7 @@ export const Projections = {
     Permissions: {
       actorPath: "user",
       component: "Permissions",
-      schemaId: 1699,
+      schemaId: 1763,
       schemaName: "PermissionMatrix",
       mode: "full",
     },
@@ -178,7 +178,7 @@ export const Projections = {
     Snapshot: {
       actorPath: "workbench",
       component: "Snapshot",
-      schemaId: 6401,
+      schemaId: 6417,
       schemaName: "WorkbenchSnapshot",
       mode: "full",
     },
@@ -208,7 +208,7 @@ export const Projections = {
     UI: {
       actorPath: "workspace",
       component: "UI",
-      schemaId: 1852,
+      schemaId: 1916,
       schemaName: "WorkspaceUIModel",
       mode: "full",
     },

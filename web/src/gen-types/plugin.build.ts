@@ -50,6 +50,7 @@ export interface PluginArtifactLoadReq {
   OnLoadConfig?: Uint8Array | undefined;
   AgentId?: string | undefined;
   RequestId?: string | undefined;
+  Dev?: boolean | undefined;
 }
 
 export interface PluginArtifactLoadResp {

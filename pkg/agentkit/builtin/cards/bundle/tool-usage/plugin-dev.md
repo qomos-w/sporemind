@@ -33,6 +33,7 @@ data:
     - pluginhost.list_plugins
     - pluginhost.plugin_logs
     - pluginhost.plugin_dom
+    - pluginhost.panel_op
     - appmanager.callable_info
     - appmanager.dev_guide
     - appmanager.host_protocol
@@ -100,7 +101,19 @@ The panel — your `index.html` / `client.gen.ts` — runs inside a sandboxed if
 - **Pointer release is host-guaranteed.** The injected bridge snippet auto-captures the pointer on `pointerdown` (capture phase), so a press released outside the iframe — over host chrome or a native window — still delivers `pointerup`/`mouseup`/`click` to the pressed element. Write plain `pointerdown`/`pointerup` handlers; do NOT hand-roll window-level mouseup/blur fallbacks or stuck-drag watchdogs. Excluded targets: `input`/`textarea`/`select`/`[contenteditable]` (the browser already manages their press semantics). If the plugin calls `setPointerCapture` itself, the plugin's capture wins (last-write-wins).
 - Keep overlays inside the iframe viewport; the iframe is the whole world — host chrome and native browser windows are not addressable from the panel.
 
-Verify frontend behaviour with `appmanager.open_view` → `pluginhost.plugin_dom` (rendered structure) → `pluginhost.plugin_logs` (Source=frontend console + errors).
+Verify frontend behaviour with `appmanager.open_view` → `pluginhost.plugin_dom` (rendered structure) → `pluginhost.panel_op` (precise interaction, below) → `pluginhost.plugin_logs` (Source=frontend console + errors).
+
+#### Panel operations (drive your own panel)
+
+`pluginhost.panel_op` runs a precise operation inside a mounted panel iframe — dev-registered plugins only (`register_project` / `reload_project`); installed third-party plugins are refused. Requires the panel to be open (`appmanager.open_view`) and handshaked. Ops:
+
+- `dom` — bounded DOM serialization with `[k]` markers on interactive elements; `Selector` scopes the root, `MaxChars` (default 16384, cap 131072) bounds the output.
+- `eval` — bounded async JS in the panel (`Expr` is the body of an async function; `return` a value; a bare expression is auto-wrapped); result JSON-serialized, `TimeoutMs` default 5000 / cap 15000.
+- `click` — synthetic pointer/mouse sequence on `Selector`.
+- `type` — native-value-setter input on `Selector` (controlled components observe it) + `input`/`change` events; also contenteditable.
+- `wait` — poll until `Selector` (+ optional `Text` substring) is visible, within `TimeoutMs`.
+
+Workflow: `dom` to read state → `click`/`type` to act → `wait` to confirm. Typical failure reasons: `selector not found`, `no bridge port: panel not mounted`, timeouts. `Ok=false` + `Reason` is a business result, not an error — inspect and adapt the selector.
 
 #### Host calls (query → declare → generate)
 

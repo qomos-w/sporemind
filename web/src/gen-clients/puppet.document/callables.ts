@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "revert_to",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4582,
-    finalSchemaId: 4583,
+    reqSchemaId: 4726,
+    finalSchemaId: 4727,
     req: {
       kind: "struct",
       name: "PuppetDocumentRevertToReq",
@@ -26,8 +26,8 @@ export const callableEntries: CallableEntry[] = [
     name: "snapshot",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4547,
-    finalSchemaId: 4548,
+    reqSchemaId: 4691,
+    finalSchemaId: 4692,
     req: {
       kind: "struct",
       name: "PuppetDocumentSnapshotReq",

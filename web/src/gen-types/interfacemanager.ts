@@ -46,6 +46,17 @@ export interface InterfaceManagerControlReq {
   Title?: string | undefined;
   Description?: string | undefined;
   AutoPlay?: boolean | undefined;
+  PanelOp?: PanelOpSpec | undefined;
+}
+
+export interface PanelOpSpec {
+  RequestId: string;
+  Op: string;
+  Selector?: string | undefined;
+  Text?: string | undefined;
+  Expr?: string | undefined;
+  TimeoutMs?: number | undefined;
+  MaxChars?: number | undefined;
 }
 
 export interface InterfaceManagerControlResp {
@@ -71,6 +82,7 @@ export interface InterfaceManagerEvent {
   Tutorial?: TutorialSpec | undefined;
   AutoPlay?: boolean | undefined;
   TutorialId?: string | undefined;
+  PanelOp?: PanelOpSpec | undefined;
 }
 
 export interface ReportInteractionReq {

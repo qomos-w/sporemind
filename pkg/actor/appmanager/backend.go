@@ -129,6 +129,10 @@ func (a *Actor) withBackendLoadReq(req gen.PluginArtifactLoadReq) (gen.PluginArt
 		return req, "", err
 	}
 	projectID := a.boundProjectID(req.Manifest.ID)
+	// Dev gate for panel ops: project-bound loads (register_project /
+	// reload_project, the appmanager dev loop) mark the plugin dev; zip
+	// installs and pre-binding records stay non-dev.
+	req.Dev = projectID != ""
 	raw, err := json.Marshal(backendLoadConfig{HTTPAddr: backendHTTPAddr, SessionSecret: secret, StaticDir: appDir, DataDir: dataDir, ProjectID: projectID})
 	if err != nil {
 		return req, "", fmt.Errorf("appmanager: marshal backend load config: %w", err)

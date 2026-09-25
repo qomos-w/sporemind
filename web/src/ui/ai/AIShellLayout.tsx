@@ -216,7 +216,7 @@ import { setBrowserWindowVisible, closeBrowserSession, captureBrowserWindow, set
 import type { BrowserManagerEvent } from '../../gen-types/browser'
 import { listBrowserWindows, closeBrowserInstance, onBrowserManagerEvent, proxySignature } from '../../application/browser-manager'
 import { onInterfaceManagerEvent, fetchTutorialCatalog } from '../../application/interface-manager'
-import { requestPluginDomSnapshot } from '../../application/plugin-bridge'
+import { requestPluginDomSnapshot, requestPluginPanelOp, pushPanelOpFailure } from '../../application/plugin-bridge'
 import { guideManager } from '../../application/guide-manager'
 import { initTelemetry, setTelemetryView, reportInteraction } from '../../application/telemetry'
 import { executeInteraction } from '../../application/ui-interactor'
@@ -3964,6 +3964,31 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
       if (event.Action !== 'request_plugin_dom_snapshot') return
       if (!event.AppId) return
       requestPluginDomSnapshot(event.AppId)
+    })
+  }, [])
+
+  // Agent-driven request_plugin_panel_op: relay the op envelope to the
+  // mounted plugin iframe over the bridge port. When no view is mounted the
+  // failure is pushed immediately so pluginhost.panel_op's poll fails fast
+  // instead of burning its whole budget.
+  useEffect(() => {
+    return onInterfaceManagerEvent((event) => {
+      if (event.Action !== 'request_plugin_panel_op') return
+      const appId = event.AppId
+      const spec = event.PanelOp
+      if (!appId || !spec?.RequestId || !spec.Op) return
+      const relayed = requestPluginPanelOp(appId, {
+        requestId: spec.RequestId,
+        op: spec.Op,
+        selector: spec.Selector || undefined,
+        text: spec.Text || undefined,
+        expr: spec.Expr || undefined,
+        timeoutMs: spec.TimeoutMs || undefined,
+        maxChars: spec.MaxChars || undefined,
+      })
+      if (!relayed) {
+        pushPanelOpFailure(appId, spec.RequestId, 'no bridge port: panel not mounted or handshake incomplete')
+      }
     })
   }, [])
 

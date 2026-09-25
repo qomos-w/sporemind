@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "document",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 838,
-    finalSchemaId: 845,
+    reqSchemaId: 854,
+    finalSchemaId: 861,
     req: {
       kind: "struct",
       name: "InspectDocumentReq",

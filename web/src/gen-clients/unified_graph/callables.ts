@@ -9,7 +9,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 0,
-    finalSchemaId: 893,
+    finalSchemaId: 909,
     req: {
       kind: "void",
       name: "void"
@@ -25,8 +25,8 @@ export const callableEntries: CallableEntry[] = [
     name: "sync",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 890,
-    finalSchemaId: 891,
+    reqSchemaId: 906,
+    finalSchemaId: 907,
     req: {
       kind: "struct",
       name: "TopologySyncReq",

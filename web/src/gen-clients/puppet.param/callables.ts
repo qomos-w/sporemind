@@ -8,8 +8,8 @@ export const callableEntries: CallableEntry[] = [
     name: "list",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 4588,
-    finalSchemaId: 4589,
+    reqSchemaId: 4732,
+    finalSchemaId: 4733,
     req: {
       kind: "struct",
       name: "PuppetParamListReq",

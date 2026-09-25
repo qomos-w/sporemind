@@ -66,8 +66,8 @@ describe('client', () => {
     expect(generatedClients.project.cardMount).toBeTypeOf('function')
     expect(generatedClients.project.cardUnmount).toBeTypeOf('function')
     expect(generatedClients.project.cardList).toBeTypeOf('function')
-    expect(SchemaIDs.ProjectCardMountReq).toBe(3360)
-    expect(SchemaIDs.ProjectCardListResp).toBe(3365)
+    expect(SchemaIDs.ProjectCardMountReq).toBe(3440)
+    expect(SchemaIDs.ProjectCardListResp).toBe(3445)
   })
 
 })
