@@ -18,7 +18,9 @@ copy_tree() { # <src-dir> <dst-dir>
   (cd "$src" && find . -type d \( -name node_modules -o -name dist -o -name .git \) -prune -o -type f ! -name '*.js' ! -name '*.tsbuildinfo' ! -name bun.lock ! -name package-lock.json ! -name pnpm-lock.yaml -print0 | tar --null -cf - -T -) | (cd "$dst" && tar -xf -)
 }
 
-pin() { grep -oP "github.com/qomos-w/$1 \K\S+" "$root/go.mod"; }
+# Anchor to require lines (leading tab): a `replace … => …` directive for the
+# same module must not leak its arrow into the version.
+pin() { grep -oP "^\tgithub.com/qomos-w/$1 \K\S+" "$root/go.mod"; }
 
 # gospore/web-client and spore/ts live in sibling checkouts; git archive the
 # pinned tag's subtree so the source equals exactly what go.mod resolves to.

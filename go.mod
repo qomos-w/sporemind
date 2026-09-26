@@ -21,8 +21,8 @@ require (
 	github.com/modelcontextprotocol/go-sdk v1.7.0
 	github.com/pkg/sftp v1.13.10
 	github.com/pkoukk/tiktoken-go v0.1.8
-	github.com/qomos-w/gospore v0.5.1
-	github.com/qomos-w/spore v0.6.0
+	github.com/qomos-w/gospore v0.5.3
+	github.com/qomos-w/spore v0.6.1
 	github.com/qomos-w/sporemind-plugin-sdk v0.0.0
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/skeema/knownhosts v1.3.2

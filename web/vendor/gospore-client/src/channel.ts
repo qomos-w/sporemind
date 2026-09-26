@@ -150,6 +150,7 @@ export class SubscriptionIterator implements AsyncIterator<unknown> {
     while (true) {
       if (this.index < this.sub.queue.length) {
         const entry = this.sub.queue[this.index++];
+        compactQueue(this.sub);
         if (!entry) continue;
         const value = this.sub.withSeqNo
           ? { seqNo: entry.seqNo, payload: entry.payload }
@@ -184,6 +185,17 @@ export class SubscriptionIterator implements AsyncIterator<unknown> {
     this.waitResolve?.();
   }
 
+  /** Current queue position. Package-internal, used by compactQueue. */
+  get queueIndex(): number {
+    return this.index;
+  }
+
+  /** Shift the queue position back by n after the queue head was dropped.
+   * Package-internal, used by compactQueue. */
+  rewind(n: number): void {
+    this.index -= n;
+  }
+
   private dispose(): void {
     if (this.disposed) return;
     this.disposed = true;
@@ -191,6 +203,31 @@ export class SubscriptionIterator implements AsyncIterator<unknown> {
     this.waitResolve?.();
     this.onDispose();
   }
+}
+
+/* ------------------------------------------------------------------ */
+/* Consumed-prefix compaction                                         */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Drop the head of a subscription queue once every live iterator has consumed
+ * it. Without this the queue retains every chunk payload for the whole
+ * lifetime of the subscription: a long-lived stream (e.g. agent_list_state at
+ * ~100KB per event, one event per second) grows the JS heap without bound.
+ * Compaction is thresholded so the O(len) splice amortizes across many
+ * consumed chunks.
+ */
+const QUEUE_COMPACT_MIN = 32;
+
+function compactQueue(sub: ActiveSubscription): void {
+  if (sub.iterators.size === 0 || sub.queue.length === 0) return;
+  let min = Infinity;
+  for (const it of sub.iterators) {
+    if (it.queueIndex < min) min = it.queueIndex;
+  }
+  if (min < QUEUE_COMPACT_MIN) return;
+  sub.queue.splice(0, min);
+  for (const it of sub.iterators) it.rewind(min);
 }
 
 /* ------------------------------------------------------------------ */

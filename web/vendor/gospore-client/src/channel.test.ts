@@ -293,4 +293,78 @@ describe("FrameChannel", () => {
     expect(unsubFrames).toContain(subId);
     expect(ch.subscriptions.size).toBe(0);
   });
+
+  it("drops the consumed queue prefix so chunk payloads are not retained forever", async () => {
+    const ch = new FrameChannel();
+    ch.send = () => true;
+
+    const subId = "sub:compact";
+    const sub = {
+      callID: "test.compact",
+      payload: {},
+      sinceSeqNo: 0,
+      withSeqNo: false,
+      queue: [] as Array<{seqNo: number; payload: unknown}>,
+      error: null as Error | null,
+      done: false,
+      iterators: new Set<SubscriptionIterator>(),
+    };
+
+    const iterable = ch.createSubscription(subId, sub);
+    const iter = iterable[Symbol.asyncIterator]();
+
+    const N = 1000;
+    for (let i = 1; i <= N; i++) {
+      ch.dispatch({ type: "chunk", subId, seqNo: i, payload: { blob: "x".repeat(1024) } });
+    }
+    for (let i = 1; i <= N; i++) {
+      const v = await iter.next();
+      expect(v.value).toEqual({ blob: "x".repeat(1024) });
+    }
+
+    // All chunks consumed: the queue must not retain them.
+    expect(sub.queue.length).toBeLessThanOrEqual(32);
+  });
+
+  it("keeps queue entries a slow parallel iterator has not consumed yet", async () => {
+    const ch = new FrameChannel();
+    ch.send = () => true;
+
+    const subId = "sub:compact-multi";
+    const sub = {
+      callID: "test.compact-multi",
+      payload: {},
+      sinceSeqNo: 0,
+      withSeqNo: false,
+      queue: [] as Array<{seqNo: number; payload: unknown}>,
+      error: null as Error | null,
+      done: false,
+      iterators: new Set<SubscriptionIterator>(),
+    };
+
+    const iterable = ch.createSubscription(subId, sub);
+    const fast = iterable[Symbol.asyncIterator]() as SubscriptionIterator;
+    const slow = iterable[Symbol.asyncIterator]() as SubscriptionIterator;
+
+    const N = 100;
+    for (let i = 1; i <= N; i++) {
+      ch.dispatch({ type: "chunk", subId, seqNo: i, payload: i });
+    }
+    for (let i = 1; i <= N; i++) {
+      await fast.next();
+    }
+    // Slow iterator consumes only 40; entries 41..100 must stay queued.
+    for (let i = 1; i <= 40; i++) {
+      const v = await slow.next();
+      expect(v.value).toBe(i);
+    }
+
+    // Slow stopped at 40: the last compaction ran when it hit 32 (dropped
+    // 32 entries), so 68 remain — 8 dead prefix + 60 not yet consumed by slow.
+    expect(sub.queue.length).toBe(68);
+    expect(sub.queue[8]!.payload).toBe(41);
+    for (let i = 0; i < 68; i++) {
+      expect(sub.queue[i]!.payload).toBe(33 + i);
+    }
+  });
 });

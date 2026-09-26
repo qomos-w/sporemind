@@ -223,8 +223,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 h1:Jamvg5psRIccs7FGNTlIRMkT8wgtp5eCXdBlqhYGL6U=
 github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4/go.mod h1:xMI15A0UPsDsEKsMN9yxemIoYk6Tm2C1GtYGdfGttqA=
-github.com/qomos-w/spore v0.6.0 h1:9WZ0CfKP3779eqmMZnU9tWUAyKsjUscgiDqBChhHu7Y=
-github.com/qomos-w/spore v0.6.0/go.mod h1:i7SH44uN82muo4fN9zyL4aWB3r6cYE217YMdBpfOPOc=
+github.com/qomos-w/spore v0.6.1 h1:McsyTY+XyPOevtCyJvfgvG5634NU5IiJiufETiUuPlE=
+github.com/qomos-w/spore v0.6.1/go.mod h1:i7SH44uN82muo4fN9zyL4aWB3r6cYE217YMdBpfOPOc=
 github.com/qomos-w/wails/v3 v3.0.0-spore.4 h1:chDgHr845onZjL38pNzo8aKzTBHomt558OcPYaJVUwY=
 github.com/qomos-w/wails/v3 v3.0.0-spore.4/go.mod h1:/6QR46/nhGCSADHbS++XtDb9dkTnenTHlGskTPRo9S0=
 github.com/quic-go/quic-go v0.55.0 h1:zccPQIqYCXDt5NmcEabyYvOnomjs8Tlwl7tISjJh9Mk=
