@@ -1805,9 +1805,9 @@ func TestResolveHotContext_MCPBlock_Mounted(t *testing.T) {
 	// Deterministic order: sorted by server id.
 	for _, want := range []string{
 		"- srv-0 (name: deepwiki, connected, 5 tools)",
-		"- srv-1 (name: playwright, DISCONNECTED, 0 tools), error: reconnect failed after 10 attempts: dial refused — call mcp.reconnect with Id=srv-1",
+		"- srv-1 (name: playwright, DISCONNECTED, 0 tools), error: reconnect failed after 10 attempts: dial refused — call mcp.connect with Id=srv-1",
 		"- srv-ghost (not registered — no such server in the system)",
-		"Call mcp.reconnect with Id=<server-id>",
+		"Call mcp.connect with Id=<server-id>",
 	} {
 		if !strings.Contains(block.Text, want) {
 			t.Fatalf("missing %q in block:\n%s", want, block.Text)
@@ -2004,8 +2004,12 @@ func TestResolveTools_AgentChatToolsInjectedForLoadedTarget(t *testing.T) {
 	for _, tool := range tools {
 		if tool.CallableID == "workspace.agent_send_message" {
 			found = true
-			if tool.Description != "Send a message to Alice." {
-				t.Fatalf("send_message description = %q, want component-patched %q", tool.Description, "Send a message to Alice.")
+			// agent-chat contributions must NOT override the shared tool's
+			// neutral registration description (per-target text would name
+			// only the first mounted target); the live target list is the
+			// hot-context Conversable Agents block.
+			if tool.Description != "Send" {
+				t.Fatalf("send_message description = %q, want the neutral registration text %q", tool.Description, "Send")
 			}
 		}
 	}

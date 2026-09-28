@@ -3453,16 +3453,16 @@ func (a *Actor) buildWorkflowBlock(ctx actor.Context) *domain.ContentBlock {
 // conversableBlockBase is the fixed guidance section of the conversable
 // agents hot-context block. It is emitted exactly once per block regardless
 // of how many agent-chat cards are mounted; buildConversableBlock appends one
-// row per mounted target after it.
+// row per mounted target after it. This block is the ONLY prompt surface for
+// the shared workspace.agent_* callables — the compiled system prompt never
+// lists them (componentToolGuidance skips agent-chat contributions).
 const conversableBlockBase = `## Conversable Agents
 
-You have direct conversational channels to the agents listed below ONLY.
-- Send messages with workspace.agent_send_message(ToAgentId=...).
-- Read their recent steps with workspace.agent_read_message.
-- Pause or resume them with workspace.agent_pause / workspace.agent_resume.
-- ToAgentId must be one of the listed ids.
-- Always read replies after sending.
-- Messages wake idle agents and queue on busy ones.`
+The agents listed below are your mounted conversation channels — no other agent is reachable through them.
+- workspace.agent_send_message (ToAgentId, Text): fire-and-forget delivery; wakes an idle target, queues on a busy one. Replies are asynchronous.
+- workspace.agent_read_message (ToAgentId, optional Limit / BeforeSeq): read a target's recent conversation, newest first. After sending, poll this for the reply instead of assuming delivery.
+- workspace.agent_pause / workspace.agent_resume (ToAgentId, optional Reason): suspend or restore a target's active work without losing its state.
+- Address a target by the id shown in its row below.`
 
 // browserWindowsBlockBase is the fixed guidance section of the mounted
 // browser windows hot-context block. It is emitted exactly once per block
@@ -3629,12 +3629,14 @@ func buildBrowserWindowsSection(instances []string) string {
 const mcpStatusBlockBase = `## Mounted MCP Servers
 
 External MCP tool servers are mounted on you as mcp:<server-id> cards; their tools appear as mcp.<server>.<tool>.
-- When a mounted server is disconnected, its tools are NOT in your surface. Call mcp.reconnect with Id=<server-id> to re-establish the session; the tools re-enter your surface after the reconnect (same turn at the next safe judgment window, otherwise next turn).
+- The mcp.connect tool (Id=<server-id>) is ALWAYS in your surface while any MCP card is mounted, whether the server is connected or not.
+- When a mounted server is disconnected, its tools are NOT in your surface. Call mcp.connect with Id=<server-id> to establish the session (idempotent); the tools re-enter your surface after the connect (same turn at the next safe judgment window, otherwise next turn). If connect reports success but the session stays broken, mcp.reconnect (when present in your surface) force-tears-down and re-establishes it.
 - A server whose row says "not registered" no longer exists in the system registry; unmount its card with component_unmount if you no longer need it.`
 
 // buildMCPStatusBlock injects the live status of every mounted MCP server
 // into hot context so the agent knows which external tool servers it carries
-// and can self-heal a dropped one (mcp.reconnect). Returns nil when no
+// and can self-heal a dropped one (mcp.connect — always in its tool surface
+// while an MCP card is mounted). Returns nil when no
 // mcp:<server-id> card is mounted (zero token cost).
 //
 // Live status comes from one mcp.list_servers call (the safe view), mirroring
@@ -3685,7 +3687,7 @@ func (a *Actor) buildMCPStatusBlock(ctx actor.Context) *domain.ContentBlock {
 		if view.Status.Error != "" {
 			row += fmt.Sprintf(", error: %s", truncateMid(view.Status.Error, 160))
 		}
-		sb.WriteString(row + " — call mcp.reconnect with Id=" + id + "\n")
+		sb.WriteString(row + " — call mcp.connect with Id=" + id + "\n")
 	}
 	return &domain.ContentBlock{Type: "text", Text: sb.String()}
 }

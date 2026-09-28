@@ -2134,9 +2134,19 @@ func bundleToolSummary(d domain.ComponentDescriptor) string {
 	return strings.Join(ids, ", ")
 }
 
+// componentToolGuidance renders the compiled system-prompt guidance for tool
+// contributions. Conversable (agent-chat:*) and browser-chat:* cards are
+// skipped: they contribute the SHARED workspace.agent_* / crawl.* callables
+// once per mounted target, so rendering them here duplicates the same tool
+// block N times in the static prompt while naming only one binding — their
+// prompt surface is the hot-context Conversable Agents / Mounted Browser
+// Windows blocks, which track the live mount set per turn.
 func componentToolGuidance(snapshot domain.AgentComponentSnapshot) string {
 	var sections []string
 	for _, contribution := range snapshot.Tools {
+		if isLiveChatCardID(contribution.CardID) {
+			continue
+		}
 		parts := make([]string, 0, 3)
 		if contribution.Description != "" {
 			parts = append(parts, "Description: "+contribution.Description)
@@ -2154,9 +2164,26 @@ func componentToolGuidance(snapshot domain.AgentComponentSnapshot) string {
 	return strings.Join(sections, "\n\n")
 }
 
+// isLiveChatCardID reports whether a component card id is an agent-chat:* or
+// browser-chat:* virtual mount whose tool prompt surface is owned by the
+// hot-context blocks (buildConversableBlock), not the compiled system prompt.
+func isLiveChatCardID(cardID string) bool {
+	return strings.HasPrefix(cardID, agentChatCardPrefix) || strings.HasPrefix(cardID, browserChatCardPrefix)
+}
+
+// applyComponentToolMetadata patches ToolSpecs with component-contributed
+// names/descriptions. agent-chat:* / browser-chat:* contributions are skipped:
+// they describe one card's bound target/window, but multiple cards contribute
+// the SAME shared callable (workspace.agent_send_message, crawl.start, ...)
+// and first-wins patching would name only one target in the tool description.
+// The neutral registration descriptions stay, and the live target/window list
+// lives in the hot-context blocks.
 func applyComponentToolMetadata(tools []domain.ToolSpec, snapshot domain.AgentComponentSnapshot) []domain.ToolSpec {
 	byCallable := make(map[string]domain.ComponentToolContribution, len(snapshot.Tools))
 	for _, contribution := range snapshot.Tools {
+		if isLiveChatCardID(contribution.CardID) {
+			continue
+		}
 		if _, exists := byCallable[contribution.CallableID]; !exists {
 			byCallable[contribution.CallableID] = contribution
 		}

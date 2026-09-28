@@ -372,9 +372,13 @@ func (a *Actor) resolveTools(ctx actor.Context, cfg domain.AgentKindConfig, call
 // through verbatim), but only for servers referenced by mounted
 // mcp:<server-id> component cards. With no MCP card mounted, no MCP tools are
 // injected (explicit constraint); discover_tools is still consulted per turn
-// so the tool list stays fresh. Returns nil when the manager is unreachable
-// or no mounted server's tools are discoverable — MCP tools are an additive
-// surface, never a hard dependency.
+// so the tool list stays fresh. The mcp.connect management tool is injected
+// unconditionally with any mount — regardless of whether the server (or even
+// the whole catalog query) is reachable — so a mounted-but-disconnected
+// server always leaves the agent an entry point to establish the session.
+// Returns nil when the manager is unreachable or no mounted server's tools
+// are discoverable — MCP tools are an additive surface, never a hard
+// dependency.
 func (a *Actor) resolveMCPTools(ctx actor.Context) []domain.ToolSpec {
 	serverIDs := mountedMCPServerIDs(a.resolveComponentSnapshot(ctx).Mounts)
 	if len(serverIDs) == 0 {
@@ -388,33 +392,34 @@ func (a *Actor) resolveMCPTools(ctx actor.Context) []domain.ToolSpec {
 	if !ok {
 		return nil
 	}
+	tools := []domain.ToolSpec{mcpConnectToolSpec()}
 	payload, _ := json.Marshal(domain.McpDiscoverToolsReq{})
 	invokeCtx, cancel := context.WithTimeout(ctx.Lifecycle(), domain.DefaultInvokeTimeout)
 	defer cancel()
 	result, err := planner.Call(invokeCtx, mcpRef, "mcp.discover_tools", payload).Await()
 	if err != nil || result == nil {
-		return nil
+		return tools
 	}
 	var resp domain.McpDiscoverToolsResp
 	switch v := result.(type) {
 	case []byte:
 		if err := json.Unmarshal(v, &resp); err != nil {
-			return nil
+			return tools
 		}
 	case domain.McpDiscoverToolsResp:
 		resp = v
 	case *domain.McpDiscoverToolsResp:
 		if v == nil {
-			return nil
+			return tools
 		}
 		resp = *v
 	case map[string]interface{}:
 		b, _ := json.Marshal(v)
 		_ = json.Unmarshal(b, &resp)
 	default:
-		return nil
+		return tools
 	}
-	return mcpToolSpecsFromCatalog(filterMCPServers(resp, serverIDs))
+	return append(tools, mcpToolSpecsFromCatalog(filterMCPServers(resp, serverIDs))...)
 }
 
 // mountedMCPServerIDs extracts the server ID of every enabled mcp:<server-id>
@@ -1135,7 +1140,7 @@ func (a *Actor) resolveStaticEnvironment(ctx actor.Context) string {
 // the LLM sees its own pending/in-progress tasks every turn. Mounted MCP
 // servers (buildMCPStatusBlock) are included so the agent knows which
 // external tool servers it carries and can self-heal a dropped one via
-// mcp.reconnect.
+// mcp.connect (injected by resolveMCPTools with every MCP mount).
 func (a *Actor) resolveHotContext(ctx actor.Context) []domain.ContentBlock {
 	var blocks []domain.ContentBlock
 	if block := a.buildGoalBlock(ctx); block != nil {

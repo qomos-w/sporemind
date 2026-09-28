@@ -153,6 +153,26 @@ func mcpToolSpecsFromCatalog(resp domain.McpDiscoverToolsResp) []domain.ToolSpec
 	return out
 }
 
+// mcpConnectToolSpec synthesizes the LLM-facing ToolSpec for the manager's
+// mcp.connect callable. resolveMCPTools injects it whenever an mcp:<server-id>
+// card is mounted — presence depends only on the mount, never on the server's
+// live connectivity, so a mounted-but-disconnected server always leaves the
+// agent an entry point to establish the session. The LLM-facing Name follows
+// the dot-fold convention (mcp.connect → "mcp-connect"); the dotted CallableID
+// stays a routing alias.
+func mcpConnectToolSpec() domain.ToolSpec {
+	return domain.ToolSpec{
+		Name:        "mcp-connect",
+		CallableID:  "mcp.connect",
+		ServiceName: "mcp",
+		EffectKind:  string(domain.EffectNone),
+		Description: "Connect an MCP server (idempotent): establish its session so its tools enter your surface. " +
+			"Always in your surface while an mcp:<server-id> card is mounted, even when the server is currently disconnected — " +
+			"call it whenever a mounted server's row reports DISCONNECTED or its tools are missing. Returns the live status (connected, toolCount, error).",
+		InputSchema: `{"type":"object","properties":{"Id":{"type":"string","description":"MCP server ID as shown in the Mounted MCP Servers hot-context block (the mcp:<server-id> card without the mcp: prefix)."}},"required":["Id"]}`,
+	}
+}
+
 // appToolSpecsFromCatalog converts the appmanager's registered app callable
 // catalog into LLM-facing ToolSpecs. The LLM-facing Name is hyphen-delimited
 // ("app-<appID>-<callable>") since dots are not allowed in provider tool names;

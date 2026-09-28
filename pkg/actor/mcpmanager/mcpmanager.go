@@ -38,8 +38,11 @@
 //     additionally accepts agent-originated registration (the bundle-use
 //     flow: an agent adds a server on the user's behalf) and mcp.reconnect
 //     accepts agent-initiated self-healing (a mounted agent re-establishing
-//     a dropped server's session); the remaining CRUD
-//     and lifecycle callables (update/remove/connect/disconnect) stay
+//     a dropped server's session) — mcp.connect is agent-facing for the same
+//     self-heal reason: resolveMCPTools injects it into every agent that
+//     mounts an mcp:<server-id> card, connected or not, so the entry point
+//     must accept the turn engine's internal caller; the remaining CRUD
+//     and lifecycle callables (update/remove/disconnect) stay
 //     strictly admin-gated via requireAdmin.
 package mcpmanager
 
@@ -154,7 +157,9 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	if err := ctx.Register("mcp.remove_server", a.handleRemoveServer, actor.AdminOnly()); err != nil {
 		return fmt.Errorf("mcpmanager: register remove_server: %w", err)
 	}
-	if err := ctx.Register("mcp.connect", a.handleConnect, actor.AdminOnly()); err != nil {
+	if err := ctx.Register("mcp.connect", a.handleConnect, actor.AdminOnly(),
+		actor.WithDescription("Connect an MCP server (idempotent): establish its session so its tools enter the caller's surface. Injected into every agent that mounts an mcp:<server-id> card, regardless of the server's current connectivity; returns the live status (connected, toolCount, error)."),
+	); err != nil {
 		return fmt.Errorf("mcpmanager: register connect: %w", err)
 	}
 	if err := ctx.Register("mcp.disconnect", a.handleDisconnect, actor.AdminOnly()); err != nil {
@@ -439,12 +444,17 @@ func (a *Actor) handleUpdateServer(ctx actor.Context, req domain.McpUpdateServer
 
 // handleConnect routes to the child's Internal connect callable.
 //
+// Agent-facing (requireAgentOrHuman, same gate as reconnect): the agent tool
+// surface always carries mcp.connect while an mcp:<server-id> card is mounted
+// (resolveMCPTools injects it unconditionally, connected or not), so the turn
+// engine's internal caller must pass; the anonymous web role is still denied.
+//
 // Stateless (PureContext) routing handler: the manager mutates no owner-lane
 // state here — findServer is an a.mu-guarded read, the list snapshot is an
 // atomic store — so the 60s connect budget runs on a forked goroutine and
 // cannot park the owner queue behind one slow handshake.
 func (a *Actor) handleConnect(ctx actor.PureContext, req domain.McpConnectReq) (domain.McpConnectResp, error) {
-	if err := requireAdmin(ctx.Identity().Role); err != nil {
+	if err := requireAgentOrHuman(ctx.Identity().Role); err != nil {
 		return domain.McpConnectResp{}, err
 	}
 	cfg, ok := a.findServer(req.ID)
@@ -968,10 +978,10 @@ func requireAdmin(role id.Role) error {
 //
 // The explicit anonymous web role ("anonymous") is still denied. Applies to
 // the agent-facing callables (mcp.discover_tools, mcp.call_tool,
-// mcp.list_servers, mcp.reconnect) and to mcp.add_server, which accepts
-// agent-originated registration (the bundle-use flow: an agent mounts
+// mcp.list_servers, mcp.connect, mcp.reconnect) and to mcp.add_server, which
+// accepts agent-originated registration (the bundle-use flow: an agent mounts
 // mcp.add_server and adds a server on the user's behalf). The remaining CRUD
-// and lifecycle callables (update/remove/connect/disconnect) stay strictly
+// and lifecycle callables (update/remove/disconnect) stay strictly
 // admin-gated via requireAdmin.
 func requireAgentOrHuman(role id.Role) error {
 	if role == "" {

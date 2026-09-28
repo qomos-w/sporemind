@@ -565,6 +565,24 @@ func TestHandleConnect_RequiresHuman(t *testing.T) {
 	}
 }
 
+// TestHandleConnect_AllowsInternalCaller: resolveMCPTools injects mcp.connect
+// into every agent that mounts an mcp:<server-id> card, so the turn engine
+// (zero/system identity) must pass the gate; the anonymous web role is denied.
+func TestHandleConnect_AllowsInternalCaller(t *testing.T) {
+	for _, role := range []id.Role{"", "system"} {
+		a, ctx := freshMM(t)
+		created, err := a.handleAddServer(ctx, validAddReq())
+		if err != nil {
+			t.Fatal(err)
+		}
+		attachFakeChild(a, ctx, created.Server.ID, domain.McpCallToolResp{})
+		ctx.Identity_ = id.Identity{Role: role}
+		if _, err := a.handleConnect(ctx, domain.McpConnectReq{ID: created.Server.ID}); err != nil {
+			t.Fatalf("role %q: internal caller should be allowed, got %v", role, err)
+		}
+	}
+}
+
 func TestHandleDisconnect_RoutesToChild(t *testing.T) {
 	a, ctx := freshMM(t)
 	created, err := a.handleAddServer(ctx, validAddReq())

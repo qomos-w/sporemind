@@ -17,25 +17,49 @@ import (
 )
 
 func TestComponentToolGuidance(t *testing.T) {
-	guidance := componentToolGuidance(domain.AgentComponentSnapshot{Tools: []domain.ComponentToolContribution{{
-		CallableID:  "project.read",
-		Usage:       "Read before editing.",
-		Constraints: "Do not use shell instead.",
-	}}})
+	guidance := componentToolGuidance(domain.AgentComponentSnapshot{Tools: []domain.ComponentToolContribution{
+		{
+			CallableID:  "project.read",
+			Usage:       "Read before editing.",
+			Constraints: "Do not use shell instead.",
+		},
+		// Shared conversable / crawl callables contributed once per mounted
+		// card must NOT enter the compiled system prompt: their prompt
+		// surface is the hot-context blocks (live target list per turn).
+		{CardID: "agent-chat:Coder#0001", CallableID: "workspace.agent_send_message", Description: "Send a message to Alice."},
+		{CardID: "agent-chat:Worker#0002", CallableID: "workspace.agent_send_message", Description: "Send a message to Bob."},
+		{CardID: "browser-chat:win-1", CallableID: "crawl.start", Description: "Start a crawl on win-1."},
+	}})
 	if guidance == "" || !containsAll(guidance, "project.read", "Read before editing.", "Do not use shell instead.") {
 		t.Fatalf("unexpected guidance: %q", guidance)
+	}
+	if strings.Contains(guidance, "workspace.agent_send_message") || strings.Contains(guidance, "Alice") ||
+		strings.Contains(guidance, "crawl.start") || strings.Contains(guidance, "win-1") {
+		t.Fatalf("agent-chat/browser-chat contributions must stay out of the compiled prompt: %q", guidance)
 	}
 }
 
 func TestApplyComponentToolMetadata(t *testing.T) {
-	tools := []domain.ToolSpec{{Name: "file_read", Description: "old", CallableID: "project.read"}}
-	updated := applyComponentToolMetadata(tools, domain.AgentComponentSnapshot{Tools: []domain.ComponentToolContribution{{
-		CallableID:  "project.read",
-		Name:        "read_project_file",
-		Description: "Read a project file.",
-	}}})
-	if len(updated) != 1 || updated[0].Name != "read_project_file" || updated[0].Description != "Read a project file." {
+	tools := []domain.ToolSpec{
+		{Name: "file_read", Description: "old", CallableID: "project.read"},
+		{Name: "workspace-agent_send_message", Description: "neutral registration text", CallableID: "workspace.agent_send_message"},
+	}
+	updated := applyComponentToolMetadata(tools, domain.AgentComponentSnapshot{Tools: []domain.ComponentToolContribution{
+		{
+			CallableID:  "project.read",
+			Name:        "read_project_file",
+			Description: "Read a project file.",
+		},
+		// First-wins patching would name only Alice although Bob's card
+		// mounts the same shared callable — agent-chat contributions must
+		// not override the neutral registration description.
+		{CardID: "agent-chat:Coder#0001", CallableID: "workspace.agent_send_message", Name: "bad_override", Description: "Send a message to Alice."},
+	}})
+	if len(updated) != 2 || updated[0].Name != "read_project_file" || updated[0].Description != "Read a project file." {
 		t.Fatalf("component metadata was not applied: %+v", updated)
+	}
+	if updated[1].Name != "workspace-agent_send_message" || updated[1].Description != "neutral registration text" {
+		t.Fatalf("agent-chat contribution must not override the shared tool spec: %+v", updated[1])
 	}
 }
 
@@ -2148,10 +2172,11 @@ func TestIntegration_MountUnmountMCPCard(t *testing.T) {
 	if resp.Mount.Kind != "bundle" {
 		t.Fatalf("mcp mount kind = %q, want bundle", resp.Mount.Kind)
 	}
-	// After mount, resolveMCPTools must see the tool.
+	// After mount, resolveMCPTools must see the tool (plus the always-present
+	// mcp.connect entry point).
 	specs := a.resolveMCPTools(ctx)
-	if len(specs) != 1 || specs[0].CallableID != "mcp.srv-0.tool0" {
-		t.Fatalf("expected mounted server's tool visible after mount, got %+v", specs)
+	if len(specs) != 2 || specs[0].CallableID != "mcp.connect" || specs[1].CallableID != "mcp.srv-0.tool0" {
+		t.Fatalf("expected mcp.connect + mounted server's tool visible after mount, got %+v", specs)
 	}
 
 	// Unmount: the tool must disappear.

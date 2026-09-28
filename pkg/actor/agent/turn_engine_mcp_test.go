@@ -140,11 +140,14 @@ func TestResolveMCPTools_FilterByMounts(t *testing.T) {
 		{CardID: "mcp:srv-1", Enabled: true, Scope: "test"},
 	}}
 	specs := a.resolveMCPTools(ctx)
-	if len(specs) != 1 {
-		t.Fatalf("expected exactly the mounted server's 1 tool, got %d: %+v", len(specs), specs)
+	if len(specs) != 2 {
+		t.Fatalf("expected mcp.connect + the mounted server's 1 tool, got %d: %+v", len(specs), specs)
 	}
-	if specs[0].CallableID != "mcp.srv-1.tool1" {
-		t.Errorf("callable = %q, want mcp.srv-1.tool1", specs[0].CallableID)
+	if specs[0].CallableID != "mcp.connect" {
+		t.Errorf("spec[0] callable = %q, want mcp.connect", specs[0].CallableID)
+	}
+	if specs[1].CallableID != "mcp.srv-1.tool1" {
+		t.Errorf("spec[1] callable = %q, want mcp.srv-1.tool1", specs[1].CallableID)
 	}
 	if planner.callID != "mcp.discover_tools" {
 		t.Errorf("planner call = %q, want mcp.discover_tools", planner.callID)
@@ -198,21 +201,22 @@ func TestResolveMCPTools_AllMounts(t *testing.T) {
 		{CardID: "mcp:srv-1", Enabled: true, Scope: "test"},
 	}}
 	specs := a.resolveMCPTools(ctx)
-	if len(specs) != 2 {
-		t.Fatalf("expected 2 specs with both servers mounted, got %d: %+v", len(specs), specs)
+	if len(specs) != 3 {
+		t.Fatalf("expected mcp.connect + 2 specs with both servers mounted, got %d: %+v", len(specs), specs)
 	}
 	got := map[string]bool{}
 	for _, s := range specs {
 		got[s.CallableID] = true
 	}
-	if !got["mcp.srv-0.tool0"] || !got["mcp.srv-1.tool1"] {
+	if !got["mcp.connect"] || !got["mcp.srv-0.tool0"] || !got["mcp.srv-1.tool1"] {
 		t.Errorf("unexpected tool set: %v", got)
 	}
 }
 
 // TestResolveMCPTools_MountedServerNotDiscovered: a mount whose server is not
-// in the discovery catalog (not connected / removed) yields no specs, but
-// discover_tools is still consulted per turn.
+// in the discovery catalog (not connected / removed) still yields the
+// mcp.connect entry point — tool presence depends only on the mount — but no
+// server tools, and discover_tools is still consulted per turn.
 func TestResolveMCPTools_MountedServerNotDiscovered(t *testing.T) {
 	planner := &mcpRoutingPlanner{
 		response: domain.McpDiscoverToolsResp{Servers: []domain.McpServerTools{
@@ -234,11 +238,48 @@ func TestResolveMCPTools_MountedServerNotDiscovered(t *testing.T) {
 		{CardID: "mcp:srv-9", Enabled: true, Scope: "test"},
 	}}
 	specs := a.resolveMCPTools(ctx)
-	if specs != nil {
-		t.Errorf("expected no specs for mounted-but-not-discovered server, got %d", len(specs))
+	if len(specs) != 1 || specs[0].CallableID != "mcp.connect" {
+		t.Fatalf("expected only the mcp.connect spec for mounted-but-not-discovered server, got %+v", specs)
 	}
 	if planner.callID != "mcp.discover_tools" {
 		t.Errorf("discover_tools must still be consulted per turn, got call %q", planner.callID)
+	}
+}
+
+// TestResolveMCPTools_ConnectToolSurvivesDiscoveryFailure verifies the
+// user-facing contract: mounting an mcp:<server-id> card always yields the
+// mcp.connect tool, whether or not the catalog query succeeds — the spec must
+// route to the mcp service with a required Id parameter.
+func TestResolveMCPTools_ConnectToolSurvivesDiscoveryFailure(t *testing.T) {
+	for name, planner := range map[string]*mcpRoutingPlanner{
+		"discover error": {err: errors.New("manager unreachable"), called: make(chan struct{})},
+		"empty catalog":  {response: domain.McpDiscoverToolsResp{}, called: make(chan struct{})},
+	} {
+		ctx := testutil.HumanCtx(testutil.GenActorID())
+		ctx.PlannerFn = func() actor.Planner { return planner }
+		ctx.LookupServiceFn = func(name string) (ref.Ref, bool) {
+			if name == "mcp" {
+				return testutil.NewFakeRef(testutil.GenActorID(), nil), true
+			}
+			return nil, false
+		}
+		a := &Actor{ComponentMounts: []domain.AgentComponentMount{
+			{CardID: "mcp:srv-0", Enabled: true, Scope: "test"},
+		}}
+		specs := a.resolveMCPTools(ctx)
+		if len(specs) != 1 || specs[0].CallableID != "mcp.connect" {
+			t.Fatalf("%s: expected only mcp.connect, got %+v", name, specs)
+		}
+		spec := specs[0]
+		if spec.ServiceName != "mcp" {
+			t.Errorf("%s: ServiceName = %q, want mcp", name, spec.ServiceName)
+		}
+		if spec.Name != "mcp-connect" {
+			t.Errorf("%s: LLM name = %q, want mcp-connect", name, spec.Name)
+		}
+		if !strings.Contains(spec.InputSchema, `"Id"`) || !strings.Contains(spec.InputSchema, `"required"`) {
+			t.Errorf("%s: input schema lacks required Id param: %s", name, spec.InputSchema)
+		}
 	}
 }
 
@@ -309,12 +350,12 @@ func TestResolveMCPTools_MountUnmountBehavior(t *testing.T) {
 		t.Fatalf("expected nil before mounting, got %d specs", len(specs))
 	}
 
-	// Mount mcp:srv-0 → its tool appears.
+	// Mount mcp:srv-0 → its tool appears (plus the always-present mcp.connect).
 	a.ComponentMounts = []domain.AgentComponentMount{{CardID: "mcp:srv-0", Enabled: true, Scope: "user"}}
 	a.componentSnapshot.Store(nil)
 	specs := a.resolveMCPTools(ctx)
-	if len(specs) != 1 || specs[0].CallableID != "mcp.srv-0.tool0" {
-		t.Fatalf("expected only mcp.srv-0.tool0 after mount, got %+v", specs)
+	if len(specs) != 2 || specs[0].CallableID != "mcp.connect" || specs[1].CallableID != "mcp.srv-0.tool0" {
+		t.Fatalf("expected mcp.connect + mcp.srv-0.tool0 after mount, got %+v", specs)
 	}
 
 	// Disable the mount → tools disappear.
@@ -331,16 +372,16 @@ func TestResolveMCPTools_MountUnmountBehavior(t *testing.T) {
 	}
 	a.componentSnapshot.Store(nil)
 	specs = a.resolveMCPTools(ctx)
-	if len(specs) != 2 {
-		t.Fatalf("expected 2 specs after mounting both servers, got %d: %+v", len(specs), specs)
+	if len(specs) != 3 {
+		t.Fatalf("expected 3 specs after mounting both servers, got %d: %+v", len(specs), specs)
 	}
 
 	// Unmount mcp:srv-0 → only srv-1's tool remains.
 	a.ComponentMounts = []domain.AgentComponentMount{{CardID: "mcp:srv-1", Enabled: true, Scope: "user"}}
 	a.componentSnapshot.Store(nil)
 	specs = a.resolveMCPTools(ctx)
-	if len(specs) != 1 || specs[0].CallableID != "mcp.srv-1.tool1" {
-		t.Fatalf("expected only mcp.srv-1.tool1 after unmount, got %+v", specs)
+	if len(specs) != 2 || specs[0].CallableID != "mcp.connect" || specs[1].CallableID != "mcp.srv-1.tool1" {
+		t.Fatalf("expected mcp.connect + mcp.srv-1.tool1 after unmount, got %+v", specs)
 	}
 }
 
@@ -699,10 +740,16 @@ func TestTurnEngineMCP_E2E(t *testing.T) {
 		t.Fatal("probe did not finish in time")
 	}
 
-	if len(res.specs) != 1 {
-		t.Fatalf("resolveMCPTools returned %d specs, want 1 (debug=%s)", len(res.specs), res.debug)
+	if len(res.specs) != 2 {
+		t.Fatalf("resolveMCPTools returned %d specs, want mcp.connect + 1 (debug=%s)", len(res.specs), res.debug)
 	}
-	spec := res.specs[0]
+	var spec domain.ToolSpec
+	for _, s := range res.specs {
+		if s.CallableID == "mcp.connect" {
+			continue
+		}
+		spec = s
+	}
 	if spec.Name != "mcp-echo-server-echo" {
 		t.Errorf("spec name = %q, want mcp-echo-server-echo", spec.Name)
 	}
@@ -855,10 +902,16 @@ func TestTurnEngineMCP_E2E_UnmountedServerInvisible(t *testing.T) {
 		t.Fatal("probe did not finish in time")
 	}
 
-	if len(res.specs) != 1 {
-		t.Fatalf("resolveMCPTools returned %d specs (want 1 for mounted server only), debug=%s", len(res.specs), res.debug)
+	if len(res.specs) != 2 {
+		t.Fatalf("resolveMCPTools returned %d specs (want mcp.connect + 1 for mounted server only), debug=%s", len(res.specs), res.debug)
 	}
-	spec := res.specs[0]
+	var spec domain.ToolSpec
+	for _, s := range res.specs {
+		if s.CallableID == "mcp.connect" {
+			continue
+		}
+		spec = s
+	}
 	if spec.Name != "mcp-echo-a-echo_a" {
 		t.Errorf("spec name = %q, want mcp-echo-a-echo_a", spec.Name)
 	}

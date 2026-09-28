@@ -22,14 +22,16 @@
 //   - All responses use the safe views McpServerView / McpStdioTransportView /
 //     McpHttpTransportView, which expose only env/header KEY NAMES plus a
 //     Configured flag — never values.
-//   - mcp.* callables must not be exposed to the anonymous role. Three
+//   - mcp.* callables must not be exposed to the anonymous role. Four
 //     agent-facing callables (mcp.discover_tools, mcp.call_tool,
-//     mcp.reconnect) additionally accept internal callers — the agent turn
-//     engine routing mcp.<server>.<tool> tool calls arrives with the
+//     mcp.reconnect, mcp.connect) additionally accept internal callers — the
+//     agent turn engine routing mcp.<server>.<tool> tool calls arrives with the
 //     manager's own "system" role (service-ref default caller role) or zero
 //     identity on raw internal invokes; mcp.reconnect lets a mounted agent
-//     self-heal a dropped MCP server. The CRUD/lifecycle callables remain
-//     strictly human-only.
+//     self-heal a dropped MCP server, and mcp.connect pairs with it because
+//     the agent tool surface always carries mcp.connect while an
+//     mcp:<server-id> card is mounted, connected or not. The CRUD/lifecycle
+//     callables remain strictly human-only.
 
 struct McpStdioTransport {
     Command: string

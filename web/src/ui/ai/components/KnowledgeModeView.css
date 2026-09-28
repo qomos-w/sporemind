@@ -44,33 +44,105 @@
   color: var(--danger, var(--accent-danger, #d9534f));
 }
 
-/* Narrow / mobile: stack the outline above the right column. */
-@media (max-width: 720px) {
-  .kb-mode,
-  .kb-mode--mobile {
-    flex-direction: column;
-  }
+/* Mobile: the outline is an on-demand drawer instead of a stacked column that
+   eats half the viewport. A slim bar above the main column carries the toggle;
+   the drawer slides over a click-to-dismiss backdrop — same pattern as the
+   mobile ai-sidebar overlay in AIShellLayout.css. Layout keys off the
+   JS-provided `kb-mode--mobile` class (useResponsiveLayout, <768px), not a
+   media query, so there is a single source of truth for "mobile". */
+.kb-mode--mobile {
+  position: relative;
+  flex-direction: column;
+}
 
-  .kb-mode--mobile .kb-mode-outline,
-  .kb-mode .kb-mode-outline {
-    flex: 0 0 auto;
-    max-width: none;
-    max-height: 45%;
-    border-right: none;
-    border-bottom: 1px solid var(--border-subtle);
-    /* The outline column is content-sized (auto) up to the 45% cap, so a
-       child's height:100% resolves against an indefinite height and the tree
-       just clips. Make the column a flex box whose child shrinks within the
-       cap — then .kb-outline-projects gets a bounded height and scrolls. */
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
-  }
+.kb-mode-mobile-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--border-subtle);
+}
 
-  .kb-mode--mobile .kb-outline,
-  .kb-mode .kb-outline {
-    height: auto;
-    flex: 0 1 auto;
-    min-height: 0;
-  }
+.kb-mode-outline-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-secondary, var(--text-tertiary));
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.kb-mode-outline-toggle:hover {
+  color: var(--text-primary);
+  background: var(--bg-hover);
+}
+
+.kb-mode-outline-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: calc(var(--z-overlay) - 1);
+}
+
+.kb-mode--mobile .kb-mode-outline {
+  position: fixed;
+  top: var(--titlebar-height, 0px);
+  left: 0;
+  width: min(320px, 86vw);
+  height: calc(100dvh - var(--titlebar-height, 0px));
+  max-width: none;
+  z-index: var(--z-overlay);
+  background: var(--bg-base);
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-100%);
+  transition: transform 200ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.kb-mode--mobile .kb-mode-outline.open {
+  transform: translateX(0);
+  box-shadow: var(--shadow-lg);
+}
+
+.kb-mode-outline-drawer-head {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-subtle);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary, var(--text-tertiary));
+}
+
+.kb-mode-outline-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--text-secondary, var(--text-tertiary));
+  cursor: pointer;
+}
+
+.kb-mode-outline-close:hover {
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+/* Inside the drawer the outline shares the column with the drawer head, so it
+   flexes instead of claiming height:100%. */
+.kb-mode--mobile .kb-outline {
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 0;
 }

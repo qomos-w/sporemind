@@ -10,6 +10,12 @@
  * - right: either the active project/card swimlane ([[kb-swimlane]]) or one of
  *   the quick views ([[kb-quick-views]]).
  *
+ * On mobile (`isMobile`) the outline is not a stacked column eating half the
+ * viewport height: it becomes an on-demand slide-in drawer behind a toggle bar
+ * (backdrop click / navigation closes it), mirroring the mobile ai-sidebar
+ * overlay. The drawer registers with `useBrowserOverlay` so the native browser
+ * window hides while it is open.
+ *
  * Durable preferences (selected view, active lane, expanded project ids) live in
  * the workspace actor's UI state via `application/workspace-ui-state`
  * (`getKbNotesUIState` / `saveKbNotesUIState`) — never localStorage. Cross-project
@@ -23,7 +29,9 @@
  */
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { ListTree, X } from 'lucide-react'
 import { useI18n } from '../../../i18n'
+import { useBrowserOverlay } from '../browserOverlay'
 import { KnowledgeLeftOutline } from './KnowledgeLeftOutline'
 import { KnowledgeSwimlane } from './KnowledgeSwimlane'
 import { KnowledgeHomeView, KnowledgeSearchView, KnowledgeStarredView } from './KnowledgeQuickViews'
@@ -149,6 +157,14 @@ export const KnowledgeModeView: React.FC<KnowledgeModeViewProps> = ({
   // focused card id itself did not change.
   const [focusKey, setFocusKey] = useState(0)
 
+  // Mobile outline drawer. Transient by design (the mobile shell restores its
+  // sidebars closed too), so it never touches the durable kb UI state.
+  const [outlineOpen, setOutlineOpen] = useState(false)
+
+  // The drawer + backdrop float above the content, which may be an embedded
+  // native browser window — register with the overlay manager while open.
+  useBrowserOverlay(isMobile && outlineOpen)
+
   const tocRequestedRef = useRef<Set<string>>(new Set())
   const laneRequestedRef = useRef<Set<string>>(new Set())
   const laneResetRef = useRef<string>('')
@@ -249,16 +265,19 @@ export const KnowledgeModeView: React.FC<KnowledgeModeViewProps> = ({
   }, [openLane])
 
   const selectView = useCallback((next: KbQuickView) => {
+    setOutlineOpen(false)
     setView(next)
     setLane(null)
     void saveKbNotesUIState({ view: next, lane: null })
   }, [])
 
   const handleOpenProject = useCallback((project: KbOutlineProject) => {
+    setOutlineOpen(false)
     openLane({ projectId: project.projectId, projectName: project.name })
   }, [openLane])
 
   const handleOpenCard = useCallback((project: KbOutlineProject, cardId: string) => {
+    setOutlineOpen(false)
     openLane({ projectId: project.projectId, projectName: project.name, cardId })
   }, [openLane])
 
@@ -275,6 +294,7 @@ export const KnowledgeModeView: React.FC<KnowledgeModeViewProps> = ({
   // focused in the stack. Failures surface in the outline's per-project error
   // slot (the same one TOC load errors use).
   const handleCreateCard = useCallback((project: KbOutlineProject, name: string) => {
+    setOutlineOpen(false)
     const trimmed = name.trim()
     if (!trimmed) return
     const loadExisting = laneCards[project.projectId] !== undefined
@@ -492,7 +512,37 @@ export const KnowledgeModeView: React.FC<KnowledgeModeViewProps> = ({
 
   return (
     <div className={`kb-mode${isMobile ? ' kb-mode--mobile' : ''}${className ? ` ${className}` : ''}`}>
-      <div className="kb-mode-outline">
+      {isMobile && (
+        <div className="kb-mode-mobile-bar">
+          <button
+            type="button"
+            className="kb-mode-outline-toggle"
+            onClick={() => setOutlineOpen(true)}
+            aria-haspopup="dialog"
+            aria-expanded={outlineOpen}
+          >
+            <ListTree size={14} />
+            <span>{t('knowledgeMode.outline.open')}</span>
+          </button>
+        </div>
+      )}
+      {isMobile && outlineOpen && (
+        <div className="kb-mode-outline-backdrop" onClick={() => setOutlineOpen(false)} />
+      )}
+      <div className={`kb-mode-outline${isMobile && outlineOpen ? ' open' : ''}`}>
+        {isMobile && (
+          <div className="kb-mode-outline-drawer-head">
+            <span>{t('knowledgeMode.outline.title')}</span>
+            <button
+              type="button"
+              className="kb-mode-outline-close"
+              onClick={() => setOutlineOpen(false)}
+              aria-label={t('knowledgeMode.outline.close')}
+            >
+              <X size={15} />
+            </button>
+          </div>
+        )}
         <KnowledgeLeftOutline
           projects={projects}
           activeView={view}
