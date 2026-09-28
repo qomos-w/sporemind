@@ -789,6 +789,12 @@ func (a *Actor) onStartChild(ctx actor.Context) error {
 	if err := ctx.Register("agent_run", a.handleRun, actor.Internal(), actor.WithLoop("agent_exec")); err != nil {
 		return fmt.Errorf("agent: register agent_run: %w", err)
 	}
+	// Skill lane — must not ride agent_exec: the child turn engine invokes
+	// skill_use via planner.Call(self, ...) mid-turn and would self-deadlock
+	// on agent_exec's single consumer goroutine (see agent.go).
+	if err := ctx.RegisterLoop("skill_ops", actor.ModeStateful); err != nil {
+		return fmt.Errorf("agent: register skill_ops loop: %w", err)
+	}
 	if err := ctx.Register("turn_cancel", a.handleTurnCancel, actor.Public()); err != nil {
 		return fmt.Errorf("agent: register turn_cancel: %w", err)
 	}
@@ -861,7 +867,7 @@ func (a *Actor) onStartChild(ctx actor.Context) error {
 	a.notifyWorkspaceStatus(ctx)
 	a.seedBuiltinComponentMounts(ctx)
 	if err := ctx.Register("skill_use", a.handleSkillUse, actor.Public(),
-		actor.WithLoop("agent_exec"),
+		actor.WithLoop("skill_ops"),
 		actor.WithDescription("Invoke a mounted skill by skillId and receive its workflow instructions. The skill must be mounted first; each skill can be used at most once per session."),
 	); err != nil {
 		return fmt.Errorf("agent: register child skill.use: %w", err)

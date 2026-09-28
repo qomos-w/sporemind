@@ -19,6 +19,11 @@ import (
 //   - "exec"  → registered WithLoop("agent_exec"), serialized with the turn
 //     engine's RawSession/steps/status writes (deadlock-free: none of these
 //     is invoked by the engine via planner.Call(self,...))
+//   - "skill_ops" → registered WithLoop("skill_ops"), serialized among skill
+//     calls only. skill_use IS invoked by the engine via planner.Call(self,...)
+//     mid-turn, so it must never ride agent_exec (same-lane self-deadlock —
+//     the engine occupies agent_exec's consumer for the whole turn) and is
+//     not pure (mountSkill mutates ComponentMounts).
 //
 // workflow_stop is intentionally absent: it is invoked by the engine as a
 // tool (workflow-mode bundle) yet writes session state, so neither lane move
@@ -38,7 +43,8 @@ var ownerLaneMigrationSurface = map[string]string{
 	"compact":              "exec",
 	"workflow_start":       "exec",
 	"workflow_plan_submit": "exec",
-	"skill_mount":          "exec",
+	"skill_use":            "skill_ops",
+	"skill_mount":          "skill_ops",
 }
 
 // TestOwnerLaneMigrationSurface asserts every migrated callable is registered
@@ -91,6 +97,10 @@ func TestOwnerLaneMigrationSurface(t *testing.T) {
 		case "exec":
 			if got := actor.ResolveLoop(opts...); got != "agent_exec" {
 				t.Errorf("%s loop = %q, want agent_exec", callID, got)
+			}
+		case "skill_ops":
+			if got := actor.ResolveLoop(opts...); got != "skill_ops" {
+				t.Errorf("%s loop = %q, want skill_ops", callID, got)
 			}
 		default:
 			t.Fatalf("bad want value %q for %s", want, callID)

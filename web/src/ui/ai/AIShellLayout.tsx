@@ -3299,9 +3299,13 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
   useEffect(() => {
     if (state.selectedFrame) {
       const tabId = `frame-${state.selectedFrame.id}`
+      // Capture the active agent at selection time: the maximized frame tab
+      // re-renders the step via FrameRenderer, and agent-scoped tools inside
+      // it (e.g. page_preview → open_global_browser) need the ActorId to
+      // route through the agent instead of falling back to window.open.
       setRightTabs(prev => {
         if (prev.some(t => t.id === tabId)) return prev
-        return [...prev, { id: tabId, type: 'frame' as const, label: frameTypeLabel(state.selectedFrame!, t), payload: state.selectedFrame }]
+        return [...prev, { id: tabId, type: 'frame' as const, label: frameTypeLabel(state.selectedFrame!, t), payload: { frame: state.selectedFrame, agentActorId: activeAgentIdRef.current } }]
       })
       setActiveBrowserTabId(tabId)
     } else {
@@ -5230,7 +5234,8 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
       ...modeTabs,
       ...visibleRightTabs.map((tab): RightTabItem => {
       if (tab.type === 'frame') {
-        const frame = tab.payload as typeof state.selectedFrame
+        const payload = tab.payload as { frame: typeof state.selectedFrame; agentActorId?: string | null }
+        const frame = payload.frame
         return {
           id: tab.id,
           label: tab.label,
@@ -5238,7 +5243,7 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
           render: () => (
             <div className="ai-right-panel-content">
               <div className="ai-right-panel-scroll">
-                {frame ? <FrameRenderer frame={frame} version={1} turnStreaming={false} /> : null}
+                {frame ? <FrameRenderer frame={frame} version={1} agentActorId={payload.agentActorId ?? undefined} turnStreaming={false} /> : null}
               </div>
             </div>
           ),

@@ -287,7 +287,7 @@ type Actor struct {
 
 	// usedSkills tracks skill IDs invoked via agent.skill.use in the current
 	// session so duplicate calls can return a warning while refreshing the body.
-	// Guarded by usedSkillsMu: skill_use runs on the agent_exec loop lane while
+	// Guarded by usedSkillsMu: skill_use runs on the skill_ops loop lane while
 	// the slash path (synthesizeSkillMount) writes from turn lanes.
 	usedSkills   map[string]struct{}
 	usedSkillsMu sync.Mutex
@@ -750,6 +750,17 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	if err := ctx.Register("agent_run", a.handleRun, actor.Internal(), actor.WithLoop("agent_exec")); err != nil {
 		return fmt.Errorf("agent: register agent_run: %w", err)
 	}
+	// Skill lane: skill_use is invoked by the turn engine itself via
+	// planner.Call(self, ...) mid-turn, so it must NOT ride agent_exec — the
+	// engine occupies that lane's single consumer goroutine for the whole
+	// turn, and a same-lane self-invoke would queue behind it until the
+	// 5-minute tool timeout (self-deadlock; see agent_ownerlane_surface_test
+	// for the invariant). A dedicated stateful lane also keeps a
+	// seconds-long runtime:spore script off the owner lane and serializes
+	// skill_use/skill_mount with each other.
+	if err := ctx.RegisterLoop("skill_ops", actor.ModeStateful); err != nil {
+		return fmt.Errorf("agent: register skill_ops loop: %w", err)
+	}
 	// Coord-event loop for state-writing callbacks pushed at the agent from
 	// other actors (coordinator glass intake, lifecycle/status/tools-refresh
 	// notifications, worktree binding refresh). These are stateful (they
@@ -1118,16 +1129,19 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 		return fmt.Errorf("agent: register thinking_set_level: %w", err)
 	}
 
-	// skill_use rides the agent_exec loop lane (same as skill_mount): a
-	// runtime:spore skill may run its script for seconds, and that must not
-	// block the owner lane.
+	// skill_use / skill_mount ride the skill_ops loop lane (NOT agent_exec):
+	// the turn engine invokes skill_use via planner.Call(self, ...) mid-turn,
+	// and agent_exec's single consumer goroutine is occupied by agent_run for
+	// the whole turn — a same-lane self-invoke deadlocks until the tool
+	// timeout. skill_ops keeps a seconds-long runtime:spore script off the
+	// owner lane and serialized among skill calls.
 	if err := ctx.Register("skill_use", a.handleSkillUse, actor.Public(),
-		actor.WithLoop("agent_exec"),
+		actor.WithLoop("skill_ops"),
 		actor.WithDescription("Invoke a mounted skill by skillId and receive its workflow instructions. The skill must be mounted first; each skill can be used at most once per session."),
 	); err != nil {
 		return fmt.Errorf("agent: register skill_use: %w", err)
 	}
-	if err := ctx.Register("skill_mount", a.handleSkillInject, actor.Public(), actor.WithLoop("agent_exec")); err != nil {
+	if err := ctx.Register("skill_mount", a.handleSkillInject, actor.Public(), actor.WithLoop("skill_ops")); err != nil {
 		return fmt.Errorf("agent: register skill_mount compatibility: %w", err)
 	}
 
