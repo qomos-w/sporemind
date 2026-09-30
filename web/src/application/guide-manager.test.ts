@@ -32,6 +32,17 @@ vi.mock('../gen-clients/interfacemanager/client', () => ({
   reportInteraction: hoisted.reportInteraction,
 }))
 
+const swapCallbacks = vi.hoisted(() => ({
+  list: [] as Array<(e: { from: string; to: string }) => void>,
+}))
+vi.mock('./instance', () => ({
+  LOCAL_INSTANCE_ID: 'local',
+  onInstanceSwap: (cb: (e: { from: string; to: string }) => void) => {
+    swapCallbacks.list.push(cb)
+    return () => {}
+  },
+}))
+
 import { guideManager, matchesExpectedInteraction, TOUR_CAPABILITY } from './guide-manager'
 
 describe('guide-manager', () => {
@@ -313,6 +324,22 @@ describe('guide-manager', () => {
       guideManager.showGuide(steps, false, 'test', { triggerToolGuide: true })
       guideManager.completeGuide()
       expect(listener).not.toHaveBeenCalled()
+    })
+  })
+
+  describe('instance swap', () => {
+    it('hides and clears the active guide on swap', () => {
+      const steps: GuideStep[] = [
+        { TargetGuideId: 'guide.a', Title: 'A', Body: 'Body' },
+      ]
+      guideManager.showGuide(steps, true)
+      expect(guideManager.getState().visible).toBe(true)
+
+      for (const cb of swapCallbacks.list) cb({ from: 'local', to: 'c1' })
+
+      const state = guideManager.getState()
+      expect(state.visible).toBe(false)
+      expect(state.steps).toHaveLength(0)
     })
   })
 })

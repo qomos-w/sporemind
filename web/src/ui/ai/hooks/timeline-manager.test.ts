@@ -47,6 +47,17 @@ vi.mock('../../../application/backend-ready', () => ({
   waitForBackendReady: vi.fn(async () => undefined),
 }))
 
+const swapCallbacks = vi.hoisted(() => ({
+  list: [] as Array<(e: { from: string; to: string }) => void>,
+}))
+vi.mock('../../../application/instance', () => ({
+  LOCAL_INSTANCE_ID: 'local',
+  onInstanceSwap: (cb: (e: { from: string; to: string }) => void) => {
+    swapCallbacks.list.push(cb)
+    return () => {}
+  },
+}))
+
 vi.mock('../../../gen-clients/local/client', () => ({
   sessionSummary: vi.fn(async () => ({
     Turns: [],
@@ -2590,6 +2601,19 @@ describe('TimelineManager — transport reconnect reconcile', () => {
     expect(vi.mocked(agentSessionClient.turnsList)).toHaveBeenCalledTimes(2)
 
     manager.release('agent-a')
+  })
+})
+
+describe('instance swap', () => {
+  it('releases every tracked timeline when the instance is swapped', () => {
+    const manager = createTimelineManager()
+    manager.select('agent-swap')
+    expect(manager.hasTimeline('agent-swap')).toBe(true)
+
+    for (const cb of swapCallbacks.list) cb({ from: 'local', to: 'c1' })
+
+    expect(manager.hasTimeline('agent-swap')).toBe(false)
+    expect(manager.getSnapshot('agent-swap').envelopes).toHaveLength(0)
   })
 })
 
