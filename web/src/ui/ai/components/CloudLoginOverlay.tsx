@@ -11,6 +11,7 @@ import type {
   CloudAccountStatus,
 } from '../../../gen-clients/system/types'
 import { OpenSystemLogin } from '../../../bindings/github.com/qomos-w/sporemind/pkg/desktop/app'
+import { localCloudLink } from '../../../application/local-account'
 import { useI18n } from '../../../i18n'
 import './CloudLoginOverlay.css'
 
@@ -19,6 +20,9 @@ interface CloudLoginOverlayProps {
   onClose: () => void
   /** Called after the token has been stored in the cloudaccount actor. */
   onLinked?: (status: CloudAccountStatus) => void
+  /** Remote-navigated window: link against THIS machine's local cloudaccount
+   *  actor instead of the remote gateway the app client is connected to. */
+  linkViaLocal?: boolean
 }
 
 type Phase = 'opening' | 'waiting' | 'linking' | 'success' | 'error'
@@ -47,7 +51,7 @@ function isRawLoginToken(d: unknown): d is RawLoginToken {
  * the actual login UI lives in the system browser. Existing LoginPage
  * (web/src/ui/auth/LoginPage.tsx) is left untouched.
  */
-export function CloudLoginOverlay({ open, onClose, onLinked }: CloudLoginOverlayProps) {
+export function CloudLoginOverlay({ open, onClose, onLinked, linkViaLocal }: CloudLoginOverlayProps) {
   const { t } = useI18n()
   const [phase, setPhase] = useState<Phase>('opening')
   const [error, setError] = useState('')
@@ -105,7 +109,9 @@ export function CloudLoginOverlay({ open, onClose, onLinked }: CloudLoginOverlay
         AvatarUrl: raw.avatar_url,
       }
       try {
-        const status = await cloudaccount.link(client, req)
+        const status = linkViaLocal
+          ? await localCloudLink(req)
+          : await cloudaccount.link(client, req)
         setPhase('success')
         void refreshInsiderAccess()
         onLinked?.(status)

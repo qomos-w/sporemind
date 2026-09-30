@@ -10,6 +10,8 @@ import type {
   ProjectSnapshot,
 } from '../../domain/types'
 import { client } from '../../application/generated-client'
+import { isRemoteConnectionWindow } from '../../application/remote-connections'
+import { localAccountSnapshot } from '../../application/local-account'
 import * as projectClient from '../../gen-clients/project/client'
 import * as appmanagerClient from '../../gen-clients/appmanager/client'
 import { mapProjectRef, projectDisplayName } from '../../application/project-adapter'
@@ -1716,6 +1718,19 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
     }
 
     loadContext()
+
+    // Remote-navigated window: the bottom-left login state must show THIS
+    // machine's account even though every other call targets the remote
+    // gateway. Override whatever the (remote) shell-context prefetch put in.
+    if (isRemoteConnectionWindow()) {
+      localAccountSnapshot()
+        .then(localAcc => {
+          if (!cancelled) setAccount(localAcc)
+        })
+        .catch(err => {
+          console.warn('[Shell] local account fetch failed in remote window:', err)
+        })
+    }
 
     return () => {
       cancelled = true

@@ -203,16 +203,27 @@ func sanitizeHost(in string) string {
 	return strings.TrimSpace(h)
 }
 
-// connectionBaseURL builds "http://host:port" for a saved connection shape.
-func connectionBaseURL(host string, port int) string {
+// connectionHostPort joins host and port for a URL authority, bracketing a
+// bare IPv6 literal.
+func connectionHostPort(host string, port int) string {
 	h := sanitizeHost(host)
 	if strings.Contains(h, ":") && !strings.HasPrefix(h, "[") {
-		// bare IPv6 literal without brackets — net.JoinHostPort adds them
 		if ip := net.ParseIP(h); ip != nil && ip.To4() == nil {
 			h = "[" + h + "]"
 		}
 	}
-	return "http://" + h + ":" + strconv.Itoa(port)
+	return h + ":" + strconv.Itoa(port)
+}
+
+// connectionBaseURL builds "http://host:port" for a saved connection shape.
+func connectionBaseURL(host string, port int) string {
+	return "http://" + connectionHostPort(host, port)
+}
+
+// connectionWSURL builds "ws://host:port/ws" — the ?server= target that
+// routes the remote-navigated window at the remote gateway.
+func connectionWSURL(host string, port int) string {
+	return "ws://" + connectionHostPort(host, port) + "/ws"
 }
 
 // ---------------------------------------------------------------------------
@@ -404,7 +415,8 @@ func (a *App) ConnectionsSave(conn RemoteConnectionView, password string) (Remot
 	return record.view(), nil
 }
 
-// ConnectionsDelete removes a saved connection (and closes its window).
+// ConnectionsDelete removes a saved connection. If it was the active target,
+// the window falls back to the local client.
 func (a *App) ConnectionsDelete(id string) error {
 	a.connMu.Lock()
 	doc, err := a.connectionsLocked()
@@ -430,9 +442,12 @@ func (a *App) ConnectionsDelete(id string) error {
 		a.connMu.Unlock()
 		return err
 	}
+	wasActive := a.activeTarget == id
 	a.connMu.Unlock()
 
-	a.closeConnectionWindow(id, true)
+	if wasActive {
+		return a.SwitchConnection(LocalTarget)
+	}
 	return nil
 }
 

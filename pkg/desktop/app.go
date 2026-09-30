@@ -96,13 +96,12 @@ type App struct {
 	mainWindowResizing bool // main window is being resized; suppress showing child browsers
 	browserDark        bool // right-panel browser windows render dark mode
 
-	// Remote connection profiles (persisted under the desktop namespace) and
-	// the live per-connection app windows. conns is lazily loaded under connMu.
-	// activeTarget is "local" or a connection id — the window the user last
-	// switched to; closing that window falls back to local.
-	connMu      sync.Mutex
-	conns       *connectionsDoc
-	connWindows map[string]*application.WebviewWindow
+	// Remote connection profiles (persisted under the desktop namespace).
+	// conns is lazily loaded under connMu. activeTarget is "local" or a
+	// connection id — the client the main window last navigated to; it lives
+	// in the host process and survives the page reload a switch performs.
+	connMu       sync.Mutex
+	conns        *connectionsDoc
 	activeTarget string
 	// browserOverlaySuppressed is raised while an HTML overlay is open (last
 	// overlay push, cleared by the last pop). Unlike wanted it is persistent:

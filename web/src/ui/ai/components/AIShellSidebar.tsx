@@ -37,6 +37,8 @@ import { buildAgentForest, flattenAgentForest, type AgentTreeNode } from '../lib
 import { jumpToWorktreeGit } from '../hooks/worktreeGitJump'
 import { SidebarModeSwitch, type LauncherMode } from './SidebarModeSwitch'
 import { CloudLoginOverlay } from './CloudLoginOverlay'
+import { isRemoteConnectionWindow } from '../../../application/remote-connections'
+import { localCloudStatus, localCloudSync, localCloudUnlink } from '../../../application/local-account'
 import './AIShellSidebar.css'
 
 interface PinnedItem {
@@ -1534,6 +1536,11 @@ export function SidebarAccountMenu({
   // must be registered with the BrowserOverlayManager (0→1 hides native panes).
   useBrowserOverlay(open)
 
+  // In a remote-navigated window the bottom-left login state must reflect
+  // THIS machine: cloud status/sync/unlink/link go through the local host
+  // bindings instead of the remote gateway the app client is connected to.
+  const remoteWindow = isRemoteConnectionWindow()
+
   // The collapsed button reflects the cloud linkage: avatar + cloud display
   // name when linked, "not signed in" otherwise. The local account name
   // (e.g. admin) stays as the secondary line.
@@ -1548,14 +1555,16 @@ export function SidebarAccountMenu({
 
   const refreshCloud = useCallback(async () => {
     try {
-      const status = await cloudaccount.status(client)
+      const status = remoteWindow
+        ? await localCloudStatus()
+        : await cloudaccount.status(client)
       setCloud(status)
       if (!status.EntitlementsDegraded) setSyncFailed(false)
     } catch {
       setCloud(null)
     }
     void refreshInsiderAccess()
-  }, [])
+  }, [remoteWindow])
 
   useEffect(() => {
     void refreshCloud()
@@ -1569,7 +1578,9 @@ export function SidebarAccountMenu({
     setSyncBusy(true)
     setSyncFailed(false)
     try {
-      const status = await cloudaccount.sync(client)
+      const status = remoteWindow
+        ? await localCloudSync()
+        : await cloudaccount.sync(client)
       setCloud(status)
       // The actor's sync never throws on a cloud error (it keeps the stale
       // degraded status), so a still-degraded response is the failure signal
@@ -1581,12 +1592,13 @@ export function SidebarAccountMenu({
     } finally {
       setSyncBusy(false)
     }
-  }, [cloud?.Linked])
+  }, [cloud?.Linked, remoteWindow])
 
   const handleCloudLogout = useCallback(async () => {
     setCloudBusy(true)
     try {
-      await cloudaccount.unlink(client)
+      if (remoteWindow) await localCloudUnlink()
+      else await cloudaccount.unlink(client)
       await refreshCloud()
     } catch {
       // surfaced via the settings cloud-account section; keep the menu quiet
@@ -1604,7 +1616,8 @@ export function SidebarAccountMenu({
     setCloudBusy(true)
     setSyncFailed(false)
     try {
-      await cloudaccount.unlink(client)
+      if (remoteWindow) await localCloudUnlink()
+      else await cloudaccount.unlink(client)
       await refreshCloud()
     } catch {
       // Even if unlinking fails, still route the user to the sign-in surface;
@@ -1614,7 +1627,7 @@ export function SidebarAccountMenu({
     }
     setOpen(false)
     if (isWails()) setLoginOpen(true)
-  }, [cloud?.Linked, refreshCloud])
+  }, [cloud?.Linked, refreshCloud, remoteWindow])
 
   const updatePopoverPosition = useCallback(() => {
     if (!menuRef.current) return
@@ -1792,6 +1805,7 @@ export function SidebarAccountMenu({
         open={loginOpen}
         onClose={() => setLoginOpen(false)}
         onLinked={st => setCloud(st)}
+        linkViaLocal={remoteWindow}
       />
     </div>
   )

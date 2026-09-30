@@ -3,14 +3,11 @@ package desktop
 import (
 	"fmt"
 	"net/url"
-	goruntime "runtime"
 
 	"github.com/qomos-w/sporemind/pkg/instanceid"
-	"github.com/wailsapp/wails/v3/pkg/application"
-	"github.com/wailsapp/wails/v3/pkg/events"
 )
 
-// LocalTarget names the main window's client in SwitchConnection.
+// LocalTarget names the local client in SwitchConnection.
 const LocalTarget = "local"
 
 // ActiveConnection describes the currently visible client target.
@@ -21,7 +18,8 @@ type ActiveConnection struct {
 	Conn   *RemoteConnectionView `json:"conn,omitempty"`
 }
 
-// GetActiveConnection reports which client target is currently visible.
+// GetActiveConnection reports which client target the main window currently
+// shows.
 func (a *App) GetActiveConnection() ActiveConnection {
 	a.connMu.Lock()
 	defer a.connMu.Unlock()
@@ -43,10 +41,14 @@ func (a *App) activeConnectionLocked() ActiveConnection {
 	return ActiveConnection{Target: LocalTarget, Local: true, Name: "local"}
 }
 
-// SwitchConnection brings a client target to the front. target "local" shows
-// the main window; a connection id shows its dedicated window, creating it on
-// first use. The previously visible window is only hidden, never destroyed —
-// both clients keep their state and subscriptions running.
+// SwitchConnection navigates the MAIN window to the requested client target.
+//
+// Single-window model: switching is a navigation, i.e. a reset — local loads
+// "/", a connection loads "/?server=<ws url>&conn=<id>", which forces the WS
+// transport and the remote saved-credential auto-login path. The previous
+// client's in-page state is intentionally discarded. activeTarget lives in
+// the host process and survives the navigation, so the switcher UI stays
+// truthful across the reload.
 //
 // Remote targets are probed first: unreachable gateways are refused, and a
 // fingerprint equal to this installation's own (a client pointed at itself)
@@ -55,17 +57,22 @@ func (a *App) SwitchConnection(target string) error {
 	if a.app == nil || a.window == nil {
 		return fmt.Errorf("desktop: not started")
 	}
-	if target == "" || target == LocalTarget {
+	if target == "" {
+		target = LocalTarget
+	}
+
+	a.connMu.Lock()
+	current := a.activeTarget
+	a.connMu.Unlock()
+	if current == target {
+		return nil // already showing this target; navigating again would reload
+	}
+
+	if target == LocalTarget {
 		a.connMu.Lock()
 		a.activeTarget = LocalTarget
-		windows := a.allConnectionWindowsLocked()
 		a.connMu.Unlock()
-		for _, w := range windows {
-			w.Hide()
-		}
-		a.window.Show()
-		a.window.Restore()
-		a.window.Focus()
+		a.window.SetURL("/")
 		return nil
 	}
 
@@ -104,119 +111,18 @@ func (a *App) SwitchConnection(target string) error {
 			if doc.Connections[i].ID == target {
 				doc.Connections[i].InstanceID = probe.InstanceID
 				_ = a.saveConnectionsLocked(doc)
-				conn.InstanceID = probe.InstanceID
 			}
 		}
 		a.connMu.Unlock()
 	}
 
 	a.connMu.Lock()
-	w := a.connWindows[target]
 	a.activeTarget = target
-	others := a.allConnectionWindowsLocked()
-	delete(others, target)
 	a.connMu.Unlock()
 
-	if w == nil {
-		var err error
-		w, err = a.createConnectionWindow(conn)
-		if err != nil {
-			a.connMu.Lock()
-			a.activeTarget = LocalTarget
-			a.connMu.Unlock()
-			return err
-		}
-		a.connMu.Lock()
-		if a.connWindows == nil {
-			a.connWindows = map[string]*application.WebviewWindow{}
-		}
-		a.connWindows[target] = w
-		a.connMu.Unlock()
-	}
-
-	// Hide the main window and every other connection window; show and focus
-	// the target. Hidden windows keep running — state stays isolated per
-	// window and both clients stay live.
-	a.window.Hide()
-	for _, ow := range others {
-		ow.Hide()
-	}
-	w.Show()
-	w.Restore()
-	w.Focus()
-	return nil
-}
-
-// createConnectionWindow builds the dedicated window for a saved connection.
-// It loads the same embedded frontend with ?server= pointing at the remote
-// gateway and ?conn= identifying the profile, which forces the WS transport
-// and the remote auto-login path in the frontend.
-func (a *App) createConnectionWindow(conn remoteConnection) (*application.WebviewWindow, error) {
-	mode, _ := parseThemePreference(mustReadBootThemeCache())
 	query := url.Values{}
-	query.Set("server", fmt.Sprintf("ws://%s:%d/ws", sanitizeHost(conn.Host), conn.Port))
+	query.Set("server", connectionWSURL(conn.Host, conn.Port))
 	query.Set("conn", conn.ID)
-	opts := application.WebviewWindowOptions{
-		Name:            "conn-" + conn.ID,
-		Title:           "sporemind — " + conn.Name,
-		Width:           1280,
-		Height:          800,
-		EnableFileDrop:  true,
-		Frameless:       goruntime.GOOS != "darwin",
-		BackgroundType:  application.BackgroundTypeSolid,
-		BackgroundColour: ShellBackgroundColour(mode == "dark"),
-		URL:             "/?" + query.Encode(),
-	}
-	if goruntime.GOOS == "darwin" {
-		opts.Mac = application.MacWindow{TitleBar: application.MacTitleBarHidden}
-	}
-	w := a.app.Window.NewWithOptions(opts)
-	w.OnWindowEvent(events.Common.WindowClosing, func(*application.WindowEvent) {
-		a.connMu.Lock()
-		wasActive := a.activeTarget == conn.ID
-		delete(a.connWindows, conn.ID)
-		if wasActive {
-			a.activeTarget = LocalTarget
-		}
-		a.connMu.Unlock()
-		if wasActive {
-			// The visible client window went away — fall back to local.
-			a.SwitchConnection(LocalTarget)
-		}
-	})
-	return w, nil
-}
-
-// closeConnectionWindow tears down a connection's window; if it was visible,
-// control returns to the local main window.
-func (a *App) closeConnectionWindow(id string, switchToLocal bool) {
-	a.connMu.Lock()
-	w := a.connWindows[id]
-	wasActive := a.activeTarget == id
-	delete(a.connWindows, id)
-	if wasActive {
-		a.activeTarget = LocalTarget
-	}
-	a.connMu.Unlock()
-	if w != nil {
-		w.Close()
-	}
-	if wasActive && switchToLocal {
-		_ = a.SwitchConnection(LocalTarget)
-	}
-}
-
-func (a *App) allConnectionWindowsLocked() map[string]*application.WebviewWindow {
-	out := make(map[string]*application.WebviewWindow, len(a.connWindows))
-	for k, v := range a.connWindows {
-		out[k] = v
-	}
-	return out
-}
-
-func mustReadBootThemeCache() string {
-	if s, ok := readBootThemeCache(); ok {
-		return s
-	}
-	return ""
+	a.window.SetURL("/?" + query.Encode())
+	return nil
 }
