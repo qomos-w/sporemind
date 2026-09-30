@@ -1,4 +1,5 @@
 import { client } from './generated-client'
+import { onInstanceSwap } from './instance'
 import * as unifiedGraph from '../gen-clients/unified_graph/client'
 
 const CHECK_INTERVAL_MS = 150
@@ -98,3 +99,23 @@ export function waitForBackendReady(): Promise<void> {
   if (!readyPromise) readyPromise = createReadyPromise()
   return readyPromise
 }
+
+// --- Instance swap ---
+
+/**
+ * Drop the cached readiness gate on an instance swap so the new instance waits
+ * for its own topology epoch. The in-flight probe loop is deliberately NOT
+ * cancelled: it re-reads the live `client` binding each iteration, so it settles
+ * against the rebound transport, whereas cancelling would leave its awaiters
+ * hanging forever (the cancelled promise never resolves). The reconnect listener
+ * is re-registered against the new transport on the next waitForBackendReady.
+ */
+function resetBackendReadyForSwap(): void {
+  ready = false
+  readyPromise = null
+  reconnectListenerRegistered = false
+}
+
+// Fires synchronously after the client is rebound and before React remounts the
+// UI subtree on the new instance id; see [[instance-swap-refactor]].
+onInstanceSwap(resetBackendReadyForSwap)

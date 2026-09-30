@@ -1,5 +1,6 @@
 import { client } from '../../../application/generated-client'
 import { waitForBackendReady } from '../../../application/backend-ready'
+import { onInstanceSwap } from '../../../application/instance'
 import * as workspace from '../../../gen-clients/workspace/client'
 import type { AgentListItem, WorkspaceAgentListState, AgentRef } from '../../../gen-clients/system/types'
 
@@ -223,3 +224,22 @@ export function prefetchAgentList(): Promise<void> {
   start()
   return fetchFull()
 }
+
+// --- Instance swap ---
+
+/**
+ * Clear the gateway-bound cache when the instance is swapped (design contract
+ * §onInstanceSwap): the snapshot holds the previous instance's agents. Data
+ * only — the workspace subscription, transport reconnect hook and
+ * visibilitychange listener are all established by subscribeAgentListStore on
+ * component mount, so the remount of the instance UI subtree rebuilds them on
+ * the rebound client. The splash gate is a startup concern, left resolved.
+ */
+export function resetAgentListCacheOnSwap(): void {
+  snapshot = { version: 0, full: true, items: [] }
+  fetchFullPromise = null
+}
+
+// Fires synchronously after the client is rebound and before React remounts the
+// UI subtree on the new instance id; see [[instance-swap-refactor]].
+onInstanceSwap(resetAgentListCacheOnSwap)

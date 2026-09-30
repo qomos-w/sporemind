@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useSyncExternalStore } from 'react'
 import { gitStore } from '../../panels/git-store'
 import { client } from '../../../application/generated-client'
+import { onInstanceSwap } from '../../../application/instance'
 import * as agentCompaction from '../../../gen-clients/local/client'
 import type { AgentChildRef, AgentListItem, AgentRuntimeState, CompactionPolicy, ModelSlot } from '../../../gen-clients/system/types'
 import { getAgentListSnapshot, subscribeAgentListStore } from './agentListStore'
@@ -501,3 +502,27 @@ export function useAgentInfoWithCompaction(actorId: string | null | undefined): 
 
   return info
 }
+
+// --- Instance swap ---
+
+/**
+ * Clear the gateway-bound cache when the instance is swapped: the derived
+ * snapshot and the per-agent compaction policies belong to the previous
+ * instance. Data only — the agent-list and git subscriptions are established by
+ * subscribeAgentInfoStore on component mount, so the remount of the instance UI
+ * subtree rebuilds them on the rebound client.
+ */
+export function resetAgentInfoCacheOnSwap(): void {
+  snapshot = {
+    version: 0,
+    loading: true,
+    items: [],
+    byActorId: new Map(),
+    byId: new Map(),
+  }
+  compactionPolicies.clear()
+}
+
+// Fires synchronously after the client is rebound and before React remounts the
+// UI subtree on the new instance id; see [[instance-swap-refactor]].
+onInstanceSwap(resetAgentInfoCacheOnSwap)

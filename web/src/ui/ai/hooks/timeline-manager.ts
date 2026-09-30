@@ -1,6 +1,7 @@
 import type { TurnEnvelope, PlanFrame } from '../model/frame-types'
 import { client, waitForClientReady } from '../../../application/generated-client'
 import { waitForBackendReady } from '../../../application/backend-ready'
+import { onInstanceSwap } from '../../../application/instance'
 import { sessionTurnsToEnvelopes, turnStatusToEnvelope } from '../model/session-adapter'
 
 import { AgentSession } from './agent-session'
@@ -956,3 +957,28 @@ if (transport && typeof transport.onConnected === 'function') {
     }
   })
 }
+
+// --- Instance swap ---
+
+/**
+ * Clear every module-level timeline cache on an instance swap: the tracked
+ * timelines (whose streams and reconcilers are bound to the previous client),
+ * the selection, and the transient dedup/pending sets — all of which name the
+ * previous instance's agents. Releasing each timeline aborts its subscriptions;
+ * the per-agent subscriptions themselves are rebuilt by the UI subtree remount
+ * (components call select/load again against the rebound client), so no
+ * re-subscribe happens here.
+ */
+export function resetTimelineManagerCache(): void {
+  for (const id of Array.from(timelines.keys())) {
+    clearAgentTimeline(id)
+  }
+  selectedId = null
+  pendingAgentIds.clear()
+  cancelledClientIds.clear()
+  pendingHistoryAgents.clear()
+}
+
+// Fires synchronously after the client is rebound and before React remounts the
+// UI subtree on the new instance id; see [[instance-swap-refactor]].
+onInstanceSwap(resetTimelineManagerCache)
