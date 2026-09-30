@@ -104,6 +104,19 @@ describe('transport selection', () => {
     setWindow({ wails: true, search: '' })
     expect(useWailsRawTransport()).toBe(false)
   })
+
+  it('a gateway override (swapped remote instance) forces WebSocket transport', async () => {
+    const gateway = await import('./gateway')
+    setWindow({ wails: true, search: '' })
+    try {
+      gateway.setGatewayOverride('ws://myconsole.pixelpoly.net:80/ws')
+      expect(useWailsRawTransport()).toBe(false)
+      gateway.setGatewayOverride(null)
+      expect(useWailsRawTransport()).toBe(true)
+    } finally {
+      gateway.setGatewayOverride(null)
+    }
+  })
 })
 
 describe('auth gating in remote-connection windows', () => {

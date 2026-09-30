@@ -13,7 +13,7 @@ import * as domain$0 from "../domain/models.js";
 import * as gen$0 from "../domain/gen/models.js";
 
 /**
- * ActiveConnection describes the currently visible client target.
+ * ActiveConnection describes the currently active client target.
  */
 export class ActiveConnection {
     /**

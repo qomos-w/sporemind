@@ -122,7 +122,8 @@ export function CloseScreenshotWindow(): $CancellablePromise<void> {
 }
 
 /**
- * ConnectionsDelete removes a saved connection (and closes its window).
+ * ConnectionsDelete removes a saved connection. If it was the active target,
+ * the window falls back to the local client.
  */
 export function ConnectionsDelete(id: string): $CancellablePromise<void> {
     return $Call.ByID(1563831422, id);
@@ -209,7 +210,8 @@ export function FocusMainWindow(): $CancellablePromise<void> {
 }
 
 /**
- * GetActiveConnection reports which client target is currently visible.
+ * GetActiveConnection reports which client target the main window currently
+ * has active.
  */
 export function GetActiveConnection(): $CancellablePromise<$models.ActiveConnection> {
     return $Call.ByID(3557708418).then(($result: any) => {
@@ -733,10 +735,15 @@ export function StartScreenshot(): $CancellablePromise<$models.ScreenshotData | 
 }
 
 /**
- * SwitchConnection brings a client target to the front. target "local" shows
- * the main window; a connection id shows its dedicated window, creating it on
- * first use. The previously visible window is only hidden, never destroyed —
- * both clients keep their state and subscriptions running.
+ * SwitchConnection records the requested client target as active and
+ * broadcasts the change; it does not navigate or reload the window.
+ * 
+ * Single-window model: the shell (theme, switcher) stays resident. A switch is
+ * a pure state change — the frontend reacts to the "connections:active" Wails
+ * event by rebinding its gateway client and re-mounting the instance subtree
+ * with the new instanceId (see instance-swap-refactor). The previous client's
+ * in-page state is discarded by that remount, not by a navigation. activeTarget
+ * lives in the host process so the switcher UI stays truthful.
  * 
  * Remote targets are probed first: unreachable gateways are refused, and a
  * fingerprint equal to this installation's own (a client pointed at itself)

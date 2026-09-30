@@ -416,12 +416,16 @@ export function App() {
   }, [loggedIn])
 
   // Bootstrap unified App Registry (after auth) with reconnect resilience.
+  // instanceId is a dep: a swap rebinds `client`, so the old sync loop (bound
+  // to the destroyed transport) must stop and re-sync the registry from the
+  // new gateway — otherwise the right sidebar keeps the previous instance's
+  // plugin tabs.
   useEffect(() => {
     if (!loggedIn) return
     appRegistry.clear()
     const stop = startAppRegistrySync(client)
     return () => { stop(); appRegistry.clear() }
-  }, [loggedIn])
+  }, [loggedIn, instanceId])
 
   // Prefetch agent list + shell context as early as possible (right after
   // auth succeeds) so the splash screen can dismiss as soon as data is
