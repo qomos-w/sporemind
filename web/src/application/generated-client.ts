@@ -185,6 +185,28 @@ export function createTransport(): Transport {
 
 export let client: GosporeClient = new GosporeClient(createTransport())
 
+/**
+ * Install a new GosporeClient as the live `client` binding (every importer of
+ * `client` follows automatically — it is a live ESM binding). The previous
+ * transport is closed best-effort: the frame transport's close() is terminal,
+ * which is fine because a rebind is a full instance swap — every prior
+ * subscription belongs to the old instance and is meant to be dropped as the
+ * UI subtree remounts on the new instance id. The auth-failure counter is
+ * reset so the new instance starts clean.
+ */
+export function rebindClient(next: GosporeClient): void {
+  const previous = client
+  try {
+    const transport = previous.getTransport() as Partial<ManagedTransport>
+    if (transport && typeof transport.close === 'function') transport.close()
+  } catch (err) {
+    // Best-effort: a transport that refuses to close must never block a swap.
+    console.warn('[generated-client] closing previous transport failed:', err)
+  }
+  client = next
+  authFailCount = 0
+}
+
 let lastForceReconnectAt = 0
 
 export function forceReconnectClient(): void {
