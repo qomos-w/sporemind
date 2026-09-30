@@ -191,6 +191,29 @@ describe('MobileSyncPanel', () => {
     expect(hoisted.create).toHaveBeenCalledWith(expect.anything(), expect.objectContaining({ Name: 'mobile-sync' }))
   })
 
+  it('assigns a unique gateway-* proxy name per quick-tunnel creation', async () => {
+    await renderPanel()
+    const createBtn = () => container.querySelector('.mobile-sync-primary-btn') as HTMLButtonElement
+    const createOnce = async () => {
+      await act(async () => {
+        setInputValue('mobileSync.frpServerHost', 'frp.example.com')
+        setInputValue('mobileSync.frpRemotePort', '6080')
+      })
+      await act(async () => {
+        createBtn().click()
+      })
+      await vi.waitFor(() => expect(hoisted.create).toHaveBeenCalled())
+      const call = hoisted.create.mock.calls.at(-1)!
+      const req = (call as unknown[])[1] as { Proxies: Array<{ Name: string }> }
+      return req.Proxies[0]!.Name
+    }
+    const first = await createOnce()
+    const second = await createOnce()
+    expect(first).toMatch(/^gateway-/)
+    expect(second).toMatch(/^gateway-/)
+    expect(first).not.toBe(second)
+  })
+
   it('starts a stopped tunnel', async () => {
     await renderPanel()
     const startBtn = container.querySelector('[title="mobileSync.frpStart"]')

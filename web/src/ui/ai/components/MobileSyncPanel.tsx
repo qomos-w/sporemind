@@ -221,7 +221,7 @@ export const MobileSyncPanel: React.FC<MobileSyncPanelProps> = ({
         ServerAddr: serverAddr,
         Token: form.token,
         Proxies: [{
-          Name: 'gateway',
+          Name: quickFrpProxyName(),
           Kind: 'tcp',
           LocalIP: '127.0.0.1',
           LocalPort: gatewayPort,
@@ -553,6 +553,15 @@ function getOnlineUrl(list: FrpManagerListResp | null): string | null {
 function parseHost(serverAddr: string): string {
   const idx = serverAddr.lastIndexOf(':')
   return idx > 0 ? serverAddr.slice(0, idx) : serverAddr
+}
+
+// frps keys proxies by bare name across every connected client, so two quick
+// tunnels both named "gateway" collide and only the first registers — the
+// rest fail with "proxy name [gateway] is already in use" and their remote
+// ports are never bound. A per-creation suffix keeps names unique; the name
+// is persisted with the instance config and stays stable afterwards.
+function quickFrpProxyName(): string {
+  return `gateway-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 7)}`
 }
 
 function getItemRemoteUrl(inst: FrpInstance, gatewayPort: number): string | null {
