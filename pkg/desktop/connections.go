@@ -39,16 +39,19 @@ const remoteAuthTimeout = 10 * time.Second
 
 // RemoteConnectionView is the frontend-facing shape of a saved remote
 // connection. It never carries the password (encrypted or plain).
+// UpdatedAt is RFC3339 string on the wire: a time.Time field in a bound
+// argument struct makes the Wails layer time.Parse every inbound call, and
+// an empty/zero value from the frontend then fails before the handler runs.
 type RemoteConnectionView struct {
-	ID           string    `json:"id"`
-	Name         string    `json:"name"`
-	Host         string    `json:"host"`
-	Port         int       `json:"port"`
-	Username     string    `json:"username"`
-	InstanceID   string    `json:"instanceId,omitempty"`
-	InstanceName string    `json:"instanceName,omitempty"`
-	UpdatedAt    time.Time `json:"updatedAt"`
-	HasPassword  bool      `json:"hasPassword"`
+	ID           string `json:"id"`
+	Name         string `json:"name"`
+	Host         string `json:"host"`
+	Port         int    `json:"port"`
+	Username     string `json:"username"`
+	InstanceID   string `json:"instanceId,omitempty"`
+	InstanceName string `json:"instanceName,omitempty"`
+	UpdatedAt    string `json:"updatedAt"`
+	HasPassword  bool   `json:"hasPassword"`
 }
 
 // remoteConnection is the persisted record. PasswordEnc is AES-GCM sealed
@@ -65,6 +68,10 @@ type remoteConnection struct {
 }
 
 func (c remoteConnection) view() RemoteConnectionView {
+	updatedAt := ""
+	if !c.UpdatedAt.IsZero() {
+		updatedAt = c.UpdatedAt.UTC().Format(time.RFC3339)
+	}
 	return RemoteConnectionView{
 		ID:          c.ID,
 		Name:        c.Name,
@@ -72,7 +79,7 @@ func (c remoteConnection) view() RemoteConnectionView {
 		Port:        c.Port,
 		Username:    c.Username,
 		InstanceID:  c.InstanceID,
-		UpdatedAt:   c.UpdatedAt,
+		UpdatedAt:   updatedAt,
 		HasPassword: c.PasswordEnc != "",
 	}
 }

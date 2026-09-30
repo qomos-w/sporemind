@@ -484,6 +484,9 @@ export class RemoteAuthResult {
 /**
  * RemoteConnectionView is the frontend-facing shape of a saved remote
  * connection. It never carries the password (encrypted or plain).
+ * UpdatedAt is RFC3339 string on the wire: a time.Time field in a bound
+ * argument struct makes the Wails layer time.Parse every inbound call, and
+ * an empty/zero value from the frontend then fails before the handler runs.
  */
 export class RemoteConnectionView {
     "id": string;
@@ -514,7 +517,7 @@ export class RemoteConnectionView {
             this["username"] = "";
         }
         if (!("updatedAt" in $$source)) {
-            this["updatedAt"] = "0001-01-01T00:00:00.000Z";
+            this["updatedAt"] = "";
         }
         if (!("hasPassword" in $$source)) {
             this["hasPassword"] = false;
