@@ -10,6 +10,7 @@ import { useBrowserOverlay } from '../browserOverlay'
 import { GuideIds } from '../guide-ids'
 import { SidebarModeSwitch, type LauncherMode } from './SidebarModeSwitch'
 import { SidebarAccountMenu } from './AIShellSidebar'
+import { ConnectionSwitcher } from './ConnectionSwitcher'
 import { resolveAppIcon } from './appIconResolver'
 import './SidebarLauncher.css'
 
@@ -577,6 +578,7 @@ export function SidebarLauncher({
             />
             {(onOpenMobileSync || onOpenSettings) && (
               <div className="ai-sidebar-footer-actions">
+                <ConnectionSwitcher />
                 {onOpenMobileSync && (
                   <button
                     type="button"

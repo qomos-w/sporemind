@@ -31,6 +31,7 @@ import (
 	"github.com/qomos-w/sporemind/pkg/domain"
 	sporeGateway "github.com/qomos-w/sporemind/pkg/gateway"
 	"github.com/qomos-w/sporemind/pkg/gatewayauth"
+	"github.com/qomos-w/sporemind/pkg/instanceid"
 	"github.com/qomos-w/sporemind/pkg/logging"
 	"github.com/qomos-w/sporemind/pkg/mobileassets"
 	"github.com/qomos-w/sporemind/pkg/peerserver"
@@ -271,9 +272,21 @@ func New(cfg Config) (app.App, error) {
 				mux.Handle("/plugin/", pluginRouter)
 			}
 		})
-		routeFuncs = append(routeFuncs, func(mux *http.ServeMux) {
-			mux.HandleFunc("/download/mobile.apk", mobileassets.ServeDownload)
+	routeFuncs = append(routeFuncs, func(mux *http.ServeMux) {
+		mux.HandleFunc("/download/mobile.apk", mobileassets.ServeDownload)
+	})
+	routeFuncs = append(routeFuncs, func(mux *http.ServeMux) {
+		// Instance fingerprint endpoint. Public on purpose: remote clients
+		// probe it pre-auth to check reachability and refuse self-connections.
+		mux.HandleFunc("/instance/info", func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.Header().Set("Cache-Control", "no-store")
+			_ = json.NewEncoder(w).Encode(map[string]string{
+				"instanceId": instanceid.Get(),
+				"version":    version.Version,
+			})
 		})
+	})
 		opts = append(opts, app.WithExtraRoutes(func(mux *http.ServeMux) {
 			for _, fn := range routeFuncs {
 				fn(mux)

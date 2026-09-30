@@ -2,6 +2,7 @@ import React, { useCallback, useContext, useEffect, useLayoutEffect, useMemo, us
 import { AlertCircle, ArrowDownAZ, ArrowUpAZ, BookOpen, Bot, Brain, Check, ChevronDown, ChevronRight, CircleHelp, Clock, Cloud, Code, Compass, ConciergeBell, File, FileCode, FileText, Folder, FolderOpen, FolderPlus, FolderTree, Funnel, GitBranch, Hexagon, Languages, Lock, LogIn, LogOut, MessageCircle, MessageSquare, Moon, Package, Pin, PinOff, Plus, Puzzle, RefreshCw, Search, Settings, Smartphone, SquarePen, Sun, Target, Unplug, UserRound, Wrench, Waypoints, X } from 'lucide-react'
 import { useLongPress } from '../hooks/useLongPress'
 import { useBrowserOverlay } from '../browserOverlay'
+import { ConnectionSwitcher } from './ConnectionSwitcher'
 import { isWails } from '../../../application/runtime'
 import * as cloudaccount from '../../../gen-clients/cloudaccount/client'
 import { refreshInsiderAccess } from '../hooks/useInsiderAccess'
@@ -2253,17 +2254,18 @@ export const AIShellSidebar: React.FC<AIShellSidebarProps> = ({
         <div className="ai-sidebar-tail" />
       </div>
 
-      <div className="ai-sidebar-footer">
-        <div className="ai-sidebar-footer-row">
-          <SidebarAccountMenu
-            account={account}
-            onOpenSettings={onOpenSettings}
-          />
-          <div className="ai-sidebar-footer-actions">
-            <button
-              type="button"
-              className="ai-sidebar-footer-btn"
-              title={t('shell.sidebar.themeToggle')}
+        <div className="ai-sidebar-footer">
+          <div className="ai-sidebar-footer-row">
+            <SidebarAccountMenu
+              account={account}
+              onOpenSettings={onOpenSettings}
+            />
+            <div className="ai-sidebar-footer-actions">
+              <ConnectionSwitcher />
+              <button
+                type="button"
+                className="ai-sidebar-footer-btn"
+                title={t('shell.sidebar.themeToggle')}
               aria-label={t('shell.sidebar.themeToggle')}
               onClick={() => onThemeChange({ ...theme, mode: theme.mode === 'dark' ? 'light' : 'dark' })}
             >

@@ -32,7 +32,8 @@ import { SplashScreen } from './ui/auth/SplashScreen'
 import { prefetchAgentList, isAgentListFetched } from './ui/ai/hooks/agentListStore'
 import { prefetchShellContext, isShellContextFetched } from './application/shell-context-prefetch'
 import type { OverlayState } from './ui/auth/LoadingOverlay'
-import { tryWailsAutoLogin, isLoggedIn, clearAuth, tryUrlTokenLogin, setupCapacitorTokenBridge, isCapacitorMode, requestCapacitorToken } from './application/auth-store'
+import { tryWailsAutoLogin, tryRemoteAutoLogin, isLoggedIn, clearAuth, tryUrlTokenLogin, setupCapacitorTokenBridge, isCapacitorMode, requestCapacitorToken } from './application/auth-store'
+import { isRemoteConnectionWindow } from './application/remote-connections'
 import { connectClient, waitForClientReady, AUTH_CONNECTION_TIMEOUT_MS } from './application/generated-client'
 import { appRegistry } from './application/app-registry'
 import { startAppRegistrySync } from './application/app-registry-sync'
@@ -241,6 +242,25 @@ export function App() {
       }
 
       try {
+        // Remote-connection window: login with the connection's saved
+        // credentials against the remote gateway. On failure fall through to
+        // the manual login page (it posts straight to the remote gateway).
+        if (isRemoteConnectionWindow()) {
+          const remoteOk = await tryRemoteAutoLogin()
+          if (cancelled) return
+          if (remoteOk) {
+            console.log('[App] remote saved-credential login OK')
+            setLoggedIn(true)
+            setOverlayState('idle')
+            setAuthReady(true)
+            return
+          }
+          console.log('[App] remote auto-login unavailable — showing login page')
+          setOverlayState('idle')
+          setAuthReady(true)
+          return
+        }
+
         // Try Wails desktop auto-login
         const wailsOk = await tryWailsAutoLogin()
         if (cancelled) return
