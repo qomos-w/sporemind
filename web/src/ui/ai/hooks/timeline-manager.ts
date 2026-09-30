@@ -1,6 +1,7 @@
 import type { TurnEnvelope, PlanFrame } from '../model/frame-types'
 import { client, waitForClientReady } from '../../../application/generated-client'
 import { waitForBackendReady } from '../../../application/backend-ready'
+import { onInstanceSwap } from '../../../application/instance'
 import { sessionTurnsToEnvelopes, turnStatusToEnvelope } from '../model/session-adapter'
 
 import { AgentSession } from './agent-session'
@@ -901,9 +902,15 @@ export function createTimelineManager(): TimelineManager {
 // Reset the realLoading safety timeout on reconnect: the new connection may
 // still complete the in-flight load, so give it a fresh window instead of
 // letting a timeout armed before the disconnect fire immediately.
-const transport = typeof (client as any).getTransport === 'function' ? (client as any).getTransport() as any : null
-if (transport && typeof transport.onConnected === 'function') {
-  transport.onConnected(({ isReconnect }: { isReconnect: boolean }) => {
+//
+// The hook is registered against the CURRENT transport, and the live `client`
+// binding is swapped by rebindClient on every instance swap — so
+// resetTimelineManagerCache re-registers it on the new transport (the old
+// one is closed/destroyed and its hook never fires again).
+function registerTransportReconnectHook(): void {
+  const transport = typeof (client as any).getTransport === 'function' ? (client as any).getTransport() as any : null
+  if (transport && typeof transport.onConnected === 'function') {
+    transport.onConnected(({ isReconnect }: { isReconnect: boolean }) => {
     if (!isReconnect) return
     for (const tl of timelines.values()) {
       if (tl.realLoading) {
@@ -954,5 +961,36 @@ if (transport && typeof transport.onConnected === 'function') {
         await tl.layer.reconciler?.reconcileLadder('reconnect')
       })
     }
-  })
+    })
+  }
 }
+
+registerTransportReconnectHook()
+
+// --- Instance swap ---
+
+/**
+ * Clear every module-level timeline cache on an instance swap: the tracked
+ * timelines (whose streams and reconcilers are bound to the previous client),
+ * the selection, and the transient dedup/pending sets — all of which name the
+ * previous instance's agents. Releasing each timeline aborts its subscriptions;
+ * the per-agent subscriptions themselves are rebuilt by the UI subtree remount
+ * (components call select/load again against the rebound client), so no
+ * re-subscribe happens here.
+ */
+export function resetTimelineManagerCache(): void {
+  for (const id of Array.from(timelines.keys())) {
+    clearAgentTimeline(id)
+  }
+  selectedId = null
+  pendingAgentIds.clear()
+  cancelledClientIds.clear()
+  pendingHistoryAgents.clear()
+  // The cleared subscriptions rebuild on remount against the rebound client;
+  // the reconnect hook below is transport-bound, so re-arm it on the new one.
+  registerTransportReconnectHook()
+}
+
+// Fires synchronously after the client is rebound and before React remounts the
+// UI subtree on the new instance id; see [[instance-swap-refactor]].
+onInstanceSwap(resetTimelineManagerCache)

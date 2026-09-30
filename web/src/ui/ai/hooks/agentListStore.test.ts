@@ -4,6 +4,17 @@ import type { AgentListItem, AgentRuntimeState } from '../../../gen-clients/syst
 vi.mock('../../../application/generated-client', () => ({ client: {} }))
 vi.mock('../../../application/backend-ready', () => ({ waitForBackendReady: () => Promise.resolve() }))
 
+const swapCallbacks = vi.hoisted(() => ({
+  list: [] as Array<(e: { from: string; to: string }) => void>,
+}))
+vi.mock('../../../application/instance', () => ({
+  LOCAL_INSTANCE_ID: 'local',
+  onInstanceSwap: (cb: (e: { from: string; to: string }) => void) => {
+    swapCallbacks.list.push(cb)
+    return () => {}
+  },
+}))
+
 const { agentListState } = vi.hoisted(() => ({ agentListState: vi.fn() }))
 vi.mock('../../../gen-clients/workspace/client', () => ({
   agentListState,
@@ -92,5 +103,17 @@ describe('mergeState', () => {
     expect(getAgentListSnapshot().version).toBe(15)
     expect(agentListState).not.toHaveBeenCalled()
     expect(getAgentListItems().find(i => i.Id === 'a')!.Runtime!.State).toBe('completed')
+  })
+})
+
+describe('instance swap', () => {
+  it('clears the module-level cache when the instance is swapped', () => {
+    mergeState({ Version: 7, Full: true, Items: [item('a', 'running'), item('b', 'idle')] })
+    expect(getAgentListItems()).toHaveLength(2)
+
+    for (const cb of swapCallbacks.list) cb({ from: 'local', to: 'c1' })
+
+    expect(getAgentListSnapshot().version).toBe(0)
+    expect(getAgentListItems()).toHaveLength(0)
   })
 })

@@ -32,8 +32,9 @@ import { SplashScreen } from './ui/auth/SplashScreen'
 import { prefetchAgentList, isAgentListFetched } from './ui/ai/hooks/agentListStore'
 import { prefetchShellContext, isShellContextFetched } from './application/shell-context-prefetch'
 import type { OverlayState } from './ui/auth/LoadingOverlay'
-import { tryWailsAutoLogin, tryRemoteAutoLogin, isLoggedIn, clearAuth, tryUrlTokenLogin, setupCapacitorTokenBridge, isCapacitorMode, requestCapacitorToken } from './application/auth-store'
+import { tryWailsAutoLogin, tryRemoteAutoLogin, authenticateLocal, authenticateRemote, snapshotAuthState, restoreAuthState, isLoggedIn, clearAuth, tryUrlTokenLogin, setupCapacitorTokenBridge, isCapacitorMode, requestCapacitorToken } from './application/auth-store'
 import { isRemoteConnectionWindow } from './application/remote-connections'
+import { useActiveInstanceId, onInstanceSwap, registerAuthProviders } from './application/instance'
 import { connectClient, waitForClientReady, AUTH_CONNECTION_TIMEOUT_MS } from './application/generated-client'
 import { appRegistry } from './application/app-registry'
 import { startAppRegistrySync } from './application/app-registry-sync'
@@ -53,6 +54,30 @@ if (isWails()) {
 // Pre-paint with the boot-script theme so the splash never flashes the
 // default palette before the persisted theme round-trips.
 applyTheme(initialTheme())
+
+// Wire the auth orchestration into the instance container (see instance.ts).
+// Registered here — at App startup — rather than inside auth-store so
+// auth-store need not import instance.ts (which would close a module cycle
+// through generated-client). switchInstance() calls these on every swap.
+//
+// A soft failure (false — no saved credentials / rejected / not in Wails)
+// must THROW here: switchInstance treats a thrown provider error as a failed
+// swap and rolls the whole instance back, whereas swallowing the boolean
+// would commit the swap with no valid token on the new gateway.
+registerAuthProviders({
+  authenticateLocal: async () => {
+    if (!(await authenticateLocal())) {
+      throw new Error('instance: local authentication failed')
+    }
+  },
+  authenticateRemote: async (connId) => {
+    if (!(await authenticateRemote(connId))) {
+      throw new Error(`instance: remote authentication failed for "${connId}"`)
+    }
+  },
+  snapshotAuthState,
+  restoreAuthState,
+})
 
 export function App() {
   const { setLocale } = useI18n()
@@ -97,6 +122,13 @@ export function App() {
   const [loggedIn, setLoggedIn] = useState(false)
   const [overlayState, setOverlayState] = useState<OverlayState>('loading')
   const [overlayMessage, setOverlayMessage] = useState('')
+
+  // Active instance id. A local↔remote swap rebuilds the instance subtree
+  // below (key={instanceId}) and re-arms the readiness gates so the new
+  // instance's data loads before the shell is shown again. The theme and the
+  // splash/login overlays deliberately stay OUTSIDE the key.
+  const instanceId = useActiveInstanceId()
+  const [swapPending, setSwapPending] = useState(false)
 
   // Agent list readiness gate for the splash screen. If the initial fetch
   // already completed (e.g. from a prior session in the same page load),
@@ -416,7 +448,31 @@ export function App() {
         .then(() => { if (!cancelled2) setContextLoaded(true) })
         .catch(() => { if (!cancelled2) setContextLoaded(true) })
     }
-  }, [loggedIn])
+  }, [loggedIn, instanceId])
+
+  // Instance swap: switchInstance commits the new instance id, then this fires
+  // synchronously before React remounts the subtree. Cover the transition with
+  // the existing loading overlay and re-arm the readiness gates so the new
+  // instance's agent list / shell context load before the shell reappears.
+  useEffect(() => {
+    return onInstanceSwap(() => {
+      setOverlayState('loading')
+      setOverlayMessage('Switching connection…')
+      setSwapPending(true)
+      setAgentsLoaded(false)
+      setContextLoaded(false)
+    })
+  }, [])
+
+  // Drop the swap overlay once the new instance's data is ready (the prefetch
+  // effect above re-runs on the new instanceId and flips both gates).
+  useEffect(() => {
+    if (!swapPending) return
+    if (!agentsLoaded || !contextLoaded) return
+    setSwapPending(false)
+    setOverlayState('idle')
+  }, [swapPending, agentsLoaded, contextLoaded])
+
 
   // SplashScreen is rendered once, outside the per-state branches, so the
   // branch transitions below never remount it and restart its animation.
@@ -452,7 +508,10 @@ export function App() {
   } else {
     content = (
       <BrowserOverlayManager>
-        <AIShell theme={aiTheme} onThemeChange={setAiTheme} />
+        {/* Instance-scoped subtree: remounts on every instance swap so every
+            useEffect subscription re-establishes on the new client. Theme and
+            the overlays below stay out of the key. */}
+        <AIShell key={instanceId} theme={aiTheme} onThemeChange={setAiTheme} />
         <LoadingOverlay state={overlayState} message={overlayMessage} onRetry={handleRetry} />
         <CrashOverlay />
       </BrowserOverlayManager>

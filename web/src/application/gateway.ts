@@ -1,6 +1,9 @@
 // Gateway URL resolution — single source of truth.
 //
 // Precedence (first match wins, evaluation short-circuits):
+//   0. setGatewayOverride(wsUrl)          instance-level override set by
+//                                         instance.ts during a local↔remote
+//                                         swap (beats everything)
 //   1. import.meta.env.VITE_WS_URL       dev-time override, beats everything
 //   2. ?server= URL query param           set by the mobile shell on iframe src
 //   3. Mode-specific async resolver:
@@ -28,6 +31,7 @@ export const GATEWAY_DEFAULT_ADDR = '127.0.0.1:18080' as const
 export const GATEWAY_DEFAULT_WS = `ws://${GATEWAY_DEFAULT_ADDR}/ws` as const
 
 export type GatewaySource =
+  | 'override'
   | 'env'
   | 'query-param'
   | 'wails-binding'
@@ -82,7 +86,12 @@ function httpToWs(httpUrl: string): string {
 // ---------------------------------------------------------------------------
 
 function resolveSync(): GatewayUrls {
-  // 0. test override (never set in production)
+  // 0. instance override — set by instance.ts during a local↔remote swap.
+  //    Beats every other source (including env / ?server=) so the swap sticks
+  //    until it is explicitly cleared (local) or replaced (another remote).
+  if (gatewayOverride) return finalize(gatewayOverride, 'override')
+
+  // 0b. test override (never set in production)
   if (testOverride) return testOverride
 
   const snap = getRuntime()
@@ -150,6 +159,26 @@ export function getHttpUrl(): string {
 let testOverride: GatewayUrls | null = null
 export function __setGatewayUrlsForTest(urls: GatewayUrls | null): void {
   testOverride = urls
+}
+
+// Production instance override — the gateway the frontend is currently bound
+// to. instance.ts sets it on a swap (remote ws url), clears it for local
+// (null, so the wails binding resolves the local gateway with sporemind.yaml
+// honoured), and snapshots/restores it on rollback. Distinct from the
+// test-only testOverride above; it wins over every other resolution source.
+let gatewayOverride: string | null = null
+
+export function setGatewayOverride(wsUrl: string | null): void {
+  gatewayOverride = wsUrl
+  // Cached async resolutions (wails binding / capacitor handshake) were
+  // computed against the previous target; drop them so the next resolve
+  // re-resolves against the new one instead of serving a stale gateway.
+  wailsResolved = null
+  capacitorResolved = null
+}
+
+export function getGatewayOverride(): string | null {
+  return gatewayOverride
 }
 
 // ---------------------------------------------------------------------------
@@ -298,4 +327,5 @@ export async function httpLogin(username: string, password: string): Promise<Aut
 export function __resetGatewayCacheForTests(): void {
   wailsResolved = null
   capacitorResolved = null
+  gatewayOverride = null
 }

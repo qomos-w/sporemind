@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	"github.com/wailsapp/wails/v3/pkg/application"
 )
 
 func TestSealOpenPasswordRoundtrip(t *testing.T) {
@@ -53,6 +55,34 @@ func TestSanitizeHost(t *testing.T) {
 		if got := sanitizeHost(in); got != want {
 			t.Errorf("sanitizeHost(%q) = %q, want %q", in, got, want)
 		}
+	}
+}
+
+func TestSwitchConnectionBroadcastsActiveTarget(t *testing.T) {
+	orig := emitActiveConnection
+	t.Cleanup(func() { emitActiveConnection = orig })
+
+	var events []string
+	emitActiveConnection = func(_ *App, target string) { events = append(events, target) }
+
+	// A Wails App/WebviewWindow are needed to clear the "not started" guard, but
+	// the seam above intercepts the broadcast so no live app is exercised.
+	a := &App{app: &application.App{}, window: &application.WebviewWindow{}}
+
+	// "" normalises to the local target and must broadcast.
+	if err := a.SwitchConnection(""); err != nil {
+		t.Fatalf("switch to local: %v", err)
+	}
+	if got := a.GetActiveConnection().Target; got != LocalTarget {
+		t.Fatalf("active target = %q, want %q", got, LocalTarget)
+	}
+	// Re-selecting the active target is an early return: no second broadcast.
+	if err := a.SwitchConnection(LocalTarget); err != nil {
+		t.Fatalf("switch to same target: %v", err)
+	}
+
+	if len(events) != 1 || events[0] != LocalTarget {
+		t.Fatalf("broadcast events = %v, want [%q]", events, LocalTarget)
 	}
 }
 

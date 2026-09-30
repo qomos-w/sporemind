@@ -26,6 +26,17 @@ vi.mock('../../../application/generated-client', () => ({
   client: {},
 }))
 
+const swapCallbacks = vi.hoisted(() => ({
+  list: [] as Array<(e: { from: string; to: string }) => void>,
+}))
+vi.mock('../../../application/instance', () => ({
+  LOCAL_INSTANCE_ID: 'local',
+  onInstanceSwap: (cb: (e: { from: string; to: string }) => void) => {
+    swapCallbacks.list.push(cb)
+    return () => {}
+  },
+}))
+
 vi.mock('../../../gen-clients/local/client', () => ({
   compactionConfigure: vi.fn(),
 }))
@@ -577,6 +588,24 @@ describe('patchAgentActorId', () => {
     patchAgentActorId('unknown-id', 'whatever')
 
     expect(getAgentInfoSnapshot()).toBe(before)
+    off()
+  })
+})
+
+describe('instance swap', () => {
+  it('clears the derived snapshot and compaction cache on swap', async () => {
+    const { getAgentInfoSnapshot, subscribeAgentInfoStore } = await import('./agentInfoStore')
+    mockAgentListSnapshot.version = 1
+    mockAgentListSnapshot.items = [{ ...baseItem() }]
+    const off = subscribeAgentInfoStore(() => {})
+    expect(getAgentInfoSnapshot().items).toHaveLength(1)
+
+    for (const cb of swapCallbacks.list) cb({ from: 'local', to: 'c1' })
+
+    const after = getAgentInfoSnapshot()
+    expect(after.items).toHaveLength(0)
+    expect(after.loading).toBe(true)
+    expect(after.byId.size).toBe(0)
     off()
   })
 })

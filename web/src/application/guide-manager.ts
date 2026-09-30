@@ -26,6 +26,7 @@ import { client } from './generated-client'
 import * as guidanceClient from '../gen-clients/local/client'
 import * as interfaceClient from '../gen-clients/interfacemanager/client'
 import { onInteraction, type InteractionPayload } from './telemetry'
+import { onInstanceSwap } from './instance'
 
 type GuideListener = (state: GuideState) => void
 type TourFinishedListener = () => void
@@ -316,6 +317,28 @@ class GuideManager {
       console.warn('[guide-manager] failed to report target missing:', err)
     }
   }
+
+  /**
+   * Reset the overlay to its initial hidden state on an instance swap: the
+   * active tour's steps were sourced from the previous instance's
+   * interfacemanager projection and no longer apply. The in-process telemetry
+   * subscription is not instance-bound and is deliberately kept live (clearing
+   * it would leave ensureTelemetryListener thinking it is still attached).
+   */
+  resetForInstanceSwap(): void {
+    this.state = {
+      steps: [],
+      currentIndex: 0,
+      visible: false,
+      gateMet: true,
+      isTour: false,
+    }
+    this.emit()
+  }
 }
 
 export const guideManager = new GuideManager()
+
+// Fires synchronously after the client is rebound and before React remounts the
+// UI subtree on the new instance id; see [[instance-swap-refactor]].
+onInstanceSwap(() => guideManager.resetForInstanceSwap())

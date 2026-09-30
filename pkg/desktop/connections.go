@@ -220,12 +220,6 @@ func connectionBaseURL(host string, port int) string {
 	return "http://" + connectionHostPort(host, port)
 }
 
-// connectionWSURL builds "ws://host:port/ws" — the ?server= target that
-// routes the remote-navigated window at the remote gateway.
-func connectionWSURL(host string, port int) string {
-	return "ws://" + connectionHostPort(host, port) + "/ws"
-}
-
 // ---------------------------------------------------------------------------
 // Pure probe / login (testable without a live App)
 // ---------------------------------------------------------------------------

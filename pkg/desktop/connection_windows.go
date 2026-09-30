@@ -2,15 +2,25 @@ package desktop
 
 import (
 	"fmt"
-	"net/url"
 
 	"github.com/qomos-w/sporemind/pkg/instanceid"
 )
 
+// emitActiveConnection broadcasts the newly active client target to every
+// frame as the "connections:active" Wails custom event. It is a package-level
+// seam (mirrors openDirectoryInFileManager) so tests can observe the broadcast
+// without standing up a live Wails application.
+var emitActiveConnection = func(a *App, target string) {
+	if a == nil || a.app == nil {
+		return
+	}
+	a.app.Event.Emit("connections:active", map[string]string{"target": target})
+}
+
 // LocalTarget names the local client in SwitchConnection.
 const LocalTarget = "local"
 
-// ActiveConnection describes the currently visible client target.
+// ActiveConnection describes the currently active client target.
 type ActiveConnection struct {
 	Target string                `json:"target"` // "local" or connection id
 	Local  bool                  `json:"local"`
@@ -19,7 +29,7 @@ type ActiveConnection struct {
 }
 
 // GetActiveConnection reports which client target the main window currently
-// shows.
+// has active.
 func (a *App) GetActiveConnection() ActiveConnection {
 	a.connMu.Lock()
 	defer a.connMu.Unlock()
@@ -41,14 +51,15 @@ func (a *App) activeConnectionLocked() ActiveConnection {
 	return ActiveConnection{Target: LocalTarget, Local: true, Name: "local"}
 }
 
-// SwitchConnection navigates the MAIN window to the requested client target.
+// SwitchConnection records the requested client target as active and
+// broadcasts the change; it does not navigate or reload the window.
 //
-// Single-window model: switching is a navigation, i.e. a reset — local loads
-// "/", a connection loads "/?server=<ws url>&conn=<id>", which forces the WS
-// transport and the remote saved-credential auto-login path. The previous
-// client's in-page state is intentionally discarded. activeTarget lives in
-// the host process and survives the navigation, so the switcher UI stays
-// truthful across the reload.
+// Single-window model: the shell (theme, switcher) stays resident. A switch is
+// a pure state change — the frontend reacts to the "connections:active" Wails
+// event by rebinding its gateway client and re-mounting the instance subtree
+// with the new instanceId (see instance-swap-refactor). The previous client's
+// in-page state is discarded by that remount, not by a navigation. activeTarget
+// lives in the host process so the switcher UI stays truthful.
 //
 // Remote targets are probed first: unreachable gateways are refused, and a
 // fingerprint equal to this installation's own (a client pointed at itself)
@@ -65,14 +76,14 @@ func (a *App) SwitchConnection(target string) error {
 	current := a.activeTarget
 	a.connMu.Unlock()
 	if current == target {
-		return nil // already showing this target; navigating again would reload
+		return nil // already active; re-broadcasting would restart the instance
 	}
 
 	if target == LocalTarget {
 		a.connMu.Lock()
 		a.activeTarget = LocalTarget
 		a.connMu.Unlock()
-		a.window.SetURL("/")
+		emitActiveConnection(a, LocalTarget)
 		return nil
 	}
 
@@ -120,9 +131,6 @@ func (a *App) SwitchConnection(target string) error {
 	a.activeTarget = target
 	a.connMu.Unlock()
 
-	query := url.Values{}
-	query.Set("server", connectionWSURL(conn.Host, conn.Port))
-	query.Set("conn", conn.ID)
-	a.window.SetURL("/?" + query.Encode())
+	emitActiveConnection(a, target)
 	return nil
 }

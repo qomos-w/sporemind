@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { onInstanceSwap } from '../../../application/instance'
 
 export interface AgentSessionSnapshot {
   activeAgentId: string | null
@@ -50,3 +51,19 @@ export function useActiveProjectId(): string | null {
   useEffect(() => subscribeAgentSessionStore(() => setPid(getActiveProjectId())), [])
   return pid
 }
+
+// --- Instance swap ---
+
+/**
+ * Clear the selected agent/project on an instance swap: both ids belong to the
+ * previous instance's agent tree. Emits so any subscriber still mounted before
+ * the remount sees the cleared selection immediately.
+ */
+export function resetAgentSessionStore(): void {
+  snapshot = { activeAgentId: null, activeProjectId: null }
+  emit()
+}
+
+// Fires synchronously after the client is rebound and before React remounts the
+// UI subtree on the new instance id; see [[instance-swap-refactor]].
+onInstanceSwap(resetAgentSessionStore)
