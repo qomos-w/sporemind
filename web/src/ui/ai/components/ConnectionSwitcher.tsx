@@ -12,41 +12,46 @@ import { useI18n } from '../../../i18n'
 import { isWails } from '../../../application/runtime'
 import {
   deleteConnection,
-  getActiveConnection,
   listConnections,
   probeConnection,
   saveConnection,
-  switchConnection,
   type RemoteConnectionView,
 } from '../../../application/remote-connections'
+import { switchInstance, useActiveInstanceId } from '../../../application/instance'
+import { client } from '../../../application/generated-client'
+import * as toastApi from '../../../gen-clients/toast/client'
 import { useBrowserOverlay } from '../browserOverlay'
 import { Modal } from '../../../ui/components/Modal'
 import './ConnectionSwitcher.css'
 
 /** Bottom-left connection switcher (Wails desktop only).
  *
- *  The main window is the local instance; every saved remote connection runs
- *  in its own window (?server= + ?conn=) with fully isolated client state.
- *  Switching asks the host process to hide the current window and show (or
- *  create) the target window — both clients keep running with live
- *  subscriptions. Windows are never destroyed, so nothing reconnects. */
+ *  Single-window model: the shell stays resident and switching a connection
+ *  rebuilds the "instance" (gateway client + derived state) in place — see
+ *  [[instance-swap-refactor]]. The action calls switchInstance(target); the host
+ *  probes the target and refuses self-connections, and any refusal (or a failed
+ *  re-auth) surfaces as an error toast while the current instance stays put.
+ *  The active check reads useActiveInstanceId(), so the UI follows committed
+ *  swaps (host broadcasts and ?conn= windows) without a window reload. */
 export function ConnectionSwitcher() {
   const { t } = useI18n()
   const [open, setOpen] = useState(false)
   const [menuRef, setMenuRef] = useState<HTMLDivElement | null>(null)
   const [popoverStyle, setPopoverStyle] = useState<{ left: number; bottom: number } | null>(null)
   const [connections, setConnections] = useState<RemoteConnectionView[]>([])
-  const [active, setActive] = useState<string>('')
+  const active = useActiveInstanceId()
   const [editing, setEditing] = useState<RemoteConnectionView | null>(null)
   const [creating, setCreating] = useState(false)
 
   useBrowserOverlay(open)
 
+  // Refresh the saved-connection list whenever the popover opens. The active
+  // instance is NOT read here — it comes from useActiveInstanceId() (the host
+  // broadcast / committed swap), so it stays correct without a window reload.
   const refresh = useCallback(async () => {
     try {
-      const [conns, act] = await Promise.all([listConnections(), getActiveConnection()])
+      const conns = await listConnections()
       setConnections(conns ?? [])
-      setActive(act?.target ?? '')
     } catch (err) {
       console.warn('[ConnectionSwitcher] refresh failed:', err)
     }
@@ -83,11 +88,23 @@ export function ConnectionSwitcher() {
   const handleSwitch = useCallback(async (target: string) => {
     setOpen(false)
     try {
-      await switchConnection(target)
+      await switchInstance(target)
     } catch (err) {
+      // The host refused the switch (unreachable gateway / self-connection) or
+      // the swap rolled back: the window stays on the current instance. Surface
+      // the failure as an error toast rather than silently swallowing it.
       console.warn('[ConnectionSwitcher] switch failed:', err)
+      void toastApi
+        .show(client, {
+          Title: t('connections.title'),
+          Body: errorText(err),
+          Kind: 'error',
+        })
+        .catch((toastErr) => {
+          console.warn('[ConnectionSwitcher] failed to show switch error toast:', toastErr)
+        })
     }
-  }, [])
+  }, [t])
 
   const handleSaved = useCallback(() => {
     setEditing(null)
@@ -129,7 +146,7 @@ export function ConnectionSwitcher() {
           <button
             type="button"
             role="menuitem"
-            className={`ai-sidebar-connection-item${active === 'local' || !active ? ' active' : ''}`}
+            className={`ai-sidebar-connection-item${active === 'local' ? ' active' : ''}`}
             data-testid="connection-item-local"
             onClick={() => { if (active !== 'local') void handleSwitch('local') }}
           >
@@ -137,7 +154,7 @@ export function ConnectionSwitcher() {
             <span className="ai-sidebar-connection-item-text">
               <span className="ai-sidebar-connection-item-name">{t('connections.local')}</span>
             </span>
-            {(active === 'local' || !active) && <Check size={14} className="ai-sidebar-connection-check" />}
+            {(active === 'local') && <Check size={14} className="ai-sidebar-connection-check" />}
           </button>
           {connections.map(conn => (
             <button
@@ -375,4 +392,10 @@ function ConnectionModal({
       </div>
     </Modal>
   )
+}
+
+/** Best-effort human-readable text for a thrown switch error. */
+function errorText(err: unknown): string {
+  if (err instanceof Error && err.message) return err.message
+  return String(err ?? '')
 }

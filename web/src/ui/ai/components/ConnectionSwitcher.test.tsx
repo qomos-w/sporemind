@@ -19,6 +19,23 @@ const probeMock = vi.fn(async (_host: string, _port: number) => ({ reachable: tr
 const listMock = vi.fn(async () => [
   { id: 'c1', name: 'Lab', host: '192.168.1.5', port: 18080, username: 'admin', instanceId: 'fp-1', updatedAt: '', hasPassword: true },
 ])
+const toastShowMock = vi.fn(async (..._args: unknown[]) => ({ Id: 'toast-1' }))
+
+// Mutable active instance id exposed through the (mocked) instance module so a
+// test can pre-set which instance the switcher should mark active.
+let activeInstanceId = 'local'
+
+vi.mock('../../../application/instance', () => ({
+  LOCAL_INSTANCE_ID: 'local',
+  useActiveInstanceId: () => activeInstanceId,
+  switchInstance: (target: string) => switchMock(target),
+}))
+
+vi.mock('../../../application/generated-client', () => ({ client: {} }))
+
+vi.mock('../../../gen-clients/toast/client', () => ({
+  show: (...args: unknown[]) => toastShowMock(...args),
+}))
 
 vi.mock('../../../application/remote-connections', () => ({
   remoteConnectionId: () => 'c1',
@@ -27,8 +44,6 @@ vi.mock('../../../application/remote-connections', () => ({
   saveConnection: (conn: unknown, password: string) => saveMock(conn, password),
   deleteConnection: vi.fn(async () => {}),
   probeConnection: (host: string, port: number) => probeMock(host, port),
-  switchConnection: (target: string) => switchMock(target),
-  getActiveConnection: vi.fn(async () => ({ target: 'c1', name: 'Lab', host: '192.168.1.5', port: 18080 })),
 }))
 
 function makeWindow(): void {
@@ -67,6 +82,7 @@ describe('ConnectionSwitcher', () => {
 
   beforeEach(() => {
     vi.clearAllMocks()
+    activeInstanceId = 'local'
     makeWindow()
     vi.spyOn(console, 'warn').mockImplementation(() => {})
     container = document.createElement('div')
@@ -105,7 +121,8 @@ describe('ConnectionSwitcher', () => {
     expect(container.querySelector('.ai-sidebar-connection-menu')).toBeNull()
   })
 
-  it('lists local + saved connections and switches window target on click', async () => {
+  it('lists local + saved connections and switches instance on click', async () => {
+    activeInstanceId = 'c1'
     await renderSwitcher()
     await openMenu()
     const local = container.querySelector('[data-testid="connection-item-local"]') as HTMLButtonElement
@@ -114,6 +131,37 @@ describe('ConnectionSwitcher', () => {
     expect(container.textContent).toContain('192.168.1.5:18080')
     await act(async () => { local.click() })
     expect(switchMock).toHaveBeenCalledWith('local')
+    expect(toastShowMock).not.toHaveBeenCalled()
+  })
+
+  it('marks the active instance from useActiveInstanceId()', async () => {
+    activeInstanceId = 'c1'
+    await renderSwitcher()
+    await openMenu()
+    const local = container.querySelector('[data-testid="connection-item-local"]') as HTMLButtonElement
+    const remote = container.querySelector('[data-testid="connection-item-c1"]') as HTMLButtonElement
+    expect(remote.className).toContain('active')
+    expect(local.className).not.toContain('active')
+  })
+
+  it('shows an error toast and stays on the current instance when the host refuses the switch', async () => {
+    activeInstanceId = 'local'
+    switchMock.mockRejectedValueOnce(new Error('desktop: cannot reach 192.168.1.5:18080 — timeout'))
+    await renderSwitcher()
+    await openMenu()
+    const remote = container.querySelector('[data-testid="connection-item-c1"]') as HTMLButtonElement
+    await act(async () => { remote.click() })
+    expect(switchMock).toHaveBeenCalledWith('c1')
+    expect(toastShowMock).toHaveBeenCalledTimes(1)
+    const req = toastShowMock.mock.calls[0]![1] as { Title: string; Body: string; Kind: string }
+    expect(req.Kind).toBe('error')
+    expect(req.Title).toBe('Connections')
+    expect(req.Body).toContain('cannot reach')
+    // The popover closed but the active instance did not change: reopening still
+    // marks local as active.
+    await openMenu()
+    expect((container.querySelector('[data-testid="connection-item-local"]') as HTMLButtonElement).className).toContain('active')
+    expect((container.querySelector('[data-testid="connection-item-c1"]') as HTMLButtonElement).className).not.toContain('active')
   })
 
   it('opens the add modal, probes, and saves with the learned fingerprint', async () => {
