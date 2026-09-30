@@ -75,6 +75,36 @@ export function clearAuth() {
   }
 }
 
+/** Credential snapshot used to roll back a failed instance swap. */
+export interface AuthStateSnapshot {
+  token: string | null
+  refreshToken: string | null
+  account: AccountView | null
+}
+
+/** Capture the current credentials so instance.switchInstance can restore them
+ *  if the new instance fails to authenticate. */
+export function snapshotAuthState(): AuthStateSnapshot {
+  return { token: _token, refreshToken: _refreshToken, account: _account }
+}
+
+/** Restore credentials captured by snapshotAuthState. Any refresh timer armed
+ *  for the aborted instance is cleared and re-armed from the restored
+ *  credentials (the desktop path re-arms via authenticateLocal, so only a
+ *  refresh-token instance needs re-scheduling here). */
+export function restoreAuthState(snapshot: unknown): void {
+  const snap = snapshot as AuthStateSnapshot | null
+  if (!snap || typeof snap !== 'object') return
+  _token = snap.token ?? null
+  _refreshToken = snap.refreshToken ?? null
+  _account = snap.account ?? null
+  if (_proactiveTimer) {
+    clearTimeout(_proactiveTimer)
+    _proactiveTimer = null
+  }
+  if (_refreshToken) startProactiveRefreshTimer()
+}
+
 export async function refreshMe(): Promise<boolean> {
   if (!_token) return false
   try {
@@ -223,22 +253,24 @@ export function setupCapacitorTokenBridge(): void {
   })
 }
 
-/** Try auto-login via Wails desktop binding (admin token).
+/** Core local-instance authentication.
  *
- *  The desktop frontend now uses the same WebSocket transport as the web
- *  frontend. We still fetch the admin token through the Wails binding
- *  GetAdminToken (process-level trust), then authenticate the WebSocket
- *  with that token and call user.me over the socket.
+ *  The desktop frontend uses the same WebSocket transport as the web
+ *  frontend. This mints the admin token through the Wails binding
+ *  GetAdminToken (process-level trust), authenticates the (already bound)
+ *  WebSocket with that token and loads the account over the socket.
  *
- *  Never used in a remote-connection window — that would mint a LOCAL admin
- *  token while the transport dials the remote gateway.
+ *  Extracted from tryWailsAutoLogin so the instance container's switchInstance
+ *  can reuse it for a local swap; the wrapper keeps the remote-window guard.
+ *  The caller must ensure the transport dials the LOCAL gateway first — this
+ *  mints a LOCAL admin token.
  *
  *  If `waitWailsReady()` confirms we are inside a Wails window, the binding
  *  MUST succeed — there is no HTTP fallback. A failure here is a real bug
  *  (Go backend not ready, binding proxy broken, etc.) and is thrown so the
- *  caller can surface it instead of silently hiding it behind a login form. */
-export async function tryWailsAutoLogin(): Promise<boolean> {
-  if (isRemoteConnectionWindow()) return false
+ *  caller can surface it instead of silently hiding it behind a login form.
+ *  Returns false outside Wails mode. */
+export async function authenticateLocal(): Promise<boolean> {
   const ready = await waitWailsReady()
   if (!ready) return false
 
@@ -276,6 +308,16 @@ export async function tryWailsAutoLogin(): Promise<boolean> {
   return true
 }
 
+/** Try auto-login via Wails desktop binding (admin token).
+ *
+ *  Thin wrapper over authenticateLocal that refuses to run in a
+ *  remote-connection window — minting a LOCAL admin token while the transport
+ *  dials the remote gateway would be wrong. */
+export async function tryWailsAutoLogin(): Promise<boolean> {
+  if (isRemoteConnectionWindow()) return false
+  return authenticateLocal()
+}
+
 /** Remote-connection window: auto-login with the connection's saved
  *  credentials. The host process performs the login against the remote
  *  gateway (RemoteAuthLogin) so the saved password never reaches this
@@ -285,6 +327,21 @@ export async function tryWailsAutoLogin(): Promise<boolean> {
 export async function tryRemoteAutoLogin(): Promise<boolean> {
   const connId = remoteConnectionId()
   if (!connId) return false
+  return authenticateRemote(connId)
+}
+
+/** Core remote-instance authentication.
+ *
+ *  Extracted from tryRemoteAutoLogin so the instance container's switchInstance
+ *  can reuse it with an explicit connection id (the desktop host's active
+ *  target), rather than re-deriving it from this window's ?conn= URL.
+ *
+ *  The host performs the login against the remote gateway (RemoteAuthLogin) so
+ *  the saved password never reaches this webview; only the resulting tokens do.
+ *  Applies the tokens to the (already rebound) client and loads the account.
+ *  Returns false (fall through to the manual login page) when there are no
+ *  saved credentials or they were rejected. */
+export async function authenticateRemote(connId: string): Promise<boolean> {
   let resp
   try {
     resp = await wailsApp.RemoteAuthLogin(connId)

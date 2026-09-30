@@ -10,7 +10,8 @@
 
 import * as desktop from '../bindings/github.com/qomos-w/sporemind/pkg/desktop/app'
 import type { ActiveConnection, ProbeResult, RemoteConnectionView } from '../bindings/github.com/qomos-w/sporemind/pkg/desktop/models'
-import { getRuntime, isWails } from './runtime'
+import { isIframe, isWails } from './runtime'
+import { getActiveInstanceId, LOCAL_INSTANCE_ID } from './instance'
 
 export interface RemoteConnectionInput {
   id?: string
@@ -28,11 +29,20 @@ export function remoteConnectionId(): string | null {
   return conn && conn.trim() ? conn : null
 }
 
-/** True inside a dedicated remote-connection window (Wails + ?server= + ?conn=). */
+/** True when this window is bound to a non-local instance.
+ *
+ *  Two cases:
+ *   1. An explicit ?conn= target in the URL — the mobile-shell / plugin iframe
+ *      contract (`isIframe()`) and the desktop window (`isWails()`) both carry
+ *      it. A mobile iframe with ?server= but no ?conn= is NOT remote: the native
+ *      shell authenticates it with a handed-over token.
+ *   2. The single-window shell whose active instance has been swapped away from
+ *      local (`getActiveInstanceId() !== 'local'`) — the transport now dials the
+ *      remote gateway, so a LOCAL admin token must never be minted here.
+ */
 export function isRemoteConnectionWindow(): boolean {
-  if (!isWails()) return false
-  const s = getRuntime().signals
-  return Boolean(s.serverParam) && remoteConnectionId() !== null
+  if (remoteConnectionId() !== null && (isWails() || isIframe())) return true
+  return getActiveInstanceId() !== LOCAL_INSTANCE_ID
 }
 
 export async function listConnections(): Promise<RemoteConnectionView[]> {
