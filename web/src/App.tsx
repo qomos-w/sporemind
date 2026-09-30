@@ -59,12 +59,21 @@ applyTheme(initialTheme())
 // Registered here — at App startup — rather than inside auth-store so
 // auth-store need not import instance.ts (which would close a module cycle
 // through generated-client). switchInstance() calls these on every swap.
+//
+// A soft failure (false — no saved credentials / rejected / not in Wails)
+// must THROW here: switchInstance treats a thrown provider error as a failed
+// swap and rolls the whole instance back, whereas swallowing the boolean
+// would commit the swap with no valid token on the new gateway.
 registerAuthProviders({
   authenticateLocal: async () => {
-    await authenticateLocal()
+    if (!(await authenticateLocal())) {
+      throw new Error('instance: local authentication failed')
+    }
   },
   authenticateRemote: async (connId) => {
-    await authenticateRemote(connId)
+    if (!(await authenticateRemote(connId))) {
+      throw new Error(`instance: remote authentication failed for "${connId}"`)
+    }
   },
   snapshotAuthState,
   restoreAuthState,

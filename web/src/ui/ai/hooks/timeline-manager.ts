@@ -902,9 +902,15 @@ export function createTimelineManager(): TimelineManager {
 // Reset the realLoading safety timeout on reconnect: the new connection may
 // still complete the in-flight load, so give it a fresh window instead of
 // letting a timeout armed before the disconnect fire immediately.
-const transport = typeof (client as any).getTransport === 'function' ? (client as any).getTransport() as any : null
-if (transport && typeof transport.onConnected === 'function') {
-  transport.onConnected(({ isReconnect }: { isReconnect: boolean }) => {
+//
+// The hook is registered against the CURRENT transport, and the live `client`
+// binding is swapped by rebindClient on every instance swap — so
+// resetTimelineManagerCache re-registers it on the new transport (the old
+// one is closed/destroyed and its hook never fires again).
+function registerTransportReconnectHook(): void {
+  const transport = typeof (client as any).getTransport === 'function' ? (client as any).getTransport() as any : null
+  if (transport && typeof transport.onConnected === 'function') {
+    transport.onConnected(({ isReconnect }: { isReconnect: boolean }) => {
     if (!isReconnect) return
     for (const tl of timelines.values()) {
       if (tl.realLoading) {
@@ -955,8 +961,11 @@ if (transport && typeof transport.onConnected === 'function') {
         await tl.layer.reconciler?.reconcileLadder('reconnect')
       })
     }
-  })
+    })
+  }
 }
+
+registerTransportReconnectHook()
 
 // --- Instance swap ---
 
@@ -977,6 +986,9 @@ export function resetTimelineManagerCache(): void {
   pendingAgentIds.clear()
   cancelledClientIds.clear()
   pendingHistoryAgents.clear()
+  // The cleared subscriptions rebuild on remount against the rebound client;
+  // the reconnect hook below is transport-bound, so re-arm it on the new one.
+  registerTransportReconnectHook()
 }
 
 // Fires synchronously after the client is rebound and before React remounts the
