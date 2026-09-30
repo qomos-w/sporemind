@@ -59,6 +59,11 @@ vi.mock('./application/app-registry-sync', () => ({ startAppRegistrySync: () => 
 vi.mock('./application/auth-store', () => ({
   tryUrlTokenLogin: () => (hoisted.urlTokenPending ? new Promise(() => {}) : Promise.resolve(hoisted.urlTokenOk)),
   tryWailsAutoLogin: () => Promise.resolve(hoisted.wailsAutoLoginOk),
+  tryRemoteAutoLogin: async () => false,
+  authenticateLocal: async () => true,
+  authenticateRemote: async () => true,
+  snapshotAuthState: vi.fn(() => ({})),
+  restoreAuthState: vi.fn(),
   isLoggedIn: () => false,
   clearAuth: vi.fn(),
   setupCapacitorTokenBridge: vi.fn(),

@@ -14,6 +14,7 @@
 import { client } from './generated-client'
 import * as workspace from '../gen-clients/workspace/client'
 import { mapProjectRef } from './project-adapter'
+import { onInstanceSwap } from './instance'
 import type { AccountSnapshot, SessionSnapshot } from '../gen-types/workspace'
 import type { ProjectSnapshot } from '../domain/types'
 import type { SystemTreeNode, SystemTreeResp } from '../gen-clients/system/types'
@@ -100,3 +101,10 @@ export function resetShellContextPrefetch(): void {
   done = false
   error = null
 }
+
+// An instance swap rebuilds the client against a new gateway: the cached
+// context belongs to the previous instance, so invalidate it. The next mount
+// (keyed on the instance id) re-fetches via prefetchShellContext().
+onInstanceSwap(() => {
+  resetShellContextPrefetch()
+})
