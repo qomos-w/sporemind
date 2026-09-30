@@ -5,6 +5,53 @@
 // @ts-ignore: Unused imports
 import { Create as $Create } from "@wailsio/runtime";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as domain$0 from "../domain/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as gen$0 from "../domain/gen/models.js";
+
+/**
+ * ActiveConnection describes the currently visible client target.
+ */
+export class ActiveConnection {
+    /**
+     * "local" or connection id
+     */
+    "target": string;
+    "local": boolean;
+    "name": string;
+    "conn"?: RemoteConnectionView | null;
+
+    /** Creates a new ActiveConnection instance. */
+    constructor($$source: Partial<ActiveConnection> = {}) {
+        if (!("target" in $$source)) {
+            this["target"] = "";
+        }
+        if (!("local" in $$source)) {
+            this["local"] = false;
+        }
+        if (!("name" in $$source)) {
+            this["name"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ActiveConnection instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ActiveConnection {
+        const $$createField3_0 = $$createType1;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("conn" in $$parsedSource) {
+            $$parsedSource["conn"] = $$createField3_0($$parsedSource["conn"]);
+        }
+        return new ActiveConnection($$parsedSource as Partial<ActiveConnection>);
+    }
+}
+
 /**
  * AppUpdateMeta is the shape published by scripts/publish-release.mjs at
  * releases/{channel}/latest.json on the R2 release bucket.
@@ -85,10 +132,10 @@ export class BootCrashReport {
      * Creates a new BootCrashReport instance from a string or object.
      */
     static createFrom($$source: any = {}): BootCrashReport {
-        const $$createField1_0 = $$createType1;
-        const $$createField2_0 = $$createType3;
-        const $$createField3_0 = $$createType4;
-        const $$createField4_0 = $$createType4;
+        const $$createField1_0 = $$createType3;
+        const $$createField2_0 = $$createType5;
+        const $$createField3_0 = $$createType6;
+        const $$createField4_0 = $$createType6;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("previousSession" in $$parsedSource) {
             $$parsedSource["previousSession"] = $$createField1_0($$parsedSource["previousSession"]);
@@ -145,8 +192,8 @@ export class BrowserPageSnapshot {
      * Creates a new BrowserPageSnapshot instance from a string or object.
      */
     static createFrom($$source: any = {}): BrowserPageSnapshot {
-        const $$createField4_0 = $$createType5;
-        const $$createField5_0 = $$createType5;
+        const $$createField4_0 = $$createType7;
+        const $$createField5_0 = $$createType7;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("local_storage" in $$parsedSource) {
             $$parsedSource["local_storage"] = $$createField4_0($$parsedSource["local_storage"]);
@@ -271,7 +318,7 @@ export class FileDragOutRequest {
      * Creates a new FileDragOutRequest instance from a string or object.
      */
     static createFrom($$source: any = {}): FileDragOutRequest {
-        const $$createField0_0 = $$createType4;
+        const $$createField0_0 = $$createType6;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("localPaths" in $$parsedSource) {
             $$parsedSource["localPaths"] = $$createField0_0($$parsedSource["localPaths"]);
@@ -311,6 +358,181 @@ export class InstallSourceSelection {
 }
 
 /**
+ * ProbeResult reports a pre-connect probe of a remote gateway.
+ */
+export class ProbeResult {
+    "reachable": boolean;
+    "message"?: string;
+    "instanceId"?: string;
+    "version"?: string;
+    "isSelf": boolean;
+
+    /** Creates a new ProbeResult instance. */
+    constructor($$source: Partial<ProbeResult> = {}) {
+        if (!("reachable" in $$source)) {
+            this["reachable"] = false;
+        }
+        if (!("isSelf" in $$source)) {
+            this["isSelf"] = false;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ProbeResult instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ProbeResult {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new ProbeResult($$parsedSource as Partial<ProbeResult>);
+    }
+}
+
+/**
+ * RemoteAgentBrief is the frontend-facing summary of one agent on a remote
+ * gateway. It is the projection of the remote workspace.list_agents AgentRef
+ * down to the fields the import UI needs.
+ */
+export class RemoteAgentBrief {
+    "actorId": string;
+    "displayName": string;
+    "agentKind": string;
+    "status"?: string;
+    "projectName"?: string;
+    "lastActivity"?: string;
+
+    /** Creates a new RemoteAgentBrief instance. */
+    constructor($$source: Partial<RemoteAgentBrief> = {}) {
+        if (!("actorId" in $$source)) {
+            this["actorId"] = "";
+        }
+        if (!("displayName" in $$source)) {
+            this["displayName"] = "";
+        }
+        if (!("agentKind" in $$source)) {
+            this["agentKind"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new RemoteAgentBrief instance from a string or object.
+     */
+    static createFrom($$source: any = {}): RemoteAgentBrief {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new RemoteAgentBrief($$parsedSource as Partial<RemoteAgentBrief>);
+    }
+}
+
+/**
+ * RemoteAgentContext is a remote agent's exported session snapshot. It is the
+ * exact shape the remote returns from local.session_fork, so no mapping layer
+ * is needed: the importer feeds it straight back into the local import
+ * callable. Goal is passed through untouched — keeping or dropping it is the
+ * importer's decision (the clone precedent drops it).
+ */
+export const RemoteAgentContext = domain$0.AgentSessionForkResp;
+
+/**
+ * RemoteAgentContext is a remote agent's exported session snapshot. It is the
+ * exact shape the remote returns from local.session_fork, so no mapping layer
+ * is needed: the importer feeds it straight back into the local import
+ * callable. Goal is passed through untouched — keeping or dropping it is the
+ * importer's decision (the clone precedent drops it).
+ */
+export type RemoteAgentContext = domain$0.AgentSessionForkResp;
+
+/**
+ * RemoteAuthResult mirrors the remote user.auth_login response so the saved
+ * credentials never need to reach the frontend.
+ */
+export class RemoteAuthResult {
+    "Token": string;
+    "RefreshToken": string;
+    "ExpiresAt": string;
+    "Account"?: { [_ in string]?: any };
+
+    /** Creates a new RemoteAuthResult instance. */
+    constructor($$source: Partial<RemoteAuthResult> = {}) {
+        if (!("Token" in $$source)) {
+            this["Token"] = "";
+        }
+        if (!("RefreshToken" in $$source)) {
+            this["RefreshToken"] = "";
+        }
+        if (!("ExpiresAt" in $$source)) {
+            this["ExpiresAt"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new RemoteAuthResult instance from a string or object.
+     */
+    static createFrom($$source: any = {}): RemoteAuthResult {
+        const $$createField3_0 = $$createType8;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Account" in $$parsedSource) {
+            $$parsedSource["Account"] = $$createField3_0($$parsedSource["Account"]);
+        }
+        return new RemoteAuthResult($$parsedSource as Partial<RemoteAuthResult>);
+    }
+}
+
+/**
+ * RemoteConnectionView is the frontend-facing shape of a saved remote
+ * connection. It never carries the password (encrypted or plain).
+ */
+export class RemoteConnectionView {
+    "id": string;
+    "name": string;
+    "host": string;
+    "port": number;
+    "username": string;
+    "instanceId"?: string;
+    "instanceName"?: string;
+    "updatedAt": string;
+    "hasPassword": boolean;
+
+    /** Creates a new RemoteConnectionView instance. */
+    constructor($$source: Partial<RemoteConnectionView> = {}) {
+        if (!("id" in $$source)) {
+            this["id"] = "";
+        }
+        if (!("name" in $$source)) {
+            this["name"] = "";
+        }
+        if (!("host" in $$source)) {
+            this["host"] = "";
+        }
+        if (!("port" in $$source)) {
+            this["port"] = 0;
+        }
+        if (!("username" in $$source)) {
+            this["username"] = "";
+        }
+        if (!("updatedAt" in $$source)) {
+            this["updatedAt"] = "0001-01-01T00:00:00.000Z";
+        }
+        if (!("hasPassword" in $$source)) {
+            this["hasPassword"] = false;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new RemoteConnectionView instance from a string or object.
+     */
+    static createFrom($$source: any = {}): RemoteConnectionView {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new RemoteConnectionView($$parsedSource as Partial<RemoteConnectionView>);
+    }
+}
+
+/**
  * ScreenshotData holds the screenshot image and window list.
  */
 export class ScreenshotData {
@@ -333,7 +555,7 @@ export class ScreenshotData {
      * Creates a new ScreenshotData instance from a string or object.
      */
     static createFrom($$source: any = {}): ScreenshotData {
-        const $$createField1_0 = $$createType7;
+        const $$createField1_0 = $$createType10;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("Windows" in $$parsedSource) {
             $$parsedSource["Windows"] = $$createField1_0($$parsedSource["Windows"]);
@@ -458,7 +680,7 @@ export class UpdateStatus {
      * Creates a new UpdateStatus instance from a string or object.
      */
     static createFrom($$source: any = {}): UpdateStatus {
-        const $$createField4_0 = $$createType9;
+        const $$createField4_0 = $$createType12;
         let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
         if ("remote" in $$parsedSource) {
             $$parsedSource["remote"] = $$createField4_0($$parsedSource["remote"]);
@@ -516,13 +738,16 @@ export class WindowInfo {
 }
 
 // Private type creation functions
-const $$createType0 = CrashSessionInfo.createFrom;
+const $$createType0 = RemoteConnectionView.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
-const $$createType2 = CrashRecordInfo.createFrom;
-const $$createType3 = $Create.Array($$createType2);
-const $$createType4 = $Create.Array($Create.Any);
-const $$createType5 = $Create.Map($Create.Any, $Create.Any);
-const $$createType6 = WindowInfo.createFrom;
-const $$createType7 = $Create.Array($$createType6);
-const $$createType8 = AppUpdateMeta.createFrom;
-const $$createType9 = $Create.Nullable($$createType8);
+const $$createType2 = CrashSessionInfo.createFrom;
+const $$createType3 = $Create.Nullable($$createType2);
+const $$createType4 = CrashRecordInfo.createFrom;
+const $$createType5 = $Create.Array($$createType4);
+const $$createType6 = $Create.Array($Create.Any);
+const $$createType7 = $Create.Map($Create.Any, $Create.Any);
+const $$createType8 = $Create.Map($Create.Any, $Create.Any);
+const $$createType9 = WindowInfo.createFrom;
+const $$createType10 = $Create.Array($$createType9);
+const $$createType11 = AppUpdateMeta.createFrom;
+const $$createType12 = $Create.Nullable($$createType11);

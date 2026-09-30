@@ -121,9 +121,45 @@ export function CloseScreenshotWindow(): $CancellablePromise<void> {
     return $Call.ByID(3304147444);
 }
 
+/**
+ * ConnectionsDelete removes a saved connection (and closes its window).
+ */
+export function ConnectionsDelete(id: string): $CancellablePromise<void> {
+    return $Call.ByID(1563831422, id);
+}
+
+/**
+ * ConnectionsList returns the saved remote connections (without passwords).
+ */
+export function ConnectionsList(): $CancellablePromise<$models.RemoteConnectionView[]> {
+    return $Call.ByID(3761170949).then(($result: any) => {
+        return $$createType4($result);
+    });
+}
+
+/**
+ * ConnectionsProbe checks a remote gateway for reachability and self-identity
+ * before it may be saved or connected to.
+ */
+export function ConnectionsProbe(host: string, port: number): $CancellablePromise<$models.ProbeResult> {
+    return $Call.ByID(917625581, host, port).then(($result: any) => {
+        return $$createType5($result);
+    });
+}
+
+/**
+ * ConnectionsSave creates or updates a connection. An empty password keeps
+ * the previously saved one.
+ */
+export function ConnectionsSave(conn: $models.RemoteConnectionView, password: string): $CancellablePromise<$models.RemoteConnectionView> {
+    return $Call.ByID(3538635980, conn, password).then(($result: any) => {
+        return $$createType3($result);
+    });
+}
+
 export function DesktopWindowState(): $CancellablePromise<domain$0.DesktopWindowState> {
     return $Call.ByID(3971789617).then(($result: any) => {
-        return $$createType3($result);
+        return $$createType6($result);
     });
 }
 
@@ -173,6 +209,15 @@ export function FocusMainWindow(): $CancellablePromise<void> {
 }
 
 /**
+ * GetActiveConnection reports which client target is currently visible.
+ */
+export function GetActiveConnection(): $CancellablePromise<$models.ActiveConnection> {
+    return $Call.ByID(3557708418).then(($result: any) => {
+        return $$createType7($result);
+    });
+}
+
+/**
  * GetAdminToken returns a JWT for the local admin account. Wails uses this
  * to auto-login on startup without a password — the desktop binary lives
  * in the same process as the user actor, so anything that can call this
@@ -198,7 +243,7 @@ export function GetAdminToken(): $CancellablePromise<string> {
  */
 export function GetBrowserPageSnapshot(id: string): $CancellablePromise<$models.BrowserPageSnapshot> {
     return $Call.ByID(2806196127, id).then(($result: any) => {
-        return $$createType4($result);
+        return $$createType8($result);
     });
 }
 
@@ -208,7 +253,7 @@ export function GetBrowserPageSnapshot(id: string): $CancellablePromise<$models.
  */
 export function GetBuildInfo(): $CancellablePromise<buildinfo$0.Info> {
     return $Call.ByID(229763848).then(($result: any) => {
-        return $$createType5($result);
+        return $$createType9($result);
     });
 }
 
@@ -217,7 +262,7 @@ export function GetBuildInfo(): $CancellablePromise<buildinfo$0.Info> {
  */
 export function GetConsoleLogs(limit: number): $CancellablePromise<logging$0.ConsoleEntry[]> {
     return $Call.ByID(2878256414, limit).then(($result: any) => {
-        return $$createType7($result);
+        return $$createType11($result);
     });
 }
 
@@ -236,7 +281,7 @@ export function GetDesktopTransport(): $CancellablePromise<string> {
  */
 export function GetFeatureFlags(): $CancellablePromise<buildinfo$0.FeatureFlags> {
     return $Call.ByID(3366584797).then(($result: any) => {
-        return $$createType8($result);
+        return $$createType12($result);
     });
 }
 
@@ -255,8 +300,16 @@ export function GetGatewayAddr(): $CancellablePromise<string> {
  */
 export function GetGatewayBindAddrs(): $CancellablePromise<string[]> {
     return $Call.ByID(3125158047).then(($result: any) => {
-        return $$createType9($result);
+        return $$createType13($result);
     });
+}
+
+/**
+ * GetInstanceFingerprint exposes this installation's stable instance id so
+ * the frontend can label the local target and double-check self-connections.
+ */
+export function GetInstanceFingerprint(): $CancellablePromise<string> {
+    return $Call.ByID(264991993);
 }
 
 /**
@@ -282,7 +335,7 @@ export function GetLocalNetworkGatewayURL(): $CancellablePromise<string> {
  */
 export function GetLogs(limit: number): $CancellablePromise<gateway$0.LogEntry[]> {
     return $Call.ByID(3622924255, limit).then(($result: any) => {
-        return $$createType11($result);
+        return $$createType15($result);
     });
 }
 
@@ -294,7 +347,7 @@ export function GetLogs(limit: number): $CancellablePromise<gateway$0.LogEntry[]
  */
 export function GetLogsBefore(before: string, limit: number): $CancellablePromise<gateway$0.LogEntry[]> {
     return $Call.ByID(3873348136, before, limit).then(($result: any) => {
-        return $$createType11($result);
+        return $$createType15($result);
     });
 }
 
@@ -313,7 +366,7 @@ export function GetRawGatewayAddr(): $CancellablePromise<string> {
  */
 export function GetScreenshotData(): $CancellablePromise<$models.ScreenshotData | null> {
     return $Call.ByID(3769772216).then(($result: any) => {
-        return $$createType13($result);
+        return $$createType17($result);
     });
 }
 
@@ -324,7 +377,7 @@ export function GetScreenshotData(): $CancellablePromise<$models.ScreenshotData 
  */
 export function GetStorageSettings(): $CancellablePromise<$models.StorageSettings> {
     return $Call.ByID(2679214336).then(($result: any) => {
-        return $$createType14($result);
+        return $$createType18($result);
     });
 }
 
@@ -362,7 +415,7 @@ export function InstallUpdate(): $CancellablePromise<void> {
  */
 export function Log(level: string, msg: string, caller: string, fields: { [_ in string]?: any }): $CancellablePromise<gateway$0.LogEntry> {
     return $Call.ByID(1312406826, level, msg, caller, fields).then(($result: any) => {
-        return $$createType10($result);
+        return $$createType14($result);
     });
 }
 
@@ -449,7 +502,43 @@ export function RecordWindowGeometry(): $CancellablePromise<void> {
 
 export function RefreshScreenshotForWindow(handle: number): $CancellablePromise<$models.ScreenshotData | null> {
     return $Call.ByID(2538944262, handle).then(($result: any) => {
-        return $$createType13($result);
+        return $$createType17($result);
+    });
+}
+
+/**
+ * RemoteAgentContextExport fetches a remote agent's full current session
+ * context in a single call. local.session_fork with an empty AtTurnID returns
+ * the complete snapshot (turns, steps, summaries, explore results, goal), so no
+ * paged export is needed. The call is Public on the remote — no admin role
+ * required — and the token exists only for the duration of this call.
+ */
+export function RemoteAgentContextExport(connID: string, agentID: string): $CancellablePromise<$models.RemoteAgentContext> {
+    return $Call.ByID(3600901344, connID, agentID).then(($result: any) => {
+        return $$createType19($result);
+    });
+}
+
+/**
+ * RemoteAgentList returns the agents visible on a saved remote connection,
+ * mapped to the fields the import picker renders. The saved credentials never
+ * reach the frontend: the host logs in, calls workspace.list_agents with the
+ * bearer token, and returns only the projected briefs.
+ */
+export function RemoteAgentList(connID: string): $CancellablePromise<$models.RemoteAgentBrief[]> {
+    return $Call.ByID(1559340867, connID).then(($result: any) => {
+        return $$createType21($result);
+    });
+}
+
+/**
+ * RemoteAuthLogin performs a saved-credential login against the connection's
+ * remote gateway from the host process, returning the auth response. The
+ * password never crosses into the frontend.
+ */
+export function RemoteAuthLogin(connID: string): $CancellablePromise<$models.RemoteAuthResult> {
+    return $Call.ByID(3066224729, connID).then(($result: any) => {
+        return $$createType22($result);
     });
 }
 
@@ -487,7 +576,7 @@ export function SaveScreenshotDialog(base64Data: string, defaultName: string): $
  */
 export function SelectAppPackageFile(): $CancellablePromise<$models.InstallSourceSelection> {
     return $Call.ByID(2212415167).then(($result: any) => {
-        return $$createType15($result);
+        return $$createType23($result);
     });
 }
 
@@ -496,7 +585,7 @@ export function SelectAppPackageFile(): $CancellablePromise<$models.InstallSourc
  */
 export function SelectAppPackageFolder(): $CancellablePromise<$models.InstallSourceSelection> {
     return $Call.ByID(1386660473).then(($result: any) => {
-        return $$createType15($result);
+        return $$createType23($result);
     });
 }
 
@@ -639,8 +728,22 @@ export function StartFileDragOut(req: $models.FileDragOutRequest): $CancellableP
  */
 export function StartScreenshot(): $CancellablePromise<$models.ScreenshotData | null> {
     return $Call.ByID(4259582160).then(($result: any) => {
-        return $$createType13($result);
+        return $$createType17($result);
     });
+}
+
+/**
+ * SwitchConnection brings a client target to the front. target "local" shows
+ * the main window; a connection id shows its dedicated window, creating it on
+ * first use. The previously visible window is only hidden, never destroyed —
+ * both clients keep their state and subscriptions running.
+ * 
+ * Remote targets are probed first: unreachable gateways are refused, and a
+ * fingerprint equal to this installation's own (a client pointed at itself)
+ * is a hard error.
+ */
+export function SwitchConnection(target: string): $CancellablePromise<void> {
+    return $Call.ByID(1115160148, target);
 }
 
 /**
@@ -674,16 +777,24 @@ export function WriteConsoleLog(level: string, message: string, location: string
 const $$createType0 = $models.BootCrashReport.createFrom;
 const $$createType1 = $Create.Nullable($$createType0);
 const $$createType2 = $models.UpdateStatus.createFrom;
-const $$createType3 = gen$0.DesktopWindowState.createFrom;
-const $$createType4 = $models.BrowserPageSnapshot.createFrom;
-const $$createType5 = buildinfo$0.Info.createFrom;
-const $$createType6 = logging$0.ConsoleEntry.createFrom;
-const $$createType7 = $Create.Array($$createType6);
-const $$createType8 = buildinfo$0.FeatureFlags.createFrom;
-const $$createType9 = $Create.Array($Create.Any);
-const $$createType10 = gateway$0.LogEntry.createFrom;
+const $$createType3 = $models.RemoteConnectionView.createFrom;
+const $$createType4 = $Create.Array($$createType3);
+const $$createType5 = $models.ProbeResult.createFrom;
+const $$createType6 = gen$0.DesktopWindowState.createFrom;
+const $$createType7 = $models.ActiveConnection.createFrom;
+const $$createType8 = $models.BrowserPageSnapshot.createFrom;
+const $$createType9 = buildinfo$0.Info.createFrom;
+const $$createType10 = logging$0.ConsoleEntry.createFrom;
 const $$createType11 = $Create.Array($$createType10);
-const $$createType12 = $models.ScreenshotData.createFrom;
-const $$createType13 = $Create.Nullable($$createType12);
-const $$createType14 = $models.StorageSettings.createFrom;
-const $$createType15 = $models.InstallSourceSelection.createFrom;
+const $$createType12 = buildinfo$0.FeatureFlags.createFrom;
+const $$createType13 = $Create.Array($Create.Any);
+const $$createType14 = gateway$0.LogEntry.createFrom;
+const $$createType15 = $Create.Array($$createType14);
+const $$createType16 = $models.ScreenshotData.createFrom;
+const $$createType17 = $Create.Nullable($$createType16);
+const $$createType18 = $models.StorageSettings.createFrom;
+const $$createType19 = gen$0.AgentSessionForkResp.createFrom;
+const $$createType20 = $models.RemoteAgentBrief.createFrom;
+const $$createType21 = $Create.Array($$createType20);
+const $$createType22 = $models.RemoteAuthResult.createFrom;
+const $$createType23 = $models.InstallSourceSelection.createFrom;

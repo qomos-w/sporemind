@@ -3,6 +3,7 @@ import * as userAuth from '../gen-clients/user/client'
 import * as wailsApp from '../bindings/github.com/qomos-w/sporemind/pkg/desktop/app'
 import type { AccountView } from '../gen-clients/system/types'
 import { isCapacitor } from './runtime'
+import { isRemoteConnectionWindow, remoteConnectionId } from './remote-connections'
 
 let _token: string | null = null
 let _refreshToken: string | null = null
@@ -229,11 +230,15 @@ export function setupCapacitorTokenBridge(): void {
  *  GetAdminToken (process-level trust), then authenticate the WebSocket
  *  with that token and call user.me over the socket.
  *
+ *  Never used in a remote-connection window — that would mint a LOCAL admin
+ *  token while the transport dials the remote gateway.
+ *
  *  If `waitWailsReady()` confirms we are inside a Wails window, the binding
  *  MUST succeed — there is no HTTP fallback. A failure here is a real bug
  *  (Go backend not ready, binding proxy broken, etc.) and is thrown so the
  *  caller can surface it instead of silently hiding it behind a login form. */
 export async function tryWailsAutoLogin(): Promise<boolean> {
+  if (isRemoteConnectionWindow()) return false
   const ready = await waitWailsReady()
   if (!ready) return false
 
@@ -268,6 +273,42 @@ export async function tryWailsAutoLogin(): Promise<boolean> {
     }
   }
   startDesktopTokenRefreshTimer()
+  return true
+}
+
+/** Remote-connection window: auto-login with the connection's saved
+ *  credentials. The host process performs the login against the remote
+ *  gateway (RemoteAuthLogin) so the saved password never reaches this
+ *  webview; only the resulting tokens do. Returns false (fall through to
+ *  the manual login page) when there are no saved credentials or they were
+ *  rejected. */
+export async function tryRemoteAutoLogin(): Promise<boolean> {
+  const connId = remoteConnectionId()
+  if (!connId) return false
+  let resp
+  try {
+    resp = await wailsApp.RemoteAuthLogin(connId)
+  } catch (err) {
+    console.warn('[Auth] remote saved-credential login failed:', err)
+    return false
+  }
+  if (!resp?.Token) return false
+
+  _token = resp.Token
+  if (resp.RefreshToken) _refreshToken = resp.RefreshToken
+  if (resp.Account) _account = resp.Account as unknown as AccountView
+
+  await connectClient()
+  await waitForClientReady(AUTH_CONNECTION_TIMEOUT_MS)
+
+  try {
+    const acc = await userAuth.authMe(client)
+    _account = acc
+    console.log('[Auth] remote auto-login OK, account:', acc?.Username)
+  } catch (err) {
+    console.warn('[Auth] remote user.me failed, using login account:', err)
+  }
+  startProactiveRefreshTimer()
   return true
 }
 

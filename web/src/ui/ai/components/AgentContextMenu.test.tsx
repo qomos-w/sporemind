@@ -190,3 +190,60 @@ describe('AgentContextMenu delete visibility', () => {
     expect(onDelete).toHaveBeenCalledWith(child)
   })
 })
+
+describe('AgentContextMenu import-from-remote item', () => {
+  let container: HTMLDivElement
+  let root: Root
+  let onImportFromRemote: ReturnType<typeof vi.fn<(agent: AgentInfo) => void>>
+
+  beforeEach(() => {
+    container = document.createElement('div')
+    document.body.appendChild(container)
+    root = createRoot(container)
+    onImportFromRemote = vi.fn()
+  })
+
+  afterEach(async () => {
+    await act(async () => { root.unmount() })
+    container.remove()
+  })
+
+  function renderWith(handler?: (agent: AgentInfo) => void) {
+    act(() => {
+      root.render(
+        <AgentContextMenu
+          target={{ agent, x: 10, y: 10 }}
+          onClose={() => {}}
+          onOpenChat={() => {}}
+          onEdit={() => {}}
+          onClone={() => {}}
+          onDelete={() => {}}
+          onImportFromRemote={handler}
+        />,
+      )
+    })
+    return Array.from(container.querySelectorAll('.agent-context-menu-item'))
+      .map(el => el.textContent ?? '')
+  }
+
+  it('hides the import item when no handler is provided', () => {
+    const labels = renderWith(undefined)
+    expect(labels.some(l => l.includes('contextMenu.importFromRemote'))).toBe(false)
+  })
+
+  it('shows the import item after clone when a handler is provided', () => {
+    const labels = renderWith(onImportFromRemote)
+    const importIndex = labels.findIndex(l => l.includes('contextMenu.importFromRemote'))
+    const cloneIndex = labels.findIndex(l => l.includes('contextMenu.clone'))
+    expect(importIndex).toBeGreaterThan(-1)
+    expect(importIndex).toBe(cloneIndex + 1)
+  })
+
+  it('invokes onImportFromRemote with the agent when the item is clicked', () => {
+    renderWith(onImportFromRemote)
+    const importBtn = Array.from(container.querySelectorAll('.agent-context-menu-item'))
+      .find(el => (el.textContent ?? '').includes('contextMenu.importFromRemote')) as HTMLElement
+    act(() => { importBtn.click() })
+    expect(onImportFromRemote).toHaveBeenCalledWith(agent)
+  })
+})

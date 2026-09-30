@@ -52,6 +52,7 @@ vi.mock('../../application/generated-client', () => ({
     events: { onService: vi.fn(() => () => {}) },
     getTransport: vi.fn(() => null),
     invoke: vi.fn(async () => ({})),
+    onConnected: vi.fn(() => () => {}),
   },
 }))
 

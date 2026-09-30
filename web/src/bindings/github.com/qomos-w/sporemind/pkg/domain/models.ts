@@ -10,6 +10,16 @@ import { Create as $Create } from "@wailsio/runtime";
 import * as gen$0 from "./gen/models.js";
 
 /**
+ * AgentSessionForkResp is the response for agent.session.fork.
+ */
+export const AgentSessionForkResp = gen$0.AgentSessionForkResp;
+
+/**
+ * AgentSessionForkResp is the response for agent.session.fork.
+ */
+export type AgentSessionForkResp = gen$0.AgentSessionForkResp;
+
+/**
  * DesktopWindowState is the persisted desktop window geometry.
  */
 export const DesktopWindowState = gen$0.DesktopWindowState;

@@ -107,6 +107,7 @@ import { NewAgentDialog, type AgentDialogInput } from './components/NewAgentDial
 import { NewProjectDialog } from '../panels/NewProjectDialog'
 import { OnboardingFlow } from './components/OnboardingFlow'
 import { AgentContextMenu, type AgentMenuTarget } from './components/AgentContextMenu'
+import { RemoteImportModal } from './components/RemoteImportModal'
 import { AgentInspectorPanel } from './components/AgentInspectorPanel'
 import { ProjectContextMenu, type ProjectMenuTarget } from './components/ProjectContextMenu'
 import { ProjectPropertiesOverlay } from './components/ProjectPropertiesOverlay'
@@ -537,6 +538,7 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
   const editAgentInfo = useAgentInfoWithCompaction(editAgent?.ActorId ?? null)
   const [cloneAgent, setCloneAgent] = useState<AgentInfo | null>(null)
   const [forkTurn, setForkTurn] = useState<{ agent: AgentInfo; turnId: string } | null>(null)
+  const [remoteImportAgent, setRemoteImportAgent] = useState<AgentInfo | null>(null)
   const [agentMenu, setAgentMenu] = useState<AgentMenuTarget | null>(null)
   const [projectMenu, setProjectMenu] = useState<ProjectMenuTarget | null>(null)
   const [renameProject, setRenameProject] = useState<ProjectMenuTarget['project'] | null>(null)
@@ -6719,9 +6721,18 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
           onOpenBrain={(agent) => { void handleOpenBrain(agent) }}
           onEdit={(agent) => { void openEditAgent(agent) }}
           onClone={(agent) => { setCloneAgent(agent); agentOps.clearError() }}
+          onImportFromRemote={(agent) => { setRemoteImportAgent(agent) }}
           onClearHistory={(agent) => { void handleClearAgentHistory(agent) }}
           onDelete={(agent) => { void handleDeleteAgent(agent) }}
           onInspectInfo={handleOpenAgentInspector}
+        />
+        <RemoteImportModal
+          open={!!remoteImportAgent}
+          agent={remoteImportAgent ? {
+            actorId: remoteImportAgent.ActorId,
+            displayName: agentDisplayName(remoteImportAgent.Title, remoteImportAgent.DisplayName),
+          } : null}
+          onClose={() => { setRemoteImportAgent(null) }}
         />
         <ProjectContextMenu
           target={projectMenu}

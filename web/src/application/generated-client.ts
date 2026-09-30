@@ -6,9 +6,9 @@ import {
   resolveWailsGateway,
   resolveCapacitorGatewayFromParent,
 } from './gateway'
-import { isWails, isCapacitor, isWeb, isIframe } from './runtime'
+import { isWails, isCapacitor, isWeb, isIframe, getRuntime } from './runtime'
 import { WailsRawTransport } from './wails-raw-transport'
-import { getDesktopConfig } from './desktop-config'
+import { useWailsRawTransport } from './transport-selection'
 import { reportDiagnostic } from '../gen-clients/oracle/client'
 import * as desktop from '../bindings/github.com/qomos-w/sporemind/pkg/desktop/app'
 import * as clients from '../gen-clients/index.js'
@@ -177,11 +177,7 @@ function createWailsRawTransport(): WailsRawTransport {
 }
 
 export function createTransport(): Transport {
-  if (isWails()) {
-    const cfg = getDesktopConfig()
-    if (cfg?.transport === 'ws') {
-      return createWebSocketTransport()
-    }
+  if (useWailsRawTransport()) {
     return createWailsRawTransport()
   }
   return createWebSocketTransport()
@@ -212,7 +208,10 @@ export function reconnectIfDisconnected(): void {
 export async function connectClient(): Promise<void> {
   const transport = client.getTransport()
   if (transport instanceof WebSocketTransport) {
-    if (isWails()) {
+    // Remote-connection windows dial the ?server= gateway; the local
+    // gateway-readiness wait below would only delay the remote dial.
+    const remoteWindow = isWails() && getRuntime().signals.serverParam
+    if (isWails() && !remoteWindow) {
       const gwResolved = await resolveWailsGateway()
       // The in-process gateway binds its HTTP listener only after every actor
       // finished OnStart; dialing earlier gets connection-refused and lands in

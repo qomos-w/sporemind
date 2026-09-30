@@ -1,5 +1,5 @@
 import React, { useLayoutEffect, useRef } from 'react'
-import { MessageSquare, Pencil, Copy, Trash2, Eraser, Info, FileText, Brain, Unplug } from 'lucide-react'
+import { MessageSquare, Pencil, Copy, Trash2, Eraser, Info, FileText, Brain, Unplug, Download } from 'lucide-react'
 import type { AgentInfo } from '../hooks/agentInfoStore'
 import { agentDisplayName } from '../lib/agent-avatar'
 import { useMenuDismiss } from '../hooks/useMenuDismiss'
@@ -20,6 +20,8 @@ interface AgentContextMenuProps {
   onOpenChat: (agent: AgentInfo) => void
   onEdit: (agent: AgentInfo) => void
   onClone: (agent: AgentInfo) => void
+  /** Import a remote agent's context and replace this agent's conversation history. */
+  onImportFromRemote?: (agent: AgentInfo) => void
   onClearHistory?: (agent: AgentInfo) => void
   onDelete: (agent: AgentInfo) => void
   onInspectInfo?: (agent: AgentInfo) => void
@@ -45,6 +47,7 @@ export const AgentContextMenu: React.FC<AgentContextMenuProps> = ({
   onOpenChat,
   onEdit,
   onClone,
+  onImportFromRemote,
   onClearHistory,
   onDelete,
   onInspectInfo,
@@ -104,6 +107,7 @@ export const AgentContextMenu: React.FC<AgentContextMenuProps> = ({
     ...(onOpenBrain && target.context !== 'topology' ? [{ key: 'brain', hotkey: 'b', label: t('contextMenu.openBrain'), icon: <Brain size={13} />, run: () => onOpenBrain(agent) }] : []),
     { key: 'edit', hotkey: 'e', label: t('contextMenu.edit'), icon: <Pencil size={13} />, run: () => onEdit(agent) },
     { key: 'clone', hotkey: 'f', label: t('contextMenu.clone'), icon: <Copy size={13} />, run: () => onClone(agent) },
+    ...(onImportFromRemote ? [{ key: 'import', hotkey: 'r', label: t('contextMenu.importFromRemote'), icon: <Download size={13} />, run: () => onImportFromRemote(agent) }] : []),
     ...(onInspectInfo ? [{ key: 'info', hotkey: 'i', label: t('contextMenu.inspectInfo'), icon: <Info size={13} />, run: () => onInspectInfo(agent) }] : []),
     ...(onClearHistory ? [{ key: 'clear', hotkey: 'x', label: t('contextMenu.clearChat'), icon: <Eraser size={13} />, run: () => onClearHistory(agent) }] : []),
     // Top-level agents delete via workspace.delete_agent (CanDelete gate).
