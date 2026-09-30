@@ -5,6 +5,113 @@
 // @ts-ignore: Unused imports
 import { Create as $Create } from "@wailsio/runtime";
 
+export class AgentSessionForkResp {
+    "Session": Session;
+    "SummarySegments"?: SummarySegment[];
+    "ExploreResults"?: ExploreResult[];
+    "Steps"?: Step[];
+    "Goal"?: SessionGoal | null;
+    "NextIdx"?: number;
+    "NextSeq"?: number;
+    "NextTurnOrder"?: number;
+
+    /** Creates a new AgentSessionForkResp instance. */
+    constructor($$source: Partial<AgentSessionForkResp> = {}) {
+        if (!("Session" in $$source)) {
+            this["Session"] = (new Session());
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new AgentSessionForkResp instance from a string or object.
+     */
+    static createFrom($$source: any = {}): AgentSessionForkResp {
+        const $$createField0_0 = $$createType0;
+        const $$createField1_0 = $$createType2;
+        const $$createField2_0 = $$createType4;
+        const $$createField3_0 = $$createType6;
+        const $$createField4_0 = $$createType8;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Session" in $$parsedSource) {
+            $$parsedSource["Session"] = $$createField0_0($$parsedSource["Session"]);
+        }
+        if ("SummarySegments" in $$parsedSource) {
+            $$parsedSource["SummarySegments"] = $$createField1_0($$parsedSource["SummarySegments"]);
+        }
+        if ("ExploreResults" in $$parsedSource) {
+            $$parsedSource["ExploreResults"] = $$createField2_0($$parsedSource["ExploreResults"]);
+        }
+        if ("Steps" in $$parsedSource) {
+            $$parsedSource["Steps"] = $$createField3_0($$parsedSource["Steps"]);
+        }
+        if ("Goal" in $$parsedSource) {
+            $$parsedSource["Goal"] = $$createField4_0($$parsedSource["Goal"]);
+        }
+        return new AgentSessionForkResp($$parsedSource as Partial<AgentSessionForkResp>);
+    }
+}
+
+export class AttachmentEntry {
+    "Name": string;
+    "MimeType": string;
+    "Url"?: string;
+    "SizeBytes"?: number;
+
+    /** Creates a new AttachmentEntry instance. */
+    constructor($$source: Partial<AttachmentEntry> = {}) {
+        if (!("Name" in $$source)) {
+            this["Name"] = "";
+        }
+        if (!("MimeType" in $$source)) {
+            this["MimeType"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new AttachmentEntry instance from a string or object.
+     */
+    static createFrom($$source: any = {}): AttachmentEntry {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new AttachmentEntry($$parsedSource as Partial<AttachmentEntry>);
+    }
+}
+
+export class ContentBlock {
+    "Type": string;
+    "Id"?: string;
+    "Text"?: string;
+    "ToolUseId"?: string;
+    "ToolName"?: string;
+    "Input"?: string;
+    "IsError"?: boolean;
+    "CacheControl"?: string;
+    "ImageUrl"?: string;
+    "MimeType"?: string;
+    "Recognized"?: boolean;
+    "RecognitionText"?: string;
+
+    /** Creates a new ContentBlock instance. */
+    constructor($$source: Partial<ContentBlock> = {}) {
+        if (!("Type" in $$source)) {
+            this["Type"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ContentBlock instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ContentBlock {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new ContentBlock($$parsedSource as Partial<ContentBlock>);
+    }
+}
+
 export class DesktopWindowState {
     "X": number;
     "Y": number;
@@ -41,3 +148,596 @@ export class DesktopWindowState {
         return new DesktopWindowState($$parsedSource as Partial<DesktopWindowState>);
     }
 }
+
+export class ExploreResult {
+    "TurnId": string;
+    "Summary": string;
+    "SearchCount": number;
+    "ReadCount": number;
+    "InputTokens": number;
+    "OutputTokens": number;
+    "Timestamp": string;
+    "StepId"?: string;
+    "AgentId"?: string;
+
+    /** Creates a new ExploreResult instance. */
+    constructor($$source: Partial<ExploreResult> = {}) {
+        if (!("TurnId" in $$source)) {
+            this["TurnId"] = "";
+        }
+        if (!("Summary" in $$source)) {
+            this["Summary"] = "";
+        }
+        if (!("SearchCount" in $$source)) {
+            this["SearchCount"] = 0;
+        }
+        if (!("ReadCount" in $$source)) {
+            this["ReadCount"] = 0;
+        }
+        if (!("InputTokens" in $$source)) {
+            this["InputTokens"] = 0;
+        }
+        if (!("OutputTokens" in $$source)) {
+            this["OutputTokens"] = 0;
+        }
+        if (!("Timestamp" in $$source)) {
+            this["Timestamp"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ExploreResult instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ExploreResult {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new ExploreResult($$parsedSource as Partial<ExploreResult>);
+    }
+}
+
+export class ImageEntry {
+    "Url": string;
+    "Alt"?: string;
+    "MimeType"?: string;
+
+    /** Creates a new ImageEntry instance. */
+    constructor($$source: Partial<ImageEntry> = {}) {
+        if (!("Url" in $$source)) {
+            this["Url"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ImageEntry instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ImageEntry {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new ImageEntry($$parsedSource as Partial<ImageEntry>);
+    }
+}
+
+export class ModelUnit {
+    "model": string;
+    "provider": string;
+    "thinkLevel"?: string;
+
+    /** Creates a new ModelUnit instance. */
+    constructor($$source: Partial<ModelUnit> = {}) {
+        if (!("model" in $$source)) {
+            this["model"] = "";
+        }
+        if (!("provider" in $$source)) {
+            this["provider"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new ModelUnit instance from a string or object.
+     */
+    static createFrom($$source: any = {}): ModelUnit {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new ModelUnit($$parsedSource as Partial<ModelUnit>);
+    }
+}
+
+export class Session {
+    "Turns"?: Turn[];
+    "ActiveHead"?: number;
+
+    /** Creates a new Session instance. */
+    constructor($$source: Partial<Session> = {}) {
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Session instance from a string or object.
+     */
+    static createFrom($$source: any = {}): Session {
+        const $$createField0_0 = $$createType10;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Turns" in $$parsedSource) {
+            $$parsedSource["Turns"] = $$createField0_0($$parsedSource["Turns"]);
+        }
+        return new Session($$parsedSource as Partial<Session>);
+    }
+}
+
+export class SessionGoal {
+    "Condition": string;
+    "MaxTurns": number;
+    "TurnCount": number;
+    "CardID"?: string;
+    "InterpretedGoal"?: string;
+    "Confirmed"?: boolean;
+    "PlanCardIDs"?: string[];
+    "Status"?: string;
+    "ReviewID"?: string;
+    "ReviewTurnID"?: string;
+    "BoundTaskCardId"?: string;
+    "Outputs"?: { [_ in string]?: any };
+
+    /** Creates a new SessionGoal instance. */
+    constructor($$source: Partial<SessionGoal> = {}) {
+        if (!("Condition" in $$source)) {
+            this["Condition"] = "";
+        }
+        if (!("MaxTurns" in $$source)) {
+            this["MaxTurns"] = 0;
+        }
+        if (!("TurnCount" in $$source)) {
+            this["TurnCount"] = 0;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new SessionGoal instance from a string or object.
+     */
+    static createFrom($$source: any = {}): SessionGoal {
+        const $$createField6_0 = $$createType11;
+        const $$createField11_0 = $$createType12;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("PlanCardIDs" in $$parsedSource) {
+            $$parsedSource["PlanCardIDs"] = $$createField6_0($$parsedSource["PlanCardIDs"]);
+        }
+        if ("Outputs" in $$parsedSource) {
+            $$parsedSource["Outputs"] = $$createField11_0($$parsedSource["Outputs"]);
+        }
+        return new SessionGoal($$parsedSource as Partial<SessionGoal>);
+    }
+}
+
+export class Step {
+    "Id": string;
+    "Role": string;
+    "Type": string;
+    "Content": ContentBlock[];
+    "Closed": boolean;
+    "Error"?: string;
+    "Timestamp"?: string;
+    "StartedAt"?: string;
+    "CompletedAt"?: string;
+    "TurnId"?: string;
+    "ReasoningContent"?: string;
+    "Usage"?: UsageData | null;
+    "ContentStatus"?: string;
+    "ExecutionStatus"?: string;
+    "InteractionStatus"?: string;
+    "Progress"?: string;
+    "Seq"?: number;
+    "RequestId"?: string;
+    "Meta"?: string;
+    "Discarded"?: boolean;
+    "Model"?: string;
+    "Provider"?: string;
+
+    /** Creates a new Step instance. */
+    constructor($$source: Partial<Step> = {}) {
+        if (!("Id" in $$source)) {
+            this["Id"] = "";
+        }
+        if (!("Role" in $$source)) {
+            this["Role"] = "";
+        }
+        if (!("Type" in $$source)) {
+            this["Type"] = "";
+        }
+        if (!("Content" in $$source)) {
+            this["Content"] = [];
+        }
+        if (!("Closed" in $$source)) {
+            this["Closed"] = false;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Step instance from a string or object.
+     */
+    static createFrom($$source: any = {}): Step {
+        const $$createField3_0 = $$createType14;
+        const $$createField11_0 = $$createType16;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Content" in $$parsedSource) {
+            $$parsedSource["Content"] = $$createField3_0($$parsedSource["Content"]);
+        }
+        if ("Usage" in $$parsedSource) {
+            $$parsedSource["Usage"] = $$createField11_0($$parsedSource["Usage"]);
+        }
+        return new Step($$parsedSource as Partial<Step>);
+    }
+}
+
+export class SummarySegment {
+    "SourceStartIndex": number;
+    "SourceEndIndex": number;
+    "Level": number;
+    "Text": string;
+    "InputTokens": number;
+    "OutputTokens": number;
+    "CreatedAt": string;
+
+    /** Creates a new SummarySegment instance. */
+    constructor($$source: Partial<SummarySegment> = {}) {
+        if (!("SourceStartIndex" in $$source)) {
+            this["SourceStartIndex"] = 0;
+        }
+        if (!("SourceEndIndex" in $$source)) {
+            this["SourceEndIndex"] = 0;
+        }
+        if (!("Level" in $$source)) {
+            this["Level"] = 0;
+        }
+        if (!("Text" in $$source)) {
+            this["Text"] = "";
+        }
+        if (!("InputTokens" in $$source)) {
+            this["InputTokens"] = 0;
+        }
+        if (!("OutputTokens" in $$source)) {
+            this["OutputTokens"] = 0;
+        }
+        if (!("CreatedAt" in $$source)) {
+            this["CreatedAt"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new SummarySegment instance from a string or object.
+     */
+    static createFrom($$source: any = {}): SummarySegment {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new SummarySegment($$parsedSource as Partial<SummarySegment>);
+    }
+}
+
+export class Turn {
+    "Id": string;
+    "Role": string;
+    "UserInput"?: string;
+    "State"?: string;
+    "Assessment"?: TurnAssessment | null;
+    "Usage"?: UsageData | null;
+    "ContextBudget"?: TurnContextBudgetPayload | null;
+    "Tasks"?: TurnTask[];
+    "Error"?: string;
+    "Cancelled"?: boolean;
+    "Timestamp"?: string;
+    "FileChanges"?: TurnFileChange[];
+    "ExploreResult"?: ExploreResult | null;
+    "Unit"?: ModelUnit | null;
+    "StartedAt"?: string;
+    "CompletedAt"?: string;
+    "Seq"?: number;
+    "TurnOrder"?: number;
+    "Revision"?: number;
+    "PauseReason"?: string;
+    "ResumeDescriptor"?: string;
+    "UserAttachments"?: AttachmentEntry[];
+    "UserImages"?: ImageEntry[];
+    "RequestStats"?: TurnRequestStat[];
+
+    /** Creates a new Turn instance. */
+    constructor($$source: Partial<Turn> = {}) {
+        if (!("Id" in $$source)) {
+            this["Id"] = "";
+        }
+        if (!("Role" in $$source)) {
+            this["Role"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new Turn instance from a string or object.
+     */
+    static createFrom($$source: any = {}): Turn {
+        const $$createField4_0 = $$createType18;
+        const $$createField5_0 = $$createType16;
+        const $$createField6_0 = $$createType20;
+        const $$createField7_0 = $$createType22;
+        const $$createField11_0 = $$createType24;
+        const $$createField12_0 = $$createType25;
+        const $$createField13_0 = $$createType27;
+        const $$createField21_0 = $$createType29;
+        const $$createField22_0 = $$createType31;
+        const $$createField23_0 = $$createType33;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Assessment" in $$parsedSource) {
+            $$parsedSource["Assessment"] = $$createField4_0($$parsedSource["Assessment"]);
+        }
+        if ("Usage" in $$parsedSource) {
+            $$parsedSource["Usage"] = $$createField5_0($$parsedSource["Usage"]);
+        }
+        if ("ContextBudget" in $$parsedSource) {
+            $$parsedSource["ContextBudget"] = $$createField6_0($$parsedSource["ContextBudget"]);
+        }
+        if ("Tasks" in $$parsedSource) {
+            $$parsedSource["Tasks"] = $$createField7_0($$parsedSource["Tasks"]);
+        }
+        if ("FileChanges" in $$parsedSource) {
+            $$parsedSource["FileChanges"] = $$createField11_0($$parsedSource["FileChanges"]);
+        }
+        if ("ExploreResult" in $$parsedSource) {
+            $$parsedSource["ExploreResult"] = $$createField12_0($$parsedSource["ExploreResult"]);
+        }
+        if ("Unit" in $$parsedSource) {
+            $$parsedSource["Unit"] = $$createField13_0($$parsedSource["Unit"]);
+        }
+        if ("UserAttachments" in $$parsedSource) {
+            $$parsedSource["UserAttachments"] = $$createField21_0($$parsedSource["UserAttachments"]);
+        }
+        if ("UserImages" in $$parsedSource) {
+            $$parsedSource["UserImages"] = $$createField22_0($$parsedSource["UserImages"]);
+        }
+        if ("RequestStats" in $$parsedSource) {
+            $$parsedSource["RequestStats"] = $$createField23_0($$parsedSource["RequestStats"]);
+        }
+        return new Turn($$parsedSource as Partial<Turn>);
+    }
+}
+
+export class TurnAssessment {
+    "Decision": string;
+    "Reason"?: string;
+    "Evidence"?: string[];
+    "Outputs"?: { [_ in string]?: any };
+
+    /** Creates a new TurnAssessment instance. */
+    constructor($$source: Partial<TurnAssessment> = {}) {
+        if (!("Decision" in $$source)) {
+            this["Decision"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new TurnAssessment instance from a string or object.
+     */
+    static createFrom($$source: any = {}): TurnAssessment {
+        const $$createField2_0 = $$createType11;
+        const $$createField3_0 = $$createType12;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Evidence" in $$parsedSource) {
+            $$parsedSource["Evidence"] = $$createField2_0($$parsedSource["Evidence"]);
+        }
+        if ("Outputs" in $$parsedSource) {
+            $$parsedSource["Outputs"] = $$createField3_0($$parsedSource["Outputs"]);
+        }
+        return new TurnAssessment($$parsedSource as Partial<TurnAssessment>);
+    }
+}
+
+export class TurnContextBudgetPayload {
+    "EstimatedTokens": number;
+    "ContextWindowSize": number;
+    "TokenBudget": number;
+
+    /** Creates a new TurnContextBudgetPayload instance. */
+    constructor($$source: Partial<TurnContextBudgetPayload> = {}) {
+        if (!("EstimatedTokens" in $$source)) {
+            this["EstimatedTokens"] = 0;
+        }
+        if (!("ContextWindowSize" in $$source)) {
+            this["ContextWindowSize"] = 0;
+        }
+        if (!("TokenBudget" in $$source)) {
+            this["TokenBudget"] = 0;
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new TurnContextBudgetPayload instance from a string or object.
+     */
+    static createFrom($$source: any = {}): TurnContextBudgetPayload {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new TurnContextBudgetPayload($$parsedSource as Partial<TurnContextBudgetPayload>);
+    }
+}
+
+export class TurnFileChange {
+    "Path": string;
+    "Additions": number;
+    "Deletions": number;
+    "DiffContent": string;
+
+    /** Creates a new TurnFileChange instance. */
+    constructor($$source: Partial<TurnFileChange> = {}) {
+        if (!("Path" in $$source)) {
+            this["Path"] = "";
+        }
+        if (!("Additions" in $$source)) {
+            this["Additions"] = 0;
+        }
+        if (!("Deletions" in $$source)) {
+            this["Deletions"] = 0;
+        }
+        if (!("DiffContent" in $$source)) {
+            this["DiffContent"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new TurnFileChange instance from a string or object.
+     */
+    static createFrom($$source: any = {}): TurnFileChange {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new TurnFileChange($$parsedSource as Partial<TurnFileChange>);
+    }
+}
+
+export class TurnRequestStat {
+    "Id": string;
+    "Provider": string;
+    "Model": string;
+    "ResponseModel"?: string;
+    "ResponseId"?: string;
+    "RequestId"?: string;
+    "Usage"?: UsageData | null;
+    "StopReason"?: string;
+    "ErrorCode"?: string;
+    "ErrorMessage"?: string;
+    "LatencyMs"?: number;
+    "FirstTokenMs"?: number;
+    "StartedAt"?: string;
+    "CompletedAt"?: string;
+
+    /** Creates a new TurnRequestStat instance. */
+    constructor($$source: Partial<TurnRequestStat> = {}) {
+        if (!("Id" in $$source)) {
+            this["Id"] = "";
+        }
+        if (!("Provider" in $$source)) {
+            this["Provider"] = "";
+        }
+        if (!("Model" in $$source)) {
+            this["Model"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new TurnRequestStat instance from a string or object.
+     */
+    static createFrom($$source: any = {}): TurnRequestStat {
+        const $$createField6_0 = $$createType16;
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        if ("Usage" in $$parsedSource) {
+            $$parsedSource["Usage"] = $$createField6_0($$parsedSource["Usage"]);
+        }
+        return new TurnRequestStat($$parsedSource as Partial<TurnRequestStat>);
+    }
+}
+
+export class TurnTask {
+    "Id": string;
+    "Subject": string;
+    "Status": string;
+    "ActiveForm"?: string;
+
+    /** Creates a new TurnTask instance. */
+    constructor($$source: Partial<TurnTask> = {}) {
+        if (!("Id" in $$source)) {
+            this["Id"] = "";
+        }
+        if (!("Subject" in $$source)) {
+            this["Subject"] = "";
+        }
+        if (!("Status" in $$source)) {
+            this["Status"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new TurnTask instance from a string or object.
+     */
+    static createFrom($$source: any = {}): TurnTask {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new TurnTask($$parsedSource as Partial<TurnTask>);
+    }
+}
+
+export class UsageData {
+    "InputTokens"?: number;
+    "OutputTokens"?: number;
+    "TotalTokens"?: number;
+    "CacheCreationInputTokens"?: number;
+    "CacheReadInputTokens"?: number;
+    "EstimatedPromptTokens"?: number;
+    "MaxContextLength"?: number;
+    "ReasoningTokens"?: number;
+    "CostInput"?: number;
+    "CostOutput"?: number;
+    "CostCacheRead"?: number;
+    "CostCacheWrite"?: number;
+    "CostTotal"?: number;
+
+    /** Creates a new UsageData instance. */
+    constructor($$source: Partial<UsageData> = {}) {
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new UsageData instance from a string or object.
+     */
+    static createFrom($$source: any = {}): UsageData {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new UsageData($$parsedSource as Partial<UsageData>);
+    }
+}
+
+// Private type creation functions
+const $$createType0 = Session.createFrom;
+const $$createType1 = SummarySegment.createFrom;
+const $$createType2 = $Create.Array($$createType1);
+const $$createType3 = ExploreResult.createFrom;
+const $$createType4 = $Create.Array($$createType3);
+const $$createType5 = Step.createFrom;
+const $$createType6 = $Create.Array($$createType5);
+const $$createType7 = SessionGoal.createFrom;
+const $$createType8 = $Create.Nullable($$createType7);
+const $$createType9 = Turn.createFrom;
+const $$createType10 = $Create.Array($$createType9);
+const $$createType11 = $Create.Array($Create.Any);
+const $$createType12 = $Create.Map($Create.Any, $Create.Any);
+const $$createType13 = ContentBlock.createFrom;
+const $$createType14 = $Create.Array($$createType13);
+const $$createType15 = UsageData.createFrom;
+const $$createType16 = $Create.Nullable($$createType15);
+const $$createType17 = TurnAssessment.createFrom;
+const $$createType18 = $Create.Nullable($$createType17);
+const $$createType19 = TurnContextBudgetPayload.createFrom;
+const $$createType20 = $Create.Nullable($$createType19);
+const $$createType21 = TurnTask.createFrom;
+const $$createType22 = $Create.Array($$createType21);
+const $$createType23 = TurnFileChange.createFrom;
+const $$createType24 = $Create.Array($$createType23);
+const $$createType25 = $Create.Nullable($$createType3);
+const $$createType26 = ModelUnit.createFrom;
+const $$createType27 = $Create.Nullable($$createType26);
+const $$createType28 = AttachmentEntry.createFrom;
+const $$createType29 = $Create.Array($$createType28);
+const $$createType30 = ImageEntry.createFrom;
+const $$createType31 = $Create.Array($$createType30);
+const $$createType32 = TurnRequestStat.createFrom;
+const $$createType33 = $Create.Array($$createType32);

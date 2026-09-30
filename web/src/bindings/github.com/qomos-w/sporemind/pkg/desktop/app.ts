@@ -507,13 +507,38 @@ export function RefreshScreenshotForWindow(handle: number): $CancellablePromise<
 }
 
 /**
+ * RemoteAgentContextExport fetches a remote agent's full current session
+ * context in a single call. local.session_fork with an empty AtTurnID returns
+ * the complete snapshot (turns, steps, summaries, explore results, goal), so no
+ * paged export is needed. The call is Public on the remote — no admin role
+ * required — and the token exists only for the duration of this call.
+ */
+export function RemoteAgentContextExport(connID: string, agentID: string): $CancellablePromise<$models.RemoteAgentContext> {
+    return $Call.ByID(3600901344, connID, agentID).then(($result: any) => {
+        return $$createType19($result);
+    });
+}
+
+/**
+ * RemoteAgentList returns the agents visible on a saved remote connection,
+ * mapped to the fields the import picker renders. The saved credentials never
+ * reach the frontend: the host logs in, calls workspace.list_agents with the
+ * bearer token, and returns only the projected briefs.
+ */
+export function RemoteAgentList(connID: string): $CancellablePromise<$models.RemoteAgentBrief[]> {
+    return $Call.ByID(1559340867, connID).then(($result: any) => {
+        return $$createType21($result);
+    });
+}
+
+/**
  * RemoteAuthLogin performs a saved-credential login against the connection's
  * remote gateway from the host process, returning the auth response. The
  * password never crosses into the frontend.
  */
 export function RemoteAuthLogin(connID: string): $CancellablePromise<$models.RemoteAuthResult> {
     return $Call.ByID(3066224729, connID).then(($result: any) => {
-        return $$createType19($result);
+        return $$createType22($result);
     });
 }
 
@@ -551,7 +576,7 @@ export function SaveScreenshotDialog(base64Data: string, defaultName: string): $
  */
 export function SelectAppPackageFile(): $CancellablePromise<$models.InstallSourceSelection> {
     return $Call.ByID(2212415167).then(($result: any) => {
-        return $$createType20($result);
+        return $$createType23($result);
     });
 }
 
@@ -560,7 +585,7 @@ export function SelectAppPackageFile(): $CancellablePromise<$models.InstallSourc
  */
 export function SelectAppPackageFolder(): $CancellablePromise<$models.InstallSourceSelection> {
     return $Call.ByID(1386660473).then(($result: any) => {
-        return $$createType20($result);
+        return $$createType23($result);
     });
 }
 
@@ -768,5 +793,8 @@ const $$createType15 = $Create.Array($$createType14);
 const $$createType16 = $models.ScreenshotData.createFrom;
 const $$createType17 = $Create.Nullable($$createType16);
 const $$createType18 = $models.StorageSettings.createFrom;
-const $$createType19 = $models.RemoteAuthResult.createFrom;
-const $$createType20 = $models.InstallSourceSelection.createFrom;
+const $$createType19 = gen$0.AgentSessionForkResp.createFrom;
+const $$createType20 = $models.RemoteAgentBrief.createFrom;
+const $$createType21 = $Create.Array($$createType20);
+const $$createType22 = $models.RemoteAuthResult.createFrom;
+const $$createType23 = $models.InstallSourceSelection.createFrom;

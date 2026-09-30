@@ -16,6 +16,8 @@ export {
     FileDragOutRequest,
     InstallSourceSelection,
     ProbeResult,
+    RemoteAgentBrief,
+    RemoteAgentContext,
     RemoteAuthResult,
     RemoteConnectionView,
     ScreenshotData,

@@ -5,6 +5,13 @@
 // @ts-ignore: Unused imports
 import { Create as $Create } from "@wailsio/runtime";
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as domain$0 from "../domain/models.js";
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore: Unused imports
+import * as gen$0 from "../domain/gen/models.js";
+
 /**
  * ActiveConnection describes the currently visible client target.
  */
@@ -380,6 +387,61 @@ export class ProbeResult {
         return new ProbeResult($$parsedSource as Partial<ProbeResult>);
     }
 }
+
+/**
+ * RemoteAgentBrief is the frontend-facing summary of one agent on a remote
+ * gateway. It is the projection of the remote workspace.list_agents AgentRef
+ * down to the fields the import UI needs.
+ */
+export class RemoteAgentBrief {
+    "actorId": string;
+    "displayName": string;
+    "agentKind": string;
+    "status"?: string;
+    "projectName"?: string;
+    "lastActivity"?: string;
+
+    /** Creates a new RemoteAgentBrief instance. */
+    constructor($$source: Partial<RemoteAgentBrief> = {}) {
+        if (!("actorId" in $$source)) {
+            this["actorId"] = "";
+        }
+        if (!("displayName" in $$source)) {
+            this["displayName"] = "";
+        }
+        if (!("agentKind" in $$source)) {
+            this["agentKind"] = "";
+        }
+
+        Object.assign(this, $$source);
+    }
+
+    /**
+     * Creates a new RemoteAgentBrief instance from a string or object.
+     */
+    static createFrom($$source: any = {}): RemoteAgentBrief {
+        let $$parsedSource = typeof $$source === 'string' ? JSON.parse($$source) : $$source;
+        return new RemoteAgentBrief($$parsedSource as Partial<RemoteAgentBrief>);
+    }
+}
+
+/**
+ * RemoteAgentContext is a remote agent's exported session snapshot. It is the
+ * exact shape the remote returns from local.session_fork, so no mapping layer
+ * is needed: the importer feeds it straight back into the local import
+ * callable. Goal is passed through untouched — keeping or dropping it is the
+ * importer's decision (the clone precedent drops it).
+ */
+export const RemoteAgentContext = domain$0.AgentSessionForkResp;
+
+/**
+ * RemoteAgentContext is a remote agent's exported session snapshot. It is the
+ * exact shape the remote returns from local.session_fork, so no mapping layer
+ * is needed: the importer feeds it straight back into the local import
+ * callable. Goal is passed through untouched — keeping or dropping it is the
+ * importer's decision (the clone precedent drops it).
+ */
+export type RemoteAgentContext = domain$0.AgentSessionForkResp;
 
 /**
  * RemoteAuthResult mirrors the remote user.auth_login response so the saved
