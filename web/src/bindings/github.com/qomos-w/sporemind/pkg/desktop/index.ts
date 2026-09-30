@@ -7,6 +7,7 @@ export {
 };
 
 export {
+    ActiveConnection,
     AppUpdateMeta,
     BootCrashReport,
     BrowserPageSnapshot,
@@ -14,6 +15,11 @@ export {
     CrashSessionInfo,
     FileDragOutRequest,
     InstallSourceSelection,
+    ProbeResult,
+    RemoteAgentBrief,
+    RemoteAgentContext,
+    RemoteAuthResult,
+    RemoteConnectionView,
     ScreenshotData,
     StorageSettings,
     UpdateStatus,
