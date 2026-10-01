@@ -69,6 +69,17 @@ function readInstanceIdFromUrl(): string {
 
 let activeInstanceId: string = readInstanceIdFromUrl()
 
+// The instance this window booted as (?conn= for dedicated remote windows,
+// local for the single-window shell). A swap AWAY from the boot instance
+// makes this window a guest projection of another instance: guest sessions
+// must not persist UI state into the visited instance's workspace model —
+// that clobbers whatever the instance's own clients saved there.
+const bootInstanceId = activeInstanceId
+
+export function isActiveInstanceGuest(): boolean {
+  return activeInstanceId !== bootInstanceId
+}
+
 const instanceListeners = new Set<() => void>()
 const swapListeners = new Set<(e: InstanceSwapEvent) => void>()
 
@@ -208,6 +219,7 @@ async function performSwap(target: string): Promise<void> {
 
     // 5. commit — flip the id, then reset stores before React remounts.
     activeInstanceId = normalized
+    console.log(`[instance] swap committed: ${from} -> ${normalized} (listeners=${instanceListeners.size}, swapSubs=${swapListeners.size})`)
     notifyInstanceListeners()
     notifySwap({ from, to: normalized })
   } catch (err) {

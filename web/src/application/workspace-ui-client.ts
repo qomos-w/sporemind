@@ -1,4 +1,5 @@
 import { client } from './generated-client'
+import { isActiveInstanceGuest, onInstanceSwap } from './instance'
 import { uiGet as getWorkspaceUI } from '../gen-clients/workspace/client'
 import { uiSaveAiShell, uiSaveAiShell_meta, uiSaveDock, uiSaveDock_meta, uiSaveExplorer, uiSaveExplorer_meta, uiSaveLayout, uiSaveLayout_meta, uiSavePanels, uiSavePanels_meta, uiSaveProjectCardBrowser, uiSaveProjectCardBrowser_meta } from '../gen-clients/workspace/client'
 import type {
@@ -126,6 +127,17 @@ let cachedModel: WorkspaceUIModel | null = null
 let loadPromise: Promise<WorkspaceUIModel> | null = null
 let writeQueue: Promise<void> = Promise.resolve()
 
+// Instance swap: the cached model belongs to the previous workspace actor
+// (local or remote). Without this reset the boot-restore of the right-panel
+// tab list keeps reading the OLD instance's layout, and any pending queued
+// save would fire against the NEW instance with a stale version.
+export function resetWorkspaceUICacheForSwap(): void {
+  cachedModel = null
+  loadPromise = null
+  writeQueue = Promise.resolve()
+}
+onInstanceSwap(resetWorkspaceUICacheForSwap)
+
 export async function loadWorkspaceUIModel(): Promise<WorkspaceUIModel> {
   if (cachedModel) {
     return cachedModel
@@ -144,6 +156,13 @@ export async function loadWorkspaceUIModel(): Promise<WorkspaceUIModel> {
 }
 
 export async function saveWorkspaceUIModel<K extends WorkspaceUIModelSaveKind>(kind: K, buildPayload: (model: WorkspaceUIModel) => WorkspaceUICommandPayload<K>): Promise<void> {
+  // Guest sessions (swapped to a remote instance) never persist UI state:
+  // the visited instance's workspace model belongs to its own clients. Two
+  // writers on one model otherwise clobber each other's layouts.
+  if (isActiveInstanceGuest()) {
+    console.log('[workspace-ui] guest session — UI save skipped')
+    return
+  }
   writeQueue = writeQueue
     .then(async () => {
       const model = await loadWorkspaceUIModel()

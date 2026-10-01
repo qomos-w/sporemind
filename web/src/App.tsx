@@ -422,6 +422,7 @@ export function App() {
   // plugin tabs.
   useEffect(() => {
     if (!loggedIn) return
+    console.log(`[App] registry-sync effect run for instance=${instanceId}`)
     appRegistry.clear()
     const stop = startAppRegistrySync(client)
     return () => { stop(); appRegistry.clear() }

@@ -1229,6 +1229,7 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
       if (layout.sidebarVisible !== undefined && !isMobileRef.current) {
         dispatch({ type: 'SET_SIDEBAR_VISIBLE', value: layout.sidebarVisible })
       }
+      console.log(`[AIShellLayout] layout restored: pluginTabs=${persistedPluginTabsRef.current?.length ?? 'null'} ids=${JSON.stringify((persistedPluginTabsRef.current ?? []).map(t => t.id))} order=${JSON.stringify(layout.rightTabOrder ?? [])} raw=${(JSON.stringify(layout) ?? '').slice(0, 240)}`)
       if (layout.sidebarWidth !== undefined) {
         setSidebarWidth(Math.max(180, layout.sidebarWidth))
       }
@@ -3952,7 +3953,9 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
       const wanted = persisted !== null
         ? new Set(persisted.map(t => t.id))
         : new Set(rightTabOrderRef.current.filter(id => id.startsWith('plugin-view-')))
-      appendPluginTabs(computeAutoOpenPluginTabs(registeredApps, existing, sessionClosedPluginTabsRef.current, wanted))
+      const additions = computeAutoOpenPluginTabs(registeredApps, existing, sessionClosedPluginTabsRef.current, wanted)
+      console.log(`[AIShellLayout] plugin boot restore: apps=${registeredApps.length} running=${seenRunningAppsRef.current.size} wanted=${wanted.size} additions=${additions.length}${additions.length === 0 ? ' (wanted-not-running: ' + registeredApps.filter(a => a.state !== 'running' && [...wanted].some(w => w.startsWith(`plugin-view-${a.id}`))).map(a => a.id).join(',') + ')' : ''}`)
+      appendPluginTabs(additions)
       return
     }
     const newlyRunning = registeredApps.filter(a => a.state === 'running' && !seenRunningAppsRef.current.has(a.id))
