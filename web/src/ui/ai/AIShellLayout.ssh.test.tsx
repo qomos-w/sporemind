@@ -69,14 +69,15 @@ vi.mock('../views/SshSessionView', () => ({
   SshSessionView: () => <div data-testid="ssh-session-view-stub" />,
 }))
 
-vi.mock('../../application/generated-client', () => ({
-  client: {
+vi.mock('../../application/generated-client', () => {
+  const client = {
     events: { onService: vi.fn(() => () => {}) },
     getTransport: vi.fn(() => null),
     invoke: vi.fn(async () => ({})),
     onConnected: vi.fn(() => () => {}),
-  },
-}))
+  }
+  return { client, getLocalGatewayClient: () => client }
+})
 
 vi.mock('../../application/backend-ready', () => ({
   waitForBackendReady: vi.fn(async () => undefined),

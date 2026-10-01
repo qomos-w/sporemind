@@ -26,6 +26,7 @@ vi.mock('../bindings/github.com/qomos-w/sporemind/pkg/desktop/app', () => ({
 vi.mock('./generated-client', () => ({
   client: { tag: 'client' },
   createTransport: vi.fn(),
+  getLocalGatewayClient: vi.fn(),
   rebindClient: vi.fn(),
 }))
 

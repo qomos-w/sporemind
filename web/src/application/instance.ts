@@ -15,7 +15,7 @@
 import { useSyncExternalStore } from 'react'
 import { GosporeClient } from '@qomos/gospore-client'
 import { Events } from '@wailsio/runtime'
-import { createTransport, rebindClient } from './generated-client'
+import { createTransport, getLocalGatewayClient, rebindClient } from './generated-client'
 import { GATEWAY_DEFAULT_PORT, getGatewayOverride, setGatewayOverride } from './gateway'
 import { isWails } from './runtime'
 import * as desktop from '../bindings/github.com/qomos-w/sporemind/pkg/desktop/app'
@@ -201,8 +201,11 @@ async function performSwap(target: string): Promise<void> {
     const wsUrl = await resolveTargetWsUrl(normalized)
     setGatewayOverride(wsUrl)
 
-    // 3. install a fresh client for the new instance.
-    rebindClient(createClient())
+    // 3. install a client for the new instance. Swapping back to local reuses
+    // the preserved local gateway client: building a second wails-raw client
+    // for this window would supersede (kill) the live local session that
+    // host-asset calls (browsermanager) are pinned to.
+    rebindClient(normalized === LOCAL_INSTANCE_ID ? getLocalGatewayClient() : createClient())
     clientRebound = true
 
     // 4. authenticate against the freshly-bound client. Capture the previous
@@ -225,12 +228,14 @@ async function performSwap(target: string): Promise<void> {
   } catch (err) {
     setGatewayOverride(previousOverride)
     if (clientRebound) {
-      // The forward rebind closed the previous transport, and the frame
-      // transport's close() is terminal (state → destroyed, no reconnect), so
-      // rebinding the previous client object would leave a dead socket. Rebuild
-      // a client for the previous instance instead — resolution now points back
-      // at the previous gateway via previousOverride.
-      rebindClient(createClient())
+      // The forward rebind closed the previous transport unless it was the
+      // preserved local session, and the frame transport's close() is terminal
+      // (state → destroyed, no reconnect), so rebinding a closed client object
+      // would leave a dead socket. Roll back to the preserved local client
+      // (still live) or rebuild a client for the previous instance —
+      // resolution now points back at the previous gateway via
+      // previousOverride.
+      rebindClient(from === LOCAL_INSTANCE_ID ? getLocalGatewayClient() : createClient())
     }
     if (authSnapshotTaken && providers.restoreAuthState) {
       providers.restoreAuthState(previousAuth)

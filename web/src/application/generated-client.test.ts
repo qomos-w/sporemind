@@ -1,6 +1,14 @@
 import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
-import { createTransport, connectClient, waitForClientReady, forceReconnectClient, client } from './generated-client'
-import { WebSocketTransport } from '@qomos/gospore-client'
+import {
+  createTransport,
+  connectClient,
+  waitForClientReady,
+  forceReconnectClient,
+  getLocalGatewayClient,
+  rebindClient,
+  client,
+} from './generated-client'
+import { WebSocketTransport, type GosporeClient } from '@qomos/gospore-client'
 import { WailsRawTransport } from './wails-raw-transport'
 import { recomputeRuntime } from './runtime'
 import { setDesktopConfigForTest } from './desktop-config'
@@ -9,6 +17,8 @@ import { __resetGatewayCacheForTests } from './gateway'
 vi.mock('../bindings/github.com/qomos-w/sporemind/pkg/desktop/app', () => ({
   GetGatewayAddr: vi.fn(async () => '127.0.0.1:18080'),
   WaitGatewayReady: vi.fn(async () => true),
+  // wails-bridge module-init (wails mode) exposes this on window.
+  EvalJSResult: vi.fn(),
 }))
 
 import * as desktop from '../bindings/github.com/qomos-w/sporemind/pkg/desktop/app'
@@ -201,5 +211,67 @@ describe('waitForClientReady', () => {
     ;(client as any).getTransport = () => fakeTransport
 
     await expect(waitForClientReady(50)).resolves.toBeUndefined()
+  })
+})
+
+describe('getLocalGatewayClient (single wails-raw session per window)', () => {
+  // Regression: the browser-manager pin used to construct its own
+  // WailsRawTransport, and the backend keeps ONE raw session per window — the
+  // pin's `connect` superseded (silently killed) the main session, so every
+  // gateway call hung after boot. The local pin must REUSE the boot client.
+
+  it('non-wails: returns the live shared client and follows rebinds', () => {
+    const originalClient = client
+    const originalGetTransport = client.getTransport.bind(client)
+    try {
+      const closeFn = vi.fn()
+      ;(client as any).getTransport = () => ({ close: closeFn })
+
+      expect(getLocalGatewayClient()).toBe(client)
+
+      const next = { getTransport: () => ({ close: vi.fn() }) } as unknown as GosporeClient
+      rebindClient(next)
+      expect(client).toBe(next)
+      // The previous non-local client is closed on rebind (swap semantics).
+      expect(closeFn).toHaveBeenCalledTimes(1)
+      expect(getLocalGatewayClient()).toBe(next)
+    } finally {
+      rebindClient(originalClient)
+      ;(client as any).getTransport = originalGetTransport
+    }
+  })
+
+  it('wails main window: pins to the boot client, never builds a second wails-raw session, and survives swaps', async () => {
+    ;(window as any).chrome = { webview: { postMessage: vi.fn() } }
+    try {
+      vi.resetModules()
+      const { WailsRawTransport: FreshWailsRawTransport } = await import('./wails-raw-transport')
+      const fresh = await import('./generated-client')
+
+      const bootClientRef = fresh.client
+      const bootTransport = bootClientRef.getTransport()
+      expect(bootTransport).toBeInstanceOf(FreshWailsRawTransport)
+      expect(fresh.getLocalGatewayClient()).toBe(bootClientRef)
+
+      const bootClose = vi.spyOn(bootTransport, 'close')
+      const remoteClose = vi.fn()
+      const remote = { getTransport: () => ({ close: remoteClose }) } as unknown as GosporeClient
+
+      // Swap away to a remote instance: the local session must be preserved.
+      fresh.rebindClient(remote)
+      expect(fresh.client).toBe(remote)
+      expect(bootClose).not.toHaveBeenCalled()
+      expect(fresh.getLocalGatewayClient()).toBe(bootClientRef)
+
+      // Swap back to local: reuses the preserved session, closes the remote.
+      fresh.rebindClient(fresh.getLocalGatewayClient())
+      expect(fresh.client).toBe(bootClientRef)
+      expect(remoteClose).toHaveBeenCalledTimes(1)
+      expect(bootClose).not.toHaveBeenCalled()
+    } finally {
+      delete (window as any).chrome
+      recomputeRuntime()
+      vi.resetModules()
+    }
   })
 })

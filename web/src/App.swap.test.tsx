@@ -101,6 +101,7 @@ vi.mock('./application/generated-client', () => ({
   // on the instance change.
   client: { tag: 'initial' },
   createTransport: () => ({ tag: 'transport' }),
+  getLocalGatewayClient: () => ({ tag: 'local' }),
   rebindClient: vi.fn(),
   onReconnectStateChange: () => () => {},
   forceReconnectClient: vi.fn(),

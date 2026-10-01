@@ -130,7 +130,7 @@ function createWebSocketTransport(): WebSocketTransport {
   return transport
 }
 
-export function createWailsRawTransport(): WailsRawTransport {
+function createWailsRawTransport(): WailsRawTransport {
   // Channel-loss observability: every transId gap is rate-limited-reported
   // into the oracle diagnostics ring (ProblemsPanel) with the cumulative
   // gapStats attached, so multi-agent frame loss on the Wails channel is
@@ -185,23 +185,61 @@ export function createTransport(): Transport {
 
 export let client: GosporeClient = new GosporeClient(createTransport())
 
+// The boot client is this window's LOCAL gateway client when the window boots
+// local (the main window). It owns the window's single wails-raw session: the
+// desktop backend keeps ONE raw session per window, and a second `connect`
+// envelope supersedes — silently kills — the first (startSession in
+// pkg/desktop/wails_transport.go). It therefore survives instance swaps and
+// carries host-asset calls (browsermanager native windows) that must reach the
+// LOCAL gateway regardless of the active instance.
+const bootClient = client
+const bootIsLocal = isWails() && !getRuntime().signals.serverParam
+
+// Lazily-created local gateway client for windows whose boot client is NOT
+// local (a dedicated ?conn= remote window): still exactly one wails-raw
+// session per window, because such a window's boot client dials WebSocket.
+let localFallbackClient: GosporeClient | null = null
+
+/** The LOCAL gateway client of this desktop host.
+ *
+ * Wails main window: the preserved boot client (never swapped away, never
+ * closed). Dedicated remote (?conn=) window: a lazily created wails-raw
+ * client hardwired to the in-process local gateway. Outside wails the live
+ * shared `client` (browser dev / standalone) — there is no separate local
+ * host to pin to. */
+export function getLocalGatewayClient(): GosporeClient {
+  if (!isWails()) return client
+  if (bootIsLocal) return bootClient
+  localFallbackClient ??= new GosporeClient(createWailsRawTransport())
+  return localFallbackClient
+}
+
+function isLocalSessionOwner(candidate: GosporeClient): boolean {
+  return candidate === bootClient ? bootIsLocal : candidate === localFallbackClient
+}
+
 /**
  * Install a new GosporeClient as the live `client` binding (every importer of
  * `client` follows automatically — it is a live ESM binding). The previous
  * transport is closed best-effort: the frame transport's close() is terminal,
  * which is fine because a rebind is a full instance swap — every prior
  * subscription belongs to the old instance and is meant to be dropped as the
- * UI subtree remounts on the new instance id. The auth-failure counter is
- * reset so the new instance starts clean.
+ * UI subtree remounts on the new instance id. The local gateway client is the
+ * exception: closing it would tear down the window's only wails-raw session
+ * (host assets like browsermanager must keep working mid-swap), so it is
+ * preserved and rebinding back to it reuses the live session. The
+ * auth-failure counter is reset so the new instance starts clean.
  */
 export function rebindClient(next: GosporeClient): void {
   const previous = client
-  try {
-    const transport = previous.getTransport() as Partial<ManagedTransport>
-    if (transport && typeof transport.close === 'function') transport.close()
-  } catch (err) {
-    // Best-effort: a transport that refuses to close must never block a swap.
-    console.warn('[generated-client] closing previous transport failed:', err)
+  if (!isLocalSessionOwner(previous)) {
+    try {
+      const transport = previous.getTransport() as Partial<ManagedTransport>
+      if (transport && typeof transport.close === 'function') transport.close()
+    } catch (err) {
+      // Best-effort: a transport that refuses to close must never block a swap.
+      console.warn('[generated-client] closing previous transport failed:', err)
+    }
   }
   client = next
   authFailCount = 0
