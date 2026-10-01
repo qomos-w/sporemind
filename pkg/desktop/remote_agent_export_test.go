@@ -47,6 +47,7 @@ func newRAEFakeRemote(t *testing.T) *raeFakeRemote {
 		agents: domain.AgentRefListResp{Items: []domain.AgentRef{{
 			ActorID:      "agent-1",
 			DisplayName:  "Alpha",
+			Title:        "fix login bug",
 			AgentKind:    "coder",
 			Status:       "active",
 			ProjectName:  "proj",
@@ -185,6 +186,7 @@ func TestRemoteAgentListProjectsBriefsAndAuthenticates(t *testing.T) {
 	want := RemoteAgentBrief{
 		ActorID:      "agent-1",
 		DisplayName:  "Alpha",
+		Title:        "fix login bug",
 		AgentKind:    "coder",
 		Status:       "active",
 		ProjectName:  "proj",

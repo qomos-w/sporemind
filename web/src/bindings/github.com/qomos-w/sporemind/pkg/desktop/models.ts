@@ -396,6 +396,7 @@ export class ProbeResult {
 export class RemoteAgentBrief {
     "actorId": string;
     "displayName": string;
+    "title"?: string;
     "agentKind": string;
     "status"?: string;
     "projectName"?: string;

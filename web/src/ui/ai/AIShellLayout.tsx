@@ -6748,6 +6748,7 @@ export const AIShellLayout: React.FC<AIShellLayoutProps> = ({
           open={!!remoteImportAgent}
           agent={remoteImportAgent ? {
             actorId: remoteImportAgent.ActorId,
+            id: remoteImportAgent.Id,
             displayName: agentDisplayName(remoteImportAgent.Title, remoteImportAgent.DisplayName),
           } : null}
           onClose={() => { setRemoteImportAgent(null) }}

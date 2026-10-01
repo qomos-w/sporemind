@@ -3,7 +3,7 @@ import { AlertTriangle, ArrowLeft, HardDrive, Loader2, RefreshCw, Server } from 
 import { useI18n } from '../../../i18n'
 import { Modal } from '../../../ui/components/Modal'
 import { AgentAvatarContent } from './AgentAvatarContent'
-import { avatarHue } from '../lib/agent-avatar'
+import { agentDisplayName, avatarHue } from '../lib/agent-avatar'
 import {
   listRemoteAgents,
   listRemoteConnections,
@@ -15,6 +15,8 @@ import './RemoteImportModal.css'
 
 export interface RemoteImportAgentRef {
   actorId: string
+  /** Workspace registry Id (`AgentRef.Id`) — enables the post-import title mirror. */
+  id?: string
   displayName: string
 }
 
@@ -149,7 +151,10 @@ export function RemoteImportModal({ open, agent, onClose }: RemoteImportModalPro
     setImporting(true)
     setImportError('')
     try {
-      const result = await remoteImportReplaceContext(connection.id, remoteAgent.ActorId, agent.actorId)
+      const result = await remoteImportReplaceContext(connection.id, remoteAgent.ActorId, agent.actorId, {
+        localAgentId: agent.id,
+        remoteTitle: remoteAgent.Title,
+      })
       setAcceptedTurns(result?.acceptedTurns ?? 0)
     } catch (err) {
       setImportError(errorText(err))
@@ -294,7 +299,7 @@ export function RemoteImportModal({ open, agent, onClose }: RemoteImportModalPro
                   >
                     <RemoteAgentAvatar agent={ra} />
                     <span className="remote-import-item-text">
-                      <span className="remote-import-item-name">{ra.DisplayName || ra.ActorId}</span>
+                      <span className="remote-import-item-name">{agentDisplayName(ra.Title, ra.DisplayName || ra.ActorId)}</span>
                       {ra.ProjectName ? <span className="remote-import-item-sub">{ra.ProjectName}</span> : null}
                     </span>
                     {ra.Status ? (
@@ -312,7 +317,7 @@ export function RemoteImportModal({ open, agent, onClose }: RemoteImportModalPro
             <div className="remote-import-heading">{t('remoteImport.remoteAgent')}</div>
             <div className="remote-import-confirm-agent" data-testid="remote-import-confirm-agent">
               {remoteAgent ? <RemoteAgentAvatar agent={remoteAgent} /> : <HardDrive size={14} />}
-              <span>{remoteAgent?.DisplayName || remoteAgent?.ActorId || ''}</span>
+              <span>{agentDisplayName(remoteAgent?.Title, remoteAgent?.DisplayName || remoteAgent?.ActorId || '')}</span>
             </div>
             <div className="remote-import-warning" data-testid="remote-import-warning">
               <AlertTriangle size={14} />

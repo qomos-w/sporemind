@@ -92,10 +92,35 @@ describe('RemoteImportModal', () => {
     expect(warning!.textContent).toContain('remoteImport.replaceWarning')
     expect(warning!.textContent).toContain('"agent":"Local A"')
 
-    // Confirming calls the replace with (connId, remoteAgentActorId, localAgentActorId).
+    // Confirming calls the replace with (connId, remoteAgentActorId,
+    // localAgentActorId) plus the title-mirror options.
     await click(byTestId('remote-import-confirm'))
-    expect(hoisted.remoteImportReplaceContext).toHaveBeenCalledWith('c1', 'ra1', 'local-1')
+    expect(hoisted.remoteImportReplaceContext).toHaveBeenCalledWith('c1', 'ra1', 'local-1', {
+      localAgentId: undefined,
+      remoteTitle: undefined,
+    })
     expect(byTestId('remote-import-success')!.textContent).toContain('remoteImport.success')
+  })
+
+  it('shows the remote conversation title and passes it to the import', async () => {
+    hoisted.listRemoteAgents.mockResolvedValue([
+      { ...REMOTE_AGENT, Title: 'fix login bug' },
+    ])
+    await render(true, { actorId: 'local-1', id: 'ag-1', displayName: 'Local A' })
+
+    await click(byTestId('remote-import-connection-c1'))
+    const row = byTestId('remote-import-agent-ra1')!
+    // Title wins over DisplayName, matching the sidebar naming convention.
+    expect(row.querySelector('.remote-import-item-name')!.textContent).toBe('fix login bug')
+
+    await click(byTestId('remote-import-agent-ra1'))
+    expect(byTestId('remote-import-confirm-agent')!.textContent).toContain('fix login bug')
+
+    await click(byTestId('remote-import-confirm'))
+    expect(hoisted.remoteImportReplaceContext).toHaveBeenCalledWith('c1', 'ra1', 'local-1', {
+      localAgentId: 'ag-1',
+      remoteTitle: 'fix login bug',
+    })
   })
 
   it('shows the add-a-connection guidance when no connections are saved', async () => {

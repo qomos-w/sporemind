@@ -17,6 +17,10 @@ vi.mock('../gen-clients/local/client', () => ({
   sessionImport: vi.fn(),
 }))
 
+vi.mock('../gen-clients/workspace/client', () => ({
+  updateAgent: vi.fn(),
+}))
+
 // The UI refresh is a dynamic import of the timeline singleton; mock it so the
 // data layer is tested without pulling in React.
 vi.mock('../ui/ai/hooks/useTimelineManager', () => ({
@@ -25,6 +29,7 @@ vi.mock('../ui/ai/hooks/useTimelineManager', () => ({
 
 import * as desktopApp from '../bindings/github.com/qomos-w/sporemind/pkg/desktop/app'
 import * as localClient from '../gen-clients/local/client'
+import * as workspaceClient from '../gen-clients/workspace/client'
 import { getTimelineManager } from '../ui/ai/hooks/useTimelineManager'
 import { client } from './generated-client'
 import { listRemoteConnections, listRemoteAgents, remoteImportReplaceContext } from './remote-import'
@@ -34,6 +39,7 @@ const mocks = {
   remoteAgentList: vi.mocked(desktopApp.RemoteAgentList),
   contextExport: vi.mocked(desktopApp.RemoteAgentContextExport),
   sessionImport: vi.mocked(localClient.sessionImport),
+  updateAgent: vi.mocked(workspaceClient.updateAgent),
   getTimelineManager: vi.mocked(getTimelineManager),
 }
 
@@ -77,6 +83,7 @@ describe('listRemoteAgents', () => {
       {
         actorId: 'ra1',
         displayName: 'Remote One',
+        title: 'fix login bug',
         agentKind: 'coder',
         status: 'running',
         projectName: 'proj',
@@ -88,6 +95,7 @@ describe('listRemoteAgents', () => {
       {
         ActorId: 'ra1',
         DisplayName: 'Remote One',
+        Title: 'fix login bug',
         AgentKind: 'coder',
         Status: 'running',
         ProjectName: 'proj',
@@ -123,9 +131,46 @@ describe('remoteImportReplaceContext', () => {
       NextTurnOrder: 3,
     })
     expect(req).not.toHaveProperty('Goal')
+    // No title options: the title mirror must stay silent.
+    expect(mocks.updateAgent).not.toHaveBeenCalled()
     // The local agent's timeline is re-fetched so an already-open conversation
     // converges to the imported history.
     expect(reconcileSpy).toHaveBeenCalledWith('local-9')
+  })
+
+  it('mirrors the remote title onto the local agent after the import', async () => {
+    mocks.contextExport.mockResolvedValue(forkResponse() as never)
+    mocks.sessionImport.mockResolvedValue({ AcceptedTurns: 1, ActiveHead: 0 } as never)
+    mocks.updateAgent.mockResolvedValue({} as never)
+
+    await remoteImportReplaceContext('c1', 'ra1', 'local-9', {
+      localAgentId: 'ag-9',
+      remoteTitle: 'fix login bug',
+    })
+
+    expect(mocks.updateAgent).toHaveBeenCalledTimes(1)
+    const [calledClient, req] = mocks.updateAgent.mock.calls[0]!
+    expect(calledClient).toBe(client)
+    expect(req).toEqual({ AgentId: 'ag-9', Title: 'fix login bug' })
+  })
+
+  it('never fails the import when the title mirror fails, and skips it for an empty remote title', async () => {
+    mocks.contextExport.mockResolvedValue(forkResponse() as never)
+    mocks.sessionImport.mockResolvedValue({ AcceptedTurns: 1, ActiveHead: 0 } as never)
+    mocks.updateAgent.mockRejectedValueOnce(new Error('role denied'))
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    await expect(
+      remoteImportReplaceContext('c1', 'ra1', 'local-9', { localAgentId: 'ag-9', remoteTitle: 't' }),
+    ).resolves.toEqual({ acceptedTurns: 1 })
+    expect(warn).toHaveBeenCalled()
+
+    // Empty remote title: no update_agent call at all.
+    await expect(
+      remoteImportReplaceContext('c1', 'ra1', 'local-9', { localAgentId: 'ag-9', remoteTitle: '' }),
+    ).resolves.toEqual({ acceptedTurns: 1 })
+    expect(mocks.updateAgent).toHaveBeenCalledTimes(1)
+    warn.mockRestore()
   })
 
   it('still resolves when the timeline refresh fails', async () => {

@@ -17,6 +17,7 @@
 import * as desktopApp from '../bindings/github.com/qomos-w/sporemind/pkg/desktop/app'
 import { client } from './generated-client'
 import * as localClient from '../gen-clients/local/client'
+import * as workspace from '../gen-clients/workspace/client'
 import type { AgentSessionImportReq } from '../gen-types/aigen'
 
 /** Minimal view of a saved remote connection (subset of the host's view type). */
@@ -31,6 +32,7 @@ export interface RemoteConnectionBrief {
 export interface RemoteAgentBrief {
   ActorId: string
   DisplayName: string
+  Title?: string
   AgentKind?: string
   Status?: string
   ProjectName?: string
@@ -64,11 +66,22 @@ export async function listRemoteAgents(connId: string): Promise<RemoteAgentBrief
   return (agents ?? []).map(a => ({
     ActorId: a.actorId,
     DisplayName: a.displayName,
+    Title: a.title,
     AgentKind: a.agentKind,
     Status: a.status,
     ProjectName: a.projectName,
     LastActivity: a.lastActivity,
   }))
+}
+
+/**
+ * Options for the title mirror: the local agent's workspace registry Id (the
+ * `AgentId` workspace.update_agent matches) and the remote agent's
+ * conversation title captured at pick time.
+ */
+export interface RemoteImportTitleOptions {
+  localAgentId?: string
+  remoteTitle?: string
 }
 
 /**
@@ -82,6 +95,11 @@ export async function listRemoteAgents(connId: string): Promise<RemoteAgentBrief
  * matches `AgentSessionImportReq` field-for-field, so no mapping is needed
  * except dropping `Goal`: the goal is a live mode-component runtime state, so
  * importing it across instances is harmful (the clone precedent drops it too).
+ *
+ * When both title options are present the remote conversation title is mirrored
+ * onto the local agent via `workspace.update_agent` (best-effort: a failure is
+ * logged and never fails the already-completed import). An empty remote title
+ * leaves the local title untouched.
  *
  * After the write the local agent's timeline is re-fetched so an already-open
  * conversation converges to the imported history. The import callable emits a
@@ -97,6 +115,7 @@ export async function remoteImportReplaceContext(
   connId: string,
   remoteAgentActorId: string,
   localAgentActorId: string,
+  title?: RemoteImportTitleOptions,
 ): Promise<{ acceptedTurns: number }> {
   const snapshot = await desktopApp.RemoteAgentContextExport(connId, remoteAgentActorId)
 
@@ -112,6 +131,14 @@ export async function remoteImportReplaceContext(
   } as unknown as AgentSessionImportReq
 
   const resp = await localClient.sessionImport(client, req, { target: localAgentActorId })
+
+  if (title?.localAgentId && title.remoteTitle) {
+    try {
+      await workspace.updateAgent(client, { AgentId: title.localAgentId, Title: title.remoteTitle })
+    } catch (err) {
+      console.warn('[remote-import] title mirror skipped:', err)
+    }
+  }
 
   // Best-effort UI convergence: the import already succeeded, so a refresh
   // failure must not surface as an import failure.

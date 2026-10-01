@@ -27,6 +27,7 @@ const (
 type RemoteAgentBrief struct {
 	ActorID      string `json:"actorId"`
 	DisplayName  string `json:"displayName"`
+	Title        string `json:"title,omitempty"`
 	AgentKind    string `json:"agentKind"`
 	Status       string `json:"status,omitempty"`
 	ProjectName  string `json:"projectName,omitempty"`
@@ -195,6 +196,7 @@ func (a *App) RemoteAgentList(connID string) ([]RemoteAgentBrief, error) {
 		briefs = append(briefs, RemoteAgentBrief{
 			ActorID:      ref.ActorID,
 			DisplayName:  ref.DisplayName,
+			Title:        ref.Title,
 			AgentKind:    ref.AgentKind,
 			Status:       ref.Status,
 			ProjectName:  ref.ProjectName,
