@@ -157,6 +157,7 @@ export function RemoteImportModal({ open, agent, onClose }: RemoteImportModalPro
       })
       setAcceptedTurns(result?.acceptedTurns ?? 0)
     } catch (err) {
+      console.error('[RemoteImportModal] import failed:', err)
       setImportError(errorText(err))
     } finally {
       setImporting(false)
@@ -326,7 +327,10 @@ export function RemoteImportModal({ open, agent, onClose }: RemoteImportModalPro
             {importError ? (
               <div className="remote-import-error" role="alert" data-testid="remote-import-error">
                 <AlertTriangle size={14} />
-                <span>{t('remoteImport.failed')}</span>
+                <span>
+                  {t('remoteImport.failed')}
+                  {importError ? ` — ${importError}` : ''}
+                </span>
               </div>
             ) : null}
           </div>

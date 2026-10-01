@@ -171,6 +171,34 @@ func raeAppWithConnection(t *testing.T, srv *httptest.Server) *App {
 	}}}}
 }
 
+func TestRemoteInvokeBudgetRejectsOversizedBodies(t *testing.T) {
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		// One byte over a 1 MiB budget.
+		_, _ = w.Write(make([]byte, 1<<20+1))
+	}))
+	defer srv.Close()
+
+	var resp map[string]any
+	err := remoteInvokeBudget(srv.URL, "", "local.session_fork", "", nil, &resp, remoteSmallTimeout, 1<<20)
+	if err == nil || !strings.Contains(err.Error(), "exceeds the 1 MiB budget") {
+		t.Fatalf("want explicit over-budget error, got %v", err)
+	}
+
+	// At exactly the cap the body must decode (or fail as JSON, never as a
+	// truncation): the budget only guards size, not content.
+	srv2 := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte(`{"ok":true}`))
+	}))
+	defer srv2.Close()
+	if err := remoteInvokeBudget(srv2.URL, "", "local.session_fork", "", nil, &resp, remoteSmallTimeout, 1<<20); err != nil {
+		t.Fatalf("small body within budget must succeed, got %v", err)
+	}
+	if resp["ok"] != true {
+		t.Fatalf("response not decoded: %+v", resp)
+	}
+}
+
 func TestRemoteAgentListProjectsBriefsAndAuthenticates(t *testing.T) {
 	fake := newRAEFakeRemote(t)
 	app := raeAppWithConnection(t, fake.Server)

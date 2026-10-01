@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 
 	"github.com/qomos-w/sporemind/pkg/domain"
 )
@@ -19,6 +20,21 @@ import (
 const (
 	remoteWorkspaceListAgentsCallID = "workspace.list_agents"
 	remoteSessionForkCallID         = "local.session_fork"
+)
+
+// Per-call HTTP budgets. Login and list_agents responses are tiny JSON, so
+// they keep the 10s / 4 MiB budget. local.session_fork returns the agent's
+// WHOLE session snapshot: long conversations — or ones containing pasted
+// images — reach tens of MiB and take seconds to serialize on the remote, so
+// both the deadline and the read cap must scale. Reading past the cap fails
+// with an explicit error; silently truncating the body used to surface as an
+// unrelated "unexpected end of JSON input" decode failure.
+const (
+	remoteSmallTimeout = 10 * time.Second
+	remoteSmallMaxBody = 4 << 20
+
+	remoteExportTimeout = 120 * time.Second
+	remoteExportMaxBody = 64 << 20
 )
 
 // RemoteAgentBrief is the frontend-facing summary of one agent on a remote
@@ -94,9 +110,17 @@ func (a *App) remoteSession(connID string) (baseURL, token string, err error) {
 }
 
 // remoteInvoke POSTs a JSON request to a remote gateway callable and decodes
-// the JSON response. When target is non-empty it is attached as the ?target
-// routing query (gateway actor addressing); a nil req sends an empty object.
+// the JSON response, under the small-call budget (10s / 4 MiB). When target is
+// non-empty it is attached as the ?target routing query (gateway actor
+// addressing); a nil req sends an empty object.
 func remoteInvoke(baseURL, token, callID, target string, req, resp any) error {
+	return remoteInvokeBudget(baseURL, token, callID, target, req, resp, remoteSmallTimeout, remoteSmallMaxBody)
+}
+
+// remoteInvokeBudget is remoteInvoke with an explicit per-call budget. The
+// response body is read up to maxBody bytes; a body one byte over the cap
+// fails loudly instead of being truncated into a decode error.
+func remoteInvokeBudget(baseURL, token, callID, target string, req, resp any, timeout time.Duration, maxBody int64) error {
 	body := []byte("{}")
 	if req != nil {
 		encoded, err := json.Marshal(req)
@@ -118,15 +142,18 @@ func remoteInvoke(baseURL, token, callID, target string, req, resp any) error {
 		httpReq.Header.Set("Authorization", "Bearer "+token)
 	}
 
-	client := &http.Client{Timeout: remoteAuthTimeout}
+	client := &http.Client{Timeout: timeout}
 	httpResp, err := client.Do(httpReq)
 	if err != nil {
 		return fmt.Errorf("desktop: remote call %s: %w", callID, err)
 	}
 	defer httpResp.Body.Close()
-	raw, err := io.ReadAll(io.LimitReader(httpResp.Body, 1<<22))
+	raw, err := io.ReadAll(io.LimitReader(httpResp.Body, maxBody+1))
 	if err != nil {
 		return fmt.Errorf("desktop: read %s response: %w", callID, err)
+	}
+	if int64(len(raw)) > maxBody {
+		return fmt.Errorf("desktop: %s response exceeds the %d MiB budget — the remote session snapshot is too large to import", callID, maxBody>>20)
 	}
 	if httpResp.StatusCode != http.StatusOK && httpResp.StatusCode != http.StatusNoContent {
 		return classifyRemoteError(callID, target, httpResp.StatusCode, raw)
@@ -222,7 +249,7 @@ func (a *App) RemoteAgentContextExport(connID, agentID string) (RemoteAgentConte
 	// An empty AtTurnID is the full-snapshot request; the typed zero value
 	// marshals to {} and decodes back to the zero AtTurnID on the remote.
 	var resp domain.AgentSessionForkResp
-	if err := remoteInvoke(baseURL, token, remoteSessionForkCallID, agentID, domain.AgentSessionForkReq{}, &resp); err != nil {
+	if err := remoteInvokeBudget(baseURL, token, remoteSessionForkCallID, agentID, domain.AgentSessionForkReq{}, &resp, remoteExportTimeout, remoteExportMaxBody); err != nil {
 		return RemoteAgentContext{}, err
 	}
 	return resp, nil
