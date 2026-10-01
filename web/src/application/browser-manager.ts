@@ -1,4 +1,6 @@
-import { client } from './generated-client'
+import { GosporeClient } from '@qomos/gospore-client'
+import { client, createWailsRawTransport } from './generated-client'
+import { isWails } from './runtime'
 import * as browserClient from '../gen-clients/browsermanager/client'
 import { onServiceEventResilient } from './resilient-service-events'
 import type { BrowserManagerCreateReq, BrowserManagerUpdateReq, BrowserManagerOpenGlobalReq } from '../gen-types/browser'
@@ -8,11 +10,26 @@ import type { BrowserCookieEntry } from '../gen-types/browser.cookie'
 const LIST_RETRIES = 2
 const LIST_RETRY_DELAY_MS = 500
 
+// Native browser windows are assets of THIS desktop host; the browsermanager
+// actor that owns them lives on the LOCAL gateway. Pin every browser call to
+// a dedicated wails-raw client (hardwired to the in-process local gateway,
+// immune to instance-swap overrides) so the browser tab strip keeps working
+// when the active instance is swapped to a remote connection whose
+// browsermanager knows nothing about our windows.
+let pinnedLocalBrowserClient: GosporeClient | null = null
+function browserTarget(): GosporeClient {
+  if (isWails()) {
+    pinnedLocalBrowserClient ??= new GosporeClient(createWailsRawTransport())
+    return pinnedLocalBrowserClient
+  }
+  return client
+}
+
 export async function listBrowserWindows() {
   let lastErr: unknown
   for (let i = 0; i <= LIST_RETRIES; i++) {
     try {
-      const resp = await browserClient.list(client)
+      const resp = await browserClient.list(browserTarget())
       return resp.Items ?? []
     } catch (e) {
       lastErr = e
@@ -44,11 +61,11 @@ export function proxySignature(cfg: { Proxy: string; ProxyMode: string }): strin
 
 export async function openBrowserWindow(name: string, url: string, proxy = '', proxyMode: BrowserProxyMode = 'system') {
   const req: BrowserManagerCreateReq = { Name: name, Url: url, Proxy: proxy, ProxyMode: proxyMode, Hidden: false }
-  return browserClient.create(client, req)
+  return browserClient.create(browserTarget(), req)
 }
 
 export async function closeBrowserWindow(id: string) {
-  await browserClient.remove(client, { Id: id })
+  await browserClient.remove(browserTarget(), { Id: id })
 }
 
 export async function closeBrowserInstance(id: string) {
@@ -81,30 +98,30 @@ export async function updateBrowserWindowUrl(id: string, url: string) {
 }
 
 export async function updateBrowserWindow(req: BrowserManagerUpdateReq) {
-  return browserClient.update(client, req)
+  return browserClient.update(browserTarget(), req)
 }
 
 export async function navigateBrowserWindow(id: string, url: string) {
-  return browserClient.navigate(client, { Id: id, Url: url })
+  return browserClient.navigate(browserTarget(), { Id: id, Url: url })
 }
 
 export async function openGlobalBrowser(url: string) {
   const req: BrowserManagerOpenGlobalReq = { Url: url }
-  return browserClient.openGlobal(client, req)
+  return browserClient.openGlobal(browserTarget(), req)
 }
 
 export function onBrowserManagerEvent(handler: (e: BrowserManagerEvent) => void): () => void {
-  return onServiceEventResilient(client, 'browsermanager', 'browser_manager_event', handler as (payload: unknown) => void)
+  return onServiceEventResilient(browserTarget(), 'browsermanager', 'browser_manager_event', handler as (payload: unknown) => void)
 }
 
 /** Export cookies of a browser instance, grouped by domain. */
 export async function exportBrowserCookies(id: string): Promise<Record<string, BrowserCookieEntry[]>> {
-  const resp = await browserClient.exportCookies(client, { Id: id })
+  const resp = await browserClient.exportCookies(browserTarget(), { Id: id })
   return resp.Cookies ?? {}
 }
 
 /** Import cookies into a browser instance; returns the number of cookies written. */
 export async function importBrowserCookies(id: string, cookies: Record<string, BrowserCookieEntry[]>): Promise<number> {
-  const resp = await browserClient.importCookies(client, { Id: id, Cookies: cookies })
+  const resp = await browserClient.importCookies(browserTarget(), { Id: id, Cookies: cookies })
   return resp.Imported
 }

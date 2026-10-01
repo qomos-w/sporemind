@@ -130,7 +130,7 @@ function createWebSocketTransport(): WebSocketTransport {
   return transport
 }
 
-function createWailsRawTransport(): WailsRawTransport {
+export function createWailsRawTransport(): WailsRawTransport {
   // Channel-loss observability: every transId gap is rate-limited-reported
   // into the oracle diagnostics ring (ProblemsPanel) with the cumulative
   // gapStats attached, so multi-agent frame loss on the Wails channel is

@@ -1,7 +1,9 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, type CSSProperties } from 'react'
 import { AlertTriangle, ArrowLeft, HardDrive, Loader2, RefreshCw, Server } from 'lucide-react'
 import { useI18n } from '../../../i18n'
 import { Modal } from '../../../ui/components/Modal'
+import { AgentAvatarContent } from './AgentAvatarContent'
+import { avatarHue } from '../lib/agent-avatar'
 import {
   listRemoteAgents,
   listRemoteConnections,
@@ -41,6 +43,31 @@ function errorText(err: unknown): string {
  * local agent's conversation history: pick a saved connection -> pick a remote
  * agent -> confirm. Data access goes through web/src/application/remote-import.
  */
+/** Remote agent row styled like the scheduled-task agent dropdown rows:
+ * sidebar-identical avatar (hue from ActorId, coordinator mushroom, paused
+ * glyph), name + project second line, live status right-aligned. */
+function RemoteAgentAvatar({ agent }: { agent: RemoteAgentBrief }) {
+  const cls = [
+    'ai-sidebar-session-avatar',
+    (agent.AgentKind ?? '').toLowerCase() === 'coordinator' ? 'coordinator' : '',
+  ].filter(Boolean).join(' ')
+  return (
+    <span className={cls} style={{ '--avatar-hue': avatarHue(agent.ActorId) } as CSSProperties}>
+      <AgentAvatarContent
+        agent={{ DisplayName: agent.DisplayName || agent.ActorId, AgentKind: agent.AgentKind ?? '', Status: agent.Status }}
+        size={15}
+        pauseSize={8}
+      />
+    </span>
+  )
+}
+
+function remoteAgentStatusClass(status: string): string {
+  if (/error|fail/i.test(status)) return 'is-error'
+  if (/work|run|busy/i.test(status)) return 'is-working'
+  return ''
+}
+
 export function RemoteImportModal({ open, agent, onClose }: RemoteImportModalProps) {
   const { t } = useI18n()
 
@@ -265,11 +292,16 @@ export function RemoteImportModal({ open, agent, onClose }: RemoteImportModalPro
                     onClick={() => handlePickAgent(ra)}
                     data-testid={`remote-import-agent-${ra.ActorId}`}
                   >
-                    <Server size={14} />
+                    <RemoteAgentAvatar agent={ra} />
                     <span className="remote-import-item-text">
                       <span className="remote-import-item-name">{ra.DisplayName || ra.ActorId}</span>
                       {ra.ProjectName ? <span className="remote-import-item-sub">{ra.ProjectName}</span> : null}
                     </span>
+                    {ra.Status ? (
+                      <span className={`remote-import-agent-status ${remoteAgentStatusClass(ra.Status)}`.trim()}>
+                        {ra.Status}
+                      </span>
+                    ) : null}
                   </button>
                 ))}
               </div>
@@ -279,7 +311,7 @@ export function RemoteImportModal({ open, agent, onClose }: RemoteImportModalPro
           <div className="remote-import-step" data-testid="remote-import-confirm-step">
             <div className="remote-import-heading">{t('remoteImport.remoteAgent')}</div>
             <div className="remote-import-confirm-agent" data-testid="remote-import-confirm-agent">
-              <HardDrive size={14} />
+              {remoteAgent ? <RemoteAgentAvatar agent={remoteAgent} /> : <HardDrive size={14} />}
               <span>{remoteAgent?.DisplayName || remoteAgent?.ActorId || ''}</span>
             </div>
             <div className="remote-import-warning" data-testid="remote-import-warning">

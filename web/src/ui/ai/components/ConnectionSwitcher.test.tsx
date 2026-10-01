@@ -116,9 +116,11 @@ describe('ConnectionSwitcher', () => {
   }
 
   it('renders nothing outside wails', async () => {
-    ;(isWails as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce(false)
+    const wailsMock = isWails as unknown as ReturnType<typeof vi.fn>
+    wailsMock.mockReturnValue(false)
     await renderSwitcher()
     expect(container.querySelector('.ai-sidebar-connection-menu')).toBeNull()
+    wailsMock.mockReturnValue(true)
   })
 
   it('lists local + saved connections and switches instance on click', async () => {

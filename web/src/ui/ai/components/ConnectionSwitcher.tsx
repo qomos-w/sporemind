@@ -57,6 +57,13 @@ export function ConnectionSwitcher() {
     }
   }, [])
 
+  // Load the saved-connection list on mount too, not only when the popover
+  // opens: this component lives inside the instance-keyed subtree, so every
+  // swap remounts it. Without the mount fetch the trigger icon falls back to
+  // the local drive even when the active instance is a remote connection.
+  useEffect(() => {
+    void refresh()
+  }, [refresh])
   useEffect(() => {
     if (!open) return
     void refresh()
