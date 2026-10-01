@@ -99,7 +99,7 @@ func (f *raeFakeRemote) handle(w http.ResponseWriter, r *http.Request) {
 		}
 		_ = json.NewEncoder(w).Encode(f.agents)
 
-	case "/api/local.session_fork":
+	case "/api/session_fork":
 		f.forkAuth = r.Header.Get("Authorization")
 		f.forkTarget = r.URL.Query().Get("target")
 		raw, _ := json.Marshal(mustDecodeAny(r))
@@ -180,7 +180,7 @@ func TestRemoteInvokeBudgetRejectsOversizedBodies(t *testing.T) {
 	defer srv.Close()
 
 	var resp map[string]any
-	err := remoteInvokeBudget(srv.URL, "", "local.session_fork", "", nil, &resp, remoteSmallTimeout, 1<<20)
+	err := remoteInvokeBudget(srv.URL, "", "session_fork", "", nil, &resp, remoteSmallTimeout, 1<<20)
 	if err == nil || !strings.Contains(err.Error(), "exceeds the 1 MiB budget") {
 		t.Fatalf("want explicit over-budget error, got %v", err)
 	}
@@ -191,7 +191,7 @@ func TestRemoteInvokeBudgetRejectsOversizedBodies(t *testing.T) {
 		_, _ = w.Write([]byte(`{"ok":true}`))
 	}))
 	defer srv2.Close()
-	if err := remoteInvokeBudget(srv2.URL, "", "local.session_fork", "", nil, &resp, remoteSmallTimeout, 1<<20); err != nil {
+	if err := remoteInvokeBudget(srv2.URL, "", "session_fork", "", nil, &resp, remoteSmallTimeout, 1<<20); err != nil {
 		t.Fatalf("small body within budget must succeed, got %v", err)
 	}
 	if resp["ok"] != true {

@@ -19,7 +19,10 @@ import (
 // was required for agent context import.
 const (
 	remoteWorkspaceListAgentsCallID = "workspace.list_agents"
-	remoteSessionForkCallID         = "local.session_fork"
+	// Bare call ID on the target agent (routed via ?target=), matching the
+	// generated local client — the "local." module prefix is NOT part of the
+	// wire call ID.
+	remoteSessionForkCallID = "session_fork"
 )
 
 // Per-call HTTP budgets. Login and list_agents responses are tiny JSON, so
