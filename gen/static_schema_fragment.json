@@ -45856,7 +45856,16 @@
             "type": {
               "kind": "scalar",
               "name": "string"
-            }
+            },
+            "optional": true
+          },
+          {
+            "name": "PluginId",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
           }
         ],
         "schemaId": 3178

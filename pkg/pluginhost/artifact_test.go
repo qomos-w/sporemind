@@ -1029,8 +1029,11 @@ func TestArtifactReloadCommitCloseFailureKeepsActiveHandler(t *testing.T) {
 	if string(out) != "old:x" {
 		t.Fatalf("failed commit replaced active handler: %q", out)
 	}
-	if _, err := loader.AbortReload(context.Background(), gen.PluginArtifactReloadAbortReq{Token: prepared.Token}); err != nil {
-		t.Fatal(err)
+	// The failed commit must have discarded the candidate itself: the token
+	// is gone and a later abort by that token reports not-found instead of
+	// leaking the candidate (the "reload already prepared" wedge).
+	if _, err := loader.AbortReload(context.Background(), gen.PluginArtifactReloadAbortReq{Token: prepared.Token}); err == nil {
+		t.Fatal("candidate must be discarded by the failed commit")
 	}
 }
 
@@ -1089,6 +1092,192 @@ func TestArtifactReloadCommitWaitsForActiveInvocation(t *testing.T) {
 	case <-closed:
 	default:
 		t.Fatal("old library was not closed after invocation")
+	}
+}
+
+// assertSoon runs f and fails the test if it does not return within the
+// watchdog window — used to prove the loader-wide l.mu is not wedged behind
+// a drain.
+func assertSoon(t *testing.T, name string, f func()) {
+	t.Helper()
+	done := make(chan struct{})
+	go func() {
+		f()
+		close(done)
+	}()
+	select {
+	case <-done:
+	case <-time.After(2 * time.Second):
+		t.Fatalf("%s did not complete: loader lock wedged", name)
+	}
+}
+
+// blockingInvokeOpener returns an opener whose OLD artifact blocks inside the
+// invoke (until the release channel closes) and whose candidate artifact
+// responds immediately.
+func blockingInvokeOpener(started, release chan struct{}, closed chan struct{}) ArtifactOpenerFunc {
+	return func(abi gen.PluginAbi, path, _, _ string, _ map[string]struct{}, _ []byte) (func(context.Context, string, []byte) ([]byte, error), InvokeStreamFunc, func() error, string, error) {
+		if strings.Contains(path, "candidate") {
+			return func(context.Context, string, []byte) ([]byte, error) { return []byte("new"), nil }, nil, func() error { return nil }, "", nil
+		}
+		return func(context.Context, string, []byte) ([]byte, error) {
+			started <- struct{}{}
+			<-release
+			return []byte("old"), nil
+		}, nil, func() error { closed <- struct{}{}; return nil }, "", nil
+	}
+}
+
+func prepareCandidate(t *testing.T, loader *ArtifactLoader, oldReq gen.PluginArtifactLoadReq) gen.PluginArtifactReloadPrepareResp {
+	t.Helper()
+	candidatePath := filepath.Join(t.TempDir(), "candidate.so")
+	if err := os.WriteFile(candidatePath, []byte("new"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	candidateReq := oldReq
+	candidateReq.ArtifactPath = candidatePath
+	prepared, err := loader.PrepareReload(context.Background(), prepareReq(candidateReq))
+	if err != nil {
+		t.Fatal(err)
+	}
+	return prepared
+}
+
+// TestCommitReloadDrainDeadlineDoesNotWedgeLoader: a commit racing a long
+// in-flight invoke must fail on its own deadline, keep the loader-wide lock
+// responsive, and discard the candidate so later reloads are not blocked by
+// "reload already prepared" (the novelking reload-wedge root cause).
+func TestCommitReloadDrainDeadlineDoesNotWedgeLoader(t *testing.T) {
+	host := newStubHost()
+	loader := NewArtifactLoader(host)
+	started := make(chan struct{})
+	release := make(chan struct{})
+	closed := make(chan struct{}, 4)
+	loader.SetOpener(blockingInvokeOpener(started, release, closed))
+
+	oldReq := validLoadReq(makeArtifactFile(t, "old"))
+	if _, err := loader.Load(context.Background(), oldReq); err != nil {
+		t.Fatal(err)
+	}
+	prepared := prepareCandidate(t, loader, oldReq)
+
+	invokeDone := make(chan struct{})
+	go func() {
+		_, _ = host.handlers[PluginCallID("test.native", "ping")](context.Background(), nil)
+		close(invokeDone)
+	}()
+	<-started
+
+	ctx, cancel := context.WithTimeout(context.Background(), 80*time.Millisecond)
+	defer cancel()
+	_, err := loader.CommitReload(ctx, gen.PluginArtifactReloadCommitReq{Token: prepared.Token})
+	if err == nil || !strings.Contains(err.Error(), "drain in-flight invokes") {
+		t.Fatalf("expected drain deadline error, got %v", err)
+	}
+
+	assertSoon(t, "Listeners during blocked commit", func() { loader.Listeners("x") })
+	assertSoon(t, "Get during blocked commit", func() { loader.Get("test.native") })
+	if _, err := loader.AbortReload(context.Background(), gen.PluginArtifactReloadAbortReq{Token: prepared.Token}); err == nil {
+		t.Fatal("candidate should have been discarded by the failed commit")
+	}
+	if _, err := loader.PrepareReload(context.Background(), prepareReq(func() gen.PluginArtifactLoadReq {
+		req := oldReq
+		req.ArtifactPath = filepath.Join(t.TempDir(), "candidate.so")
+		if err := os.WriteFile(req.ArtifactPath, []byte("new2"), 0o600); err != nil {
+			t.Fatal(err)
+		}
+		return req
+	}())); err != nil {
+		t.Fatalf("re-prepare after discarded candidate failed: %v", err)
+	}
+
+	close(release)
+	<-invokeDone
+}
+
+// TestUnloadDrainDeadlineDoesNotWedgeLoader: unload racing an in-flight
+// invoke must fail on its own deadline without wedging the loader, and a
+// retry after the invoke finishes must succeed.
+func TestUnloadDrainDeadlineDoesNotWedgeLoader(t *testing.T) {
+	host := newStubHost()
+	loader := NewArtifactLoader(host)
+	started := make(chan struct{})
+	release := make(chan struct{})
+	closed := make(chan struct{}, 4)
+	loader.SetOpener(blockingInvokeOpener(started, release, closed))
+
+	oldReq := validSubprocessLoadReq(makeArtifactFile(t, "old"))
+	if _, err := loader.Load(context.Background(), oldReq); err != nil {
+		t.Fatal(err)
+	}
+
+	invokeDone := make(chan struct{})
+	go func() {
+		_, _ = host.handlers[PluginCallID("test.native", "ping")](context.Background(), nil)
+		close(invokeDone)
+	}()
+	<-started
+
+	ctx, cancel := context.WithTimeout(context.Background(), 80*time.Millisecond)
+	defer cancel()
+	_, err := loader.Unload(ctx, gen.PluginArtifactUnloadReq{PluginID: "test.native"})
+	if err == nil || !strings.Contains(err.Error(), "drain in-flight invokes") {
+		t.Fatalf("expected drain deadline error, got %v", err)
+	}
+
+	assertSoon(t, "Listeners during blocked unload", func() { loader.Listeners("x") })
+	if _, ok := loader.Get("test.native"); !ok {
+		t.Fatal("record must stay loaded when unload drain times out")
+	}
+
+	close(release)
+	<-invokeDone
+	resp, err := loader.Unload(context.Background(), gen.PluginArtifactUnloadReq{PluginID: "test.native"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if resp.Removed == 0 {
+		t.Fatal("expected handlers removed on successful unload")
+	}
+	if _, ok := loader.Get("test.native"); ok {
+		t.Fatal("record must be gone after successful unload")
+	}
+	select {
+	case <-closed:
+	default:
+		t.Fatal("library was not closed on successful unload")
+	}
+}
+
+// TestAbortReloadByPluginId: a leaked candidate whose token is unknown to
+// the caller must be clearable by plugin id alone.
+func TestAbortReloadByPluginId(t *testing.T) {
+	host := newStubHost()
+	loader := NewArtifactLoader(host)
+	loader.SetOpener(&stubOpener{})
+
+	oldReq := validLoadReq(makeArtifactFile(t, "old"))
+	if _, err := loader.Load(context.Background(), oldReq); err != nil {
+		t.Fatal(err)
+	}
+	prepared := prepareCandidate(t, loader, oldReq)
+
+	if _, err := loader.AbortReload(context.Background(), gen.PluginArtifactReloadAbortReq{PluginID: "test.native"}); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := loader.AbortReload(context.Background(), gen.PluginArtifactReloadAbortReq{Token: prepared.Token}); err == nil {
+		t.Fatal("candidate should already be cleared")
+	}
+	if _, err := loader.AbortReload(context.Background(), gen.PluginArtifactReloadAbortReq{PluginID: "test.native"}); err == nil {
+		t.Fatal("expected error when no candidate is prepared")
+	}
+	// The cleared candidate no longer blocks a fresh reload.
+	if _, err := loader.PrepareReload(context.Background(), prepareReq(func() gen.PluginArtifactLoadReq {
+		req := oldReq
+		req.ArtifactPath = makeArtifactFile(t, "candidate")
+		return req
+	}())); err != nil {
+		t.Fatalf("re-prepare after plugin-id abort failed: %v", err)
 	}
 }
 

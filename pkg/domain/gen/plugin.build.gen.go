@@ -165,7 +165,8 @@ type PluginArtifactLoadResp struct {
 }
 
 type PluginArtifactReloadAbortReq struct {
-	Token string `json:"Token"`
+	Token    string `json:"Token,omitempty"`
+	PluginID string `json:"PluginId,omitempty"`
 }
 
 type PluginArtifactReloadAbortResp struct {

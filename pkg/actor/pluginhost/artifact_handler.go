@@ -213,6 +213,17 @@ func (a *Actor) handleArtifactReloadAbort(ctx actor.Context, req gen.PluginArtif
 	a.mu.Lock()
 	delete(a.pendingArtifactReloads, req.Token)
 	delete(a.pendingArtifactAssets, req.Token)
+	// PluginId-addressed abort: the token was unknown to the caller, so
+	// clear every staged actor-side entry whose prepared candidate belongs
+	// to that plugin.
+	if req.PluginID != "" {
+		for token, candidate := range a.pendingArtifactReloads {
+			if candidate.Manifest.ID == req.PluginID {
+				delete(a.pendingArtifactReloads, token)
+				delete(a.pendingArtifactAssets, token)
+			}
+		}
+	}
 	a.mu.Unlock()
 	return resp, nil
 }

@@ -121,7 +121,13 @@ struct PluginArtifactReloadCommitResp {
 }
 
 struct PluginArtifactReloadAbortReq {
-    Token: string
+    // Token addresses a single prepared candidate (the normal appmanager
+    // rollback path). Either Token or PluginId must be set.
+    optional Token: string
+    // PluginId clears every candidate prepared for the plugin — the
+    // recovery face for a candidate whose token is unknown (the preparing
+    // caller died or timed out before aborting).
+    optional PluginId: string
 }
 
 struct PluginArtifactReloadAbortResp {}

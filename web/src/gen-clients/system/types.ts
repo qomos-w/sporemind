@@ -4909,7 +4909,8 @@ export interface PluginArtifactLoadResp {
 }
 
 export interface PluginArtifactReloadAbortReq {
-  Token: string;
+  Token?: string | undefined;
+  PluginId?: string | undefined;
 }
 
 export interface PluginArtifactReloadAbortResp {

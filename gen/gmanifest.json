@@ -38152,7 +38152,17 @@
               "kind": "scalar",
               "name": "string",
               "typeId": 12
-            }
+            },
+            "optional": true
+          },
+          {
+            "name": "PluginId",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
           }
         ]
       }
@@ -76054,6 +76064,7 @@
       "namespace": "mcp",
       "name": "connect",
       "actorType": "mcpmanager",
+      "description": "Connect an MCP server (idempotent): establish its session so its tools enter the caller's surface. Injected into every agent that mounts an mcp:\u003cserver-id\u003e card, regardless of the server's current connectivity; returns the live status (connected, toolCount, error).",
       "visibility": "admin",
       "mode": "unary",
       "service": "mcp",

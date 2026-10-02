@@ -11,6 +11,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/google/uuid"
 
@@ -468,7 +469,59 @@ func (l *ArtifactLoader) PrepareReload(ctx context.Context, req gen.PluginArtifa
 	return gen.PluginArtifactReloadPrepareResp{Token: token, PluginID: record.PluginID, ArtifactHash: record.ArtifactHash, Status: artifactStatus(record)}, nil
 }
 
-func (l *ArtifactLoader) CommitReload(_ context.Context, req gen.PluginArtifactReloadCommitReq) (gen.PluginArtifactReloadCommitResp, error) {
+// lockInvokeForDrain acquires the record's write lock — draining every
+// in-flight invoke holding an RLock — WITHOUT holding l.mu and bounded by
+// ctx. A long in-flight invoke (appdef timeout up to 15 minutes) must never
+// wedge the loader-wide l.mu: Listeners, HasPermission, Load, Unload and the
+// event fan-out all take it. Invokes are themselves deadline-bounded, so even
+// a context without a deadline terminates once the slowest invoke finishes.
+// Global lock order is invokeMu → l.mu: no path may hold l.mu while
+// acquiring invokeMu.
+func lockInvokeForDrain(ctx context.Context, record *ArtifactRecord) error {
+	if record.invokeMu.TryLock() {
+		return nil
+	}
+	timer := time.NewTimer(20 * time.Millisecond)
+	defer timer.Stop()
+	for {
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-timer.C:
+			if record.invokeMu.TryLock() {
+				return nil
+			}
+			timer.Reset(20 * time.Millisecond)
+		}
+	}
+}
+
+// closeCandidateArtifact closes a reload candidate's freshly opened library
+// handle and disables its invoke closures. The candidate was never installed,
+// so nothing else references it.
+func closeCandidateArtifact(candidate *ArtifactRecord) {
+	if candidate.Closer != nil {
+		_ = candidate.Closer()
+	}
+	candidate.Invoke = nil
+	candidate.InvokeStream = nil
+}
+
+// discardCandidate removes a reload candidate from the candidates map and
+// closes its handle. Every CommitReload/AbortReload failure path must call
+// it: a caller that gives up (its context deadline fired) can never abort by
+// token again, and a leaked candidate blocks all future reloads of the plugin
+// with "reload already prepared".
+func (l *ArtifactLoader) discardCandidate(token string, candidate *ArtifactRecord) {
+	l.mu.Lock()
+	if cur, ok := l.candidates[token]; ok && cur == candidate {
+		delete(l.candidates, token)
+	}
+	l.mu.Unlock()
+	closeCandidateArtifact(candidate)
+}
+
+func (l *ArtifactLoader) CommitReload(ctx context.Context, req gen.PluginArtifactReloadCommitReq) (gen.PluginArtifactReloadCommitResp, error) {
 	if strings.TrimSpace(req.Token) == "" {
 		return gen.PluginArtifactReloadCommitResp{}, fmt.Errorf("pluginhost: reload token is required")
 	}
@@ -478,6 +531,23 @@ func (l *ArtifactLoader) CommitReload(_ context.Context, req gen.PluginArtifactR
 		l.mu.Unlock()
 		return gen.PluginArtifactReloadCommitResp{}, fmt.Errorf("pluginhost: reload token not found")
 	}
+	old, ok := l.records[candidate.PluginID]
+	if !ok || old.UnloadPending {
+		l.mu.Unlock()
+		l.discardCandidate(req.Token, candidate)
+		return gen.PluginArtifactReloadCommitResp{}, fmt.Errorf("pluginhost: plugin %q is not loaded", candidate.PluginID)
+	}
+	l.mu.Unlock()
+
+	// Drain in-flight invokes on the old record before ReplaceArtifact
+	// closes the old library. This must not happen under l.mu (see
+	// lockInvokeForDrain): a 15-minute callpoint invoke would otherwise
+	// queue every loader operation behind the commit.
+	if err := lockInvokeForDrain(ctx, old); err != nil {
+		l.discardCandidate(req.Token, candidate)
+		return gen.PluginArtifactReloadCommitResp{}, fmt.Errorf("pluginhost: drain in-flight invokes for reload commit: %w", err)
+	}
+
 	handlers := make(map[string]HandlerFunc, len(candidate.CallIDs))
 	streamHandlers := make(map[string]HandlerStreamFunc, len(candidate.CallIDs))
 	for _, callable := range candidate.Manifest.Callables {
@@ -490,49 +560,68 @@ func (l *ArtifactLoader) CommitReload(_ context.Context, req gen.PluginArtifactR
 	for _, kind := range candidate.Manifest.Listens {
 		handlers[EventRoute(candidate.PluginID, kind)] = buildInvokeHandler(candidate, ReservedEventPrefix+kind)
 	}
-	old, ok := l.records[candidate.PluginID]
-	if !ok {
+
+	l.mu.Lock()
+	// Re-validate: while the drain waited without l.mu, an Unload or another
+	// Commit may have replaced or removed the record.
+	cur, ok := l.records[candidate.PluginID]
+	if !ok || cur != old || old.UnloadPending {
 		l.mu.Unlock()
-		return gen.PluginArtifactReloadCommitResp{}, fmt.Errorf("pluginhost: plugin %q is not loaded", candidate.PluginID)
-	}
-	// Drain in-flight invokes on the old record before ReplaceArtifact
-	// closes the old library. Lock ordering: l.mu → old.invokeMu (never
-	// reversed; the invoke handler acquires record.invokeMu without l.mu).
-	old.invokeMu.Lock()
-	if err := l.host.ReplaceArtifact(append(append([]string(nil), old.CallIDs...), old.EventCallIDs...), handlers, streamHandlers, descriptorForRecord(candidate), old.Closer, candidate.Closer); err != nil {
 		old.invokeMu.Unlock()
+		l.discardCandidate(req.Token, candidate)
+		return gen.PluginArtifactReloadCommitResp{}, fmt.Errorf("pluginhost: plugin %q record changed during reload commit", candidate.PluginID)
+	}
+	if err := l.host.ReplaceArtifact(append(append([]string(nil), old.CallIDs...), old.EventCallIDs...), handlers, streamHandlers, descriptorForRecord(candidate), old.Closer, candidate.Closer); err != nil {
 		l.mu.Unlock()
+		old.invokeMu.Unlock()
+		l.discardCandidate(req.Token, candidate)
 		return gen.PluginArtifactReloadCommitResp{}, fmt.Errorf("pluginhost: replace active artifact: %w", err)
 	}
 	l.records[candidate.PluginID] = candidate
 	delete(l.candidates, req.Token)
 	old.Invoke = nil
 	old.InvokeStream = nil
-	old.invokeMu.Unlock()
 	l.mu.Unlock()
+	old.invokeMu.Unlock()
 	return gen.PluginArtifactReloadCommitResp{Status: artifactStatus(candidate), PluginID: candidate.PluginID, ArtifactHash: candidate.ArtifactHash, HttpAddr: candidate.HTTPAddr}, nil
 }
 
+// AbortReload discards a prepared reload candidate. The candidate is
+// addressed either by Token (the normal appmanager rollback path) or, when
+// the token is unknown — e.g. the preparing caller died and leaked it — by
+// PluginId, which clears every candidate prepared for that plugin.
 func (l *ArtifactLoader) AbortReload(_ context.Context, req gen.PluginArtifactReloadAbortReq) (gen.PluginArtifactReloadAbortResp, error) {
-	if strings.TrimSpace(req.Token) == "" {
-		return gen.PluginArtifactReloadAbortResp{}, fmt.Errorf("pluginhost: reload token is required")
+	if strings.TrimSpace(req.Token) == "" && strings.TrimSpace(req.PluginID) == "" {
+		return gen.PluginArtifactReloadAbortResp{}, fmt.Errorf("pluginhost: reload token or plugin id is required")
 	}
+	var aborted []*ArtifactRecord
 	l.mu.Lock()
-	candidate, ok := l.candidates[req.Token]
-	if !ok {
-		l.mu.Unlock()
-		return gen.PluginArtifactReloadAbortResp{}, fmt.Errorf("pluginhost: reload token not found")
-	}
-	if candidate.Closer != nil {
-		if err := candidate.Closer(); err != nil {
+	if strings.TrimSpace(req.Token) != "" {
+		candidate, ok := l.candidates[req.Token]
+		if !ok {
 			l.mu.Unlock()
-			return gen.PluginArtifactReloadAbortResp{}, fmt.Errorf("pluginhost: close candidate artifact: %w", err)
+			return gen.PluginArtifactReloadAbortResp{}, fmt.Errorf("pluginhost: reload token not found")
+		}
+		aborted = append(aborted, candidate)
+		delete(l.candidates, req.Token)
+	} else {
+		for token, candidate := range l.candidates {
+			if candidate.PluginID == req.PluginID {
+				aborted = append(aborted, candidate)
+				delete(l.candidates, token)
+			}
+		}
+		if len(aborted) == 0 {
+			l.mu.Unlock()
+			return gen.PluginArtifactReloadAbortResp{}, fmt.Errorf("pluginhost: no reload candidate prepared for plugin %q", req.PluginID)
 		}
 	}
-	delete(l.candidates, req.Token)
-	candidate.Invoke = nil
-	candidate.InvokeStream = nil
+	// Close outside l.mu: the closer kills the candidate process / closes
+	// the library and may block on IO.
 	l.mu.Unlock()
+	for _, candidate := range aborted {
+		closeCandidateArtifact(candidate)
+	}
 	return gen.PluginArtifactReloadAbortResp{}, nil
 }
 
@@ -651,11 +740,24 @@ func (l *ArtifactLoader) Unload(ctx context.Context, req gen.PluginArtifactUnloa
 		// and a hard error here wedges the record in unload_failed forever.
 		return gen.PluginArtifactUnloadResp{Removed: 0}, nil
 	}
+	l.mu.Unlock()
+
 	// Acquire the per-record write lock to drain all in-flight invokes
 	// before closing the native library. This blocks until every concurrent
 	// invoke releases its RLock, preventing use-after-free of the shared
-	// library handle. Lock ordering: l.mu → record.invokeMu (never reversed).
-	record.invokeMu.Lock()
+	// library handle — but never under l.mu (see lockInvokeForDrain), so a
+	// slow in-flight invoke cannot wedge the whole loader.
+	if err := lockInvokeForDrain(ctx, record); err != nil {
+		return gen.PluginArtifactUnloadResp{}, fmt.Errorf("pluginhost: drain in-flight invokes for unload: %w", err)
+	}
+
+	l.mu.Lock()
+	// Re-validate: a concurrent Unload may have completed while we drained.
+	if cur, ok := l.records[req.PluginID]; !ok || cur != record {
+		l.mu.Unlock()
+		record.invokeMu.Unlock()
+		return gen.PluginArtifactUnloadResp{Removed: 0}, nil
+	}
 
 	// In-process (c-shared) plugins cannot be safely unmapped while the host
 	// lives — FreeLibrary/dlclose with live plugin goroutines crashes the
@@ -665,8 +767,8 @@ func (l *ArtifactLoader) Unload(ctx context.Context, req gen.PluginArtifactUnloa
 	if record.Abi.Isolation == IsolationInProcess {
 		record.UnloadPending = true
 		record.Invoke = nil
-		record.invokeMu.Unlock()
 		l.mu.Unlock()
+		record.invokeMu.Unlock()
 		removed := int32(0)
 		for _, callID := range append(record.CallIDs, record.EventCallIDs...) {
 			l.host.UnregisterHandler(callID)
@@ -679,15 +781,15 @@ func (l *ArtifactLoader) Unload(ctx context.Context, req gen.PluginArtifactUnloa
 
 	if record.Closer != nil {
 		if closeErr := record.Closer(); closeErr != nil {
-			record.invokeMu.Unlock()
 			l.mu.Unlock()
+			record.invokeMu.Unlock()
 			return gen.PluginArtifactUnloadResp{}, fmt.Errorf("pluginhost: close artifact: %w", closeErr)
 		}
 	}
 	delete(l.records, req.PluginID)
 	record.Invoke = nil
-	record.invokeMu.Unlock()
 	l.mu.Unlock()
+	record.invokeMu.Unlock()
 
 	removed := int32(0)
 	for _, callID := range append(record.CallIDs, record.EventCallIDs...) {

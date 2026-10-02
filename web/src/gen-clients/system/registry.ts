@@ -48945,7 +48945,17 @@ export const schemaEntries: SchemaEntry[] = [
             kind: "scalar",
             name: "string",
             typeId: 12
-          }
+          },
+          optional: true
+        },
+        {
+          name: "PluginId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
         }
       ]
     }
