@@ -94,7 +94,7 @@ endef
 
 PHONY_SYNC=.PHONY: sync-vendor sync-vendor-check
 
-.PHONY: build build-backend build-desktop build-desktop-core build-desktop-full build-desktop-frontend build-desktop-info build-desktop-icons build-apk build-mobile-asset build-mobile-asset-if-needed copy-mobile-asset build-sdk-asset run run-desktop test test-smoke gen gen-ts gen-schemas gen-schemas-check gen-sdk-schemas gen-schema-ts gen-schema-ts-check sync-wails-bindings clean dev dev-api dev-web dev-desktop dev-all lint check ensure-node-dists validate-envelope release beta dev-build dev-release beta-desktop release-desktop
+.PHONY: build build-backend build-desktop build-desktop-core build-desktop-full build-desktop-frontend build-desktop-info build-desktop-icons build-apk build-mobile-asset build-mobile-asset-if-needed copy-mobile-asset build-sdk-asset run run-desktop test test-smoke gen gen-ts gen-schemas gen-schemas-check gen-sdk-schemas gen-schema-ts gen-schema-ts-check sync-wails-bindings clean dev dev-api dev-web dev-desktop dev-all lint check check-spore-syntax ensure-node-dists validate-envelope release beta dev-build dev-release beta-desktop release-desktop
 
 
 ensure-node-dists:
@@ -446,7 +446,16 @@ lint: ensure-node-dists
 	go vet $$(go list ./... | grep -v 'github.com/qomos-w/sporemind/pkg/desktop')
 	cd web && npx tsc --noEmit
 
-check: gen-static-fragment-check gen-schemas-check gen-schema-ts-check gen-icon-catalog-check gen-manifest-check gen-sdk-check lint test
+# Drift gate: the embedded spore syntax reference under
+# pkg/actor/workspace/sporedocs must stay byte-identical to the upstream
+# ../spore copies (skipped when the sibling checkout is absent).
+check-spore-syntax:
+	@if [ -f ../spore/SYNTAX.md ]; then \
+		git diff --no-index --quiet ../spore/SYNTAX.md pkg/actor/workspace/sporedocs/SYNTAX.md || { echo "[check-spore-syntax] pkg/actor/workspace/sporedocs/SYNTAX.md differs from ../spore/SYNTAX.md. Re-copy it and commit."; exit 1; }; \
+		git diff --no-index --quiet ../spore/SYNTAX.zh-CN.md pkg/actor/workspace/sporedocs/SYNTAX.zh-CN.md || { echo "[check-spore-syntax] pkg/actor/workspace/sporedocs/SYNTAX.zh-CN.md differs from ../spore/SYNTAX.zh-CN.md. Re-copy it and commit."; exit 1; }; \
+	fi
+
+check: gen-static-fragment-check gen-schemas-check gen-schema-ts-check gen-icon-catalog-check gen-manifest-check gen-sdk-check check-spore-syntax lint test
 
 test-smoke: build-backend gen ensure-node-dists
 	@echo "Installing web deps & type-checking smoke ..."

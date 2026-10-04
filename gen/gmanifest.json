@@ -28974,12 +28974,12 @@
     },
     {
       "namespace": "system",
-      "schemaId": 4021,
-      "name": "GlassSessionClaimResp",
+      "schemaId": 4066,
+      "name": "GlassSessionClaimRespV2",
       "visibility": "public",
       "object": {
         "kind": "struct",
-        "name": "GlassSessionClaimResp",
+        "name": "GlassSessionClaimRespV2",
         "fields": [
           {
             "name": "SessionId",
@@ -29020,6 +29020,15 @@
               "name": "bool",
               "typeId": 2
             }
+          },
+          {
+            "name": "RenewedToken",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
           },
           {
             "name": "Replaced",
@@ -43368,7 +43377,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1774,
+      "schemaId": 1840,
       "name": "ProjectWikiForwardResp",
       "visibility": "internal",
       "object": {
@@ -52626,7 +52635,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1775,
+      "schemaId": 1841,
       "name": "StampWorkflowMutatingEffectsReq",
       "visibility": "internal",
       "object": {
@@ -64728,6 +64737,69 @@
     },
     {
       "namespace": "system",
+      "schemaId": 1993,
+      "name": "WorkspaceEvalReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceEvalReq",
+        "fields": [
+          {
+            "name": "Script",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Args",
+            "type": {
+              "kind": "array",
+              "name": "array",
+              "element": {
+                "kind": "scalar",
+                "name": "any",
+                "typeId": 15
+              }
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1994,
+      "name": "WorkspaceEvalResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceEvalResp",
+        "fields": [
+          {
+            "name": "Result",
+            "type": {
+              "kind": "scalar",
+              "name": "any",
+              "typeId": 15
+            },
+            "optional": true
+          },
+          {
+            "name": "Error",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
       "schemaId": 1915,
       "name": "WorkspaceExplorerState",
       "visibility": "public",
@@ -67437,6 +67509,68 @@
     },
     {
       "namespace": "system",
+      "schemaId": 1997,
+      "name": "WorkspaceSearchCallablesReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceSearchCallablesReq",
+        "fields": [
+          {
+            "name": "Query",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          },
+          {
+            "name": "Limit",
+            "type": {
+              "kind": "scalar",
+              "name": "int",
+              "typeId": 6
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1998,
+      "name": "WorkspaceSearchCallablesResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceSearchCallablesResp",
+        "fields": [
+          {
+            "name": "Items",
+            "type": {
+              "kind": "array",
+              "name": "array",
+              "element": {
+                "kind": "struct",
+                "name": "struct",
+                "className": "CallableInterface"
+              }
+            }
+          },
+          {
+            "name": "Total",
+            "type": {
+              "kind": "scalar",
+              "name": "int",
+              "typeId": 6
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
       "schemaId": 1912,
       "name": "WorkspaceShellLayout",
       "visibility": "public",
@@ -67491,6 +67625,55 @@
                 "name": "struct",
                 "className": "SlashCommand"
               }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1995,
+      "name": "WorkspaceSporeSyntaxReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceSporeSyntaxReq",
+        "fields": [
+          {
+            "name": "Lang",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1996,
+      "name": "WorkspaceSporeSyntaxResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "WorkspaceSporeSyntaxResp",
+        "fields": [
+          {
+            "name": "Lang",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Markdown",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
             }
           }
         ]
@@ -67895,7 +68078,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1769,
+      "schemaId": 1775,
       "name": "cellStatsReq",
       "visibility": "public",
       "object": {
@@ -68083,7 +68266,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1767,
+      "schemaId": 1773,
       "name": "eventStatsReq",
       "visibility": "public",
       "object": {
@@ -68094,7 +68277,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1768,
+      "schemaId": 1774,
       "name": "eventStatsResp",
       "visibility": "public",
       "object": {
@@ -74917,7 +75100,7 @@
       "mode": "unary",
       "service": "glass_interact",
       "reqSchemaId": 4020,
-      "finalSchemaId": 4021,
+      "finalSchemaId": 4066,
       "req": {
         "kind": "struct",
         "name": "GlassSessionClaimReq",
@@ -74925,8 +75108,8 @@
       },
       "final": {
         "kind": "struct",
-        "name": "GlassSessionClaimResp",
-        "className": "GlassSessionClaimResp"
+        "name": "GlassSessionClaimRespV2",
+        "className": "GlassSessionClaimRespV2"
       }
     },
     {
@@ -75093,7 +75276,7 @@
       "actorType": "runtime",
       "visibility": "public",
       "mode": "unary",
-      "reqSchemaId": 1769,
+      "reqSchemaId": 1775,
       "finalSchemaId": 0,
       "req": {
         "kind": "struct",
@@ -75112,8 +75295,8 @@
       "actorType": "runtime",
       "visibility": "public",
       "mode": "unary",
-      "reqSchemaId": 1767,
-      "finalSchemaId": 1768,
+      "reqSchemaId": 1773,
+      "finalSchemaId": 1774,
       "req": {
         "kind": "struct",
         "name": "eventStatsReq",
@@ -76043,7 +76226,7 @@
       "namespace": "mcp",
       "name": "call_tool",
       "actorType": "mcpmanager",
-      "description": "Invoke a tool on a configured MCP server: Id selects the server, Tool the tool name, Arguments carries the JSON arguments. Exposed by the builtin:bundle:sporecall bundle.",
+      "description": "Invoke a tool on a configured MCP server: Id selects the server, Tool the tool name, Arguments carries the JSON arguments. Exposed by the builtin:bundle:sporeeval bundle.",
       "visibility": "admin",
       "mode": "unary",
       "service": "mcp",
@@ -83038,6 +83221,27 @@
     },
     {
       "namespace": "workspace",
+      "name": "eval",
+      "actorType": "workspace",
+      "description": "Evaluate an ad-hoc spore script (pure computation, no host bindings; fixed 10s / 1M-instruction budget, 64KB output cap). The script must define the run() entry function; Args are passed positionally. Exposed by the builtin:bundle:sporeeval bundle.",
+      "visibility": "public",
+      "mode": "unary",
+      "service": "workspace",
+      "reqSchemaId": 1993,
+      "finalSchemaId": 1994,
+      "req": {
+        "kind": "struct",
+        "name": "WorkspaceEvalReq",
+        "className": "WorkspaceEvalReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "WorkspaceEvalResp",
+        "className": "WorkspaceEvalResp"
+      }
+    },
+    {
+      "namespace": "workspace",
       "name": "gate_approve",
       "actorType": "workspace",
       "description": "Approve a workflow gate card (data.exec.kind: gate). CAS-flips the bound task card from doing to done, writes the approval record (approver, approved_at, optional form_values normalized via the request layout, optional callable_id and note) to task_outputs, and dismisses the companion-window gate toast. Authorization mirrors workspace.agent_review: trusted developer/admin identity bypasses; non-developer callers must supply a non-empty CallerAgentId that resolves to a live agent with an active workflow.",
@@ -83664,7 +83868,7 @@
       "namespace": "workspace",
       "name": "host_call",
       "actorType": "workspace",
-      "description": "Invoke any host actor callable by dotted ID (\u003cservice\u003e.\u003ccallable\u003e), e.g. \"workspace.slashcommands_list\". The payload must match the target callable's request schema; the target's own policy still applies. Exposed by the builtin:bundle:sporecall bundle.",
+      "description": "Invoke any host actor callable by dotted ID (\u003cservice\u003e.\u003ccallable\u003e), e.g. \"workspace.slashcommands_list\". The payload must match the target callable's request schema; the target's own policy still applies. Exposed by the builtin:bundle:sporeeval bundle.",
       "visibility": "admin",
       "mode": "unary",
       "service": "workspace",
@@ -83971,7 +84175,7 @@
       "mode": "unary",
       "service": "workspace",
       "reqSchemaId": 1793,
-      "finalSchemaId": 1774,
+      "finalSchemaId": 1840,
       "req": {
         "kind": "struct",
         "name": "ProjectWikiForwardReq",
@@ -84063,6 +84267,27 @@
     },
     {
       "namespace": "workspace",
+      "name": "search_callables",
+      "actorType": "workspace",
+      "description": "Search the live host callable catalog by case-insensitive substring on callable name or description; rows carry request params and service names so callers can discover how to invoke a callable (then relay via workspace.host_call). Exposed by the builtin:bundle:sporeeval bundle.",
+      "visibility": "public",
+      "mode": "unary",
+      "service": "workspace",
+      "reqSchemaId": 1997,
+      "finalSchemaId": 1998,
+      "req": {
+        "kind": "struct",
+        "name": "WorkspaceSearchCallablesReq",
+        "className": "WorkspaceSearchCallablesReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "WorkspaceSearchCallablesResp",
+        "className": "WorkspaceSearchCallablesResp"
+      }
+    },
+    {
+      "namespace": "workspace",
       "name": "session",
       "actorType": "workspace",
       "visibility": "public",
@@ -84143,13 +84368,34 @@
     },
     {
       "namespace": "workspace",
+      "name": "spore_syntax",
+      "actorType": "workspace",
+      "description": "Return the spore language syntax reference markdown. Lang: \"en\" (default) | \"zh\". Exposed by the builtin:bundle:sporeeval bundle.",
+      "visibility": "public",
+      "mode": "unary",
+      "service": "workspace",
+      "reqSchemaId": 1995,
+      "finalSchemaId": 1996,
+      "req": {
+        "kind": "struct",
+        "name": "WorkspaceSporeSyntaxReq",
+        "className": "WorkspaceSporeSyntaxReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "WorkspaceSporeSyntaxResp",
+        "className": "WorkspaceSporeSyntaxResp"
+      }
+    },
+    {
+      "namespace": "workspace",
       "name": "stamp_workflow_mutating_effects",
       "actorType": "workspace",
       "description": "Stamp mutating toolcall effects onto a workflow map card (data.stamped_effects) so the toolcall executor can verify plan-level approval before invoking mutating callables. Invoked by the agent's activateWorkflow after the user approves the workflow plan.",
       "visibility": "internal",
       "mode": "unary",
       "service": "workspace",
-      "reqSchemaId": 1775,
+      "reqSchemaId": 1841,
       "finalSchemaId": 0,
       "req": {
         "kind": "struct",

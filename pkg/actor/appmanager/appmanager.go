@@ -226,7 +226,7 @@ var _ persist.Persistent = (*Actor)(nil)
 
 // legacyDroppedAppIDs lists retired builtin app IDs purged unconditionally
 // during restore. builtin.sporecall (removed 2026-09-23) became the
-// builtin:bundle:sporecall card + workspace.host_call relay; a persisted
+// builtin:bundle:sporeeval card + workspace.host_call relay; a persisted
 // record for it must not resurrect the app in appmanager.list.
 var legacyDroppedAppIDs = map[string]bool{
 	"builtin.sporecall": true,
@@ -330,7 +330,7 @@ func (a *Actor) OnInit(ctx actor.Context) error {
 	// abort OnStart.
 	//
 	// The same purge drops builtin.sporecall (removed 2026-09-23: the relay is
-	// now the builtin:bundle:sporecall card + workspace.host_call, not a
+	// now the builtin:bundle:sporeeval card + workspace.host_call, not a
 	// registered spore app); its runtime is valid so the drop keys on ID.
 	purged := false
 	for appID, record := range a.Records {

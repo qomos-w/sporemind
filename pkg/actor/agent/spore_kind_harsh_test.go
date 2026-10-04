@@ -23,7 +23,7 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 	a := &Actor{
 		agentKind: domain.AgentKindSpore,
 		cardRefs: []gen.CardRef{
-			{ID: "builtin:bundle:sporecall", Scope: "builtin"},
+			{ID: "builtin:bundle:sporeeval", Scope: "builtin"},
 		},
 	}
 	a.ComponentMounts = componentMountsFromCardRefs(a.cardRefs)

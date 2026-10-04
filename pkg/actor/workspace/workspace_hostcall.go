@@ -22,7 +22,7 @@ func (s hostCallSeams) LookupService(name string) (ref.Ref, bool) { return s.loo
 func (s hostCallSeams) Self() ref.Ref                             { return s.self }
 
 // handleHostCall backs workspace.host_call, the generic host-callable relay
-// declared by the builtin:bundle:sporecall bundle: it resolves CallId's
+// declared by the builtin:bundle:sporeeval bundle: it resolves CallId's
 // service prefix, forwards Payload, and returns the decoded JSON response.
 // Mounting that bundle is the agent-side gate; the target callable's own
 // policy ladder still applies to every relayed call (the caller role is

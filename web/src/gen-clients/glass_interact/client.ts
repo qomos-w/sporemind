@@ -47,15 +47,15 @@ export const interactionReport_meta = {
   resSchemaId: 4166,
 } as const;
 
-export async function sessionClaim(client: GosporeClient, req: systemTypes.GlassSessionClaimReq, opts?: InvokeOptions): Promise<systemTypes.GlassSessionClaimResp> {
-  return client.invoke<systemTypes.GlassSessionClaimReq, systemTypes.GlassSessionClaimResp>("glass_interact.session_claim", req, { reqSchemaId: 4020, resSchemaId: 4021, ...opts });
+export async function sessionClaim(client: GosporeClient, req: systemTypes.GlassSessionClaimReq, opts?: InvokeOptions): Promise<systemTypes.GlassSessionClaimRespV2> {
+  return client.invoke<systemTypes.GlassSessionClaimReq, systemTypes.GlassSessionClaimRespV2>("glass_interact.session_claim", req, { reqSchemaId: 4020, resSchemaId: 4066, ...opts });
 }
 
 export const sessionClaim_meta = {
   callable: "glass_interact.session_claim",
   name: "session_claim",
   reqSchemaId: 4020,
-  resSchemaId: 4021,
+  resSchemaId: 4066,
 } as const;
 
 export async function sessionGetState(client: GosporeClient, req: systemTypes.GlassGetStateReq, opts?: InvokeOptions): Promise<systemTypes.GlassGetStateResp> {

@@ -24,6 +24,8 @@ const (
 	WorkspaceDeleteAgentKindReqSchemaID      uint64 = 1984
 	WorkspaceDeleteAgentKindRespSchemaID     uint64 = 1985
 	WorkspaceEnsureAppAgentRespSchemaID      uint64 = 1982
+	WorkspaceEvalReqSchemaID                 uint64 = 1993
+	WorkspaceEvalRespSchemaID                uint64 = 1994
 	WorkspaceGitAmendReqSchemaID             uint64 = 1972
 	WorkspaceGitDiscardReqSchemaID           uint64 = 1971
 	WorkspaceGitFetchReqSchemaID             uint64 = 1970
@@ -38,6 +40,10 @@ const (
 	WorkspaceHostCallReqSchemaID             uint64 = 1991
 	WorkspaceHostCallRespSchemaID            uint64 = 1992
 	WorkspaceRemoveAppAgentReqSchemaID       uint64 = 1983
+	WorkspaceSearchCallablesReqSchemaID      uint64 = 1997
+	WorkspaceSearchCallablesRespSchemaID     uint64 = 1998
+	WorkspaceSporeSyntaxReqSchemaID          uint64 = 1995
+	WorkspaceSporeSyntaxRespSchemaID         uint64 = 1996
 )
 
 func init() {
@@ -54,6 +60,8 @@ func init() {
 	schema.RegisterStructType(WorkspaceDeleteAgentKindReqSchemaID, reflect.TypeOf(WorkspaceDeleteAgentKindReq{}))
 	schema.RegisterStructType(WorkspaceDeleteAgentKindRespSchemaID, reflect.TypeOf(WorkspaceDeleteAgentKindResp{}))
 	schema.RegisterStructType(WorkspaceEnsureAppAgentRespSchemaID, reflect.TypeOf(WorkspaceEnsureAppAgentResp{}))
+	schema.RegisterStructType(WorkspaceEvalReqSchemaID, reflect.TypeOf(WorkspaceEvalReq{}))
+	schema.RegisterStructType(WorkspaceEvalRespSchemaID, reflect.TypeOf(WorkspaceEvalResp{}))
 	schema.RegisterStructType(WorkspaceGitAmendReqSchemaID, reflect.TypeOf(WorkspaceGitAmendReq{}))
 	schema.RegisterStructType(WorkspaceGitDiscardReqSchemaID, reflect.TypeOf(WorkspaceGitDiscardReq{}))
 	schema.RegisterStructType(WorkspaceGitFetchReqSchemaID, reflect.TypeOf(WorkspaceGitFetchReq{}))
@@ -68,6 +76,10 @@ func init() {
 	schema.RegisterStructType(WorkspaceHostCallReqSchemaID, reflect.TypeOf(WorkspaceHostCallReq{}))
 	schema.RegisterStructType(WorkspaceHostCallRespSchemaID, reflect.TypeOf(WorkspaceHostCallResp{}))
 	schema.RegisterStructType(WorkspaceRemoveAppAgentReqSchemaID, reflect.TypeOf(WorkspaceRemoveAppAgentReq{}))
+	schema.RegisterStructType(WorkspaceSearchCallablesReqSchemaID, reflect.TypeOf(WorkspaceSearchCallablesReq{}))
+	schema.RegisterStructType(WorkspaceSearchCallablesRespSchemaID, reflect.TypeOf(WorkspaceSearchCallablesResp{}))
+	schema.RegisterStructType(WorkspaceSporeSyntaxReqSchemaID, reflect.TypeOf(WorkspaceSporeSyntaxReq{}))
+	schema.RegisterStructType(WorkspaceSporeSyntaxRespSchemaID, reflect.TypeOf(WorkspaceSporeSyntaxResp{}))
 }
 
 type GitShowFile struct {
@@ -153,6 +165,16 @@ type WorkspaceEnsureAppAgentResp struct {
 	Created     bool   `json:"Created"`
 }
 
+type WorkspaceEvalReq struct {
+	Script string `json:"Script"`
+	Args   []any  `json:"Args,omitempty"`
+}
+
+type WorkspaceEvalResp struct {
+	Result any    `json:"Result,omitempty"`
+	Error  string `json:"Error,omitempty"`
+}
+
 type WorkspaceGitAmendReq struct {
 	ProjectID  string `json:"ProjectId"`
 	WorktreeID string `json:"WorktreeID,omitempty"`
@@ -232,4 +254,23 @@ type WorkspaceHostCallResp struct {
 
 type WorkspaceRemoveAppAgentReq struct {
 	AppID string `json:"AppId"`
+}
+
+type WorkspaceSearchCallablesReq struct {
+	Query string `json:"Query,omitempty"`
+	Limit int32  `json:"Limit,omitempty"`
+}
+
+type WorkspaceSearchCallablesResp struct {
+	Items []CallableInterface `json:"Items"`
+	Total int32               `json:"Total"`
+}
+
+type WorkspaceSporeSyntaxReq struct {
+	Lang string `json:"Lang,omitempty"`
+}
+
+type WorkspaceSporeSyntaxResp struct {
+	Lang     string `json:"Lang"`
+	Markdown string `json:"Markdown"`
 }

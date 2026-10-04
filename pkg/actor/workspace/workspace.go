@@ -1234,9 +1234,24 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 		return fmt.Errorf("workspace: register builtin.modes.list: %w", err)
 	}
 	if err := ctx.Register("workspace.host_call", a.handleHostCall, actor.AdminOnly(),
-		actor.WithDescription("Invoke any host actor callable by dotted ID (<service>.<callable>), e.g. \"workspace.slashcommands_list\". The payload must match the target callable's request schema; the target's own policy still applies. Exposed by the builtin:bundle:sporecall bundle."),
+		actor.WithDescription("Invoke any host actor callable by dotted ID (<service>.<callable>), e.g. \"workspace.slashcommands_list\". The payload must match the target callable's request schema; the target's own policy still applies. Exposed by the builtin:bundle:sporeeval bundle."),
 	); err != nil {
 		return fmt.Errorf("workspace: register host_call: %w", err)
+	}
+	if err := ctx.Register("workspace.eval", a.handleEval, actor.Public(),
+		actor.WithDescription("Evaluate an ad-hoc spore script (pure computation, no host bindings; fixed 10s / 1M-instruction budget, 64KB output cap). The script must define the run() entry function; Args are passed positionally. Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("workspace: register eval: %w", err)
+	}
+	if err := ctx.Register("workspace.spore_syntax", a.handleSporeSyntax, actor.Public(),
+		actor.WithDescription("Return the spore language syntax reference markdown. Lang: \"en\" (default) | \"zh\". Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("workspace: register spore_syntax: %w", err)
+	}
+	if err := ctx.Register("workspace.search_callables", a.handleSearchCallables, actor.Public(),
+		actor.WithDescription("Search the live host callable catalog by case-insensitive substring on callable name or description; rows carry request params and service names so callers can discover how to invoke a callable (then relay via workspace.host_call). Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("workspace: register search_callables: %w", err)
 	}
 	if err := ctx.Register("workspace.agent_status_update", a.handleAgentStatusUpdate, actor.Public()); err != nil {
 		return fmt.Errorf("workspace: register agent_status_update: %w", err)

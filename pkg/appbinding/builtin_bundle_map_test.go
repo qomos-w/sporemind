@@ -46,9 +46,12 @@ var builtinBundleNotPluginReachable = map[string]string{
 	"pluginhost.plugin_logs":      "管理面（plugin-dev bundle），不经插件宿主 host call",
 	"pluginhost.plugin_dom":       "管理面（plugin-dev bundle），不经插件宿主 host call",
 	"pluginhost.panel_op":         "管理面（plugin-dev bundle），不经插件宿主 host call",
-	"mcp.call_tool":               "管理面（sporecall bundle），不经插件宿主 host call",
+	"mcp.call_tool":               "管理面（sporeeval bundle），不经插件宿主 host call",
 	"workspace.agent_spawn_swarm": "管理面（swarm bundle），不经插件宿主 host call",
-	"workspace.host_call":         "管理面（sporecall bundle），不经插件宿主 host call",
+	"workspace.host_call":         "管理面（sporeeval bundle），不经插件宿主 host call",
+	"workspace.eval":              "代码求值面（sporeeval bundle），不经插件宿主 host call",
+	"workspace.spore_syntax":      "语言参考面（sporeeval bundle），不经插件宿主 host call",
+	"workspace.search_callables":  "目录搜索面（sporeeval bundle），不经插件宿主 host call",
 
 	// ── agent 编排面（workspace-tools / workflow-tools / bundle-use / fork-* / planning bundle）──
 	"workspace.list_agents":        "agent 编排面（workspace-tools bundle），不经插件宿主 host call",

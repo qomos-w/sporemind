@@ -586,9 +586,9 @@ export const SchemaIDs = {
   PermissionEntry: 1762,
   PermissionMatrix: 1763,
   PermissionUpdateReq: 1764,
-  eventStatsReq: 1767,
-  eventStatsResp: 1768,
-  cellStatsReq: 1769,
+  eventStatsReq: 1773,
+  eventStatsResp: 1774,
+  cellStatsReq: 1775,
   LoginDoneReq: 1779,
   ListPluginsResp: 1781,
   setPermissionModeReq: 1783,
@@ -747,6 +747,12 @@ export const SchemaIDs = {
   WikiListStarredResp: 1990,
   WorkspaceHostCallReq: 1991,
   WorkspaceHostCallResp: 1992,
+  WorkspaceEvalReq: 1993,
+  WorkspaceEvalResp: 1994,
+  WorkspaceSporeSyntaxReq: 1995,
+  WorkspaceSporeSyntaxResp: 1996,
+  WorkspaceSearchCallablesReq: 1997,
+  WorkspaceSearchCallablesResp: 1998,
   AppSchemaRef: 2112,
   AppTypeDescriptor: 2113,
   AppFieldDescriptor: 2114,
@@ -996,7 +1002,6 @@ export const SchemaIDs = {
   GlassBootstrapReq: 4018,
   GlassBootstrapResp: 4019,
   GlassSessionClaimReq: 4020,
-  GlassSessionClaimResp: 4021,
   GlassLifecycleEvent: 4022,
   GlassSessionState: 4023,
   GlassGetStateReq: 4024,
@@ -1023,6 +1028,7 @@ export const SchemaIDs = {
   GlassEventCompletedEvent: 4063,
   GlassDeliveryLogEntry: 4064,
   GlassHudStatus: 4065,
+  GlassSessionClaimRespV2: 4066,
   GlassSceneBox: 4160,
   GlassSceneOption: 4161,
   GlassSceneElement: 4162,
@@ -31542,14 +31548,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1767,
+    schemaId: 1773,
     name: "eventStatsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "eventStatsReq",
       className: "eventStatsReq",
-      classId: 1767
+      classId: 1773
     },
     object: {
       kind: "struct",
@@ -31559,14 +31565,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1768,
+    schemaId: 1774,
     name: "eventStatsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "eventStatsResp",
       className: "eventStatsResp",
-      classId: 1768
+      classId: 1774
     },
     object: {
       kind: "struct",
@@ -31613,14 +31619,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1769,
+    schemaId: 1775,
     name: "cellStatsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "cellStatsReq",
       className: "cellStatsReq",
-      classId: 1769
+      classId: 1775
     },
     object: {
       kind: "struct",
@@ -40367,6 +40373,216 @@ export const schemaEntries: SchemaEntry[] = [
             }
           },
           optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1993,
+    name: "WorkspaceEvalReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "WorkspaceEvalReq",
+      className: "WorkspaceEvalReq",
+      classId: 1993
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceEvalReq",
+      fields: [
+        {
+          name: "Script",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Args",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "any",
+              typeId: 15
+            }
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1994,
+    name: "WorkspaceEvalResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "WorkspaceEvalResp",
+      className: "WorkspaceEvalResp",
+      classId: 1994
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceEvalResp",
+      fields: [
+        {
+          name: "Result",
+          type: {
+            kind: "scalar",
+            name: "any",
+            typeId: 15
+          },
+          optional: true
+        },
+        {
+          name: "Error",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1995,
+    name: "WorkspaceSporeSyntaxReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "WorkspaceSporeSyntaxReq",
+      className: "WorkspaceSporeSyntaxReq",
+      classId: 1995
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceSporeSyntaxReq",
+      fields: [
+        {
+          name: "Lang",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1996,
+    name: "WorkspaceSporeSyntaxResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "WorkspaceSporeSyntaxResp",
+      className: "WorkspaceSporeSyntaxResp",
+      classId: 1996
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceSporeSyntaxResp",
+      fields: [
+        {
+          name: "Lang",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Markdown",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1997,
+    name: "WorkspaceSearchCallablesReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "WorkspaceSearchCallablesReq",
+      className: "WorkspaceSearchCallablesReq",
+      classId: 1997
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceSearchCallablesReq",
+      fields: [
+        {
+          name: "Query",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Limit",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1998,
+    name: "WorkspaceSearchCallablesResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "WorkspaceSearchCallablesResp",
+      className: "WorkspaceSearchCallablesResp",
+      classId: 1998
+    },
+    object: {
+      kind: "struct",
+      name: "WorkspaceSearchCallablesResp",
+      fields: [
+        {
+          name: "Items",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "CallableInterface"
+            }
+          }
+        },
+        {
+          name: "Total",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          }
         }
       ]
     }
@@ -53756,81 +53972,6 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 4021,
-    name: "GlassSessionClaimResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "GlassSessionClaimResp",
-      className: "GlassSessionClaimResp",
-      classId: 4021
-    },
-    object: {
-      kind: "struct",
-      name: "GlassSessionClaimResp",
-      fields: [
-        {
-          name: "SessionId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "DeviceId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Generation",
-          type: {
-            kind: "scalar",
-            name: "long",
-            typeId: 8
-          }
-        },
-        {
-          name: "Online",
-          type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
-          }
-        },
-        {
-          name: "Reconnected",
-          type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
-          }
-        },
-        {
-          name: "Replaced",
-          type: {
-            kind: "scalar",
-            name: "bool",
-            typeId: 2
-          }
-        },
-        {
-          name: "LastFrame",
-          type: {
-            kind: "struct",
-            name: "struct",
-            className: "GlassRenderFrame"
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
     schemaId: 4022,
     name: "GlassLifecycleEvent",
     visibility: "public",
@@ -55265,6 +55406,90 @@ export const schemaEntries: SchemaEntry[] = [
             kind: "scalar",
             name: "string",
             typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 4066,
+    name: "GlassSessionClaimRespV2",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "GlassSessionClaimRespV2",
+      className: "GlassSessionClaimRespV2",
+      classId: 4066
+    },
+    object: {
+      kind: "struct",
+      name: "GlassSessionClaimRespV2",
+      fields: [
+        {
+          name: "SessionId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "DeviceId",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Generation",
+          type: {
+            kind: "scalar",
+            name: "long",
+            typeId: 8
+          }
+        },
+        {
+          name: "Online",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "Reconnected",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "RenewedToken",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Replaced",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        },
+        {
+          name: "LastFrame",
+          type: {
+            kind: "struct",
+            name: "struct",
+            className: "GlassRenderFrame"
           },
           optional: true
         }

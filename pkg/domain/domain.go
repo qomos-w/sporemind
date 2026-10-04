@@ -1352,9 +1352,28 @@ type WorkspaceAgentSpawnSchedulerReq = gen.WorkspaceAgentSpawnSchedulerReq
 type WorkspaceAgentSpawnSchedulerResp = gen.WorkspaceAgentSpawnSchedulerResp
 
 // WorkspaceHostCallReq/Resp are the protocol for workspace.host_call, the
-// generic host-callable relay behind the builtin:bundle:sporecall bundle.
+// generic host-callable relay behind the builtin:bundle:sporeeval bundle.
 type WorkspaceHostCallReq = gen.WorkspaceHostCallReq
 type WorkspaceHostCallResp = gen.WorkspaceHostCallResp
+
+// WorkspaceEvalReq/Resp are the protocol for workspace.eval: evaluate an
+// ad-hoc spore script (pure computation, no host bindings) under a fixed
+// budget and return the normalized result or failure diagnostics.
+type WorkspaceEvalReq = gen.WorkspaceEvalReq
+type WorkspaceEvalResp = gen.WorkspaceEvalResp
+
+// WorkspaceSporeSyntaxReq/Resp are the protocol for workspace.spore_syntax:
+// serve the spore language syntax reference (embedded copy of the upstream
+// ../spore SYNTAX.md, drift-gated by make check-spore-syntax).
+type WorkspaceSporeSyntaxReq = gen.WorkspaceSporeSyntaxReq
+type WorkspaceSporeSyntaxResp = gen.WorkspaceSporeSyntaxResp
+
+// WorkspaceSearchCallablesReq/Resp are the protocol for
+// workspace.search_callables: substring search over the live host callable
+// catalog (topology snapshot rows) so callers can discover callable IDs and
+// their request shapes.
+type WorkspaceSearchCallablesReq = gen.WorkspaceSearchCallablesReq
+type WorkspaceSearchCallablesResp = gen.WorkspaceSearchCallablesResp
 
 // AgentSchedulerBindReq/Resp + AgentSchedulerUnbindReq/Resp are the protocol
 // for the agent-side scheduler binding lifecycle callables

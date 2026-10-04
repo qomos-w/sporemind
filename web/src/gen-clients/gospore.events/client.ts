@@ -4,14 +4,14 @@ import type { InvokeOptions } from "@qomos/gospore-client";
 import type * as systemTypes from "../system/types";
 
 export async function stats(client: GosporeClient, req: systemTypes.eventStatsReq, opts?: InvokeOptions): Promise<systemTypes.eventStatsResp> {
-  return client.invoke<systemTypes.eventStatsReq, systemTypes.eventStatsResp>("gospore.events.stats", req, { reqSchemaId: 1767, resSchemaId: 1768, ...opts });
+  return client.invoke<systemTypes.eventStatsReq, systemTypes.eventStatsResp>("gospore.events.stats", req, { reqSchemaId: 1773, resSchemaId: 1774, ...opts });
 }
 
 export const stats_meta = {
   callable: "gospore.events.stats",
   name: "stats",
-  reqSchemaId: 1767,
-  resSchemaId: 1768,
+  reqSchemaId: 1773,
+  resSchemaId: 1774,
 } as const;
 
 export async function *subscribeInstance(client: GosporeClient, req: systemTypes.eventSubscribeInstanceReq, opts?: InvokeOptions): AsyncIterable<any> {

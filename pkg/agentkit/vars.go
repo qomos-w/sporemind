@@ -68,7 +68,7 @@ var BuiltinCards = []BuiltinCard{
 	{Title: "builtin:bundle:swarm"},
 	{Title: "builtin:bundle:workspace-tools"},
 	{Title: "builtin:bundle:app-tools"},
-	{Title: "builtin:bundle:sporecall"},
+	{Title: "builtin:bundle:sporeeval"},
 	{Title: "builtin:bundle:interface-controls"},
 	{Title: "builtin:bundle:tutor"},
 	{Title: "builtin:bundle:browser-tools"},
@@ -90,6 +90,7 @@ var BuiltinCards = []BuiltinCard{
 // agents persisted before a rename can migrate their mounts on startup.
 var BuiltinCardRenames = map[string]string{
 	"builtin:bundle:omnibox":      "builtin:bundle:interface-controls",
+	"builtin:bundle:sporecall":    "builtin:bundle:sporeeval",
 	"builtin:prompt:debug":        "builtin:bundle:debug",
 	"skill:frontdesign":           "builtin:bundle:interface-controls",
 	"builtin:bundle:wiremark":     "builtin:bundle:interface-controls",

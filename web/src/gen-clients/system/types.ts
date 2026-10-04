@@ -3668,12 +3668,13 @@ export interface GlassSessionClaimReq {
   Capabilities?: GlassCapability[] | undefined;
 }
 
-export interface GlassSessionClaimResp {
+export interface GlassSessionClaimRespV2 {
   SessionId: string;
   DeviceId: string;
   Generation: number;
   Online: boolean;
   Reconnected: boolean;
+  RenewedToken?: string | undefined;
   Replaced: boolean;
   LastFrame?: GlassRenderFrame | undefined;
 }
@@ -8549,6 +8550,16 @@ export interface WorkspaceDockState {
   WindowH: number;
 }
 
+export interface WorkspaceEvalReq {
+  Script: string;
+  Args?: unknown[] | undefined;
+}
+
+export interface WorkspaceEvalResp {
+  Result?: unknown | undefined;
+  Error?: string | undefined;
+}
+
 export interface WorkspaceExplorerState {
   ActiveProjectId?: string | undefined;
   SelectedPath?: string | undefined;
@@ -8947,6 +8958,16 @@ export interface WorkspaceSaveAgentKindConfigReq {
   MaxTurns?: number | undefined;
 }
 
+export interface WorkspaceSearchCallablesReq {
+  Query?: string | undefined;
+  Limit?: number | undefined;
+}
+
+export interface WorkspaceSearchCallablesResp {
+  Items: CallableInterface[];
+  Total: number;
+}
+
 export interface WorkspaceShellLayout {
   Version: number;
   LayoutJson: string;
@@ -8955,6 +8976,15 @@ export interface WorkspaceShellLayout {
 
 export interface WorkspaceSlashCommandsListResp {
   Commands: SlashCommand[];
+}
+
+export interface WorkspaceSporeSyntaxReq {
+  Lang?: string | undefined;
+}
+
+export interface WorkspaceSporeSyntaxResp {
+  Lang: string;
+  Markdown: string;
 }
 
 export interface WorkspaceUIModel {

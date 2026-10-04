@@ -81,7 +81,7 @@ export const callableEntries: CallableEntry[] = [
     visibility: "public",
     mode: "unary",
     reqSchemaId: 4020,
-    finalSchemaId: 4021,
+    finalSchemaId: 4066,
     req: {
       kind: "struct",
       name: "GlassSessionClaimReq",
@@ -89,8 +89,8 @@ export const callableEntries: CallableEntry[] = [
     },
     final: {
       kind: "struct",
-      name: "GlassSessionClaimResp",
-      className: "GlassSessionClaimResp"
+      name: "GlassSessionClaimRespV2",
+      className: "GlassSessionClaimRespV2"
     }
   },
   {
