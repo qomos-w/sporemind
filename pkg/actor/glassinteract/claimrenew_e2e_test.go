@@ -71,12 +71,33 @@ func TestGlassClaimRenewalOverRealGateway(t *testing.T) {
 	}
 }
 
-// TestGlassClaimRenewalDefaultOff pins the default gate state: without
-// SPOREMIND_GLASS_CLAIM_RENEW the claim response must not carry RenewedToken.
-// The other claim e2e tests decode into the legacy struct, which would
-// silently drop an accidentally-emitted renewal field — this is the guard
-// that catches a default-on regression.
-func TestGlassClaimRenewalDefaultOff(t *testing.T) {
+// TestGlassClaimRenewalDefaultOn pins the default gate state: since the
+// bilateral confirmation (MentraOS 7edc51a, 2026-10-06) renewal is ON unless
+// explicitly opted out — a default-off regression here flips the wire
+// contract silently.
+func TestGlassClaimRenewalDefaultOn(t *testing.T) {
+	addr, _, _ := startGlassRuntime(t)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+	dev, err := glasssim.Connect(ctx, addr, glassConnKey, "dev-renew-def")
+	if err != nil {
+		t.Fatalf("connect: %v", err)
+	}
+	defer dev.Close()
+
+	if _, err := dev.Claim(); err != nil {
+		t.Fatalf("claim: %v", err)
+	}
+	if dev.LastRenewal == "" {
+		t.Fatal("default-on claim carried no RenewedToken")
+	}
+}
+
+// TestGlassClaimRenewalOptOut pins the escape hatch: SPOREMIND_GLASS_CLAIM_RENEW=0
+// keeps the legacy claim response (no RenewedToken on the wire).
+func TestGlassClaimRenewalOptOut(t *testing.T) {
+	t.Setenv("SPOREMIND_GLASS_CLAIM_RENEW", "0")
 	addr, _, _ := startGlassRuntime(t)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
@@ -91,6 +112,6 @@ func TestGlassClaimRenewalDefaultOff(t *testing.T) {
 		t.Fatalf("claim: %v", err)
 	}
 	if dev.LastRenewal != "" {
-		t.Fatalf("default-off claim carried RenewedToken (%d bytes)", len(dev.LastRenewal))
+		t.Fatalf("opt-out claim carried RenewedToken (%d bytes)", len(dev.LastRenewal))
 	}
 }

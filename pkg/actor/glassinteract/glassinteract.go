@@ -46,10 +46,10 @@ const (
 	// only used at bootstrap time; connections use the issued glass token.
 	BootstrapKeyEnv = "SPOREMIND_GLASS_KEY"
 
-	// ClaimRenewEnv opts the server into the claim-response token renewal
-	// (GlassSessionClaimRespV2). Default off: the wire change is pending
-	// bilateral confirmation with MentraOS — flipping it before the client
-	// gains the V2 decode path breaks its claim.
+	// ClaimRenewEnv opts the server OUT of the claim-response token renewal
+	// (GlassSessionClaimRespV2). Renewal is ON by default since the MentraOS
+	// bilateral confirmation (2026-10-06, their commit 7edc51a); set
+	// SPOREMIND_GLASS_CLAIM_RENEW=0 to keep the legacy claim response.
 	ClaimRenewEnv = "SPOREMIND_GLASS_CLAIM_RENEW"
 )
 
@@ -401,9 +401,9 @@ type Actor struct {
 	key         string
 	jwt         *auth.Manager
 	// claimRenew emits GlassSessionClaimRespV2 (with RenewedToken) instead of
-	// GlassSessionClaimResp. Default off: the wire change is pending bilateral
-	// confirmation with MentraOS (see the contract card). Enabled by
-	// SPOREMIND_GLASS_CLAIM_RENEW=1.
+	// GlassSessionClaimResp. ON by default since the bilateral confirmation
+	// with MentraOS (see the contract card); SPOREMIND_GLASS_CLAIM_RENEW=0
+	// restores the legacy response.
 	claimRenew  bool
 	now         func() time.Time
 	sess        *sessionManager
@@ -473,7 +473,7 @@ func (a *Actor) OnInit(ctx actor.Context) error {
 	if a.key == "" {
 		a.key = os.Getenv(BootstrapKeyEnv)
 	}
-	a.claimRenew = os.Getenv(ClaimRenewEnv) == "1"
+	a.claimRenew = os.Getenv(ClaimRenewEnv) != "0"
 	if a.now == nil {
 		a.now = time.Now
 	}
