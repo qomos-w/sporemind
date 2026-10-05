@@ -75,13 +75,17 @@ type fakeWorkspaceCoordinator struct {
 func (f *fakeWorkspaceCoordinator) Type() string { return "workspace" }
 
 func (f *fakeWorkspaceCoordinator) OnStart(ctx actor.Context) error {
-	if err := ctx.Register("workspace.coordinator_lookup", func(_ actor.PureContext) (gen.WorkspaceCoordinatorLookupResp, error) {
+	lookup := func(_ actor.PureContext) (gen.WorkspaceCoordinatorLookupResp, error) {
 		ref, ok := ctx.LookupService("coordinator")
 		if !ok {
 			return gen.WorkspaceCoordinatorLookupResp{}, nil
 		}
 		return gen.WorkspaceCoordinatorLookupResp{Found: true, Nickname: "小明", ActorID: ref.ID().String()}, nil
-	}, actor.Internal()); err != nil {
+	}
+	if err := ctx.Register("workspace.coordinator_lookup", lookup, actor.Internal()); err != nil {
+		return err
+	}
+	if err := ctx.Register("workspace.coordinator_peek", lookup, actor.Internal()); err != nil {
 		return err
 	}
 	return ctx.RegisterDomain("workspace").Expose()
