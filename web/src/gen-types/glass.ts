@@ -348,3 +348,14 @@ export interface GlassHudStatus {
   AgentOutcome?: string | undefined;
   Timestamp?: string | undefined;
 }
+
+export interface GlassSessionClaimRespV2 {
+  SessionId: string;
+  DeviceId: string;
+  Generation: number;
+  Online: boolean;
+  Reconnected: boolean;
+  RenewedToken?: string | undefined;
+  Replaced: boolean;
+  LastFrame?: GlassRenderFrame | undefined;
+}

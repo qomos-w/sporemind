@@ -91,6 +91,10 @@ type Device struct {
 	Generation int64
 
 	token string // glass JWT; retained so Reconnect can reuse the session
+	// LastRenewal is the RenewedToken from the most recent claim response
+	// (non-empty only on renewal-enabled servers). It may equal the previous
+	// token byte-for-byte when both were minted within the same second.
+	LastRenewal string
 
 	ws       *websocket.Conn
 	codec    codec.Codec
@@ -314,17 +318,8 @@ func (d *Device) Encode(schemaID uint64, value any) ([]byte, error) {
 
 // Invoke sends one TBC-encoded invoke frame and decodes the reply into resp
 // (resp may be nil to discard).
-func (d *Device) Invoke(callID string, reqSchemaID uint64, req any, respSchemaID uint64, resp any) error {
-	payload, err := d.Encode(reqSchemaID, req)
-	if err != nil {
-		return err
-	}
-	return d.InvokeView(callID, payload, respSchemaID, resp)
-}
-
-// InvokeView sends a pre-encoded TBC payload (e.g. a forced-ClassID typed
-// struct) and decodes the reply.
-func (d *Device) InvokeView(callID string, payload []byte, respSchemaID uint64, resp any) error {
+// roundtrip sends one invoke frame and returns the decompressed reply payload.
+func (d *Device) roundtrip(callID string, payload []byte) ([]byte, error) {
 	d.corID++
 	cor := d.corID
 	wire := &gateway.WireFrame{
@@ -336,7 +331,7 @@ func (d *Device) InvokeView(callID string, payload []byte, respSchemaID uint64, 
 	}
 	raw, err := gateway.MarshalWireFrame(wire)
 	if err != nil {
-		return fmt.Errorf("glasssim: marshal wire frame: %w", err)
+		return nil, fmt.Errorf("glasssim: marshal wire frame: %w", err)
 	}
 	ch := make(chan *gateway.WireFrame, 1)
 	d.mu.Lock()
@@ -346,45 +341,93 @@ func (d *Device) InvokeView(callID string, payload []byte, respSchemaID uint64, 
 		d.mu.Lock()
 		delete(d.pending, cor)
 		d.mu.Unlock()
-		return fmt.Errorf("glasssim: write frame: %w", err)
+		return nil, fmt.Errorf("glasssim: write frame: %w", err)
 	}
 	select {
 	case frame := <-ch:
 		if frame.Type == gateway.FrameTypeError {
-			return fmt.Errorf("%s: %s", callID, frame.ErrorMsg)
+			return nil, fmt.Errorf("%s: %s", callID, frame.ErrorMsg)
 		}
 		if frame.Type != gateway.FrameTypeReply {
-			return fmt.Errorf("%s: unexpected frame type %v", callID, frame.Type)
-		}
-		if resp == nil {
-			return nil
+			return nil, fmt.Errorf("%s: unexpected frame type %v", callID, frame.Type)
 		}
 		data, err := gateway.Decompress(frame.Payload, frame.Flags.Compression())
 		if err != nil {
-			return fmt.Errorf("glasssim: decompress reply: %w", err)
+			return nil, fmt.Errorf("glasssim: decompress reply: %w", err)
 		}
-		if err := d.codec.DecodeByIDInto(respSchemaID, encodingOf(data), data, resp); err != nil {
-			return fmt.Errorf("glasssim: decode reply: %w", err)
-		}
-		return nil
+		return data, nil
 	case <-time.After(15 * time.Second):
 		d.mu.Lock()
 		delete(d.pending, cor)
 		d.mu.Unlock()
-		return fmt.Errorf("%s: timeout waiting for reply", callID)
+		return nil, fmt.Errorf("%s: timeout waiting for reply", callID)
 	}
 }
 
-// Claim performs session_claim and records the generation.
-func (d *Device) Claim() (gen.GlassSessionClaimResp, error) {
-	var claim gen.GlassSessionClaimResp
-	err := d.Invoke(CallClaim, gen.GlassSessionClaimReqSchemaID,
-		gen.GlassSessionClaimReq{SessionID: d.SessionID, DeviceID: d.DeviceID},
-		gen.GlassSessionClaimRespSchemaID, &claim)
-	if err == nil {
-		d.Generation = claim.Generation
+func (d *Device) Invoke(callID string, reqSchemaID uint64, req any, respSchemaID uint64, resp any) error {
+	payload, err := d.Encode(reqSchemaID, req)
+	if err != nil {
+		return err
 	}
-	return claim, err
+	return d.InvokeView(callID, payload, respSchemaID, resp)
+}
+
+// InvokeView sends a pre-encoded TBC payload (e.g. a forced-ClassID typed
+// struct) and decodes the reply.
+func (d *Device) InvokeView(callID string, payload []byte, respSchemaID uint64, resp any) error {
+	data, err := d.roundtrip(callID, payload)
+	if err != nil {
+		return err
+	}
+	if resp == nil {
+		return nil
+	}
+	if err := d.codec.DecodeByIDInto(respSchemaID, encodingOf(data), data, resp); err != nil {
+		return fmt.Errorf("glasssim: decode reply: %w", err)
+	}
+	return nil
+}
+
+// Claim performs session_claim and records the generation. It decodes both
+// response variants: renewal-enabled servers (SPOREMIND_GLASS_CLAIM_RENEW=1)
+// answer with GlassSessionClaimRespV2, and a non-empty RenewedToken becomes
+// the device's token for its NEXT reconnect.
+func (d *Device) Claim() (gen.GlassSessionClaimResp, error) {
+	payload, err := d.Encode(gen.GlassSessionClaimReqSchemaID,
+		gen.GlassSessionClaimReq{SessionID: d.SessionID, DeviceID: d.DeviceID})
+	if err != nil {
+		return gen.GlassSessionClaimResp{}, err
+	}
+	data, err := d.roundtrip(CallClaim, payload)
+	if err != nil {
+		return gen.GlassSessionClaimResp{}, err
+	}
+	// The server encodes glass structs anonymously (schemaId=0, decode by
+	// field name), so the legacy struct decodes a V2 payload fine while
+	// silently dropping RenewedToken. Decode the superset (V2) FIRST: a
+	// renewal-enabled server's extra field surfaces; typed-wire replies that
+	// fail the V2 expectation fall back to the legacy schema.
+	var claim gen.GlassSessionClaimResp
+	var v2 gen.GlassSessionClaimRespV2
+	if err := d.codec.DecodeByIDInto(gen.GlassSessionClaimRespV2SchemaID, encodingOf(data), data, &v2); err == nil {
+		if v2.RenewedToken != "" {
+			d.token = v2.RenewedToken
+			d.LastRenewal = v2.RenewedToken
+		}
+		claim = gen.GlassSessionClaimResp{
+			SessionID:   v2.SessionID,
+			DeviceID:    v2.DeviceID,
+			Generation:  v2.Generation,
+			Online:      v2.Online,
+			Reconnected: v2.Reconnected,
+			Replaced:    v2.Replaced,
+			LastFrame:   v2.LastFrame,
+		}
+	} else if err := d.codec.DecodeByIDInto(gen.GlassSessionClaimRespSchemaID, encodingOf(data), data, &claim); err != nil {
+		return gen.GlassSessionClaimResp{}, fmt.Errorf("glasssim: decode claim reply: %w", err)
+	}
+	d.Generation = claim.Generation
+	return claim, nil
 }
 
 // SubscribeEvents sends one subscribe frame per event kind (the gospore
@@ -434,6 +477,10 @@ func (d *Device) Telemetry(batteryLevel int, charging bool) error {
 			BatteryLevel: int32(batteryLevel), Charging: charging},
 		gen.GlassTelemetryRespSchemaID, &resp)
 }
+
+// Token returns the glass JWT currently held for the next /ws dial (the
+// bootstrap token, or the most recent RenewedToken when the server renews).
+func (d *Device) Token() string { return d.token }
 
 // Drop closes the WebSocket abruptly without tearing the device down,
 // simulating a network drop. The device keeps its token and session

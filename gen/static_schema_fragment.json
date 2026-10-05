@@ -52975,6 +52975,77 @@
     },
     {
       "namespace": "system",
+      "schemaId": 4066,
+      "name": "GlassSessionClaimRespV2",
+      "object": {
+        "kind": "struct",
+        "name": "GlassSessionClaimRespV2",
+        "fields": [
+          {
+            "name": "SessionId",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "DeviceId",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Generation",
+            "type": {
+              "kind": "scalar",
+              "name": "long"
+            }
+          },
+          {
+            "name": "Online",
+            "type": {
+              "kind": "scalar",
+              "name": "bool"
+            }
+          },
+          {
+            "name": "Reconnected",
+            "type": {
+              "kind": "scalar",
+              "name": "bool"
+            }
+          },
+          {
+            "name": "RenewedToken",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          },
+          {
+            "name": "Replaced",
+            "type": {
+              "kind": "scalar",
+              "name": "bool"
+            }
+          },
+          {
+            "name": "LastFrame",
+            "type": {
+              "kind": "struct",
+              "name": "GlassRenderFrame",
+              "className": "GlassRenderFrame"
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 4066
+      }
+    },
+    {
+      "namespace": "system",
       "schemaId": 4112,
       "name": "CoordinatorWearableNotifyReq",
       "object": {

@@ -45,6 +45,12 @@ const (
 	// bootstrap key (the sporemind_key stored in MentraOS settings). It is
 	// only used at bootstrap time; connections use the issued glass token.
 	BootstrapKeyEnv = "SPOREMIND_GLASS_KEY"
+
+	// ClaimRenewEnv opts the server into the claim-response token renewal
+	// (GlassSessionClaimRespV2). Default off: the wire change is pending
+	// bilateral confirmation with MentraOS — flipping it before the client
+	// gains the V2 decode path breaks its claim.
+	ClaimRenewEnv = "SPOREMIND_GLASS_CLAIM_RENEW"
 )
 
 const (
@@ -394,6 +400,11 @@ type Actor struct {
 	actorID     string
 	key         string
 	jwt         *auth.Manager
+	// claimRenew emits GlassSessionClaimRespV2 (with RenewedToken) instead of
+	// GlassSessionClaimResp. Default off: the wire change is pending bilateral
+	// confirmation with MentraOS (see the contract card). Enabled by
+	// SPOREMIND_GLASS_CLAIM_RENEW=1.
+	claimRenew  bool
 	now         func() time.Time
 	sess        *sessionManager
 	speech      *speechManager
@@ -462,6 +473,7 @@ func (a *Actor) OnInit(ctx actor.Context) error {
 	if a.key == "" {
 		a.key = os.Getenv(BootstrapKeyEnv)
 	}
+	a.claimRenew = os.Getenv(ClaimRenewEnv) == "1"
 	if a.now == nil {
 		a.now = time.Now
 	}
@@ -504,7 +516,11 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	if err := ctx.Register(callableBootstrap, a.handleBootstrap, actor.Public()); err != nil {
 		return fmt.Errorf("glassinteract: register %s: %w", callableBootstrap, err)
 	}
-	if err := ctx.Register(callableClaim, a.handleClaim, actor.Public()); err != nil {
+	claimHandler := any(a.handleClaim)
+	if a.claimRenew {
+		claimHandler = a.handleClaimV2
+	}
+	if err := ctx.Register(callableClaim, claimHandler, actor.Public()); err != nil {
 		return fmt.Errorf("glassinteract: register %s: %w", callableClaim, err)
 	}
 	if err := ctx.Register(callableGetState, a.handleGetState, actor.Public()); err != nil {
@@ -891,6 +907,33 @@ func (a *Actor) verifyAdminCredentials(ctx actor.PureContext, username, password
 		return fmt.Errorf("admin role required")
 	}
 	return nil
+}
+
+// handleClaimV2 is the claimRenew variant registered under callableClaim when
+// SPOREMIND_GLASS_CLAIM_RENEW=1: identical semantics to handleClaim plus
+// RenewedToken, a freshly minted glass JWT the client stores for its NEXT
+// reconnect. A mint failure degrades to an empty token (the client falls back
+// to re-bootstrap) rather than failing the claim itself.
+func (a *Actor) handleClaimV2(ctx actor.Context, req gen.GlassSessionClaimReq) (gen.GlassSessionClaimRespV2, error) {
+	resp, err := a.handleClaim(ctx, req)
+	if err != nil {
+		return gen.GlassSessionClaimRespV2{}, err
+	}
+	v2 := gen.GlassSessionClaimRespV2{
+		SessionID:   resp.SessionID,
+		DeviceID:    resp.DeviceID,
+		Generation:  resp.Generation,
+		Online:      resp.Online,
+		Reconnected: resp.Reconnected,
+		Replaced:    resp.Replaced,
+		LastFrame:   resp.LastFrame,
+	}
+	if pair, err := a.jwt.IssueGlass(resp.SessionID, resp.DeviceID, auth.GlassTokenTTL); err != nil {
+		ctx.Logger().Error("glassinteract: mint claim renewal token", "err", err)
+	} else {
+		v2.RenewedToken = pair.Token
+	}
+	return v2, nil
 }
 
 // handleClaim attaches/refreshes the process-unique Glass session. The caller

@@ -586,9 +586,9 @@ export const SchemaIDs = {
   PermissionEntry: 1762,
   PermissionMatrix: 1763,
   PermissionUpdateReq: 1764,
-  eventStatsReq: 1766,
-  eventStatsResp: 1767,
-  cellStatsReq: 1768,
+  eventStatsReq: 1767,
+  eventStatsResp: 1768,
+  cellStatsReq: 1769,
   LoginDoneReq: 1779,
   ListPluginsResp: 1781,
   setPermissionModeReq: 1783,
@@ -31542,14 +31542,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1766,
+    schemaId: 1767,
     name: "eventStatsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "eventStatsReq",
       className: "eventStatsReq",
-      classId: 1766
+      classId: 1767
     },
     object: {
       kind: "struct",
@@ -31559,14 +31559,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1767,
+    schemaId: 1768,
     name: "eventStatsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "eventStatsResp",
       className: "eventStatsResp",
-      classId: 1767
+      classId: 1768
     },
     object: {
       kind: "struct",
@@ -31613,14 +31613,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1768,
+    schemaId: 1769,
     name: "cellStatsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "cellStatsReq",
       className: "cellStatsReq",
-      classId: 1768
+      classId: 1769
     },
     object: {
       kind: "struct",

@@ -4,12 +4,12 @@ import type { InvokeOptions } from "@qomos/gospore-client";
 import type * as systemTypes from "../system/types";
 
 export async function stats(client: GosporeClient, req: systemTypes.cellStatsReq, opts?: InvokeOptions): Promise<any> {
-  return client.invoke<systemTypes.cellStatsReq, any>("gospore.cell.stats", req, { reqSchemaId: 1768, ...opts });
+  return client.invoke<systemTypes.cellStatsReq, any>("gospore.cell.stats", req, { reqSchemaId: 1769, ...opts });
 }
 
 export const stats_meta = {
   callable: "gospore.cell.stats",
   name: "stats",
-  reqSchemaId: 1768,
+  reqSchemaId: 1769,
 } as const;
 

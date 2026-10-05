@@ -528,3 +528,24 @@ struct GlassHudStatus {
     optional AgentOutcome: string // last turn outcome: "completed" | "failed" | ""
     optional Timestamp: string
 }
+
+
+// GlassSessionClaimRespV2 — claim response with token renewal (pending
+// bilateral confirmation with MentraOS; emitted ONLY when
+// SPOREMIND_GLASS_CLAIM_RENEW=1, otherwise the server keeps responding with
+// GlassSessionClaimResp). Same semantics as GlassSessionClaimResp plus
+// RenewedToken: a fresh glass JWT (same scope/TTL as bootstrap) the client
+// stores for its NEXT reconnect, so a reconnect within the grace window does
+// not need a re-bootstrap even when the original token has nearly expired.
+// Wire field order (TBC, alphabetical): DeviceId, Generation, LastFrame,
+// Online, Reconnected, RenewedToken, Replaced, SessionId.
+struct GlassSessionClaimRespV2 {
+    SessionId: string
+    DeviceId: string
+    Generation: long
+    Online: bool
+    Reconnected: bool   // true when the same session recovered within grace
+    optional RenewedToken: string  // fresh glass JWT for the NEXT reconnect; empty when unset
+    Replaced: bool      // true when this claim replaced a different active session
+    optional LastFrame: GlassRenderFrame
+}

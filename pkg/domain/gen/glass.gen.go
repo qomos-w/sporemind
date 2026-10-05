@@ -47,6 +47,7 @@ const (
 	GlassRenderRespSchemaID           uint64 = 4037
 	GlassSessionClaimReqSchemaID      uint64 = 4020
 	GlassSessionClaimRespSchemaID     uint64 = 4021
+	GlassSessionClaimRespV2SchemaID   uint64 = 4066
 	GlassSessionStateSchemaID         uint64 = 4023
 	GlassSpeakEventSchemaID           uint64 = 4041
 	GlassSpeakReqSchemaID             uint64 = 4039
@@ -100,6 +101,7 @@ func init() {
 	schema.RegisterStructType(GlassRenderRespSchemaID, reflect.TypeOf(GlassRenderResp{}))
 	schema.RegisterStructType(GlassSessionClaimReqSchemaID, reflect.TypeOf(GlassSessionClaimReq{}))
 	schema.RegisterStructType(GlassSessionClaimRespSchemaID, reflect.TypeOf(GlassSessionClaimResp{}))
+	schema.RegisterStructType(GlassSessionClaimRespV2SchemaID, reflect.TypeOf(GlassSessionClaimRespV2{}))
 	schema.RegisterStructType(GlassSessionStateSchemaID, reflect.TypeOf(GlassSessionState{}))
 	schema.RegisterStructType(GlassSpeakEventSchemaID, reflect.TypeOf(GlassSpeakEvent{}))
 	schema.RegisterStructType(GlassSpeakReqSchemaID, reflect.TypeOf(GlassSpeakReq{}))
@@ -355,6 +357,17 @@ type GlassSessionClaimResp struct {
 	Reconnected bool              `json:"Reconnected"`
 	Replaced    bool              `json:"Replaced"`
 	LastFrame   *GlassRenderFrame `json:"LastFrame,omitempty"`
+}
+
+type GlassSessionClaimRespV2 struct {
+	SessionID    string            `json:"SessionId"`
+	DeviceID     string            `json:"DeviceId"`
+	Generation   int64             `json:"Generation"`
+	Online       bool              `json:"Online"`
+	Reconnected  bool              `json:"Reconnected"`
+	RenewedToken string            `json:"RenewedToken,omitempty"`
+	Replaced     bool              `json:"Replaced"`
+	LastFrame    *GlassRenderFrame `json:"LastFrame,omitempty"`
 }
 
 type GlassSessionState struct {

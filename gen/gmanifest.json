@@ -67895,7 +67895,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1768,
+      "schemaId": 1769,
       "name": "cellStatsReq",
       "visibility": "public",
       "object": {
@@ -68083,7 +68083,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1766,
+      "schemaId": 1767,
       "name": "eventStatsReq",
       "visibility": "public",
       "object": {
@@ -68094,7 +68094,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1767,
+      "schemaId": 1768,
       "name": "eventStatsResp",
       "visibility": "public",
       "object": {
@@ -75093,7 +75093,7 @@
       "actorType": "runtime",
       "visibility": "public",
       "mode": "unary",
-      "reqSchemaId": 1768,
+      "reqSchemaId": 1769,
       "finalSchemaId": 0,
       "req": {
         "kind": "struct",
@@ -75112,8 +75112,8 @@
       "actorType": "runtime",
       "visibility": "public",
       "mode": "unary",
-      "reqSchemaId": 1766,
-      "finalSchemaId": 1767,
+      "reqSchemaId": 1767,
+      "finalSchemaId": 1768,
       "req": {
         "kind": "struct",
         "name": "eventStatsReq",
