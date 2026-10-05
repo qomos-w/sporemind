@@ -138,7 +138,9 @@ func (c *glassWSClient) readWire() (*gateway.WireFrame, error) {
 	return gateway.UnmarshalWireFrame(data)
 }
 
-func setupGlassClient(t *testing.T) (*glassWSClient, gen.GlassBootstrapResp) {
+// startGlassRuntime boots a minimal runtime (gateway + glassinteract only)
+// and returns the gateway address plus the app codec/schema resolver.
+func startGlassRuntime(t *testing.T) (string, codec.Codec, codec.SchemaResolver) {
 	t.Helper()
 	config.SetDataDirForTest(t.TempDir())
 	t.Cleanup(config.ResetForTest)
@@ -170,9 +172,13 @@ func setupGlassClient(t *testing.T) (*glassWSClient, gen.GlassBootstrapResp) {
 	case <-time.After(5 * time.Second):
 		t.Fatal("gateway never became ready")
 	}
-	addr := handle.App().GatewayServer().Addr()
-	appCodec := handle.App().Codec()
-	var resolver codec.SchemaResolver = handle.App().Schemas()
+	return handle.App().GatewayServer().Addr(), handle.App().Codec(), handle.App().Schemas()
+}
+
+func setupGlassClient(t *testing.T) (*glassWSClient, gen.GlassBootstrapResp) {
+	t.Helper()
+	addr, appCodec, schemas := startGlassRuntime(t)
+	var resolver codec.SchemaResolver = schemas
 	encID, err := identity.NewCanonicalID(1000, 1, 0, 1)
 	if err != nil {
 		t.Fatal(err)
