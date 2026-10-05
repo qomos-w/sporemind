@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, memo } from 'react'
-import type { GlassRenderFrame, GlassSceneElement } from '../../gen-clients/system/types'
+import type { GlassHudStatus, GlassRenderFrame, GlassSceneElement } from '../../gen-clients/system/types'
 import { G2_PROFILE } from './render-spec/profiles/g2'
 import { TextMeasurer } from './render-spec/measurer/TextMeasurer'
 import { TextWrapper } from './render-spec/wrapper/TextWrapper'
@@ -199,9 +199,11 @@ const MAX_SCALE = 8
 export const GlassScenePreview = memo(function GlassScenePreview({
   frame,
   online,
+  hud,
 }: {
   frame: GlassRenderFrame | undefined
   online?: boolean
+  hud?: GlassHudStatus | undefined
 }) {
   const [showGrid, setShowGrid] = useState(false)
   const [autoScale, setAutoScale] = useState(true)
@@ -302,7 +304,7 @@ export const GlassScenePreview = memo(function GlassScenePreview({
         <button
           className={`glass-preview-toggle ${showDeviceHUD ? 'active' : ''}`}
           onClick={() => setShowDeviceHUD(v => !v)}
-          title="Device-drawn HUD bar (glass.hud.update): reserves top 40px, shifts scene down, and consumes 4 of the 6 text-container slots. Values are placeholders except connection."
+          title="Device-drawn HUD bar (glass.hud.update): reserves top 40px, shifts scene down, and consumes 4 of the 6 text-container slots. Agent/battery show the server HUD truth from the debug snapshot."
         >
           HUD
         </button>
@@ -328,7 +330,7 @@ export const GlassScenePreview = memo(function GlassScenePreview({
       >
         {showGrid ? <GlassesGrid scale={scale} /> : null}
         {showDeviceHUD ? (
-          <DeviceHudBar scale={scale} online={online} />
+          <DeviceHudBar scale={scale} online={online} hud={hud} />
         ) : null}
         {sorted.length > 0 ? (
           sorted.map((el, i) =>
@@ -426,10 +428,10 @@ function GlassesGrid({ scale }: { scale: number }) {
  * DeviceHudBar — simulation of the device-drawn HUD bar (glass.hud.update,
  * NOT frame content): left connection glyph, middle agent indicator, right
  * battery, separator rect at y=39, and scene content shifted down by 40px.
- * Connection reflects the real session; agent and battery are placeholders
- * until those values flow into the debug snapshot.
+ * Agent/battery render the server's HUD truth from the debug snapshot
+ * (GlassDebugState.Hud); absent values fall back to the device placeholders.
  */
-function DeviceHudBar({ scale, online }: { scale: number; online?: boolean }) {
+function DeviceHudBar({ scale, online, hud }: { scale: number; online?: boolean; hud?: GlassHudStatus }) {
   const h = px(HUD_HEIGHT_PX, scale)
   const hudStyle: React.CSSProperties = {
     position: 'absolute',
@@ -450,11 +452,17 @@ function DeviceHudBar({ scale, online }: { scale: number; online?: boolean }) {
     alignItems: 'center',
     padding: `0 ${px(4, scale)}px`,
   }
+  const agentText = hud?.AgentRunning
+    ? `▸ ${hud.AgentName || 'agent'}${hud.AgentState ? ` ${hud.AgentState}` : ''}`
+    : '○ agent off'
+  const batteryText = hud?.BatteryLevel
+    ? `BAT ${hud.BatteryLevel}%${hud.Charging ? ' ⚡' : ''}`
+    : 'BAT --'
   return (
-    <div style={hudStyle} title="Device-drawn HUD (glass.hud.update). Server-frame hudLine text is ignored on the device.">
+    <div style={hudStyle} title="Device-drawn HUD (glass.hud.update): server HUD truth from GlassDebugState.Hud; server-frame hudLine text is ignored on the device.">
       <span>{online ? '● ok' : '○ off'}</span>
-      <span>agent off</span>
-      <span>BAT --</span>
+      <span>{agentText}</span>
+      <span>{batteryText}</span>
       <div
         style={{
           position: 'absolute',

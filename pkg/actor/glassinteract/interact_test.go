@@ -359,6 +359,11 @@ func TestHandleDebugStateProjection(t *testing.T) {
 	if st.AudioAck == nil || st.AudioAck.HighestContiguousSeq != 0 || st.AudioAck.UtteranceID != "utt_1" {
 		t.Fatalf("debug audio ack = %+v", st.AudioAck)
 	}
+	// The HUD projection carries the truth the device HUD bar renders
+	// (battery/charging/agent), not placeholders.
+	if st.Hud == nil {
+		t.Fatal("debug hud projection missing")
+	}
 	if st.Stats.Renders != 1 || st.Stats.Speaks != 1 || st.Stats.SpeakDeduped != 1 || st.Stats.Utterances != 1 {
 		t.Fatalf("debug stats = %+v", st.Stats)
 	}

@@ -30,6 +30,7 @@ import * as glassDebug from '../../gen-clients/glass_interact/client'
 import type {
   GlassCapability,
   GlassDebugState,
+  GlassHudStatus,
   GlassLifecycleEvent,
   GlassRenderFrame,
   GlassSpeechAck,
@@ -76,10 +77,10 @@ function timelineKindLabel(kind: string): string {
   }
 }
 
-function FrameCard({ frame, online }: { frame: GlassRenderFrame | undefined; online?: boolean }) {
+function FrameCard({ frame, online, hud }: { frame: GlassRenderFrame | undefined; online?: boolean; hud?: GlassHudStatus | undefined }) {
   return (
     <section className="glass-debug-card glass-debug-canvas-card">
-      <GlassScenePreview frame={frame} online={online} />
+      <GlassScenePreview frame={frame} online={online} hud={hud} />
       {frame ? (
         <div className="glass-debug-frame-meta">
           {frame.Scene ? <span className="glass-debug-chip">tick: {frame.Scene.Tick}</span> : null}
@@ -424,7 +425,7 @@ export function GlassDebugPanel() {
 
       <div className="glass-debug-grid">
         <ConnectionCard state={state} connectionEvents={connectionEvents} />
-        <FrameCard frame={state?.CurrentFrame} online={state?.Session?.Online} />
+        <FrameCard frame={state?.CurrentFrame} online={state?.Session?.Online} hud={state?.Hud} />
         <SimulationCard onResult={setSimMsg} />
         <CapabilitiesCard capabilities={capabilities} />
         <AudioAckCard ack={state?.AudioAck} stats={state?.Stats ?? { Utterances: 0, Transcripts: 0, Renders: 0, Speaks: 0, SpeakDeduped: 0, Errors: 0 }} />

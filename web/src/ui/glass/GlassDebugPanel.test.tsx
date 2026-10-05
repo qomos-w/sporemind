@@ -87,6 +87,35 @@ describe('GlassDebugPanel', () => {
     })
   })
 
+  it('renders the device HUD bar from the server HUD truth in the debug snapshot', () => {
+    hookMock.mockReset()
+    hookMock.mockReturnValue({
+      state: { ...sampleState(), Hud: { Connection: 'online', BatteryLevel: 77, Charging: true, AgentRunning: true, AgentName: 'coordinator', AgentState: 'running' } },
+      loading: false,
+      error: null,
+      lastUpdated: Date.now(),
+      autoRefresh: true,
+      setAutoRefresh: vi.fn(),
+      refresh: vi.fn(),
+      connectionEvents: connectionEvents(),
+    })
+    const { root, container } = renderPanel()
+    expect(container.textContent).toContain('▸ coordinator running')
+    expect(container.textContent).toContain('BAT 77% ⚡')
+    act(() => {
+      root.unmount()
+    })
+  })
+
+  it('falls back to device HUD placeholders when the snapshot has no HUD truth', () => {
+    const { root, container } = renderPanel()
+    expect(container.textContent).toContain('○ agent off')
+    expect(container.textContent).toContain('BAT --')
+    act(() => {
+      root.unmount()
+    })
+  })
+
   it('renders capabilities with version and features', () => {
     const { root, container } = renderPanel()
     expect(container.textContent).toContain('Capabilities')
