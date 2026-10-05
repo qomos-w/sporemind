@@ -24,10 +24,10 @@ import (
 	"github.com/qomos-w/spore/identity"
 	"github.com/qomos-w/spore/transport"
 
+	tschema "github.com/qomos-w/spore/schema"
 	sporegen "github.com/qomos-w/sporemind/gen"
 	"github.com/qomos-w/sporemind/pkg/domain/gen"
 	"github.com/qomos-w/sporemind/pkg/protocol"
-	tschema "github.com/qomos-w/spore/schema"
 )
 
 // Callables and event kinds of the glass surface (mirror of the MentraOS
@@ -60,15 +60,15 @@ var EventKinds = []string{
 
 // kindSchemaID maps an event kind to the schema its payload decodes against.
 var kindSchemaID = map[string]uint64{
-	"glass.render":       gen.GlassRenderEventSchemaID,
-	"glass.speak":        gen.GlassSpeakEventSchemaID,
-	"glass.transcript":   gen.GlassTranscriptEventSchemaID,
-	"glass.interaction":  gen.GlassInteractionEventSchemaID,
-	"glass.hud.update":   gen.GlassHudStatusSchemaID,
-	"glass.online":       gen.GlassLifecycleEventSchemaID,
-	"glass.offline":      gen.GlassLifecycleEventSchemaID,
-	"glass.replaced":     gen.GlassLifecycleEventSchemaID,
-	"glass.reconnected":  gen.GlassLifecycleEventSchemaID,
+	"glass.render":      gen.GlassRenderEventSchemaID,
+	"glass.speak":       gen.GlassSpeakEventSchemaID,
+	"glass.transcript":  gen.GlassTranscriptEventSchemaID,
+	"glass.interaction": gen.GlassInteractionEventSchemaID,
+	"glass.hud.update":  gen.GlassHudStatusSchemaID,
+	"glass.online":      gen.GlassLifecycleEventSchemaID,
+	"glass.offline":     gen.GlassLifecycleEventSchemaID,
+	"glass.replaced":    gen.GlassLifecycleEventSchemaID,
+	"glass.reconnected": gen.GlassLifecycleEventSchemaID,
 }
 
 // Event is one decoded server push: the event kind and its payload
@@ -90,6 +90,8 @@ type Device struct {
 	SessionID  string
 	Generation int64
 
+	token string // glass JWT; retained so Reconnect can reuse the session
+
 	ws       *websocket.Conn
 	codec    codec.Codec
 	resolver codec.SchemaResolver
@@ -99,8 +101,8 @@ type Device struct {
 	corID  uint64
 	subSeq int
 
-	mu      sync.Mutex
-	pending map[uint64]chan *gateway.WireFrame
+	mu        sync.Mutex
+	pending   map[uint64]chan *gateway.WireFrame
 	kindBySub map[string]string
 
 	events    chan Event
@@ -178,6 +180,7 @@ func Connect(ctx context.Context, addr, key, deviceID string) (*Device, error) {
 		Key:       key,
 		DeviceID:  deviceID,
 		SessionID: boot.SessionID,
+		token:     boot.Token,
 		ws:        ws,
 		codec:     codec.NewMulti(set),
 		resolver:  set,
@@ -432,6 +435,68 @@ func (d *Device) Telemetry(batteryLevel int, charging bool) error {
 		gen.GlassTelemetryRespSchemaID, &resp)
 }
 
+// Drop closes the WebSocket abruptly without tearing the device down,
+// simulating a network drop. The device keeps its token and session
+// identity; call Reconnect to come back. Pending invokes fail or time out —
+// drop between invokes.
+func (d *Device) Drop() {
+	_ = d.ws.Close()
+}
+
+// Reconnect re-dials /ws with the SAME glass token — the real client's
+// reconnect path within the token's lifetime (re-bootstrapping mints a new
+// session id and would REPLACE the old session instead of resuming it).
+// Event subscriptions died with the old connection: subscribe again after
+// Reconnect.
+func (d *Device) Reconnect(ctx context.Context) error {
+	ws, _, err := websocket.DefaultDialer.DialContext(ctx, "ws://"+d.Addr+"/ws?token="+d.token, nil)
+	if err != nil {
+		return fmt.Errorf("glasssim: reconnect dial: %w", err)
+	}
+	d.ws = ws
+	d.mu.Lock()
+	d.kindBySub = make(map[string]string) // old subIds died with the connection
+	d.mu.Unlock()
+	go d.pump()
+	return nil
+}
+
+// SpeechStart opens one utterance manually (see Speech for the one-shot
+// form). Use the manual primitives to simulate a mid-utterance drop and
+// audio-tail resend.
+func (d *Device) SpeechStart(utteranceID string) (gen.GlassSpeechAck, error) {
+	var start gen.GlassSpeechStartResp
+	if err := d.Invoke(CallSpeechStart, gen.GlassSpeechStartReqSchemaID,
+		gen.GlassSpeechStartReq{SessionID: d.SessionID, Generation: d.Generation,
+			UtteranceID: utteranceID, SampleRate: 16000, Channels: 1, BitsPerSample: 16},
+		gen.GlassSpeechStartRespSchemaID, &start); err != nil {
+		return gen.GlassSpeechAck{}, err
+	}
+	return start.Ack, nil
+}
+
+// SpeechChunk uploads one PCM chunk (16 kHz mono s16le) at the given
+// 0-based sequence and returns the cumulative ACK.
+func (d *Device) SpeechChunk(utteranceID string, seq int64, pcm []byte) (gen.GlassSpeechAck, error) {
+	var ack gen.GlassSpeechAck
+	err := d.Invoke(CallSpeechChunk, gen.GlassSpeechChunkReqSchemaID,
+		gen.GlassSpeechChunkReq{SessionID: d.SessionID, Generation: d.Generation,
+			UtteranceID: utteranceID, Sequence: seq, Pcm: pcm},
+		gen.GlassSpeechAckSchemaID, &ack)
+	return ack, err
+}
+
+// SpeechEnd finalizes an utterance opened with SpeechStart.
+func (d *Device) SpeechEnd(utteranceID string) (gen.GlassSpeechAck, error) {
+	var endResp gen.GlassSpeechEndResp
+	if err := d.Invoke(CallSpeechEnd, gen.GlassSpeechEndReqSchemaID,
+		gen.GlassSpeechEndReq{SessionID: d.SessionID, Generation: d.Generation, UtteranceID: utteranceID},
+		gen.GlassSpeechEndRespSchemaID, &endResp); err != nil {
+		return gen.GlassSpeechAck{}, err
+	}
+	return endResp.Ack, nil
+}
+
 // Speech performs one full utterance cycle (start → chunk × N → end) over
 // PCM bytes (16 kHz mono s16le), verifying the cumulative ACK progression.
 func (d *Device) Speech(pcm []byte, chunkBytes int) error {
@@ -440,11 +505,7 @@ func (d *Device) Speech(pcm []byte, chunkBytes int) error {
 	}
 	utterance := fmt.Sprintf("sim-%d", time.Now().UnixNano())
 
-	var start gen.GlassSpeechStartResp
-	if err := d.Invoke(CallSpeechStart, gen.GlassSpeechStartReqSchemaID,
-		gen.GlassSpeechStartReq{SessionID: d.SessionID, Generation: d.Generation,
-			UtteranceID: utterance, SampleRate: 16000, Channels: 1, BitsPerSample: 16},
-		gen.GlassSpeechStartRespSchemaID, &start); err != nil {
+	if _, err := d.SpeechStart(utterance); err != nil {
 		return err
 	}
 
@@ -460,11 +521,8 @@ func (d *Device) Speech(pcm []byte, chunkBytes int) error {
 			time.Sleep(chunkInterval)
 		}
 		seq++
-		var ack gen.GlassSpeechAck
-		if err := d.Invoke(CallSpeechChunk, gen.GlassSpeechChunkReqSchemaID,
-			gen.GlassSpeechChunkReq{SessionID: d.SessionID, Generation: d.Generation,
-				UtteranceID: utterance, Sequence: seq, Pcm: pcm[off:end]},
-			gen.GlassSpeechAckSchemaID, &ack); err != nil {
+		ack, err := d.SpeechChunk(utterance, seq, pcm[off:end])
+		if err != nil {
 			return err
 		}
 		if ack.HighestContiguousSeq < seq {
@@ -472,14 +530,12 @@ func (d *Device) Speech(pcm []byte, chunkBytes int) error {
 		}
 	}
 
-	var endResp gen.GlassSpeechEndResp
-	if err := d.Invoke(CallSpeechEnd, gen.GlassSpeechEndReqSchemaID,
-		gen.GlassSpeechEndReq{SessionID: d.SessionID, Generation: d.Generation, UtteranceID: utterance},
-		gen.GlassSpeechEndRespSchemaID, &endResp); err != nil {
+	ack, err := d.SpeechEnd(utterance)
+	if err != nil {
 		return err
 	}
-	if !endResp.Ack.EndReceived {
-		return fmt.Errorf("glasssim: speech end not acknowledged: %+v", endResp.Ack)
+	if !ack.EndReceived {
+		return fmt.Errorf("glasssim: speech end not acknowledged: %+v", ack)
 	}
 	return nil
 }
