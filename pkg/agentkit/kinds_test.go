@@ -19,6 +19,50 @@ func TestCoderDefaultSkills(t *testing.T) {
 	t.Fatal("coder kind missing")
 }
 
+// TestSporeKind asserts the minimal bootstrap surface: exactly two default
+// bundles (invoke bridge + self-management), no auto-allowed tools, and
+// registration in ValidAgentKinds as user-creatable.
+func TestSporeKind(t *testing.T) {
+	var spore *domain.AgentKindConfig
+	for i, cfg := range BaseKindConfigs() {
+		if cfg.Kind == domain.AgentKindSpore {
+			spore = &BaseKindConfigs()[i]
+			break
+		}
+	}
+	if spore == nil {
+		t.Fatal("spore kind not found in BaseKindConfigs")
+	}
+	want := []string{"builtin:bundle:sporecall", "builtin:bundle:bundle-use"}
+	if len(spore.DefaultBundleIDs) != len(want) {
+		t.Fatalf("spore DefaultBundleIDs = %v, want exactly %v", spore.DefaultBundleIDs, want)
+	}
+	for i, id := range want {
+		if spore.DefaultBundleIDs[i] != id {
+			t.Fatalf("spore DefaultBundleIDs = %v, want %v", spore.DefaultBundleIDs, want)
+		}
+	}
+	if len(spore.AutoAllowTools) != 0 {
+		t.Fatalf("spore must not auto-allow tools (bridge grants reach, not permission): %v", spore.AutoAllowTools)
+	}
+	if spore.RolePromptRef.Key != "project.spore" {
+		t.Fatalf("spore RolePromptRef = %q, want project.spore", spore.RolePromptRef.Key)
+	}
+	registered := false
+	for _, k := range domain.ValidAgentKinds() {
+		if k.Kind == domain.AgentKindSpore {
+			registered = true
+			if !k.UserCreatable {
+				t.Fatal("spore kind must be user-creatable")
+			}
+			break
+		}
+	}
+	if !registered {
+		t.Fatal("spore kind missing from ValidAgentKinds")
+	}
+}
+
 func TestCoderDefaultBundles_NoWorkspaceOrOmnibox(t *testing.T) {
 	var coder *domain.AgentKindConfig
 	for i, cfg := range BaseKindConfigs() {
@@ -220,6 +264,14 @@ func TestBaseKindConfigs_AllHaveCardSystemBundle(t *testing.T) {
 		// come from bound app-bundle cards, never project-scoped bundles.
 		domain.AgentKindPlugin:            true,
 	}
+	// Spore is the minimal bootstrap kind: its entire contract is starting
+	// with only sporecall + bundle-use. Card-system capability is not granted
+	// by default — the agent mounts project-wiki itself via bundle-use when
+	// a task needs durable output, so the invariant's intent (no agent
+	// structurally unable to persist findings) still holds.
+	minimalKinds := map[string]bool{
+		domain.AgentKindSpore: true,
+	}
 	for _, cfg := range BaseKindConfigs() {
 		if cfg.Kind == "dreamer" {
 			if len(cfg.AutoAllowTools) != 0 {
@@ -229,6 +281,10 @@ func TestBaseKindConfigs_AllHaveCardSystemBundle(t *testing.T) {
 		}
 		// Workspace-global agents skip the project-wiki requirement.
 		if globalKinds[cfg.Kind] {
+			continue
+		}
+		// Bootstrap kinds acquire the card system on demand instead.
+		if minimalKinds[cfg.Kind] {
 			continue
 		}
 		hasWiki := false

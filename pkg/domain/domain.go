@@ -201,6 +201,7 @@ const (
 	AgentKindScout       AgentKind = "scout"
 	AgentKindArchitect   AgentKind = "architect" // retired: workflow capability is now a mountable bundle (workflow-tools)
 	AgentKindPlugin      AgentKind = "plugin"    // dedicated per-app agent provisioned at registration (plugin_agent block); never user-creatable
+	AgentKindSpore       AgentKind = "spore"     // minimal bootstrap agent: only the generic invoke bridge (sporecall) + bundle self-management (bundle-use)
 )
 
 // AgentKindInfo describes one agent kind for the list_agent_kinds API.
@@ -221,6 +222,7 @@ func ValidAgentKinds() []AgentKindInfo {
 		{Kind: AgentKindWorker, DisplayName: "Worker", UserCreatable: false, SystemManaged: true, Builtin: true},
 		{Kind: AgentKindScout, DisplayName: "Scout", UserCreatable: false, SystemManaged: true, Builtin: true},
 		{Kind: AgentKindPlugin, DisplayName: "Plugin", UserCreatable: false, SystemManaged: true, Builtin: true},
+		{Kind: AgentKindSpore, DisplayName: "Spore", UserCreatable: true, SystemManaged: false, Builtin: true},
 	}
 }
 

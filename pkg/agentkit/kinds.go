@@ -171,6 +171,20 @@ func BaseKindConfigs() []domain.AgentKindConfig {
 		"builtin:bundle:workspace-tools",
 	}
 
+	// spore is the minimal bootstrap agent: it starts with exactly two
+	// bundles — sporecall (generic invoke bridge to any host callable /
+	// MCP tool / app callable) and bundle-use (component discovery and
+	// runtime self-mounting). Every other capability is acquired on demand:
+	// the LLM retrieves the component catalog and mounts what the task
+	// needs. No AutoAllowTools: the bridge grants reach, not permission —
+	// target-side approval gates stay in force.
+	spore := domain.AgentKindConfig{Kind: domain.AgentKindSpore}
+	spore.RolePromptRef = profile("project.spore")
+	spore.DefaultBundleIDs = []string{
+		"builtin:bundle:sporecall",
+		"builtin:bundle:bundle-use",
+	}
+
 	return []domain.AgentKindConfig{
 		{
 			Kind:               coder.Kind,
@@ -271,6 +285,13 @@ func BaseKindConfigs() []domain.AgentKindConfig {
 				"builtin:bundle:fork-explore",
 			},
 			MaxTurns: 100,
+		},
+		{
+			Kind:             spore.Kind,
+			DisplayName:      "Spore",
+			UserCreatable:    true,
+			RolePromptRef:    spore.RolePromptRef,
+			DefaultBundleIDs: spore.DefaultBundleIDs,
 		},
 	}
 }

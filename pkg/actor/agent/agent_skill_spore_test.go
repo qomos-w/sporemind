@@ -43,8 +43,13 @@ func TestRunSporeSkillBodyMapEnumeration(t *testing.T) {
 	if err != nil {
 		t.Fatalf("err: %v", err)
 	}
-	if got != `{"count":2,"keys":"ba"}` {
-		t.Fatalf("got %s", got)
+	// The Go map feeding the VM ranges in random order, so the spore map's
+	// insertion order is not input-order; assert membership, not sequence.
+	if !strings.Contains(got, `"count":2`) {
+		t.Fatalf("got %s, want count 2", got)
+	}
+	if !strings.Contains(got, `"keys":"ab"`) && !strings.Contains(got, `"keys":"ba"`) {
+		t.Fatalf("got %s, want keys a+b in some order", got)
 	}
 }
 

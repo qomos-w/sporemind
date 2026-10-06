@@ -21,7 +21,7 @@ JSON return value instead of this prose.
 Pass the value to inspect as `Args` (any JSON value). The result describes:
 
 - `type` — one of `bool`, `int`, `double`, `string`, `map`, `array`, `null`
-- `map` values: ordered `keys` plus `field_types` (per-key type names)
+- `map` values: `keys` (in the VM's map order) plus `field_types` (per-key type names)
 - `array` values: `size` plus `element_types` (count per element type)
 - `string` values: `length`
 - scalars: their `value`
