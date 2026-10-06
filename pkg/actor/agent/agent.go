@@ -292,6 +292,13 @@ type Actor struct {
 	usedSkills   map[string]struct{}
 	usedSkillsMu sync.Mutex
 
+	// savedScripts is the agent's accumulated spore snippet set, persisted
+	// as one JSON doc under its own namespace (agent/<actorID>/scripts) and
+	// injected into every turn's hot context. Guarded by savedScriptsMu
+	// (agent_scripts.go): script_save/script_delete run on the owner lane
+	// while resolveHotContext readers can assemble concurrently.
+	savedScripts map[string]savedScript
+
 	actorID       string // own canonical ID for persistence key
 	workspaceID   string // parent workspace actor id for aistats routing
 	parentAgentID string // parent agent actor id when spawned by another agent (spawn_assign); empty for user-created root agents
@@ -1166,6 +1173,16 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	); err != nil {
 		return fmt.Errorf("agent: register eval_callables: %w", err)
 	}
+	if err := ctx.Register("script_save", a.handleScriptSave, actor.Public(),
+		actor.WithDescription("Save (or overwrite) a reusable spore script under a stable Name. Saved scripts enter your hot context every turn, so save the ones you keep rewriting. Saving an existing Name overwrites it (that is the edit path). Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("agent: register script_save: %w", err)
+	}
+	if err := ctx.Register("script_delete", a.handleScriptDelete, actor.Public(),
+		actor.WithDescription("Delete a saved script by Name. Explicit: deleting an unknown Name is an error. Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("agent: register script_delete: %w", err)
+	}
 
 	a.actorID = ctx.Self().ID().String()
 	if !a.child.Mode && a.actorID == "" {
@@ -1173,6 +1190,9 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	}
 	a.loadMailbox(ctx)
 	a.loadRequestRecords()
+	if err := a.loadSavedScripts(); err != nil {
+		ctx.Logger().Error("agent: restore saved scripts failed", "error", err)
+	}
 	if !a.child.Mode {
 		// Initialize/restore the memory graph before any component
 		// reconciliation below: syncSkillMounts and friends can call

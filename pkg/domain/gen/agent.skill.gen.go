@@ -17,6 +17,10 @@ const (
 	AgentEvalRespSchemaID          uint64 = 2771
 	AgentEvalSyntaxReqSchemaID     uint64 = 2772
 	AgentEvalSyntaxRespSchemaID    uint64 = 2773
+	AgentScriptDeleteReqSchemaID   uint64 = 2778
+	AgentScriptDeleteRespSchemaID  uint64 = 2779
+	AgentScriptSaveReqSchemaID     uint64 = 2776
+	AgentScriptSaveRespSchemaID    uint64 = 2777
 	AgentSkillUseReqSchemaID       uint64 = 2768
 	AgentSkillUseRespSchemaID      uint64 = 2769
 )
@@ -28,6 +32,10 @@ func init() {
 	schema.RegisterStructType(AgentEvalRespSchemaID, reflect.TypeOf(AgentEvalResp{}))
 	schema.RegisterStructType(AgentEvalSyntaxReqSchemaID, reflect.TypeOf(AgentEvalSyntaxReq{}))
 	schema.RegisterStructType(AgentEvalSyntaxRespSchemaID, reflect.TypeOf(AgentEvalSyntaxResp{}))
+	schema.RegisterStructType(AgentScriptDeleteReqSchemaID, reflect.TypeOf(AgentScriptDeleteReq{}))
+	schema.RegisterStructType(AgentScriptDeleteRespSchemaID, reflect.TypeOf(AgentScriptDeleteResp{}))
+	schema.RegisterStructType(AgentScriptSaveReqSchemaID, reflect.TypeOf(AgentScriptSaveReq{}))
+	schema.RegisterStructType(AgentScriptSaveRespSchemaID, reflect.TypeOf(AgentScriptSaveResp{}))
 	schema.RegisterStructType(AgentSkillUseReqSchemaID, reflect.TypeOf(AgentSkillUseReq{}))
 	schema.RegisterStructType(AgentSkillUseRespSchemaID, reflect.TypeOf(AgentSkillUseResp{}))
 }
@@ -59,6 +67,25 @@ type AgentEvalSyntaxReq struct {
 type AgentEvalSyntaxResp struct {
 	Lang     string `json:"Lang"`
 	Markdown string `json:"Markdown"`
+}
+
+type AgentScriptDeleteReq struct {
+	Name string `json:"Name"`
+}
+
+type AgentScriptDeleteResp struct {
+	Deleted bool `json:"Deleted"`
+}
+
+type AgentScriptSaveReq struct {
+	Name        string `json:"Name"`
+	Script      string `json:"Script"`
+	Description string `json:"Description,omitempty"`
+}
+
+type AgentScriptSaveResp struct {
+	Name    string `json:"Name"`
+	Updated bool   `json:"Updated"`
 }
 
 type AgentSkillUseReq struct {

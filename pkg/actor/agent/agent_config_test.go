@@ -1092,7 +1092,7 @@ func TestResolveTools_DebugBundleExposesListAgents(t *testing.T) {
 
 // TestResolveTools_SporeevalBundleExposesCodeInvocationTools locks the
 // sporeeval system bundle's mount gating: with builtin:bundle:sporeeval
-// mounted, its three agent-local eval-family callables surface as tools;
+// mounted, its five agent-local sporeeval callables surface as tools;
 // unmounted, none of them appear.
 func TestResolveTools_SporeevalBundleExposesCodeInvocationTools(t *testing.T) {
 	a := &Actor{}
@@ -1110,6 +1110,14 @@ func TestResolveTools_SporeevalBundleExposesCodeInvocationTools(t *testing.T) {
 			Name:        "eval_callables",
 			Description: "Search the callable catalog",
 		},
+		"script_save": {
+			Name:        "script_save",
+			Description: "Save a reusable script",
+		},
+		"script_delete": {
+			Name:        "script_delete",
+			Description: "Delete a saved script",
+		},
 	}
 	ctx := testutil.AnonCtx(testutil.GenActorID())
 	cfg := domain.AgentKindConfig{Kind: "coder"}
@@ -1120,12 +1128,14 @@ func TestResolveTools_SporeevalBundleExposesCodeInvocationTools(t *testing.T) {
 		t.Fatalf("expected no tools without the sporeeval bundle, got %+v", tools)
 	}
 
-	// Mounted via component snapshot: all three callables surface.
+	// Mounted via component snapshot: all five callables surface.
 	a.componentSnapshot.Store(&domain.AgentComponentSnapshot{
 		Tools: []domain.ComponentToolContribution{
 			{ID: "eval_script", CardID: "builtin:bundle:sporeeval", CallableID: "eval_script"},
 			{ID: "eval_syntax", CardID: "builtin:bundle:sporeeval", CallableID: "eval_syntax"},
 			{ID: "eval_callables", CardID: "builtin:bundle:sporeeval", CallableID: "eval_callables"},
+			{ID: "script_save", CardID: "builtin:bundle:sporeeval", CallableID: "script_save"},
+			{ID: "script_delete", CardID: "builtin:bundle:sporeeval", CallableID: "script_delete"},
 		},
 	})
 	tools = a.resolveTools(ctx, cfg, callables)
@@ -1133,13 +1143,13 @@ func TestResolveTools_SporeevalBundleExposesCodeInvocationTools(t *testing.T) {
 	for i, tool := range tools {
 		names[i] = tool.Name
 	}
-	for _, want := range []string{"eval_script", "eval_syntax", "eval_callables"} {
+	for _, want := range []string{"eval_script", "eval_syntax", "eval_callables", "script_save", "script_delete"} {
 		if !slices.Contains(names, want) {
 			t.Errorf("sporeeval tool %q missing from %v", want, names)
 		}
 	}
-	if len(tools) != 3 {
-		t.Fatalf("expected exactly 3 tools, got %d: %+v", len(tools), tools)
+	if len(tools) != 5 {
+		t.Fatalf("expected exactly 5 tools, got %d: %+v", len(tools), tools)
 	}
 }
 
@@ -1272,7 +1282,7 @@ func TestResolveTools_CoderGetsProjectWikiTools(t *testing.T) {
 		"project.wiki_get_card":           {Name: "project.wiki_get_card", Description: "Get card"},
 		"project.wiki_create_card":        {Name: "project.wiki_create_card", Description: "Create card"},
 		"project.wiki_edit_card":          {Name: "project.wiki_edit_card", Description: "Edit card"},
-		"project.wiki_delete_card":         {Name: "project.wiki_delete_card", Description: "Delete card"},
+		"project.wiki_delete_card":        {Name: "project.wiki_delete_card", Description: "Delete card"},
 	}
 	toolContributions := make([]domain.ComponentToolContribution, 0, len(callables))
 	for id := range callables {

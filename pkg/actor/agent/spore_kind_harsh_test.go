@@ -35,6 +35,8 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 				{Name: "eval_script", Description: "Evaluate an ad-hoc spore script."},
 				{Name: "eval_syntax", Description: "Spore language syntax reference."},
 				{Name: "eval_callables", Description: "Search the callable catalog."},
+				{Name: "script_save", Description: "Save a reusable spore script."},
+				{Name: "script_delete", Description: "Delete a saved script."},
 				{Name: "component_mount"},
 				{Name: "component_unmount"},
 				{Name: "component_set_enabled"},
@@ -64,13 +66,15 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 	ctx := testutil.AnonCtx(testutil.GenActorID())
 
 	tools := a.recomputeTurnToolSurface(ctx, cfg, "test-model")
-	// The surface is the three sporeeval tools plus the hard-injected
+	// The surface is the five sporeeval tools plus the hard-injected
 	// infrastructure every kind gets (skill_use, forced image-recognition)
 	// — nothing else.
 	allowed := map[string]bool{
 		"eval_script":     true,
 		"eval_syntax":     true,
 		"eval_callables":  true,
+		"script_save":     true,
+		"script_delete":   true,
 		"skill_use":       true,
 		"image_recognize": true,
 	}
@@ -83,7 +87,7 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 	for _, tl := range tools {
 		byID[tl.CallableID] = tl
 	}
-	for _, want := range []string{"eval_script", "eval_syntax", "eval_callables"} {
+	for _, want := range []string{"eval_script", "eval_syntax", "eval_callables", "script_save", "script_delete"} {
 		tool, ok := byID[want]
 		if !ok {
 			t.Fatalf("sporeeval tool %q missing", want)

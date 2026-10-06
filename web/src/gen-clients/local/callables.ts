@@ -795,6 +795,42 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "local",
+    name: "script_delete",
+    visibility: "public",
+    mode: "unary",
+    reqSchemaId: 1844,
+    finalSchemaId: 1845,
+    req: {
+      kind: "struct",
+      name: "AgentScriptDeleteReq",
+      className: "AgentScriptDeleteReq"
+    },
+    final: {
+      kind: "struct",
+      name: "AgentScriptDeleteResp",
+      className: "AgentScriptDeleteResp"
+    }
+  },
+  {
+    namespace: "local",
+    name: "script_save",
+    visibility: "public",
+    mode: "unary",
+    reqSchemaId: 1842,
+    finalSchemaId: 1843,
+    req: {
+      kind: "struct",
+      name: "AgentScriptSaveReq",
+      className: "AgentScriptSaveReq"
+    },
+    final: {
+      kind: "struct",
+      name: "AgentScriptSaveResp",
+      className: "AgentScriptSaveResp"
+    }
+  },
+  {
+    namespace: "local",
     name: "session_export_range",
     visibility: "admin",
     mode: "unary",

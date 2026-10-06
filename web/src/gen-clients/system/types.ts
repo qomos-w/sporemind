@@ -983,6 +983,25 @@ export interface AgentSchedulerUnbindResp {
   ActiveScheduler: ActiveSchedulerEntry[];
 }
 
+export interface AgentScriptDeleteReq {
+  Name: string;
+}
+
+export interface AgentScriptDeleteResp {
+  Deleted: boolean;
+}
+
+export interface AgentScriptSaveReq {
+  Name: string;
+  Script: string;
+  Description?: string | undefined;
+}
+
+export interface AgentScriptSaveResp {
+  Name: string;
+  Updated: boolean;
+}
+
 export interface AgentSessionExportRangeReq {
   BeforeTurnId?: string | undefined;
   Limit?: number | undefined;

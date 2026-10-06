@@ -49,3 +49,22 @@ struct AgentEvalCallablesResp {
     Items: array<CallableInterface>  // catalog rows (params, request fields, service)
     Total: int                       // matched rows before the limit was applied
 }
+
+struct AgentScriptSaveReq {
+    Name:    string                 // stable id; saving an existing Name overwrites (edit path)
+    Script:  string                 // spore source (define run()); reusable via eval_script
+    optional Description: string    // one line, shown in hot context
+}
+
+struct AgentScriptSaveResp {
+    Name:    string                 // echo of the saved id
+    Updated: bool                   // true when an existing script was overwritten
+}
+
+struct AgentScriptDeleteReq {
+    Name: string                    // id of the saved script to remove
+}
+
+struct AgentScriptDeleteResp {
+    Deleted: bool                   // true when the script was removed
+}

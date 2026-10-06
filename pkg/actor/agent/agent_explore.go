@@ -890,6 +890,16 @@ func (a *Actor) onStartChild(ctx actor.Context) error {
 	); err != nil {
 		return fmt.Errorf("agent: register child eval_callables: %w", err)
 	}
+	if err := ctx.Register("script_save", a.handleScriptSave, actor.Public(),
+		actor.WithDescription("Save (or overwrite) a reusable spore script under a stable Name. Saved scripts enter your hot context every turn, so save the ones you keep rewriting. Saving an existing Name overwrites it (that is the edit path). Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("agent: register child script_save: %w", err)
+	}
+	if err := ctx.Register("script_delete", a.handleScriptDelete, actor.Public(),
+		actor.WithDescription("Delete a saved script by Name. Explicit: deleting an unknown Name is an error. Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("agent: register child script_delete: %w", err)
+	}
 
 	// Reviewer children use the same automatic child turn as Explore. Their only
 	// behavioral difference is the terminal callback handled by turn completion.

@@ -46,3 +46,22 @@ export interface AgentEvalCallablesResp {
   Items: CallableInterface[];
   Total: number;
 }
+
+export interface AgentScriptSaveReq {
+  Name: string;
+  Script: string;
+  Description?: string | undefined;
+}
+
+export interface AgentScriptSaveResp {
+  Name: string;
+  Updated: boolean;
+}
+
+export interface AgentScriptDeleteReq {
+  Name: string;
+}
+
+export interface AgentScriptDeleteResp {
+  Deleted: boolean;
+}

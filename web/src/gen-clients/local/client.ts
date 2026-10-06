@@ -429,6 +429,28 @@ export const schedulerUnbind_meta = {
   resSchemaId: 2723,
 } as const;
 
+export async function scriptDelete(client: GosporeClient, req: systemTypes.AgentScriptDeleteReq, opts?: InvokeOptions): Promise<systemTypes.AgentScriptDeleteResp> {
+  return client.invoke<systemTypes.AgentScriptDeleteReq, systemTypes.AgentScriptDeleteResp>("script_delete", req, { reqSchemaId: 1844, resSchemaId: 1845, ...opts });
+}
+
+export const scriptDelete_meta = {
+  callable: "script_delete",
+  name: "script_delete",
+  reqSchemaId: 1844,
+  resSchemaId: 1845,
+} as const;
+
+export async function scriptSave(client: GosporeClient, req: systemTypes.AgentScriptSaveReq, opts?: InvokeOptions): Promise<systemTypes.AgentScriptSaveResp> {
+  return client.invoke<systemTypes.AgentScriptSaveReq, systemTypes.AgentScriptSaveResp>("script_save", req, { reqSchemaId: 1842, resSchemaId: 1843, ...opts });
+}
+
+export const scriptSave_meta = {
+  callable: "script_save",
+  name: "script_save",
+  reqSchemaId: 1842,
+  resSchemaId: 1843,
+} as const;
+
 export async function sessionExportRange(client: GosporeClient, req: systemTypes.AgentSessionExportRangeReq, opts?: InvokeOptions): Promise<systemTypes.AgentSessionExportRangeResp> {
   return client.invoke<systemTypes.AgentSessionExportRangeReq, systemTypes.AgentSessionExportRangeResp>("session_export_range", req, { reqSchemaId: 1784, resSchemaId: 1785, ...opts });
 }

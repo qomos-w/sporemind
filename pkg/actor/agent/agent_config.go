@@ -1158,6 +1158,9 @@ func (a *Actor) resolveHotContext(ctx actor.Context) []domain.ContentBlock {
 	if block := a.buildMCPStatusBlock(ctx); block != nil {
 		blocks = append(blocks, *block)
 	}
+	if block := a.buildSavedScriptsBlock(); block != nil {
+		blocks = append(blocks, *block)
+	}
 	return blocks
 }
 

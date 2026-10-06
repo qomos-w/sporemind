@@ -7613,6 +7613,111 @@
     },
     {
       "namespace": "system",
+      "schemaId": 1844,
+      "name": "AgentScriptDeleteReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentScriptDeleteReq",
+        "fields": [
+          {
+            "name": "Name",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1845,
+      "name": "AgentScriptDeleteResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentScriptDeleteResp",
+        "fields": [
+          {
+            "name": "Deleted",
+            "type": {
+              "kind": "scalar",
+              "name": "bool",
+              "typeId": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1842,
+      "name": "AgentScriptSaveReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentScriptSaveReq",
+        "fields": [
+          {
+            "name": "Name",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Script",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Description",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1843,
+      "name": "AgentScriptSaveResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentScriptSaveResp",
+        "fields": [
+          {
+            "name": "Name",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Updated",
+            "type": {
+              "kind": "scalar",
+              "name": "bool",
+              "typeId": 2
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
       "schemaId": 1784,
       "name": "AgentSessionExportRangeReq",
       "visibility": "admin",
@@ -70398,6 +70503,46 @@
         "kind": "struct",
         "name": "AgentSchedulerUnbindResp",
         "className": "AgentSchedulerUnbindResp"
+      }
+    },
+    {
+      "namespace": "",
+      "name": "script_delete",
+      "actorType": "agent",
+      "description": "Delete a saved script by Name. Explicit: deleting an unknown Name is an error. Exposed by the builtin:bundle:sporeeval bundle.",
+      "visibility": "public",
+      "mode": "unary",
+      "reqSchemaId": 1844,
+      "finalSchemaId": 1845,
+      "req": {
+        "kind": "struct",
+        "name": "AgentScriptDeleteReq",
+        "className": "AgentScriptDeleteReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "AgentScriptDeleteResp",
+        "className": "AgentScriptDeleteResp"
+      }
+    },
+    {
+      "namespace": "",
+      "name": "script_save",
+      "actorType": "agent",
+      "description": "Save (or overwrite) a reusable spore script under a stable Name. Saved scripts enter your hot context every turn, so save the ones you keep rewriting. Saving an existing Name overwrites it (that is the edit path). Exposed by the builtin:bundle:sporeeval bundle.",
+      "visibility": "public",
+      "mode": "unary",
+      "reqSchemaId": 1842,
+      "finalSchemaId": 1843,
+      "req": {
+        "kind": "struct",
+        "name": "AgentScriptSaveReq",
+        "className": "AgentScriptSaveReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "AgentScriptSaveResp",
+        "className": "AgentScriptSaveResp"
       }
     },
     {

@@ -629,6 +629,10 @@ export const SchemaIDs = {
   VoiceDesignResp: 1834,
   WorkspaceAgentSpawnSwarmReq: 1835,
   WorkspaceAgentSpawnSwarmResp: 1836,
+  AgentScriptSaveReq: 1842,
+  AgentScriptSaveResp: 1843,
+  AgentScriptDeleteReq: 1844,
+  AgentScriptDeleteResp: 1845,
   ProjectMount: 1872,
   ProjectRef: 1873,
   WorkspaceMountReq: 1874,
@@ -33528,6 +33532,135 @@ export const schemaEntries: SchemaEntry[] = [
             kind: "scalar",
             name: "int",
             typeId: 6
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1842,
+    name: "AgentScriptSaveReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentScriptSaveReq",
+      className: "AgentScriptSaveReq",
+      classId: 1842
+    },
+    object: {
+      kind: "struct",
+      name: "AgentScriptSaveReq",
+      fields: [
+        {
+          name: "Name",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Script",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Description",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1843,
+    name: "AgentScriptSaveResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentScriptSaveResp",
+      className: "AgentScriptSaveResp",
+      classId: 1843
+    },
+    object: {
+      kind: "struct",
+      name: "AgentScriptSaveResp",
+      fields: [
+        {
+          name: "Name",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Updated",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1844,
+    name: "AgentScriptDeleteReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentScriptDeleteReq",
+      className: "AgentScriptDeleteReq",
+      classId: 1844
+    },
+    object: {
+      kind: "struct",
+      name: "AgentScriptDeleteReq",
+      fields: [
+        {
+          name: "Name",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1845,
+    name: "AgentScriptDeleteResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentScriptDeleteResp",
+      className: "AgentScriptDeleteResp",
+      classId: 1845
+    },
+    object: {
+      kind: "struct",
+      name: "AgentScriptDeleteResp",
+      fields: [
+        {
+          name: "Deleted",
+          type: {
+            kind: "scalar",
+            name: "bool",
+            typeId: 2
           }
         }
       ]

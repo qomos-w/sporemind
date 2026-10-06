@@ -1967,6 +1967,18 @@ type AgentEvalSyntaxResp = gen.AgentEvalSyntaxResp
 type AgentEvalCallablesReq = gen.AgentEvalCallablesReq
 type AgentEvalCallablesResp = gen.AgentEvalCallablesResp
 
+// AgentScriptSaveReq/Resp are the protocol for the agent-local script_save:
+// upsert one reusable spore snippet by Name (saving an existing Name
+// overwrites it — the edit path). The whole set is injected into hot
+// context and persisted under the agent's own namespace.
+type AgentScriptSaveReq = gen.AgentScriptSaveReq
+type AgentScriptSaveResp = gen.AgentScriptSaveResp
+
+// AgentScriptDeleteReq/Resp are the protocol for the agent-local
+// script_delete: remove one saved snippet by Name; unknown names error.
+type AgentScriptDeleteReq = gen.AgentScriptDeleteReq
+type AgentScriptDeleteResp = gen.AgentScriptDeleteResp
+
 // ── fork child ──
 
 type ForkResult = gen.ForkResult
