@@ -19,8 +19,8 @@ func TestCoderDefaultSkills(t *testing.T) {
 	t.Fatal("coder kind missing")
 }
 
-// TestSporeKind asserts the pure-bridge surface: exactly one default bundle
-// (sporecall invoke bridge), no auto-allowed tools, and registration in
+// TestSporeKind asserts the code-invocation surface: exactly one default
+// bundle (sporeeval), no auto-allowed tools, and registration in
 // ValidAgentKinds as user-creatable.
 func TestSporeKind(t *testing.T) {
 	var spore *domain.AgentKindConfig
@@ -33,7 +33,7 @@ func TestSporeKind(t *testing.T) {
 	if spore == nil {
 		t.Fatal("spore kind not found in BaseKindConfigs")
 	}
-	want := []string{"builtin:bundle:sporecall"}
+	want := []string{"builtin:bundle:sporeeval"}
 	if len(spore.DefaultBundleIDs) != len(want) {
 		t.Fatalf("spore DefaultBundleIDs = %v, want exactly %v", spore.DefaultBundleIDs, want)
 	}
@@ -264,8 +264,8 @@ func TestBaseKindConfigs_AllHaveCardSystemBundle(t *testing.T) {
 		// come from bound app-bundle cards, never project-scoped bundles.
 		domain.AgentKindPlugin:            true,
 	}
-	// Spore is the pure-bridge kind: its entire contract is starting with
-	// only sporecall. Card-system capability is reached directly via
+	// Spore is the code-invocation kind: its entire contract is starting with
+	// only sporeeval. Card-system capability is reached directly via
 	// workspace.host_call ("project.wiki_*" are host callables), so the
 	// invariant's intent (no agent structurally unable to persist
 	// findings) still holds — the path is the bridge, not a bundle.

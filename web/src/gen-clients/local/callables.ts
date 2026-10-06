@@ -361,6 +361,24 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "local",
+    name: "eval",
+    visibility: "public",
+    mode: "unary",
+    reqSchemaId: 1842,
+    finalSchemaId: 1843,
+    req: {
+      kind: "struct",
+      name: "AgentEvalReq",
+      className: "AgentEvalReq"
+    },
+    final: {
+      kind: "struct",
+      name: "AgentEvalResp",
+      className: "AgentEvalResp"
+    }
+  },
+  {
+    namespace: "local",
     name: "frontend_debug",
     visibility: "public",
     mode: "unary",

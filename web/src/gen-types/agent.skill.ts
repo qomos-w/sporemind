@@ -15,3 +15,13 @@ export interface AgentSkillUseResp {
   Warning?: string | undefined;
   Result?: string | undefined;
 }
+
+export interface AgentEvalReq {
+  Script: string;
+  Args?: unknown[] | undefined;
+}
+
+export interface AgentEvalResp {
+  Result?: unknown | undefined;
+  Error?: string | undefined;
+}

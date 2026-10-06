@@ -171,18 +171,18 @@ func BaseKindConfigs() []domain.AgentKindConfig {
 		"builtin:bundle:workspace-tools",
 	}
 
-	// spore is the pure-bridge bootstrap agent: its entire default surface is
-	// sporecall — workspace.host_call (any host actor callable by dotted ID),
-	// mcp.call_tool, appmanager.invoke. Capability closure comes from reach
+	// spore is the code-invocation agent: its entire default surface is the
+	// sporeeval bundle — eval (agent-local pure spore evaluation),
+	// workspace.spore_syntax / search_callables (self-documentation and
+	// catalog discovery), and the three invoke relays (workspace.host_call,
+	// mcp.call_tool, appmanager.invoke). Capability closure comes from reach
 	// alone: file editing, wiki, catalog discovery are all direct host_call
-	// targets, so no bundle ever needs to be mounted. bundle-use was removed
-	// deliberately: it only adds surface ergonomics (dedicated tool schemas,
-	// guidance, agent-local mount tools), not capability. No AutoAllowTools:
-	// the bridge grants reach, not permission — target-side gates stay.
+	// targets, so no bundle ever needs to be mounted. No AutoAllowTools: the
+	// bridge grants reach, not permission — target-side gates stay.
 	spore := domain.AgentKindConfig{Kind: domain.AgentKindSpore}
 	spore.RolePromptRef = profile("project.spore")
 	spore.DefaultBundleIDs = []string{
-		"builtin:bundle:sporecall",
+		"builtin:bundle:sporeeval",
 	}
 
 	return []domain.AgentKindConfig{

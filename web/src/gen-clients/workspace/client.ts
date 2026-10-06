@@ -291,17 +291,6 @@ export const deleteAgentKind_meta = {
   resSchemaId: 1985,
 } as const;
 
-export async function eval(client: GosporeClient, req: systemTypes.WorkspaceEvalReq, opts?: InvokeOptions): Promise<systemTypes.WorkspaceEvalResp> {
-  return client.invoke<systemTypes.WorkspaceEvalReq, systemTypes.WorkspaceEvalResp>("workspace.eval", req, { reqSchemaId: 1993, resSchemaId: 1994, ...opts });
-}
-
-export const eval_meta = {
-  callable: "workspace.eval",
-  name: "eval",
-  reqSchemaId: 1993,
-  resSchemaId: 1994,
-} as const;
-
 export async function gateApprove(client: GosporeClient, req: systemTypes.WorkspaceGateApproveReq, opts?: InvokeOptions): Promise<systemTypes.WorkspaceGateApproveResp> {
   return client.invoke<systemTypes.WorkspaceGateApproveReq, systemTypes.WorkspaceGateApproveResp>("workspace.gate_approve", req, { reqSchemaId: 3884, resSchemaId: 3885, ...opts });
 }

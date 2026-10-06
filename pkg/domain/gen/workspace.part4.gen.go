@@ -24,8 +24,6 @@ const (
 	WorkspaceDeleteAgentKindReqSchemaID      uint64 = 1984
 	WorkspaceDeleteAgentKindRespSchemaID     uint64 = 1985
 	WorkspaceEnsureAppAgentRespSchemaID      uint64 = 1982
-	WorkspaceEvalReqSchemaID                 uint64 = 1993
-	WorkspaceEvalRespSchemaID                uint64 = 1994
 	WorkspaceGitAmendReqSchemaID             uint64 = 1972
 	WorkspaceGitDiscardReqSchemaID           uint64 = 1971
 	WorkspaceGitFetchReqSchemaID             uint64 = 1970
@@ -40,10 +38,10 @@ const (
 	WorkspaceHostCallReqSchemaID             uint64 = 1991
 	WorkspaceHostCallRespSchemaID            uint64 = 1992
 	WorkspaceRemoveAppAgentReqSchemaID       uint64 = 1983
-	WorkspaceSearchCallablesReqSchemaID      uint64 = 1997
-	WorkspaceSearchCallablesRespSchemaID     uint64 = 1998
-	WorkspaceSporeSyntaxReqSchemaID          uint64 = 1995
-	WorkspaceSporeSyntaxRespSchemaID         uint64 = 1996
+	WorkspaceSearchCallablesReqSchemaID      uint64 = 1995
+	WorkspaceSearchCallablesRespSchemaID     uint64 = 1996
+	WorkspaceSporeSyntaxReqSchemaID          uint64 = 1993
+	WorkspaceSporeSyntaxRespSchemaID         uint64 = 1994
 )
 
 func init() {
@@ -60,8 +58,6 @@ func init() {
 	schema.RegisterStructType(WorkspaceDeleteAgentKindReqSchemaID, reflect.TypeOf(WorkspaceDeleteAgentKindReq{}))
 	schema.RegisterStructType(WorkspaceDeleteAgentKindRespSchemaID, reflect.TypeOf(WorkspaceDeleteAgentKindResp{}))
 	schema.RegisterStructType(WorkspaceEnsureAppAgentRespSchemaID, reflect.TypeOf(WorkspaceEnsureAppAgentResp{}))
-	schema.RegisterStructType(WorkspaceEvalReqSchemaID, reflect.TypeOf(WorkspaceEvalReq{}))
-	schema.RegisterStructType(WorkspaceEvalRespSchemaID, reflect.TypeOf(WorkspaceEvalResp{}))
 	schema.RegisterStructType(WorkspaceGitAmendReqSchemaID, reflect.TypeOf(WorkspaceGitAmendReq{}))
 	schema.RegisterStructType(WorkspaceGitDiscardReqSchemaID, reflect.TypeOf(WorkspaceGitDiscardReq{}))
 	schema.RegisterStructType(WorkspaceGitFetchReqSchemaID, reflect.TypeOf(WorkspaceGitFetchReq{}))
@@ -163,16 +159,6 @@ type WorkspaceEnsureAppAgentResp struct {
 	ActorID     string `json:"ActorID"`
 	DisplayName string `json:"DisplayName"`
 	Created     bool   `json:"Created"`
-}
-
-type WorkspaceEvalReq struct {
-	Script string `json:"Script"`
-	Args   []any  `json:"Args,omitempty"`
-}
-
-type WorkspaceEvalResp struct {
-	Result any    `json:"Result,omitempty"`
-	Error  string `json:"Error,omitempty"`
 }
 
 type WorkspaceGitAmendReq struct {

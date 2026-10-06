@@ -1145,6 +1145,16 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 		return fmt.Errorf("agent: register skill_mount compatibility: %w", err)
 	}
 
+	// eval is the agent-local pure spore evaluator (moved off workspace.eval).
+	// PureContext: the script run executes on the forked goroutine, so a
+	// seconds-long snippet never blocks the owner lane nor serializes behind
+	// the skill_ops / agent_exec lanes.
+	if err := ctx.Register("eval", a.handleEval, actor.Public(),
+		actor.WithDescription("Evaluate an ad-hoc spore script on this agent (pure computation, no host bindings; fixed 10s / 1M-instruction budget, 64KB output cap). The script must define the run() entry function; Args are passed positionally. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("agent: register eval: %w", err)
+	}
+
 	a.actorID = ctx.Self().ID().String()
 	if !a.child.Mode && a.actorID == "" {
 		ctx.Logger().Error("agent: OnStart missing actorID; persistence disabled")

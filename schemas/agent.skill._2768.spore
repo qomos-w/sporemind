@@ -1,4 +1,5 @@
-// agent.skill namespace — explicit skill use after component availability mount.
+// agent.skill / agent.eval namespace — explicit skill use after component
+// availability mount, plus the agent-local ad-hoc spore evaluator.
 // @ts-export
 
 struct AgentSkillUseReq {
@@ -16,4 +17,14 @@ struct AgentSkillUseResp {
     // Runtime=spore skills carry the JSON-encoded spore run() return value
     // here instead of a prompt Body.
     optional Result: string
+}
+
+struct AgentEvalReq {
+    Script:        string       // spore source; must define the run() entry function
+    optional Args: array<any>   // positional arguments passed to run(...)
+}
+
+struct AgentEvalResp {
+    optional Result: any        // JSON-normalized return value of run()
+    optional Error:  string     // compile / runtime / normalization failure diagnostics
 }

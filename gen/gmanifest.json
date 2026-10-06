@@ -4964,6 +4964,69 @@
     },
     {
       "namespace": "system",
+      "schemaId": 1842,
+      "name": "AgentEvalReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalReq",
+        "fields": [
+          {
+            "name": "Script",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Args",
+            "type": {
+              "kind": "array",
+              "name": "array",
+              "element": {
+                "kind": "scalar",
+                "name": "any",
+                "typeId": 15
+              }
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1843,
+      "name": "AgentEvalResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalResp",
+        "fields": [
+          {
+            "name": "Result",
+            "type": {
+              "kind": "scalar",
+              "name": "any",
+              "typeId": 15
+            },
+            "optional": true
+          },
+          {
+            "name": "Error",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
       "schemaId": 163,
       "name": "AgentFrontendDebugReq",
       "visibility": "public",
@@ -64737,69 +64800,6 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1993,
-      "name": "WorkspaceEvalReq",
-      "visibility": "public",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceEvalReq",
-        "fields": [
-          {
-            "name": "Script",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            }
-          },
-          {
-            "name": "Args",
-            "type": {
-              "kind": "array",
-              "name": "array",
-              "element": {
-                "kind": "scalar",
-                "name": "any",
-                "typeId": 15
-              }
-            },
-            "optional": true
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1994,
-      "name": "WorkspaceEvalResp",
-      "visibility": "public",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceEvalResp",
-        "fields": [
-          {
-            "name": "Result",
-            "type": {
-              "kind": "scalar",
-              "name": "any",
-              "typeId": 15
-            },
-            "optional": true
-          },
-          {
-            "name": "Error",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            },
-            "optional": true
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
       "schemaId": 1915,
       "name": "WorkspaceExplorerState",
       "visibility": "public",
@@ -69720,6 +69720,26 @@
         "kind": "struct",
         "name": "CoordinatorWearableNotifyResp",
         "className": "CoordinatorWearableNotifyResp"
+      }
+    },
+    {
+      "namespace": "",
+      "name": "eval",
+      "actorType": "agent",
+      "description": "Evaluate an ad-hoc spore script on this agent (pure computation, no host bindings; fixed 10s / 1M-instruction budget, 64KB output cap). The script must define the run() entry function; Args are passed positionally. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle.",
+      "visibility": "public",
+      "mode": "unary",
+      "reqSchemaId": 1842,
+      "finalSchemaId": 1843,
+      "req": {
+        "kind": "struct",
+        "name": "AgentEvalReq",
+        "className": "AgentEvalReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "AgentEvalResp",
+        "className": "AgentEvalResp"
       }
     },
     {
@@ -83217,27 +83237,6 @@
         "kind": "struct",
         "name": "WorkspaceDeleteAgentKindResp",
         "className": "WorkspaceDeleteAgentKindResp"
-      }
-    },
-    {
-      "namespace": "workspace",
-      "name": "eval",
-      "actorType": "workspace",
-      "description": "Evaluate an ad-hoc spore script (pure computation, no host bindings; fixed 10s / 1M-instruction budget, 64KB output cap). The script must define the run() entry function; Args are passed positionally. Exposed by the builtin:bundle:sporeeval bundle.",
-      "visibility": "public",
-      "mode": "unary",
-      "service": "workspace",
-      "reqSchemaId": 1993,
-      "finalSchemaId": 1994,
-      "req": {
-        "kind": "struct",
-        "name": "WorkspaceEvalReq",
-        "className": "WorkspaceEvalReq"
-      },
-      "final": {
-        "kind": "struct",
-        "name": "WorkspaceEvalResp",
-        "className": "WorkspaceEvalResp"
       }
     },
     {

@@ -242,22 +242,12 @@ struct WorkspaceHostCallResp {
     optional Result: map<string, any>  // decoded JSON response; nil for void/tell-style callables
 }
 
-// ---- workspace.eval / spore_syntax / search_callables (builtin:bundle:sporeeval) ----
+// ---- workspace.spore_syntax / search_callables (builtin:bundle:sporeeval) ----
 //
-// The sporeeval bundle's code-invocation surface: evaluate an ad-hoc spore
-// script (pure computation, no host bindings), read the spore language syntax
+// The sporeeval bundle's discovery surface: read the spore language syntax
 // reference, and search the live callable catalog so callers can discover
 // callable IDs and their request shapes before relaying via host_call.
-
-struct WorkspaceEvalReq {
-    Script:             string       // spore source; must define the run() entry function
-    optional Args:      array<any>   // positional arguments passed to run(...)
-}
-
-struct WorkspaceEvalResp {
-    optional Result: any             // JSON-normalized return value of run()
-    optional Error:  string          // compile / runtime / normalization failure diagnostics
-}
+// (The bundle's eval tool is agent-local, not a workspace callable.)
 
 struct WorkspaceSporeSyntaxReq {
     optional Lang: string            // "en" (default) | "zh"

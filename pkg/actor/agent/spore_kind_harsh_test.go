@@ -9,16 +9,14 @@ import (
 	"github.com/qomos-w/sporemind/pkg/testutil"
 )
 
-// TestSporeKind_PureBridgeSurface pins the spore kind's contract after the
-// deliberate removal of bundle-use: the LLM-visible tool surface is exactly
-// the sporecall bridge — nothing else.
+// TestSporeKind_PureBridgeSurface pins the spore kind's contract: the
+// LLM-visible tool surface is exactly the sporeeval bundle — the agent-local
+// eval plus the workspace discovery/relay callables — nothing else.
 //
 // Capability closure is reach, not surface (workspace_hostcall.go relays any
 // service callable by dotted ID, target-side gates intact): file editing,
 // wiki persistence and catalog discovery are direct host_call targets, so no
-// dedicated tools are required to complete tasks. bundle-use only provided
-// ergonomics (dedicated tool schemas + guidance) and the agent-local mount
-// tools — none of which is capability — and was removed.
+// dedicated tools are required to complete tasks.
 func TestSporeKind_PureBridgeSurface(t *testing.T) {
 	a := &Actor{
 		agentKind: domain.AgentKindSpore,
@@ -31,10 +29,11 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 	// The topology deliberately contains everything the agent could ever
 	// want: work callables (project.*), the component surface bundle-use
 	// used to expose, MCP management. The assertion is that NONE of it
-	// becomes a tool — only the bridge materializes.
+	// becomes a tool — only the bundle surfaces materialize.
 	a.topo = &mockTopologyProvider{
 		snapshot: []runtime.ActorNode{
 			{Kind: "agent", Callables: []domain.CallableInterface{
+				{Name: "eval", Description: "Evaluate an ad-hoc spore script."},
 				{Name: "component_mount"},
 				{Name: "component_unmount"},
 				{Name: "component_set_enabled"},
@@ -43,6 +42,8 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 			}},
 			{Kind: "workspace", Callables: []domain.CallableInterface{
 				{Name: "workspace.host_call", ServiceName: "workspace", Description: "Invoke any host actor callable by dotted ID."},
+				{Name: "workspace.spore_syntax", ServiceName: "workspace", Description: "Spore language syntax reference."},
+				{Name: "workspace.search_callables", ServiceName: "workspace", Description: "Search the live callable catalog."},
 			}},
 			{Kind: "mcpmanager", Callables: []domain.CallableInterface{
 				{Name: "mcp.list_servers", ServiceName: "mcp"},
@@ -62,31 +63,38 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 	ctx := testutil.AnonCtx(testutil.GenActorID())
 
 	tools := a.recomputeTurnToolSurface(ctx, cfg, "test-model")
-	// The surface is the bridge trio plus the hard-injected infrastructure
-	// every kind gets (skill_use, forced image-recognition) — nothing else.
+	// The surface is the six sporeeval tools plus the hard-injected
+	// infrastructure every kind gets (skill_use, forced image-recognition)
+	// — nothing else.
 	allowed := map[string]bool{
-		"workspace.host_call": true,
-		"mcp.call_tool":       true,
-		"appmanager.invoke":   true,
-		"skill_use":           true,
-		"image_recognize":     true,
+		"eval":                        true,
+		"workspace.spore_syntax":      true,
+		"workspace.search_callables":  true,
+		"workspace.host_call":         true,
+		"mcp.call_tool":               true,
+		"appmanager.invoke":           true,
+		"skill_use":                   true,
+		"image_recognize":             true,
 	}
 	for _, tl := range tools {
 		if !allowed[tl.CallableID] {
-			t.Fatalf("tool %q leaked into the pure-bridge surface", tl.CallableID)
+			t.Fatalf("tool %q leaked into the spore surface", tl.CallableID)
 		}
 	}
 	byID := map[string]domain.ToolSpec{}
 	for _, tl := range tools {
 		byID[tl.CallableID] = tl
 	}
-	for _, want := range []string{"workspace.host_call", "mcp.call_tool", "appmanager.invoke"} {
+	for _, want := range []string{
+		"eval", "workspace.spore_syntax", "workspace.search_callables",
+		"workspace.host_call", "mcp.call_tool", "appmanager.invoke",
+	} {
 		tool, ok := byID[want]
 		if !ok {
-			t.Fatalf("bridge tool %q missing", want)
+			t.Fatalf("sporeeval tool %q missing", want)
 		}
 		if tool.Description == "" {
-			t.Fatalf("bridge tool %q has no description", want)
+			t.Fatalf("sporeeval tool %q has no description", want)
 		}
 	}
 	if bridge := byID["workspace.host_call"]; bridge.ServiceName != "workspace" {
@@ -101,7 +109,7 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 		"project.read", "project.write",
 	} {
 		if _, ok := byID[forbidden]; ok {
-			t.Fatalf("%q leaked into the pure-bridge surface", forbidden)
+			t.Fatalf("%q leaked into the spore surface", forbidden)
 		}
 	}
 }

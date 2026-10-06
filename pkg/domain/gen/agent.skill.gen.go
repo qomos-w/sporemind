@@ -11,13 +11,27 @@ import (
 
 // Schema IDs for value types defined in this package.
 const (
+	AgentEvalReqSchemaID      uint64 = 2770
+	AgentEvalRespSchemaID     uint64 = 2771
 	AgentSkillUseReqSchemaID  uint64 = 2768
 	AgentSkillUseRespSchemaID uint64 = 2769
 )
 
 func init() {
+	schema.RegisterStructType(AgentEvalReqSchemaID, reflect.TypeOf(AgentEvalReq{}))
+	schema.RegisterStructType(AgentEvalRespSchemaID, reflect.TypeOf(AgentEvalResp{}))
 	schema.RegisterStructType(AgentSkillUseReqSchemaID, reflect.TypeOf(AgentSkillUseReq{}))
 	schema.RegisterStructType(AgentSkillUseRespSchemaID, reflect.TypeOf(AgentSkillUseResp{}))
+}
+
+type AgentEvalReq struct {
+	Script string `json:"Script"`
+	Args   []any  `json:"Args,omitempty"`
+}
+
+type AgentEvalResp struct {
+	Result any    `json:"Result,omitempty"`
+	Error  string `json:"Error,omitempty"`
 }
 
 type AgentSkillUseReq struct {

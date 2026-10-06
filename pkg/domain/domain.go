@@ -1356,12 +1356,6 @@ type WorkspaceAgentSpawnSchedulerResp = gen.WorkspaceAgentSpawnSchedulerResp
 type WorkspaceHostCallReq = gen.WorkspaceHostCallReq
 type WorkspaceHostCallResp = gen.WorkspaceHostCallResp
 
-// WorkspaceEvalReq/Resp are the protocol for workspace.eval: evaluate an
-// ad-hoc spore script (pure computation, no host bindings) under a fixed
-// budget and return the normalized result or failure diagnostics.
-type WorkspaceEvalReq = gen.WorkspaceEvalReq
-type WorkspaceEvalResp = gen.WorkspaceEvalResp
-
 // WorkspaceSporeSyntaxReq/Resp are the protocol for workspace.spore_syntax:
 // serve the spore language syntax reference (embedded copy of the upstream
 // ../spore SYNTAX.md, drift-gated by make check-spore-syntax).
@@ -1971,6 +1965,12 @@ type ProjectComponentGetReq = gen.ProjectComponentGetReq
 type ProjectComponentGetResp = gen.ProjectComponentGetResp
 type AgentSkillUseReq = gen.AgentSkillUseReq
 type AgentSkillUseResp = gen.AgentSkillUseResp
+
+// AgentEvalReq/Resp are the protocol for the agent-local eval callable:
+// evaluate an ad-hoc spore script on the agent itself (pure computation,
+// no host bindings) under a fixed budget envelope.
+type AgentEvalReq = gen.AgentEvalReq
+type AgentEvalResp = gen.AgentEvalResp
 
 // ── fork child ──
 

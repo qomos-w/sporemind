@@ -2,12 +2,10 @@ package workspace
 
 import (
 	_ "embed"
-	"encoding/json"
 	"fmt"
 	"strings"
 
 	"github.com/qomos-w/gospore/actor"
-	"github.com/qomos-w/spore/script"
 	"github.com/qomos-w/sporemind/pkg/domain"
 )
 
@@ -20,64 +18,6 @@ var sporeSyntaxEN string
 
 //go:embed sporedocs/SYNTAX.zh-CN.md
 var sporeSyntaxZH string
-
-// Fixed eval budget. The eval surface is pure computation (no host
-// bindings), so these constants are the whole constraint envelope —
-// explicit here rather than caller-tunable.
-const (
-	evalMaxDurationSec  = 10
-	evalMaxInstructions = 1_000_000
-	evalMaxOutputBytes  = 64 * 1024
-)
-
-// handleEval backs workspace.eval: it evaluates an ad-hoc spore script
-// snippet and returns the normalized result. The script must define the
-// run() entry function (same contract as script cards); Args are passed
-// positionally. The VM gets NO host bindings — host reach stays on
-// workspace.host_call, which routes through the target's own policy —
-// so eval is a pure data-in/data-out surface. A fresh Runtime is built
-// per call (the spore VM is not thread-safe) and closed on exit.
-// Compile / runtime failures return resp.Error so the caller sees the
-// diagnostics instead of a transport error. Stateless (PureContext).
-func (a *Actor) handleEval(ctx actor.PureContext, req domain.WorkspaceEvalReq) (domain.WorkspaceEvalResp, error) {
-	if err := requireAgentOrHuman(ctx.Identity().Role); err != nil {
-		return domain.WorkspaceEvalResp{}, err
-	}
-	if strings.TrimSpace(req.Script) == "" {
-		return domain.WorkspaceEvalResp{}, fmt.Errorf("workspace.eval: Script is required")
-	}
-
-	rt, err := script.NewRuntime()
-	if err != nil {
-		return domain.WorkspaceEvalResp{}, fmt.Errorf("workspace.eval: build runtime: %w", err)
-	}
-	defer func() { _ = rt.Close() }()
-
-	if err := rt.LoadSource("eval", req.Script); err != nil {
-		return domain.WorkspaceEvalResp{Error: fmt.Sprintf("script compile failed: %v", err)}, nil
-	}
-
-	// MaxOutputBytes is not engine-enforced; it is checked host-side
-	// after normalization below. MaxHostCalls stays 0 (limit disabled)
-	// because no host functions are bound — there is nothing to cap.
-	callCtx := buildCallContext(ctx, evalMaxInstructions, evalMaxDurationSec, 0, 0)
-	result, err := rt.CallContext(callCtx, "run", req.Args...)
-	if err != nil {
-		return domain.WorkspaceEvalResp{Error: fmt.Sprintf("script execution failed: %v", err)}, nil
-	}
-	if result.Error != nil {
-		return domain.WorkspaceEvalResp{Error: fmt.Sprintf("script runtime error: %v", result.Error)}, nil
-	}
-
-	normalized, nerr := normalizeScriptResult(result.Value)
-	if nerr != nil {
-		return domain.WorkspaceEvalResp{Error: fmt.Sprintf("script result normalization failed: %v", nerr)}, nil
-	}
-	if encoded, merr := json.Marshal(normalized); merr == nil && len(encoded) > evalMaxOutputBytes {
-		return domain.WorkspaceEvalResp{Error: fmt.Sprintf("script output exceeds %d bytes (got %d)", evalMaxOutputBytes, len(encoded))}, nil
-	}
-	return domain.WorkspaceEvalResp{Result: normalized}, nil
-}
 
 // handleSporeSyntax backs workspace.spore_syntax: it returns the spore
 // language syntax reference (the embedded upstream SYNTAX.md). Lang

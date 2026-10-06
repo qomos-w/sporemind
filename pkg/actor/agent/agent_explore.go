@@ -872,6 +872,11 @@ func (a *Actor) onStartChild(ctx actor.Context) error {
 	); err != nil {
 		return fmt.Errorf("agent: register child skill.use: %w", err)
 	}
+	if err := ctx.Register("eval", a.handleEval, actor.Public(),
+		actor.WithDescription("Evaluate an ad-hoc spore script on this agent (pure computation, no host bindings; fixed 10s / 1M-instruction budget, 64KB output cap). The script must define the run() entry function; Args are passed positionally. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("agent: register child eval: %w", err)
+	}
 
 	// Reviewer children use the same automatic child turn as Explore. Their only
 	// behavioral difference is the terminal callback handled by turn completion.

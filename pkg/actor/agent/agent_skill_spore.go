@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"math"
 	"strings"
 	"time"
 
@@ -68,7 +69,8 @@ func parseSporeSkillArgs(args string) (any, error) {
 // normalizeSporeSkillJSON converts json.Number leaves to int64 (when integral)
 // or float64. Go's default json.Decode types every number float64, which would
 // make spore `is int` false for every JSON integer; UseNumber + this walk
-// restores the author's obvious intent.
+// restores the author's obvious intent. Bare integral float64 (e.g. eval's
+// []any args decoded without UseNumber) promotes the same way.
 func normalizeSporeSkillJSON(v any) any {
 	switch t := v.(type) {
 	case json.Number:
@@ -79,6 +81,11 @@ func normalizeSporeSkillJSON(v any) any {
 			return f
 		}
 		return t.String()
+	case float64:
+		if t == math.Trunc(t) && !math.IsInf(t, 0) && t >= math.MinInt64 && t <= math.MaxInt64 {
+			return int64(t)
+		}
+		return t
 	case map[string]any:
 		for k, e := range t {
 			t[k] = normalizeSporeSkillJSON(e)

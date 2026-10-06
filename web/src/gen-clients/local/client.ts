@@ -201,6 +201,17 @@ export const coordinatorGuidanceProfileUpdate_meta = {
   resSchemaId: 4422,
 } as const;
 
+export async function eval(client: GosporeClient, req: systemTypes.AgentEvalReq, opts?: InvokeOptions): Promise<systemTypes.AgentEvalResp> {
+  return client.invoke<systemTypes.AgentEvalReq, systemTypes.AgentEvalResp>("eval", req, { reqSchemaId: 1842, resSchemaId: 1843, ...opts });
+}
+
+export const eval_meta = {
+  callable: "eval",
+  name: "eval",
+  reqSchemaId: 1842,
+  resSchemaId: 1843,
+} as const;
+
 export async function frontendDebug(client: GosporeClient, req: systemTypes.AgentFrontendDebugReq, opts?: InvokeOptions): Promise<systemTypes.AgentFrontendDebugResp> {
   return client.invoke<systemTypes.AgentFrontendDebugReq, systemTypes.AgentFrontendDebugResp>("frontend_debug", req, { reqSchemaId: 163, resSchemaId: 164, ...opts });
 }

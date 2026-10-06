@@ -1238,11 +1238,6 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	); err != nil {
 		return fmt.Errorf("workspace: register host_call: %w", err)
 	}
-	if err := ctx.Register("workspace.eval", a.handleEval, actor.Public(),
-		actor.WithDescription("Evaluate an ad-hoc spore script (pure computation, no host bindings; fixed 10s / 1M-instruction budget, 64KB output cap). The script must define the run() entry function; Args are passed positionally. Exposed by the builtin:bundle:sporeeval bundle."),
-	); err != nil {
-		return fmt.Errorf("workspace: register eval: %w", err)
-	}
 	if err := ctx.Register("workspace.spore_syntax", a.handleSporeSyntax, actor.Public(),
 		actor.WithDescription("Return the spore language syntax reference markdown. Lang: \"en\" (default) | \"zh\". Exposed by the builtin:bundle:sporeeval bundle."),
 	); err != nil {

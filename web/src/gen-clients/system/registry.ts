@@ -629,6 +629,8 @@ export const SchemaIDs = {
   VoiceDesignResp: 1834,
   WorkspaceAgentSpawnSwarmReq: 1835,
   WorkspaceAgentSpawnSwarmResp: 1836,
+  AgentEvalReq: 1842,
+  AgentEvalResp: 1843,
   ProjectMount: 1872,
   ProjectRef: 1873,
   WorkspaceMountReq: 1874,
@@ -747,8 +749,6 @@ export const SchemaIDs = {
   WikiListStarredResp: 1990,
   WorkspaceHostCallReq: 1991,
   WorkspaceHostCallResp: 1992,
-  WorkspaceEvalReq: 1993,
-  WorkspaceEvalResp: 1994,
   WorkspaceSporeSyntaxReq: 1995,
   WorkspaceSporeSyntaxResp: 1996,
   WorkspaceSearchCallablesReq: 1997,
@@ -33537,6 +33537,81 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
+    schemaId: 1842,
+    name: "AgentEvalReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalReq",
+      className: "AgentEvalReq",
+      classId: 1842
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalReq",
+      fields: [
+        {
+          name: "Script",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Args",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "any",
+              typeId: 15
+            }
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1843,
+    name: "AgentEvalResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalResp",
+      className: "AgentEvalResp",
+      classId: 1843
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalResp",
+      fields: [
+        {
+          name: "Result",
+          type: {
+            kind: "scalar",
+            name: "any",
+            typeId: 15
+          },
+          optional: true
+        },
+        {
+          name: "Error",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
     schemaId: 1872,
     name: "ProjectMount",
     visibility: "public",
@@ -40371,81 +40446,6 @@ export const schemaEntries: SchemaEntry[] = [
               name: "any",
               typeId: 15
             }
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1993,
-    name: "WorkspaceEvalReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "WorkspaceEvalReq",
-      className: "WorkspaceEvalReq",
-      classId: 1993
-    },
-    object: {
-      kind: "struct",
-      name: "WorkspaceEvalReq",
-      fields: [
-        {
-          name: "Script",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Args",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "any",
-              typeId: 15
-            }
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1994,
-    name: "WorkspaceEvalResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "WorkspaceEvalResp",
-      className: "WorkspaceEvalResp",
-      classId: 1994
-    },
-    object: {
-      kind: "struct",
-      name: "WorkspaceEvalResp",
-      fields: [
-        {
-          name: "Result",
-          type: {
-            kind: "scalar",
-            name: "any",
-            typeId: 15
-          },
-          optional: true
-        },
-        {
-          name: "Error",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
           },
           optional: true
         }

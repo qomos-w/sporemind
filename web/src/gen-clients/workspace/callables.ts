@@ -539,24 +539,6 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "workspace",
-    name: "eval",
-    visibility: "public",
-    mode: "unary",
-    reqSchemaId: 1993,
-    finalSchemaId: 1994,
-    req: {
-      kind: "struct",
-      name: "WorkspaceEvalReq",
-      className: "WorkspaceEvalReq"
-    },
-    final: {
-      kind: "struct",
-      name: "WorkspaceEvalResp",
-      className: "WorkspaceEvalResp"
-    }
-  },
-  {
-    namespace: "workspace",
     name: "gate_approve",
     visibility: "public",
     mode: "unary",

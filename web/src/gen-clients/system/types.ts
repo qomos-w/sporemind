@@ -640,6 +640,16 @@ export interface AgentConfigureReq {
   Title?: string | undefined;
 }
 
+export interface AgentEvalReq {
+  Script: string;
+  Args?: unknown[] | undefined;
+}
+
+export interface AgentEvalResp {
+  Result?: unknown | undefined;
+  Error?: string | undefined;
+}
+
 export interface AgentFrontendDebugReq {
   Operation?: string | undefined;
   Script?: string | undefined;
@@ -8548,16 +8558,6 @@ export interface WorkspaceDockState {
   BottomLeftPct: number;
   WindowW: number;
   WindowH: number;
-}
-
-export interface WorkspaceEvalReq {
-  Script: string;
-  Args?: unknown[] | undefined;
-}
-
-export interface WorkspaceEvalResp {
-  Result?: unknown | undefined;
-  Error?: string | undefined;
 }
 
 export interface WorkspaceExplorerState {
