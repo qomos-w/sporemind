@@ -27,7 +27,14 @@ data:
 
 ## Sporeeval
 
-Agent-local code invocation: `eval_script` (run a spore script — fixed budget 10s / 1M instructions / 64 host calls / 64KB output), `eval_syntax` (language reference, `Lang`: en/zh), `eval_callables` (search the catalog; query full IDs like "project.read" — name matches rank first), `script_save` / `script_read` / `script_delete` (accumulate scripts — each saved script is projected as its own tool `script-<name>`, schema from its `run()` signature; no compile gate on save, fix drafts via read → edit → save).
+Agent-local code invocation.
+
+- `eval_script` — run a spore script. Budget: 10s, 1M instructions, 64 host calls, 64KB output.
+- `eval_syntax` — language reference. `Lang`: `en` or `zh`.
+- `eval_callables` — search the callable catalog. Query full IDs, e.g. "project.read"; name matches rank first.
+- `script_save` / `script_read` / `script_delete` — accumulate scripts. Each saved script becomes its own tool, `script-<name>`; its schema comes from the `run()` signature. No compile gate on save. Fix drafts via read → edit → save.
+
+Skeleton:
 
 ```spore
 import { invoke } from "host"
@@ -38,6 +45,14 @@ fun run(path: string): map<string, any> {
 }
 ```
 
-Pitfalls (each has cost a round trip): `import { invoke } from "host"` — bare `import host` fails; typed vars — `var m: map<string, any>`, not `var m = ...`; `as` casts accept named types, not arrays; reading a missing map key throws — try/catch; `invoke` returns the target's FULL response map — pull fields by name. Inside a script, `invoke("eval_callables", ...)` and `invoke("eval_syntax", ...)` route back to you: discover and call in one script.
+Pitfalls — each one costs a round trip:
 
-`invoke` propagates your caller role through the target's own gates — reach, not permission; a denial means policy said no. Probe read-only (`*_list` / `*_get`) before mutating; split jobs that exceed the budget into inspectable steps.
+1. Import by name: `import { invoke } from "host"`. Bare `import host` fails.
+2. Declare types: `var m: map<string, any>`. Untyped `var m = ...` fails.
+3. `as` accepts named types, not arrays.
+4. Reading a missing map key throws. Use try/catch.
+5. `invoke` returns the FULL response map. Pull fields by name.
+
+Inside a script, `invoke("eval_callables", ...)` and `invoke("eval_syntax", ...)` call back into yourself. Discover and invoke in one script.
+
+`invoke` carries your caller role; the target's own policy applies. A denial means policy said no. Probe read-only (`*_list`, `*_get`) before mutating. Split jobs that exceed the budget.
