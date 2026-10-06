@@ -287,11 +287,14 @@ func (a *Actor) savedScriptTools() []domain.ToolSpec {
 				required = append(required, p.Name)
 			}
 		}
-		schemaBytes, err := json.Marshal(map[string]any{
+		schemaMap := map[string]any{
 			"type":       "object",
 			"properties": props,
-			"required":   required,
-		})
+		}
+		if len(required) > 0 {
+			schemaMap["required"] = required
+		}
+		schemaBytes, err := json.Marshal(schemaMap)
 		if err != nil {
 			continue
 		}

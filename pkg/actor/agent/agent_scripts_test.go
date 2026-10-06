@@ -199,6 +199,27 @@ func TestSavedScriptToolsProjection(t *testing.T) {
 		t.Fatalf("map/string param schema wrong: %s", emap.InputSchema)
 	}
 
+	// Zero-param scripts emit an empty object schema with NO required key —
+	// a Go nil slice must not serialize as "required":null, which strict
+	// provider modes reject.
+	if _, err := a.handleScriptSave(nil, domain.AgentScriptSaveReq{
+		Name:   "zero",
+		Script: "fun run(): int { return 1 }",
+	}); err != nil {
+		t.Fatalf("save zero: %v", err)
+	}
+	zeroSpecs := a.savedScriptTools()
+	for _, ts := range zeroSpecs {
+		if ts.Name == "script-zero" {
+			if strings.Contains(ts.InputSchema, `"required":null`) {
+				t.Fatalf("zero-param schema must omit required, got %s", ts.InputSchema)
+			}
+			if !strings.Contains(ts.InputSchema, `"properties":{}`) {
+				t.Fatalf("zero-param schema must keep empty properties, got %s", ts.InputSchema)
+			}
+		}
+	}
+
 	// Unparseable source degrades to the generic Args object, still
 	// projected (the set stays total).
 	broken := byName["script-broken"]
