@@ -813,6 +813,24 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "local",
+    name: "script_read",
+    visibility: "public",
+    mode: "unary",
+    reqSchemaId: 1846,
+    finalSchemaId: 1847,
+    req: {
+      kind: "struct",
+      name: "AgentScriptReadReq",
+      className: "AgentScriptReadReq"
+    },
+    final: {
+      kind: "struct",
+      name: "AgentScriptReadResp",
+      className: "AgentScriptReadResp"
+    }
+  },
+  {
+    namespace: "local",
     name: "script_save",
     visibility: "public",
     mode: "unary",

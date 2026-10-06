@@ -633,6 +633,8 @@ export const SchemaIDs = {
   AgentScriptSaveResp: 1843,
   AgentScriptDeleteReq: 1844,
   AgentScriptDeleteResp: 1845,
+  AgentScriptReadReq: 1846,
+  AgentScriptReadResp: 1847,
   ProjectMount: 1872,
   ProjectRef: 1873,
   WorkspaceMountReq: 1874,
@@ -33661,6 +33663,74 @@ export const schemaEntries: SchemaEntry[] = [
             kind: "scalar",
             name: "bool",
             typeId: 2
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1846,
+    name: "AgentScriptReadReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentScriptReadReq",
+      className: "AgentScriptReadReq",
+      classId: 1846
+    },
+    object: {
+      kind: "struct",
+      name: "AgentScriptReadReq",
+      fields: [
+        {
+          name: "Name",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1847,
+    name: "AgentScriptReadResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentScriptReadResp",
+      className: "AgentScriptReadResp",
+      classId: 1847
+    },
+    object: {
+      kind: "struct",
+      name: "AgentScriptReadResp",
+      fields: [
+        {
+          name: "Name",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Description",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Script",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
           }
         }
       ]

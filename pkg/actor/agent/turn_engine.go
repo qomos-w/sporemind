@@ -354,6 +354,11 @@ type turnEngine struct {
 	// it. Pure read of actor state; nil-safe.
 	onGoalCondition func() string
 
+	// savedScriptExec runs one saved script (the synthetic "script.<name>"
+	// callable injected by savedScriptTools) through the eval path and
+	// returns the tool-frame output. Wired by the Actor; nil-safe.
+	savedScriptExec func(ctx actor.PureContext, name string, input string) (out string, isErr bool)
+
 	// assessValidator, when non-nil, vets a turn.assess Decision before it is
 	// recorded (e.g. a goal bound to a task card must use ready_for_review,
 	// not complete_candidate — completion requires external review).

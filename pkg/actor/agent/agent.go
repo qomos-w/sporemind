@@ -1183,6 +1183,11 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	); err != nil {
 		return fmt.Errorf("agent: register script_delete: %w", err)
 	}
+	if err := ctx.Register("script_read", a.handleScriptRead, actor.Public(),
+		actor.WithDescription("Fetch a saved script's full source by Name (the edit path is read → modify → script_save). Explicit: unknown Name is an error. Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("agent: register script_read: %w", err)
+	}
 
 	a.actorID = ctx.Self().ID().String()
 	if !a.child.Mode && a.actorID == "" {

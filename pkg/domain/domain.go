@@ -1979,6 +1979,13 @@ type AgentScriptSaveResp = gen.AgentScriptSaveResp
 type AgentScriptDeleteReq = gen.AgentScriptDeleteReq
 type AgentScriptDeleteResp = gen.AgentScriptDeleteResp
 
+// AgentScriptReadReq/Resp are the protocol for the agent-local
+// script_read: fetch one saved snippet's full source by Name. The edit
+// path is read → modify → script_save (upsert overwrites); unknown
+// names are an explicit error.
+type AgentScriptReadReq = gen.AgentScriptReadReq
+type AgentScriptReadResp = gen.AgentScriptReadResp
+
 // ── fork child ──
 
 type ForkResult = gen.ForkResult

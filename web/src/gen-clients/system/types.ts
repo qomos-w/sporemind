@@ -991,6 +991,16 @@ export interface AgentScriptDeleteResp {
   Deleted: boolean;
 }
 
+export interface AgentScriptReadReq {
+  Name: string;
+}
+
+export interface AgentScriptReadResp {
+  Name: string;
+  Description: string;
+  Script: string;
+}
+
 export interface AgentScriptSaveReq {
   Name: string;
   Script: string;

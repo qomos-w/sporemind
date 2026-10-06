@@ -440,6 +440,17 @@ export const scriptDelete_meta = {
   resSchemaId: 1845,
 } as const;
 
+export async function scriptRead(client: GosporeClient, req: systemTypes.AgentScriptReadReq, opts?: InvokeOptions): Promise<systemTypes.AgentScriptReadResp> {
+  return client.invoke<systemTypes.AgentScriptReadReq, systemTypes.AgentScriptReadResp>("script_read", req, { reqSchemaId: 1846, resSchemaId: 1847, ...opts });
+}
+
+export const scriptRead_meta = {
+  callable: "script_read",
+  name: "script_read",
+  reqSchemaId: 1846,
+  resSchemaId: 1847,
+} as const;
+
 export async function scriptSave(client: GosporeClient, req: systemTypes.AgentScriptSaveReq, opts?: InvokeOptions): Promise<systemTypes.AgentScriptSaveResp> {
   return client.invoke<systemTypes.AgentScriptSaveReq, systemTypes.AgentScriptSaveResp>("script_save", req, { reqSchemaId: 1842, resSchemaId: 1843, ...opts });
 }

@@ -125,6 +125,7 @@ func (a *Actor) handleRun(ctx actor.Context, req domain.TurnStartReq) error {
 		onCostRate:            a.costRateFor,
 		onStatsRecord:         a.submitStatsRecord,
 		onGoalCondition:       func() string { return a.goalCondition(ctx) },
+		savedScriptExec:       a.executeSavedScriptCall,
 		assessValidator:       a.validateAssessDecision,
 		// 回合终局强制 IO：agent 层解析 IO 卡契约 + 成功后落卡。
 		onForcedIOContract: a.resolveForcedIOContract,

@@ -471,7 +471,7 @@ func TestSporeevalBundleCardDeclaresCodeInvocationTools(t *testing.T) {
 	ctx := testutil.AnonCtx(testutil.GenActorID())
 
 	got := a.resolveBundleCallableIDs(ctx, []string{"builtin:bundle:sporeeval"})
-	want := []string{"eval_script", "eval_syntax", "eval_callables", "script_save", "script_delete"}
+	want := []string{"eval_script", "eval_syntax", "eval_callables", "script_save", "script_delete", "script_read"}
 	if len(got) != len(want) {
 		t.Fatalf("resolveBundleCallableIDs(builtin:bundle:sporeeval) = %v, want %v", got, want)
 	}

@@ -7653,6 +7653,62 @@
     },
     {
       "namespace": "system",
+      "schemaId": 1846,
+      "name": "AgentScriptReadReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentScriptReadReq",
+        "fields": [
+          {
+            "name": "Name",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1847,
+      "name": "AgentScriptReadResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentScriptReadResp",
+        "fields": [
+          {
+            "name": "Name",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Description",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Script",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
       "schemaId": 1842,
       "name": "AgentScriptSaveReq",
       "visibility": "public",
@@ -70523,6 +70579,26 @@
         "kind": "struct",
         "name": "AgentScriptDeleteResp",
         "className": "AgentScriptDeleteResp"
+      }
+    },
+    {
+      "namespace": "",
+      "name": "script_read",
+      "actorType": "agent",
+      "description": "Fetch a saved script's full source by Name (the edit path is read → modify → script_save). Explicit: unknown Name is an error. Exposed by the builtin:bundle:sporeeval bundle.",
+      "visibility": "public",
+      "mode": "unary",
+      "reqSchemaId": 1846,
+      "finalSchemaId": 1847,
+      "req": {
+        "kind": "struct",
+        "name": "AgentScriptReadReq",
+        "className": "AgentScriptReadReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "AgentScriptReadResp",
+        "className": "AgentScriptReadResp"
       }
     },
     {

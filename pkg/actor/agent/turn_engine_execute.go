@@ -2897,6 +2897,16 @@ func (e *turnEngine) runOneCall(ctx actor.Context, planner actor.Planner, call p
 		}
 	}
 
+	// Saved-script tool routing: the synthetic callable "script.<name>"
+	// (injected by savedScriptTools) executes the stored body through the
+	// eval path — same budget, same host bridge carrying the caller role.
+	// Wired as a hook so the engine stays decoupled from Actor internals.
+	if strings.HasPrefix(call.CallableID, "script.") && e.savedScriptExec != nil {
+		name := strings.TrimPrefix(call.CallableID, "script.")
+		out, isErr := e.savedScriptExec(ctx, name, call.Input)
+		return toolExecutionResult{call: call, out: out, isErr: isErr}
+	}
+
 	// 先尝试 shell.exec / project.shell_exec 路由：VFS / project file / bash / reject。
 	if out, isErr, intercepted := tryShellExecIntercept(ctx, planner, call, svcRefs); intercepted {
 		return toolExecutionResult{call: call, out: out, isErr: isErr}

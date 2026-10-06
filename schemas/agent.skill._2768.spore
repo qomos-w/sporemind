@@ -68,3 +68,13 @@ struct AgentScriptDeleteReq {
 struct AgentScriptDeleteResp {
     Deleted: bool                   // true when the script was removed
 }
+
+struct AgentScriptReadReq {
+    Name: string                    // id of the saved script to fetch
+}
+
+struct AgentScriptReadResp {
+    Name:        string             // echo of the script id
+    Description: string             // saved one-line description (may be empty)
+    Script:      string             // full spore source; edit then script_save to overwrite
+}

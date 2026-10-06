@@ -364,6 +364,11 @@ func (a *Actor) resolveTools(ctx actor.Context, cfg domain.AgentKindConfig, call
 	tools = append(tools, a.resolveMCPTools(ctx)...)
 	// Append plugin tools discovered via the global appmanager.list query.
 	tools = append(tools, a.resolveAppTools(ctx)...)
+	// Append per-script tools projected from the saved script set: the
+	// signature-derived schema lands in the tool list, execution is
+	// intercepted by the turn engine ("script.<name>" callable IDs never
+	// reach a cell registration).
+	tools = append(tools, a.savedScriptTools()...)
 	return tools
 }
 
