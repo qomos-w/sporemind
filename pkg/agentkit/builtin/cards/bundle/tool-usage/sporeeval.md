@@ -38,13 +38,13 @@ data:
 
 - `eval_script` — Evaluate a spore script on this agent: `Script` (source; must define the `run()` entry function), optional `Args` (positional). Inside the script, `invoke("<service>.<callable>", payload)` (from the `host` module) reaches any host callable — the caller role propagates and the target's own policy applies (reach, not permission). Fixed budget: 10s, 1M instructions, 64 host calls, 64KB output. Compile/runtime failures return an `Error` diagnostic you can fix and retry.
 - `eval_syntax` — Return the spore language syntax reference markdown; `Lang`: `"en"` (default) or `"zh"`.
-- `eval_callables` — Search the callable catalog the agent can see: `Query` (case-insensitive substring on name or description), optional `Limit` (default 200, cap 500). Rows carry request params and service names. Discovery only — it never invokes.
+- `eval_callables` — Search the callable catalog the agent can see: `Query` (case-insensitive substring on name or description; name matches rank first — query full IDs like "project.read" for precision), optional `Limit` (default 200, cap 500). Rows carry request params and service names. Discovery only — it never invokes. Agent-local callables (eval_* / script_*) appear without a service name and are invocable from scripts via the same `invoke`.
 - `script_save` — Save (or overwrite) a reusable spore script under a stable `Name`: `Script` (source), optional `Description`. Saved scripts enter hot context every turn, so save the ones you keep rewriting; saving an existing Name overwrites it (the edit path).
 - `script_delete` — Delete a saved script by `Name`; deleting an unknown Name is an error.
 
 ### Workflow
 
-1. **Search first** — `eval_callables` to find the callable IDs and their request fields.
+1. **Search first** — `eval_callables` to find the callable IDs and their request fields; inside a script, `invoke("eval_callables", {...})` routes back to the agent itself, so discovery and invocation can share one eval_script.
 2. **Check syntax** — `eval_syntax` is the language reference; write the script, `eval_script` it, read the diagnostics, iterate.
 3. **Batch work into scripts** — a chain of host calls, loops, and data shaping belongs in ONE script, not in a dozen tool calls: fewer round trips, exact logic, inspectable result.
 4. **Accumulate** — a script you have rewritten twice is worth `script_save`-ing; it will be in your context next time. Delete it with `script_delete` when it stops earning its tokens.
