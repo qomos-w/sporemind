@@ -19,9 +19,9 @@ func TestCoderDefaultSkills(t *testing.T) {
 	t.Fatal("coder kind missing")
 }
 
-// TestSporeKind asserts the minimal bootstrap surface: exactly two default
-// bundles (invoke bridge + self-management), no auto-allowed tools, and
-// registration in ValidAgentKinds as user-creatable.
+// TestSporeKind asserts the pure-bridge surface: exactly one default bundle
+// (sporecall invoke bridge), no auto-allowed tools, and registration in
+// ValidAgentKinds as user-creatable.
 func TestSporeKind(t *testing.T) {
 	var spore *domain.AgentKindConfig
 	for i, cfg := range BaseKindConfigs() {
@@ -33,7 +33,7 @@ func TestSporeKind(t *testing.T) {
 	if spore == nil {
 		t.Fatal("spore kind not found in BaseKindConfigs")
 	}
-	want := []string{"builtin:bundle:sporecall", "builtin:bundle:bundle-use"}
+	want := []string{"builtin:bundle:sporecall"}
 	if len(spore.DefaultBundleIDs) != len(want) {
 		t.Fatalf("spore DefaultBundleIDs = %v, want exactly %v", spore.DefaultBundleIDs, want)
 	}
@@ -264,11 +264,11 @@ func TestBaseKindConfigs_AllHaveCardSystemBundle(t *testing.T) {
 		// come from bound app-bundle cards, never project-scoped bundles.
 		domain.AgentKindPlugin:            true,
 	}
-	// Spore is the minimal bootstrap kind: its entire contract is starting
-	// with only sporecall + bundle-use. Card-system capability is not granted
-	// by default — the agent mounts project-wiki itself via bundle-use when
-	// a task needs durable output, so the invariant's intent (no agent
-	// structurally unable to persist findings) still holds.
+	// Spore is the pure-bridge kind: its entire contract is starting with
+	// only sporecall. Card-system capability is reached directly via
+	// workspace.host_call ("project.wiki_*" are host callables), so the
+	// invariant's intent (no agent structurally unable to persist
+	// findings) still holds — the path is the bridge, not a bundle.
 	minimalKinds := map[string]bool{
 		domain.AgentKindSpore: true,
 	}

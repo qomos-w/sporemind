@@ -1,7 +1,6 @@
 package agent
 
 import (
-	"strings"
 	"testing"
 
 	"github.com/qomos-w/sporemind/pkg/domain"
@@ -10,33 +9,29 @@ import (
 	"github.com/qomos-w/sporemind/pkg/testutil"
 )
 
-// TestSporeKind_MinimalSurfaceAndSelfExtension answers "can a spore-kind
-// agent (only sporecall + bundle-use) complete tasks independently?" at the
-// capability-closure level, deterministically:
+// TestSporeKind_PureBridgeSurface pins the spore kind's contract after the
+// deliberate removal of bundle-use: the LLM-visible tool surface is exactly
+// the sporecall bridge — nothing else.
 //
-//	Turn N   : the surface is exactly the bootstrap pair — 3 bridge tools
-//	           (workspace.host_call / mcp.call_tool / appmanager.invoke) +
-//	           10 bundle-use tools — and NOTHING else from the project side
-//	           (no project.read / project.write), proving "only" holds.
-//	Mid-turn : the task needs file capability → the agent mounts
-//	           builtin:bundle:file-tools; the pendingToolsRefresh mechanism
-//	           makes project.read & co. visible to the same turn.
-//	Turn N+1 : the acquired tools persist; the bridge tools remain.
-//
-// The loop "minimal start → task-driven acquisition → execute" is the
-// complete capability story of the kind; the LLM driving it is turn-engine
-// machinery shared by every kind (dreamer already proves zero-tool turns
-// run), so it is not re-proven here.
-func TestSporeKind_MinimalSurfaceAndSelfExtension(t *testing.T) {
+// Capability closure is reach, not surface (workspace_hostcall.go relays any
+// service callable by dotted ID, target-side gates intact): file editing,
+// wiki persistence and catalog discovery are direct host_call targets, so no
+// dedicated tools are required to complete tasks. bundle-use only provided
+// ergonomics (dedicated tool schemas + guidance) and the agent-local mount
+// tools — none of which is capability — and was removed.
+func TestSporeKind_PureBridgeSurface(t *testing.T) {
 	a := &Actor{
 		agentKind: domain.AgentKindSpore,
 		cardRefs: []gen.CardRef{
 			{ID: "builtin:bundle:sporecall", Scope: "builtin"},
-			{ID: "builtin:bundle:bundle-use", Scope: "builtin"},
 		},
 	}
 	a.ComponentMounts = componentMountsFromCardRefs(a.cardRefs)
 
+	// The topology deliberately contains everything the agent could ever
+	// want: work callables (project.*), the component surface bundle-use
+	// used to expose, MCP management. The assertion is that NONE of it
+	// becomes a tool — only the bridge materializes.
 	a.topo = &mockTopologyProvider{
 		snapshot: []runtime.ActorNode{
 			{Kind: "agent", Callables: []domain.CallableInterface{
@@ -51,8 +46,6 @@ func TestSporeKind_MinimalSurfaceAndSelfExtension(t *testing.T) {
 			}},
 			{Kind: "mcpmanager", Callables: []domain.CallableInterface{
 				{Name: "mcp.list_servers", ServiceName: "mcp"},
-				{Name: "mcp.add_server", ServiceName: "mcp", EffectKind: string(domain.EffectReversible)},
-				{Name: "mcp.reconnect", ServiceName: "mcp"},
 				{Name: "mcp.call_tool", ServiceName: "mcp", Description: "Invoke a tool on a configured MCP server."},
 			}},
 			{Kind: "appmanager", Callables: []domain.CallableInterface{
@@ -60,7 +53,6 @@ func TestSporeKind_MinimalSurfaceAndSelfExtension(t *testing.T) {
 			}},
 			{Kind: "project", Callables: []domain.CallableInterface{
 				{Name: "project.component_list", Description: "list components"},
-				{Name: "project.component_get", Description: "get component"},
 				{Name: "project.read", Description: "read file"},
 				{Name: "project.write", Description: "write file"},
 			}},
@@ -69,80 +61,47 @@ func TestSporeKind_MinimalSurfaceAndSelfExtension(t *testing.T) {
 	cfg := domain.AgentKindConfig{Kind: domain.AgentKindSpore}
 	ctx := testutil.AnonCtx(testutil.GenActorID())
 
-	// ── Turn N: exactly the bootstrap surface ──────────────────────────────
-	toolsN := a.recomputeTurnToolSurface(ctx, cfg, "test-model")
+	tools := a.recomputeTurnToolSurface(ctx, cfg, "test-model")
+	// The surface is the bridge trio plus the hard-injected infrastructure
+	// every kind gets (skill_use, forced image-recognition) — nothing else.
+	allowed := map[string]bool{
+		"workspace.host_call": true,
+		"mcp.call_tool":       true,
+		"appmanager.invoke":   true,
+		"skill_use":           true,
+		"image_recognize":     true,
+	}
+	for _, tl := range tools {
+		if !allowed[tl.CallableID] {
+			t.Fatalf("tool %q leaked into the pure-bridge surface", tl.CallableID)
+		}
+	}
 	byID := map[string]domain.ToolSpec{}
-	for _, tl := range toolsN {
+	for _, tl := range tools {
 		byID[tl.CallableID] = tl
 	}
-	for _, want := range []string{
-		"workspace.host_call", "mcp.call_tool", "appmanager.invoke",
-		"component_list", "component_snapshot", "component_mount",
-		"component_unmount", "component_set_enabled",
-		"project.component_list", "project.component_get",
-		"mcp.list_servers", "mcp.add_server", "mcp.reconnect",
+	for _, want := range []string{"workspace.host_call", "mcp.call_tool", "appmanager.invoke"} {
+		tool, ok := byID[want]
+		if !ok {
+			t.Fatalf("bridge tool %q missing", want)
+		}
+		if tool.Description == "" {
+			t.Fatalf("bridge tool %q has no description", want)
+		}
+	}
+	if bridge := byID["workspace.host_call"]; bridge.ServiceName != "workspace" {
+		t.Fatalf("workspace.host_call ServiceName = %q, want workspace", bridge.ServiceName)
+	}
+
+	// The removed layers must not leak in: no bundle-use tools, no work
+	// tools — even though the topology offers them all.
+	for _, forbidden := range []string{
+		"component_mount", "component_snapshot", "component_list",
+		"project.component_list", "mcp.list_servers",
+		"project.read", "project.write",
 	} {
-		if _, ok := byID[want]; !ok {
-			t.Fatalf("turn N: bootstrap tool %q missing: %+v", want, toolsN)
-		}
-	}
-	bridge := byID["workspace.host_call"]
-	if strings.TrimSpace(bridge.Description) == "" {
-		t.Fatalf("turn N: workspace.host_call has no description")
-	}
-	if bridge.ServiceName != "workspace" {
-		t.Fatalf("turn N: workspace.host_call ServiceName = %q", bridge.ServiceName)
-	}
-	// "Only" holds: no work capability is present before self-extension.
-	for _, forbidden := range []string{"project.read", "project.write"} {
 		if _, ok := byID[forbidden]; ok {
-			t.Fatalf("turn N: %q present before any self-extension — surface is not minimal", forbidden)
+			t.Fatalf("%q leaked into the pure-bridge surface", forbidden)
 		}
-	}
-
-	// ── Mid-turn: task needs file capability → acquire it ─────────────────
-	if _, err := a.handleComponentMount(ctx, domain.AgentComponentMountReq{CardID: "builtin:bundle:file-tools", Enabled: true}); err != nil {
-		t.Fatalf("mount file-tools: %v", err)
-	}
-	e := &turnEngine{
-		tools: toolsN,
-		startReq: domain.TurnStartReq{Input: domain.TurnInput{
-			Unit: &domain.ModelUnit{Model: "test-model"},
-		}},
-		consumePendingToolsChange: func(model string) []domain.ToolSpec {
-			if !a.pendingToolsRefresh.Swap(false) {
-				return nil
-			}
-			return a.recomputeTurnToolSurface(ctx, cfg, model)
-		},
-	}
-	e.applyPendingToolsChange()
-	_, byName := e.buildToolIndex()
-	if _, ok := byName["project_read"]; !ok {
-		if _, ok2 := byName["project.read"]; !ok2 {
-			names := make([]string, 0, len(byName))
-			for n := range byName {
-				names = append(names, n)
-			}
-			t.Fatalf("mid-turn: project.read not visible after acquiring file-tools; index: %v", names)
-		}
-	}
-
-	// ── Turn N+1: acquired capability persists, bridge remains ────────────
-	toolsN1 := a.recomputeTurnToolSurface(ctx, cfg, "test-model")
-	var readN1, hostCallN1 bool
-	for _, tl := range toolsN1 {
-		if tl.CallableID == "project.read" {
-			readN1 = true
-		}
-		if tl.CallableID == "workspace.host_call" {
-			hostCallN1 = true
-		}
-	}
-	if !readN1 {
-		t.Fatalf("turn N+1: project.read did not persist: %+v", toolsN1)
-	}
-	if !hostCallN1 {
-		t.Fatal("turn N+1: workspace.host_call must remain after self-extension")
 	}
 }
