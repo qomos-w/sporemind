@@ -4964,7 +4964,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1846,
+      "schemaId": 2774,
       "name": "AgentEvalCallablesReq",
       "visibility": "public",
       "object": {
@@ -4994,7 +4994,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1847,
+      "schemaId": 2775,
       "name": "AgentEvalCallablesResp",
       "visibility": "public",
       "object": {
@@ -5026,7 +5026,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1842,
+      "schemaId": 2770,
       "name": "AgentEvalReq",
       "visibility": "public",
       "object": {
@@ -5059,7 +5059,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1843,
+      "schemaId": 2771,
       "name": "AgentEvalResp",
       "visibility": "public",
       "object": {
@@ -5089,7 +5089,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1844,
+      "schemaId": 2772,
       "name": "AgentEvalSyntaxReq",
       "visibility": "public",
       "object": {
@@ -5110,7 +5110,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1845,
+      "schemaId": 2773,
       "name": "AgentEvalSyntaxResp",
       "visibility": "public",
       "object": {
@@ -68010,7 +68010,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1775,
+      "schemaId": 1773,
       "name": "cellStatsReq",
       "visibility": "public",
       "object": {
@@ -68198,7 +68198,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1773,
+      "schemaId": 1771,
       "name": "eventStatsReq",
       "visibility": "public",
       "object": {
@@ -68209,7 +68209,7 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1774,
+      "schemaId": 1772,
       "name": "eventStatsResp",
       "visibility": "public",
       "object": {
@@ -69661,8 +69661,8 @@
       "description": "Search the host callable catalog the agent can see: Query (case-insensitive substring on name or description), optional Limit (default 200, cap 500). Rows carry request params and service names so scripts know how to host.invoke them. Discovery only. Exposed by the builtin:bundle:sporeeval bundle.",
       "visibility": "public",
       "mode": "unary",
-      "reqSchemaId": 1846,
-      "finalSchemaId": 1847,
+      "reqSchemaId": 2774,
+      "finalSchemaId": 2775,
       "req": {
         "kind": "struct",
         "name": "AgentEvalCallablesReq",
@@ -69681,8 +69681,8 @@
       "description": "Evaluate an ad-hoc spore script on this agent. The script must define the run() entry function; Args are passed positionally. Inside the script, host.invoke(\"\u003cservice\u003e.\u003ccallable\u003e\", payload) reaches any host callable — the caller role propagates and the target's own policy applies (reach, not permission). Fixed budget: 10s, 1M instructions, 64 host calls, 64KB output. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle.",
       "visibility": "public",
       "mode": "unary",
-      "reqSchemaId": 1842,
-      "finalSchemaId": 1843,
+      "reqSchemaId": 2770,
+      "finalSchemaId": 2771,
       "req": {
         "kind": "struct",
         "name": "AgentEvalReq",
@@ -69701,8 +69701,8 @@
       "description": "Return the spore language syntax reference markdown. Lang: \"en\" (default) | \"zh\". Exposed by the builtin:bundle:sporeeval bundle.",
       "visibility": "public",
       "mode": "unary",
-      "reqSchemaId": 1844,
-      "finalSchemaId": 1845,
+      "reqSchemaId": 2772,
+      "finalSchemaId": 2773,
       "req": {
         "kind": "struct",
         "name": "AgentEvalSyntaxReq",
@@ -75268,7 +75268,7 @@
       "actorType": "runtime",
       "visibility": "public",
       "mode": "unary",
-      "reqSchemaId": 1775,
+      "reqSchemaId": 1773,
       "finalSchemaId": 0,
       "req": {
         "kind": "struct",
@@ -75287,8 +75287,8 @@
       "actorType": "runtime",
       "visibility": "public",
       "mode": "unary",
-      "reqSchemaId": 1773,
-      "finalSchemaId": 1774,
+      "reqSchemaId": 1771,
+      "finalSchemaId": 1772,
       "req": {
         "kind": "struct",
         "name": "eventStatsReq",

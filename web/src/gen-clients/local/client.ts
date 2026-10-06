@@ -202,36 +202,36 @@ export const coordinatorGuidanceProfileUpdate_meta = {
 } as const;
 
 export async function evalCallables(client: GosporeClient, req: systemTypes.AgentEvalCallablesReq, opts?: InvokeOptions): Promise<systemTypes.AgentEvalCallablesResp> {
-  return client.invoke<systemTypes.AgentEvalCallablesReq, systemTypes.AgentEvalCallablesResp>("eval_callables", req, { reqSchemaId: 1846, resSchemaId: 1847, ...opts });
+  return client.invoke<systemTypes.AgentEvalCallablesReq, systemTypes.AgentEvalCallablesResp>("eval_callables", req, { reqSchemaId: 2774, resSchemaId: 2775, ...opts });
 }
 
 export const evalCallables_meta = {
   callable: "eval_callables",
   name: "eval_callables",
-  reqSchemaId: 1846,
-  resSchemaId: 1847,
+  reqSchemaId: 2774,
+  resSchemaId: 2775,
 } as const;
 
 export async function evalScript(client: GosporeClient, req: systemTypes.AgentEvalReq, opts?: InvokeOptions): Promise<systemTypes.AgentEvalResp> {
-  return client.invoke<systemTypes.AgentEvalReq, systemTypes.AgentEvalResp>("eval_script", req, { reqSchemaId: 1842, resSchemaId: 1843, ...opts });
+  return client.invoke<systemTypes.AgentEvalReq, systemTypes.AgentEvalResp>("eval_script", req, { reqSchemaId: 2770, resSchemaId: 2771, ...opts });
 }
 
 export const evalScript_meta = {
   callable: "eval_script",
   name: "eval_script",
-  reqSchemaId: 1842,
-  resSchemaId: 1843,
+  reqSchemaId: 2770,
+  resSchemaId: 2771,
 } as const;
 
 export async function evalSyntax(client: GosporeClient, req: systemTypes.AgentEvalSyntaxReq, opts?: InvokeOptions): Promise<systemTypes.AgentEvalSyntaxResp> {
-  return client.invoke<systemTypes.AgentEvalSyntaxReq, systemTypes.AgentEvalSyntaxResp>("eval_syntax", req, { reqSchemaId: 1844, resSchemaId: 1845, ...opts });
+  return client.invoke<systemTypes.AgentEvalSyntaxReq, systemTypes.AgentEvalSyntaxResp>("eval_syntax", req, { reqSchemaId: 2772, resSchemaId: 2773, ...opts });
 }
 
 export const evalSyntax_meta = {
   callable: "eval_syntax",
   name: "eval_syntax",
-  reqSchemaId: 1844,
-  resSchemaId: 1845,
+  reqSchemaId: 2772,
+  resSchemaId: 2773,
 } as const;
 
 export async function frontendDebug(client: GosporeClient, req: systemTypes.AgentFrontendDebugReq, opts?: InvokeOptions): Promise<systemTypes.AgentFrontendDebugResp> {

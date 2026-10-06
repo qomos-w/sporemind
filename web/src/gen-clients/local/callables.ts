@@ -364,8 +364,8 @@ export const callableEntries: CallableEntry[] = [
     name: "eval_callables",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1846,
-    finalSchemaId: 1847,
+    reqSchemaId: 2774,
+    finalSchemaId: 2775,
     req: {
       kind: "struct",
       name: "AgentEvalCallablesReq",
@@ -382,8 +382,8 @@ export const callableEntries: CallableEntry[] = [
     name: "eval_script",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1842,
-    finalSchemaId: 1843,
+    reqSchemaId: 2770,
+    finalSchemaId: 2771,
     req: {
       kind: "struct",
       name: "AgentEvalReq",
@@ -400,8 +400,8 @@ export const callableEntries: CallableEntry[] = [
     name: "eval_syntax",
     visibility: "public",
     mode: "unary",
-    reqSchemaId: 1844,
-    finalSchemaId: 1845,
+    reqSchemaId: 2772,
+    finalSchemaId: 2773,
     req: {
       kind: "struct",
       name: "AgentEvalSyntaxReq",

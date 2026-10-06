@@ -37178,229 +37178,6 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1991,
-      "name": "WorkspaceHostCallReq",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceHostCallReq",
-        "fields": [
-          {
-            "name": "CallId",
-            "type": {
-              "kind": "scalar",
-              "name": "string"
-            }
-          },
-          {
-            "name": "Payload",
-            "type": {
-              "kind": "map",
-              "key": {
-                "kind": "scalar",
-                "name": "string"
-              },
-              "value": {
-                "kind": "scalar",
-                "name": "any"
-              }
-            },
-            "optional": true
-          }
-        ],
-        "schemaId": 1991
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1992,
-      "name": "WorkspaceHostCallResp",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceHostCallResp",
-        "fields": [
-          {
-            "name": "Result",
-            "type": {
-              "kind": "map",
-              "key": {
-                "kind": "scalar",
-                "name": "string"
-              },
-              "value": {
-                "kind": "scalar",
-                "name": "any"
-              }
-            },
-            "optional": true
-          }
-        ],
-        "schemaId": 1992
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1993,
-      "name": "WorkspaceEvalReq",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceEvalReq",
-        "fields": [
-          {
-            "name": "Script",
-            "type": {
-              "kind": "scalar",
-              "name": "string"
-            }
-          },
-          {
-            "name": "Args",
-            "type": {
-              "kind": "array",
-              "element": {
-                "kind": "scalar",
-                "name": "any"
-              }
-            },
-            "optional": true
-          }
-        ],
-        "schemaId": 1993
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1994,
-      "name": "WorkspaceEvalResp",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceEvalResp",
-        "fields": [
-          {
-            "name": "Result",
-            "type": {
-              "kind": "scalar",
-              "name": "any"
-            },
-            "optional": true
-          },
-          {
-            "name": "Error",
-            "type": {
-              "kind": "scalar",
-              "name": "string"
-            },
-            "optional": true
-          }
-        ],
-        "schemaId": 1994
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1995,
-      "name": "WorkspaceSporeSyntaxReq",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceSporeSyntaxReq",
-        "fields": [
-          {
-            "name": "Lang",
-            "type": {
-              "kind": "scalar",
-              "name": "string"
-            },
-            "optional": true
-          }
-        ],
-        "schemaId": 1995
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1996,
-      "name": "WorkspaceSporeSyntaxResp",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceSporeSyntaxResp",
-        "fields": [
-          {
-            "name": "Lang",
-            "type": {
-              "kind": "scalar",
-              "name": "string"
-            }
-          },
-          {
-            "name": "Markdown",
-            "type": {
-              "kind": "scalar",
-              "name": "string"
-            }
-          }
-        ],
-        "schemaId": 1996
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1997,
-      "name": "WorkspaceSearchCallablesReq",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceSearchCallablesReq",
-        "fields": [
-          {
-            "name": "Query",
-            "type": {
-              "kind": "scalar",
-              "name": "string"
-            },
-            "optional": true
-          },
-          {
-            "name": "Limit",
-            "type": {
-              "kind": "scalar",
-              "name": "int"
-            },
-            "optional": true
-          }
-        ],
-        "schemaId": 1997
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1998,
-      "name": "WorkspaceSearchCallablesResp",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceSearchCallablesResp",
-        "fields": [
-          {
-            "name": "Items",
-            "type": {
-              "kind": "array",
-              "element": {
-                "kind": "class",
-                "name": "CallableInterface",
-                "className": "CallableInterface"
-              }
-            }
-          },
-          {
-            "name": "Total",
-            "type": {
-              "kind": "scalar",
-              "name": "int"
-            }
-          }
-        ],
-        "schemaId": 1998
-      }
-    },
-    {
-      "namespace": "system",
       "schemaId": 2064,
       "name": "TimerSchedule",
       "object": {
@@ -42984,6 +42761,168 @@
           }
         ],
         "schemaId": 2769
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 2770,
+      "name": "AgentEvalReq",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalReq",
+        "fields": [
+          {
+            "name": "Script",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Args",
+            "type": {
+              "kind": "array",
+              "element": {
+                "kind": "scalar",
+                "name": "any"
+              }
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 2770
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 2771,
+      "name": "AgentEvalResp",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalResp",
+        "fields": [
+          {
+            "name": "Result",
+            "type": {
+              "kind": "scalar",
+              "name": "any"
+            },
+            "optional": true
+          },
+          {
+            "name": "Error",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 2771
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 2772,
+      "name": "AgentEvalSyntaxReq",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalSyntaxReq",
+        "fields": [
+          {
+            "name": "Lang",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 2772
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 2773,
+      "name": "AgentEvalSyntaxResp",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalSyntaxResp",
+        "fields": [
+          {
+            "name": "Lang",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          },
+          {
+            "name": "Markdown",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            }
+          }
+        ],
+        "schemaId": 2773
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 2774,
+      "name": "AgentEvalCallablesReq",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalCallablesReq",
+        "fields": [
+          {
+            "name": "Query",
+            "type": {
+              "kind": "scalar",
+              "name": "string"
+            },
+            "optional": true
+          },
+          {
+            "name": "Limit",
+            "type": {
+              "kind": "scalar",
+              "name": "int"
+            },
+            "optional": true
+          }
+        ],
+        "schemaId": 2774
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 2775,
+      "name": "AgentEvalCallablesResp",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalCallablesResp",
+        "fields": [
+          {
+            "name": "Items",
+            "type": {
+              "kind": "array",
+              "element": {
+                "kind": "class",
+                "name": "CallableInterface",
+                "className": "CallableInterface"
+              }
+            }
+          },
+          {
+            "name": "Total",
+            "type": {
+              "kind": "scalar",
+              "name": "int"
+            }
+          }
+        ],
+        "schemaId": 2775
       }
     },
     {

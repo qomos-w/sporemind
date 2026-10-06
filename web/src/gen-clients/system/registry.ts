@@ -586,9 +586,9 @@ export const SchemaIDs = {
   PermissionEntry: 1762,
   PermissionMatrix: 1763,
   PermissionUpdateReq: 1764,
-  eventStatsReq: 1773,
-  eventStatsResp: 1774,
-  cellStatsReq: 1775,
+  eventStatsReq: 1771,
+  eventStatsResp: 1772,
+  cellStatsReq: 1773,
   LoginDoneReq: 1779,
   ListPluginsResp: 1781,
   setPermissionModeReq: 1783,
@@ -629,12 +629,6 @@ export const SchemaIDs = {
   VoiceDesignResp: 1834,
   WorkspaceAgentSpawnSwarmReq: 1835,
   WorkspaceAgentSpawnSwarmResp: 1836,
-  AgentEvalReq: 1842,
-  AgentEvalResp: 1843,
-  AgentEvalSyntaxReq: 1844,
-  AgentEvalSyntaxResp: 1845,
-  AgentEvalCallablesReq: 1846,
-  AgentEvalCallablesResp: 1847,
   ProjectMount: 1872,
   ProjectRef: 1873,
   WorkspaceMountReq: 1874,
@@ -844,6 +838,12 @@ export const SchemaIDs = {
   AgentSchedulerUnbindResp: 2723,
   AgentSkillUseReq: 2768,
   AgentSkillUseResp: 2769,
+  AgentEvalReq: 2770,
+  AgentEvalResp: 2771,
+  AgentEvalSyntaxReq: 2772,
+  AgentEvalSyntaxResp: 2773,
+  AgentEvalCallablesReq: 2774,
+  AgentEvalCallablesResp: 2775,
   AgentPauseReq: 2816,
   AgentPauseResp: 2817,
   AgentResumeReq: 2818,
@@ -31546,14 +31546,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1773,
+    schemaId: 1771,
     name: "eventStatsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "eventStatsReq",
       className: "eventStatsReq",
-      classId: 1773
+      classId: 1771
     },
     object: {
       kind: "struct",
@@ -31563,14 +31563,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1774,
+    schemaId: 1772,
     name: "eventStatsResp",
     visibility: "public",
     type: {
       kind: "struct",
       name: "eventStatsResp",
       className: "eventStatsResp",
-      classId: 1774
+      classId: 1772
     },
     object: {
       kind: "struct",
@@ -31617,14 +31617,14 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
-    schemaId: 1775,
+    schemaId: 1773,
     name: "cellStatsReq",
     visibility: "public",
     type: {
       kind: "struct",
       name: "cellStatsReq",
       className: "cellStatsReq",
-      classId: 1775
+      classId: 1773
     },
     object: {
       kind: "struct",
@@ -33524,216 +33524,6 @@ export const schemaEntries: SchemaEntry[] = [
         },
         {
           name: "Depth",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1842,
-    name: "AgentEvalReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AgentEvalReq",
-      className: "AgentEvalReq",
-      classId: 1842
-    },
-    object: {
-      kind: "struct",
-      name: "AgentEvalReq",
-      fields: [
-        {
-          name: "Script",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Args",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "scalar",
-              name: "any",
-              typeId: 15
-            }
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1843,
-    name: "AgentEvalResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AgentEvalResp",
-      className: "AgentEvalResp",
-      classId: 1843
-    },
-    object: {
-      kind: "struct",
-      name: "AgentEvalResp",
-      fields: [
-        {
-          name: "Result",
-          type: {
-            kind: "scalar",
-            name: "any",
-            typeId: 15
-          },
-          optional: true
-        },
-        {
-          name: "Error",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1844,
-    name: "AgentEvalSyntaxReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AgentEvalSyntaxReq",
-      className: "AgentEvalSyntaxReq",
-      classId: 1844
-    },
-    object: {
-      kind: "struct",
-      name: "AgentEvalSyntaxReq",
-      fields: [
-        {
-          name: "Lang",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1845,
-    name: "AgentEvalSyntaxResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AgentEvalSyntaxResp",
-      className: "AgentEvalSyntaxResp",
-      classId: 1845
-    },
-    object: {
-      kind: "struct",
-      name: "AgentEvalSyntaxResp",
-      fields: [
-        {
-          name: "Lang",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Markdown",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1846,
-    name: "AgentEvalCallablesReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AgentEvalCallablesReq",
-      className: "AgentEvalCallablesReq",
-      classId: 1846
-    },
-    object: {
-      kind: "struct",
-      name: "AgentEvalCallablesReq",
-      fields: [
-        {
-          name: "Query",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Limit",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1847,
-    name: "AgentEvalCallablesResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "AgentEvalCallablesResp",
-      className: "AgentEvalCallablesResp",
-      classId: 1847
-    },
-    object: {
-      kind: "struct",
-      name: "AgentEvalCallablesResp",
-      fields: [
-        {
-          name: "Items",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "struct",
-              name: "struct",
-              className: "CallableInterface"
-            }
-          }
-        },
-        {
-          name: "Total",
           type: {
             kind: "scalar",
             name: "int",
@@ -45681,6 +45471,216 @@ export const schemaEntries: SchemaEntry[] = [
             typeId: 12
           },
           optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 2770,
+    name: "AgentEvalReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalReq",
+      className: "AgentEvalReq",
+      classId: 2770
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalReq",
+      fields: [
+        {
+          name: "Script",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Args",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "scalar",
+              name: "any",
+              typeId: 15
+            }
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 2771,
+    name: "AgentEvalResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalResp",
+      className: "AgentEvalResp",
+      classId: 2771
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalResp",
+      fields: [
+        {
+          name: "Result",
+          type: {
+            kind: "scalar",
+            name: "any",
+            typeId: 15
+          },
+          optional: true
+        },
+        {
+          name: "Error",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 2772,
+    name: "AgentEvalSyntaxReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalSyntaxReq",
+      className: "AgentEvalSyntaxReq",
+      classId: 2772
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalSyntaxReq",
+      fields: [
+        {
+          name: "Lang",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 2773,
+    name: "AgentEvalSyntaxResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalSyntaxResp",
+      className: "AgentEvalSyntaxResp",
+      classId: 2773
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalSyntaxResp",
+      fields: [
+        {
+          name: "Lang",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Markdown",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 2774,
+    name: "AgentEvalCallablesReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalCallablesReq",
+      className: "AgentEvalCallablesReq",
+      classId: 2774
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalCallablesReq",
+      fields: [
+        {
+          name: "Query",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Limit",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 2775,
+    name: "AgentEvalCallablesResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalCallablesResp",
+      className: "AgentEvalCallablesResp",
+      classId: 2775
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalCallablesResp",
+      fields: [
+        {
+          name: "Items",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "CallableInterface"
+            }
+          }
+        },
+        {
+          name: "Total",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          }
         }
       ]
     }
