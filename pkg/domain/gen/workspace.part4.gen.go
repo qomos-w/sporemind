@@ -35,13 +35,7 @@ const (
 	WorkspaceGitTagDeleteReqSchemaID         uint64 = 1976
 	WorkspaceGitTagListReqSchemaID           uint64 = 1973
 	WorkspaceGitTagListRespSchemaID          uint64 = 1974
-	WorkspaceHostCallReqSchemaID             uint64 = 1991
-	WorkspaceHostCallRespSchemaID            uint64 = 1992
 	WorkspaceRemoveAppAgentReqSchemaID       uint64 = 1983
-	WorkspaceSearchCallablesReqSchemaID      uint64 = 1995
-	WorkspaceSearchCallablesRespSchemaID     uint64 = 1996
-	WorkspaceSporeSyntaxReqSchemaID          uint64 = 1993
-	WorkspaceSporeSyntaxRespSchemaID         uint64 = 1994
 )
 
 func init() {
@@ -69,13 +63,7 @@ func init() {
 	schema.RegisterStructType(WorkspaceGitTagDeleteReqSchemaID, reflect.TypeOf(WorkspaceGitTagDeleteReq{}))
 	schema.RegisterStructType(WorkspaceGitTagListReqSchemaID, reflect.TypeOf(WorkspaceGitTagListReq{}))
 	schema.RegisterStructType(WorkspaceGitTagListRespSchemaID, reflect.TypeOf(WorkspaceGitTagListResp{}))
-	schema.RegisterStructType(WorkspaceHostCallReqSchemaID, reflect.TypeOf(WorkspaceHostCallReq{}))
-	schema.RegisterStructType(WorkspaceHostCallRespSchemaID, reflect.TypeOf(WorkspaceHostCallResp{}))
 	schema.RegisterStructType(WorkspaceRemoveAppAgentReqSchemaID, reflect.TypeOf(WorkspaceRemoveAppAgentReq{}))
-	schema.RegisterStructType(WorkspaceSearchCallablesReqSchemaID, reflect.TypeOf(WorkspaceSearchCallablesReq{}))
-	schema.RegisterStructType(WorkspaceSearchCallablesRespSchemaID, reflect.TypeOf(WorkspaceSearchCallablesResp{}))
-	schema.RegisterStructType(WorkspaceSporeSyntaxReqSchemaID, reflect.TypeOf(WorkspaceSporeSyntaxReq{}))
-	schema.RegisterStructType(WorkspaceSporeSyntaxRespSchemaID, reflect.TypeOf(WorkspaceSporeSyntaxResp{}))
 }
 
 type GitShowFile struct {
@@ -229,34 +217,6 @@ type WorkspaceGitTagListResp struct {
 	Tags []GitTagInfo `json:"Tags"`
 }
 
-type WorkspaceHostCallReq struct {
-	CallID  string         `json:"CallId"`
-	Payload map[string]any `json:"Payload,omitempty"`
-}
-
-type WorkspaceHostCallResp struct {
-	Result map[string]any `json:"Result,omitempty"`
-}
-
 type WorkspaceRemoveAppAgentReq struct {
 	AppID string `json:"AppId"`
-}
-
-type WorkspaceSearchCallablesReq struct {
-	Query string `json:"Query,omitempty"`
-	Limit int32  `json:"Limit,omitempty"`
-}
-
-type WorkspaceSearchCallablesResp struct {
-	Items []CallableInterface `json:"Items"`
-	Total int32               `json:"Total"`
-}
-
-type WorkspaceSporeSyntaxReq struct {
-	Lang string `json:"Lang,omitempty"`
-}
-
-type WorkspaceSporeSyntaxResp struct {
-	Lang     string `json:"Lang"`
-	Markdown string `json:"Markdown"`
 }

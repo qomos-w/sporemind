@@ -379,6 +379,42 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "local",
+    name: "eval_callables",
+    visibility: "public",
+    mode: "unary",
+    reqSchemaId: 1846,
+    finalSchemaId: 1847,
+    req: {
+      kind: "struct",
+      name: "AgentEvalCallablesReq",
+      className: "AgentEvalCallablesReq"
+    },
+    final: {
+      kind: "struct",
+      name: "AgentEvalCallablesResp",
+      className: "AgentEvalCallablesResp"
+    }
+  },
+  {
+    namespace: "local",
+    name: "eval_syntax",
+    visibility: "public",
+    mode: "unary",
+    reqSchemaId: 1844,
+    finalSchemaId: 1845,
+    req: {
+      kind: "struct",
+      name: "AgentEvalSyntaxReq",
+      className: "AgentEvalSyntaxReq"
+    },
+    final: {
+      kind: "struct",
+      name: "AgentEvalSyntaxResp",
+      className: "AgentEvalSyntaxResp"
+    }
+  },
+  {
+    namespace: "local",
     name: "frontend_debug",
     visibility: "public",
     mode: "unary",

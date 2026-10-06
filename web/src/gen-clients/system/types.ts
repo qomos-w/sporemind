@@ -640,6 +640,16 @@ export interface AgentConfigureReq {
   Title?: string | undefined;
 }
 
+export interface AgentEvalCallablesReq {
+  Query?: string | undefined;
+  Limit?: number | undefined;
+}
+
+export interface AgentEvalCallablesResp {
+  Items: CallableInterface[];
+  Total: number;
+}
+
 export interface AgentEvalReq {
   Script: string;
   Args?: unknown[] | undefined;
@@ -648,6 +658,15 @@ export interface AgentEvalReq {
 export interface AgentEvalResp {
   Result?: unknown | undefined;
   Error?: string | undefined;
+}
+
+export interface AgentEvalSyntaxReq {
+  Lang?: string | undefined;
+}
+
+export interface AgentEvalSyntaxResp {
+  Lang: string;
+  Markdown: string;
 }
 
 export interface AgentFrontendDebugReq {
@@ -8829,15 +8848,6 @@ export interface WorkspaceGitTagListResp {
   Tags: GitTagInfo[];
 }
 
-export interface WorkspaceHostCallReq {
-  CallId: string;
-  Payload?: Record<string, unknown> | undefined;
-}
-
-export interface WorkspaceHostCallResp {
-  Result?: Record<string, unknown> | undefined;
-}
-
 export interface WorkspaceListAgentKindConfigsResp {
   Items: AgentKindConfig[];
 }
@@ -8958,16 +8968,6 @@ export interface WorkspaceSaveAgentKindConfigReq {
   MaxTurns?: number | undefined;
 }
 
-export interface WorkspaceSearchCallablesReq {
-  Query?: string | undefined;
-  Limit?: number | undefined;
-}
-
-export interface WorkspaceSearchCallablesResp {
-  Items: CallableInterface[];
-  Total: number;
-}
-
 export interface WorkspaceShellLayout {
   Version: number;
   LayoutJson: string;
@@ -8976,15 +8976,6 @@ export interface WorkspaceShellLayout {
 
 export interface WorkspaceSlashCommandsListResp {
   Commands: SlashCommand[];
-}
-
-export interface WorkspaceSporeSyntaxReq {
-  Lang?: string | undefined;
-}
-
-export interface WorkspaceSporeSyntaxResp {
-  Lang: string;
-  Markdown: string;
 }
 
 export interface WorkspaceUIModel {

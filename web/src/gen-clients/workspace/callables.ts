@@ -1081,24 +1081,6 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "workspace",
-    name: "host_call",
-    visibility: "admin",
-    mode: "unary",
-    reqSchemaId: 1991,
-    finalSchemaId: 1992,
-    req: {
-      kind: "struct",
-      name: "WorkspaceHostCallReq",
-      className: "WorkspaceHostCallReq"
-    },
-    final: {
-      kind: "struct",
-      name: "WorkspaceHostCallResp",
-      className: "WorkspaceHostCallResp"
-    }
-  },
-  {
-    namespace: "workspace",
     name: "list_agent_kind_configs",
     visibility: "public",
     mode: "unary",
@@ -1310,24 +1292,6 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "workspace",
-    name: "search_callables",
-    visibility: "public",
-    mode: "unary",
-    reqSchemaId: 1997,
-    finalSchemaId: 1998,
-    req: {
-      kind: "struct",
-      name: "WorkspaceSearchCallablesReq",
-      className: "WorkspaceSearchCallablesReq"
-    },
-    final: {
-      kind: "struct",
-      name: "WorkspaceSearchCallablesResp",
-      className: "WorkspaceSearchCallablesResp"
-    }
-  },
-  {
-    namespace: "workspace",
     name: "session",
     visibility: "public",
     mode: "unary",
@@ -1393,24 +1357,6 @@ export const callableEntries: CallableEntry[] = [
       kind: "struct",
       name: "WorkspaceSlashCommandsListResp",
       className: "WorkspaceSlashCommandsListResp"
-    }
-  },
-  {
-    namespace: "workspace",
-    name: "spore_syntax",
-    visibility: "public",
-    mode: "unary",
-    reqSchemaId: 1995,
-    finalSchemaId: 1996,
-    req: {
-      kind: "struct",
-      name: "WorkspaceSporeSyntaxReq",
-      className: "WorkspaceSporeSyntaxReq"
-    },
-    final: {
-      kind: "struct",
-      name: "WorkspaceSporeSyntaxResp",
-      className: "WorkspaceSporeSyntaxResp"
     }
   },
   {

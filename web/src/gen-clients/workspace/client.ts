@@ -616,17 +616,6 @@ export const gitTagList_meta = {
   resSchemaId: 1974,
 } as const;
 
-export async function hostCall(client: GosporeClient, req: systemTypes.WorkspaceHostCallReq, opts?: InvokeOptions): Promise<systemTypes.WorkspaceHostCallResp> {
-  return client.invoke<systemTypes.WorkspaceHostCallReq, systemTypes.WorkspaceHostCallResp>("workspace.host_call", req, { reqSchemaId: 1991, resSchemaId: 1992, ...opts });
-}
-
-export const hostCall_meta = {
-  callable: "workspace.host_call",
-  name: "host_call",
-  reqSchemaId: 1991,
-  resSchemaId: 1992,
-} as const;
-
 export async function listAgentKindConfigs(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.WorkspaceListAgentKindConfigsResp> {
   return client.invoke<void, systemTypes.WorkspaceListAgentKindConfigsResp>("workspace.list_agent_kind_configs", undefined, { resSchemaId: 1900, ...opts });
 }
@@ -730,17 +719,6 @@ export const saveAgentKindConfig_meta = {
   resSchemaId: 1896,
 } as const;
 
-export async function searchCallables(client: GosporeClient, req: systemTypes.WorkspaceSearchCallablesReq, opts?: InvokeOptions): Promise<systemTypes.WorkspaceSearchCallablesResp> {
-  return client.invoke<systemTypes.WorkspaceSearchCallablesReq, systemTypes.WorkspaceSearchCallablesResp>("workspace.search_callables", req, { reqSchemaId: 1997, resSchemaId: 1998, ...opts });
-}
-
-export const searchCallables_meta = {
-  callable: "workspace.search_callables",
-  name: "search_callables",
-  reqSchemaId: 1997,
-  resSchemaId: 1998,
-} as const;
-
 export async function session(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.SessionSnapshot> {
   return client.invoke<void, systemTypes.SessionSnapshot>("workspace.session", undefined, { resSchemaId: 1904, ...opts });
 }
@@ -763,17 +741,6 @@ export const shellPrefSave_meta = {
 export async function slashCommandsList(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.WorkspaceSlashCommandsListResp> {
   return client.invoke<void, systemTypes.WorkspaceSlashCommandsListResp>("workspace.slash_commands_list", undefined, { resSchemaId: 3634, ...opts });
 }
-
-export async function sporeSyntax(client: GosporeClient, req: systemTypes.WorkspaceSporeSyntaxReq, opts?: InvokeOptions): Promise<systemTypes.WorkspaceSporeSyntaxResp> {
-  return client.invoke<systemTypes.WorkspaceSporeSyntaxReq, systemTypes.WorkspaceSporeSyntaxResp>("workspace.spore_syntax", req, { reqSchemaId: 1995, resSchemaId: 1996, ...opts });
-}
-
-export const sporeSyntax_meta = {
-  callable: "workspace.spore_syntax",
-  name: "spore_syntax",
-  reqSchemaId: 1995,
-  resSchemaId: 1996,
-} as const;
 
 export async function systemTree(client: GosporeClient, opts?: InvokeOptions): Promise<systemTypes.SystemTreeResp> {
   return client.invoke<void, systemTypes.SystemTreeResp>("workspace.system_tree", undefined, { resSchemaId: 1716, ...opts });

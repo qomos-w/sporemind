@@ -1,6 +1,8 @@
 // AUTO-GENERATED - DO NOT EDIT. To regenerate:
 //   make gen-schema-ts
 
+import { CallableInterface } from './observation';
+
 export interface AgentSkillUseReq {
   SkillId: string;
   Args?: string | undefined;
@@ -24,4 +26,23 @@ export interface AgentEvalReq {
 export interface AgentEvalResp {
   Result?: unknown | undefined;
   Error?: string | undefined;
+}
+
+export interface AgentEvalSyntaxReq {
+  Lang?: string | undefined;
+}
+
+export interface AgentEvalSyntaxResp {
+  Lang: string;
+  Markdown: string;
+}
+
+export interface AgentEvalCallablesReq {
+  Query?: string | undefined;
+  Limit?: number | undefined;
+}
+
+export interface AgentEvalCallablesResp {
+  Items: CallableInterface[];
+  Total: number;
 }

@@ -11,17 +11,35 @@ import (
 
 // Schema IDs for value types defined in this package.
 const (
-	AgentEvalReqSchemaID      uint64 = 2770
-	AgentEvalRespSchemaID     uint64 = 2771
-	AgentSkillUseReqSchemaID  uint64 = 2768
-	AgentSkillUseRespSchemaID uint64 = 2769
+	AgentEvalCallablesReqSchemaID  uint64 = 2774
+	AgentEvalCallablesRespSchemaID uint64 = 2775
+	AgentEvalReqSchemaID           uint64 = 2770
+	AgentEvalRespSchemaID          uint64 = 2771
+	AgentEvalSyntaxReqSchemaID     uint64 = 2772
+	AgentEvalSyntaxRespSchemaID    uint64 = 2773
+	AgentSkillUseReqSchemaID       uint64 = 2768
+	AgentSkillUseRespSchemaID      uint64 = 2769
 )
 
 func init() {
+	schema.RegisterStructType(AgentEvalCallablesReqSchemaID, reflect.TypeOf(AgentEvalCallablesReq{}))
+	schema.RegisterStructType(AgentEvalCallablesRespSchemaID, reflect.TypeOf(AgentEvalCallablesResp{}))
 	schema.RegisterStructType(AgentEvalReqSchemaID, reflect.TypeOf(AgentEvalReq{}))
 	schema.RegisterStructType(AgentEvalRespSchemaID, reflect.TypeOf(AgentEvalResp{}))
+	schema.RegisterStructType(AgentEvalSyntaxReqSchemaID, reflect.TypeOf(AgentEvalSyntaxReq{}))
+	schema.RegisterStructType(AgentEvalSyntaxRespSchemaID, reflect.TypeOf(AgentEvalSyntaxResp{}))
 	schema.RegisterStructType(AgentSkillUseReqSchemaID, reflect.TypeOf(AgentSkillUseReq{}))
 	schema.RegisterStructType(AgentSkillUseRespSchemaID, reflect.TypeOf(AgentSkillUseResp{}))
+}
+
+type AgentEvalCallablesReq struct {
+	Query string `json:"Query,omitempty"`
+	Limit int32  `json:"Limit,omitempty"`
+}
+
+type AgentEvalCallablesResp struct {
+	Items []CallableInterface `json:"Items"`
+	Total int32               `json:"Total"`
 }
 
 type AgentEvalReq struct {
@@ -32,6 +50,15 @@ type AgentEvalReq struct {
 type AgentEvalResp struct {
 	Result any    `json:"Result,omitempty"`
 	Error  string `json:"Error,omitempty"`
+}
+
+type AgentEvalSyntaxReq struct {
+	Lang string `json:"Lang,omitempty"`
+}
+
+type AgentEvalSyntaxResp struct {
+	Lang     string `json:"Lang"`
+	Markdown string `json:"Markdown"`
 }
 
 type AgentSkillUseReq struct {

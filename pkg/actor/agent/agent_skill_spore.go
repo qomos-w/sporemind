@@ -31,6 +31,7 @@ type sporeSkillBudget struct {
 	MaxDurationSec  int
 	MaxInstructions int
 	MaxOutputBytes  int
+	MaxHostCalls    int
 }
 
 const (
@@ -128,6 +129,7 @@ func buildSporeSkillCallContext(lifecycle context.Context, budget sporeSkillBudg
 			MaxInstructions: uint64(budget.MaxInstructions),
 			MaxDuration:     time.Duration(dur) * time.Second,
 			MaxOutputBytes:  uint64(out),
+			MaxHostCalls:    uint32(budget.MaxHostCalls),
 		},
 	}
 }

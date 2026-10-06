@@ -226,44 +226,9 @@ struct WikiListStarredResp {
     Items: array<WikiStarredEntry>  // projects in mount order, cards newest-first
 }
 
-// ---- workspace.host_call (builtin:bundle:sporeeval bridge) ----
+// ---- (sporeeval bundle note) ----
 //
-// Generic host-callable relay for agents: resolves CallId's service prefix,
-// forwards Payload, and returns the decoded JSON response. Mounting the
-// builtin:bundle:sporeeval bundle is the only gate on the agent side; the
-// target callable's own policy ladder still applies to every relayed call.
+// The sporeeval bundle's surface is fully agent-local (eval / eval_syntax /
+// eval_callables, see the agent.skill namespace); the workspace declares no
+// callables for it.
 
-struct WorkspaceHostCallReq {
-    CallId:  string                 // dotted callable ID "<service>.<callable>"
-    optional Payload: map<string, any>  // target callable request body; nil for zero-arg callables
-}
-
-struct WorkspaceHostCallResp {
-    optional Result: map<string, any>  // decoded JSON response; nil for void/tell-style callables
-}
-
-// ---- workspace.spore_syntax / search_callables (builtin:bundle:sporeeval) ----
-//
-// The sporeeval bundle's discovery surface: read the spore language syntax
-// reference, and search the live callable catalog so callers can discover
-// callable IDs and their request shapes before relaying via host_call.
-// (The bundle's eval tool is agent-local, not a workspace callable.)
-
-struct WorkspaceSporeSyntaxReq {
-    optional Lang: string            // "en" (default) | "zh"
-}
-
-struct WorkspaceSporeSyntaxResp {
-    Lang:     string                 // resolved language tag
-    Markdown: string                 // full spore language syntax reference
-}
-
-struct WorkspaceSearchCallablesReq {
-    optional Query: string           // case-insensitive substring on callable name or description
-    optional Limit: int              // max rows; default 200, cap 500
-}
-
-struct WorkspaceSearchCallablesResp {
-    Items: array<CallableInterface>  // live catalog rows (params, request fields, service)
-    Total: int                       // matched rows before the limit was applied
-}

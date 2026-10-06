@@ -1145,14 +1145,26 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 		return fmt.Errorf("agent: register skill_mount compatibility: %w", err)
 	}
 
-	// eval is the agent-local pure spore evaluator (moved off workspace.eval).
+	// eval is the agent-local spore evaluator. Host reach lives inside the
+	// script: the runtime binds host.invoke via sporebridge with the agent's
+	// identity (target-side policy intact), subsuming the former relay tools.
 	// PureContext: the script run executes on the forked goroutine, so a
 	// seconds-long snippet never blocks the owner lane nor serializes behind
 	// the skill_ops / agent_exec lanes.
 	if err := ctx.Register("eval", a.handleEval, actor.Public(),
-		actor.WithDescription("Evaluate an ad-hoc spore script on this agent (pure computation, no host bindings; fixed 10s / 1M-instruction budget, 64KB output cap). The script must define the run() entry function; Args are passed positionally. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle."),
+		actor.WithDescription("Evaluate an ad-hoc spore script on this agent. The script must define the run() entry function; Args are passed positionally. Inside the script, host.invoke(\"<service>.<callable>\", payload) reaches any host callable — the caller role propagates and the target's own policy applies (reach, not permission). Fixed budget: 10s, 1M instructions, 64 host calls, 64KB output. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle."),
 	); err != nil {
 		return fmt.Errorf("agent: register eval: %w", err)
+	}
+	if err := ctx.Register("eval_syntax", a.handleEvalSyntax, actor.Public(),
+		actor.WithDescription("Return the spore language syntax reference markdown. Lang: \"en\" (default) | \"zh\". Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("agent: register eval_syntax: %w", err)
+	}
+	if err := ctx.Register("eval_callables", a.handleEvalCallables, actor.Public(),
+		actor.WithDescription("Search the host callable catalog the agent can see: Query (case-insensitive substring on name or description), optional Limit (default 200, cap 500). Rows carry request params and service names so scripts know how to host.invoke them. Discovery only. Exposed by the builtin:bundle:sporeeval bundle."),
+	); err != nil {
+		return fmt.Errorf("agent: register eval_callables: %w", err)
 	}
 
 	a.actorID = ctx.Self().ID().String()

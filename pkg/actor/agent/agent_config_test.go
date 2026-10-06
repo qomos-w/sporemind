@@ -1092,37 +1092,22 @@ func TestResolveTools_DebugBundleExposesListAgents(t *testing.T) {
 
 // TestResolveTools_SporeevalBundleExposesCodeInvocationTools locks the
 // sporeeval system bundle's mount gating: with builtin:bundle:sporeeval
-// mounted, its six code-invocation callables surface as tools; unmounted,
-// none of them appear.
+// mounted, its three agent-local eval-family callables surface as tools;
+// unmounted, none of them appear.
 func TestResolveTools_SporeevalBundleExposesCodeInvocationTools(t *testing.T) {
 	a := &Actor{}
 	callables := map[string]domain.CallableInterface{
-		"workspace.host_call": {
-			Name:        "workspace.host_call",
-			Description: "Invoke a host callable by ID",
-			Params:      []domain.CallableParam{{Name: "CallID", Type: "string", Required: true}},
-		},
-		"mcp.call_tool": {
-			Name:        "mcp.call_tool",
-			Description: "Call an MCP tool",
-			Params:      []domain.CallableParam{{Name: "Id", Type: "string", Required: true}},
-		},
-		"appmanager.invoke": {
-			Name:        "appmanager.invoke",
-			Description: "Invoke an app callable",
-			Params:      []domain.CallableParam{{Name: "ID", Type: "string", Required: true}},
-		},
 		"eval": {
 			Name:        "eval",
 			Description: "Evaluate a spore script",
 			Params:      []domain.CallableParam{{Name: "Script", Type: "string", Required: true}},
 		},
-		"workspace.spore_syntax": {
-			Name:        "workspace.spore_syntax",
+		"eval_syntax": {
+			Name:        "eval_syntax",
 			Description: "Spore syntax reference",
 		},
-		"workspace.search_callables": {
-			Name:        "workspace.search_callables",
+		"eval_callables": {
+			Name:        "eval_callables",
 			Description: "Search the callable catalog",
 		},
 	}
@@ -1135,15 +1120,12 @@ func TestResolveTools_SporeevalBundleExposesCodeInvocationTools(t *testing.T) {
 		t.Fatalf("expected no tools without the sporeeval bundle, got %+v", tools)
 	}
 
-	// Mounted via component snapshot: all six callables surface.
+	// Mounted via component snapshot: all three callables surface.
 	a.componentSnapshot.Store(&domain.AgentComponentSnapshot{
 		Tools: []domain.ComponentToolContribution{
 			{ID: "eval", CardID: "builtin:bundle:sporeeval", CallableID: "eval"},
-			{ID: "spore_syntax", CardID: "builtin:bundle:sporeeval", CallableID: "workspace.spore_syntax"},
-			{ID: "search_callables", CardID: "builtin:bundle:sporeeval", CallableID: "workspace.search_callables"},
-			{ID: "host_call", CardID: "builtin:bundle:sporeeval", CallableID: "workspace.host_call"},
-			{ID: "mcp_call", CardID: "builtin:bundle:sporeeval", CallableID: "mcp.call_tool"},
-			{ID: "app_call", CardID: "builtin:bundle:sporeeval", CallableID: "appmanager.invoke"},
+			{ID: "eval_syntax", CardID: "builtin:bundle:sporeeval", CallableID: "eval_syntax"},
+			{ID: "eval_callables", CardID: "builtin:bundle:sporeeval", CallableID: "eval_callables"},
 		},
 	})
 	tools = a.resolveTools(ctx, cfg, callables)
@@ -1151,16 +1133,13 @@ func TestResolveTools_SporeevalBundleExposesCodeInvocationTools(t *testing.T) {
 	for i, tool := range tools {
 		names[i] = tool.Name
 	}
-	for _, want := range []string{
-		"eval", "workspace-spore_syntax", "workspace-search_callables",
-		"workspace-host_call", "mcp-call_tool", "appmanager-invoke",
-	} {
+	for _, want := range []string{"eval", "eval_syntax", "eval_callables"} {
 		if !slices.Contains(names, want) {
 			t.Errorf("sporeeval tool %q missing from %v", want, names)
 		}
 	}
-	if len(tools) != 6 {
-		t.Fatalf("expected exactly 6 tools, got %d: %+v", len(tools), tools)
+	if len(tools) != 3 {
+		t.Fatalf("expected exactly 3 tools, got %d: %+v", len(tools), tools)
 	}
 }
 

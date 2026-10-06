@@ -18,40 +18,34 @@ data:
   settingsVisible: true
   tools:
     - eval
-    - workspace.spore_syntax
-    - workspace.search_callables
-    - workspace.host_call
-    - mcp.call_tool
-    - appmanager.invoke
+    - eval_syntax
+    - eval_callables
 ---
 
 ## Sporeeval
 
-**sporeeval** is the agent's code-invocation bundle: write and evaluate spore script locally on the agent, read the language syntax reference, search the live callable catalog to learn how to invoke host surfaces, and relay calls to host callables, MCP tools, and app callables. Mounting this bundle is the gate — unmounted agents get none of these surfaces.
+**sporeeval** is the agent's code-invocation bundle, fully agent-local: write spore script that computes and reaches host callables through `host.invoke`, consult the language syntax reference, and search the callable catalog for IDs and request shapes. Mounting this bundle is the gate — unmounted agents get none of these surfaces.
 
 ### When to Use
 
-- Evaluate an ad-hoc spore script snippet (pure computation) and get the result (`eval`).
-- Look up spore language syntax while writing a script (`workspace.spore_syntax`).
-- Discover a callable's ID and request shape before invoking it (`workspace.search_callables`).
-- Invoke a host service callable by ID (`workspace.host_call`), an MCP server tool (`mcp.call_tool`), or another app's callable (`appmanager.invoke`).
+- Do a deterministic job — compute, transform, batch-operate host callables — by writing one spore script and running it (`eval`).
+- Look up spore language syntax while writing a script (`eval_syntax`).
+- Discover a callable's ID and request shape before writing the `host.invoke` call (`eval_callables`).
 
 ### Tools
 
-- `eval` — Evaluate a spore script on this agent: `Script` (source; must define the `run()` entry function), optional `Args` (positional arguments). Pure computation — no host bindings; fixed 10s / 1M-instruction budget and 64KB output cap. Compile/runtime failures return an `Error` diagnostic you can fix and retry.
-- `workspace.spore_syntax` — Return the spore language syntax reference markdown; `Lang`: `"en"` (default) or `"zh"`.
-- `workspace.search_callables` — Search the live callable catalog: `Query` (case-insensitive substring on name or description), optional `Limit` (default 200, cap 500). Rows carry request params and service names.
-- `workspace.host_call` — Invoke any host actor callable by dotted ID (`<service>.<callable>`), e.g. `"workspace.slashcommands_list"`. Payload must match the target callable's request schema.
-- `mcp.call_tool` — Invoke a tool on a configured MCP server: `Id` (server), `Tool` (tool name), `Arguments` (JSON args).
-- `appmanager.invoke` — Invoke a registered app's callable: `ID` (app), `Callable`, `Payload`, optional `AgentID`.
+- `eval` — Evaluate a spore script on this agent: `Script` (source; must define the `run()` entry function), optional `Args` (positional). Inside the script, `invoke("<service>.<callable>", payload)` (from the `host` module) reaches any host callable — the caller role propagates and the target's own policy applies (reach, not permission). Fixed budget: 10s, 1M instructions, 64 host calls, 64KB output. Compile/runtime failures return an `Error` diagnostic you can fix and retry.
+- `eval_syntax` — Return the spore language syntax reference markdown; `Lang`: `"en"` (default) or `"zh"`.
+- `eval_callables` — Search the callable catalog the agent can see: `Query` (case-insensitive substring on name or description), optional `Limit` (default 200, cap 500). Rows carry request params and service names. Discovery only — it never invokes.
 
 ### Workflow
 
-1. **Search first** — before invoking an unknown surface, `workspace.search_callables` to find the callable ID and its request fields.
-2. **Check syntax** — when writing spore script, `workspace.spore_syntax` is the language reference; `eval` runs the snippet locally with no host side effects.
-3. **Dedicated tools first** — if a callable is already exposed as a dedicated tool, call the tool; the relay tools are for surfaces not pre-declared on your tool list.
+1. **Search first** — `eval_callables` to find the callable IDs and their request fields.
+2. **Check syntax** — `eval_syntax` is the language reference; write the script, `eval` it, read the diagnostics, iterate.
+3. **Batch work into scripts** — a chain of host calls, loops, and data shaping belongs in ONE script, not in a dozen tool calls: fewer round trips, exact logic, inspectable result.
 
 ### Rules
 
-1. **Targets enforce their own policy** — every relayed call still passes the target-side gates; sporeeval only grants the reach, not the permission.
-2. **eval is sandboxed** — `eval` binds no host functions; host side effects belong on the relay tools.
+1. **Targets enforce their own policy** — every `host.invoke` propagates your caller role and passes the target's own gates; a denial means the policy said no, not that you failed to reach it.
+2. **Budget your reach** — one eval allows at most 64 host calls and 10s total; a bigger job should be split into steps you can inspect between.
+3. **Read-only probes first** — when unsure of a callable's payload shape, call a `*_list` / `*_get` variant before mutating calls.

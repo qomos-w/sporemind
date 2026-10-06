@@ -464,18 +464,14 @@ func TestAppToolSpecsFromCatalog(t *testing.T) {
 
 // TestSporeevalBundleCardDeclaresCodeInvocationTools locks the
 // builtin:bundle:sporeeval system card: it must resolve from embedded assets
-// to exactly the six code-invocation callable IDs (the agent-local eval,
-// workspace.spore_syntax / workspace.search_callables, plus the three relay
-// tools) with no app-manager app behind it.
+// to exactly the three agent-local eval-family callable IDs with no
+// app-manager app behind it.
 func TestSporeevalBundleCardDeclaresCodeInvocationTools(t *testing.T) {
 	a := &Actor{}
 	ctx := testutil.AnonCtx(testutil.GenActorID())
 
 	got := a.resolveBundleCallableIDs(ctx, []string{"builtin:bundle:sporeeval"})
-	want := []string{
-		"eval", "workspace.spore_syntax", "workspace.search_callables",
-		"workspace.host_call", "mcp.call_tool", "appmanager.invoke",
-	}
+	want := []string{"eval", "eval_syntax", "eval_callables"}
 	if len(got) != len(want) {
 		t.Fatalf("resolveBundleCallableIDs(builtin:bundle:sporeeval) = %v, want %v", got, want)
 	}

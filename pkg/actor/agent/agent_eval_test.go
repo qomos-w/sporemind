@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/qomos-w/sporemind/pkg/domain"
+	"github.com/qomos-w/sporemind/pkg/runtime"
 	"github.com/qomos-w/sporemind/pkg/testutil"
 )
 
@@ -136,20 +137,100 @@ func TestHandleEvalEmptyScriptRejected(t *testing.T) {
 	}
 }
 
-func TestHandleEvalNoHostBindings(t *testing.T) {
+func TestHandleEvalHostInvokeReachesBridge(t *testing.T) {
 	a := &Actor{}
 	ctx := testutil.SystemCtx(testutil.GenActorID())
 
-	// The eval runtime binds no host functions: importing "host" must fail
-	// to compile, proving the surface is pure computation.
+	// host is bound now: the import compiles and the invoke executes, then
+	// fails on service resolution inside the bridge (no such service in the
+	// test context) — proving reach flows through sporebridge, not a stub.
 	resp, err := a.handleEval(ctx, domain.AgentEvalReq{
-		Script: `import "host"` + "\n" + `export fun run(): int { return host.invoke("workspace.list_agents", {}) as int }`,
+		Script: "import { invoke } from \"host\"\n" + "export fun run(): string {\n\tvar r: map = invoke(\"nosuch.svc\", {})\n\treturn \"called\"\n}",
 	})
 	if err != nil {
 		t.Fatalf("handleEval: %v", err)
 	}
 	if resp.Error == "" {
-		t.Error("Error is empty, want compile failure on unbound host import")
+		t.Fatal("Error is empty, want bridge resolution failure surfaced as diagnostic")
+	}
+	if !strings.Contains(resp.Error, "nosuch.svc") {
+		t.Errorf("Error = %q, want diagnostic naming the unknown callable", resp.Error)
+	}
+}
+
+func TestHandleEvalSyntax(t *testing.T) {
+	a := &Actor{}
+
+	resp, err := a.handleEvalSyntax(nil, domain.AgentEvalSyntaxReq{})
+	if err != nil {
+		t.Fatalf("default lang: %v", err)
+	}
+	if resp.Lang != "en" || !strings.Contains(resp.Markdown, "sporescript language reference") {
+		t.Errorf("default resp = lang %q, %d bytes; want en reference", resp.Lang, len(resp.Markdown))
+	}
+
+	resp, err = a.handleEvalSyntax(nil, domain.AgentEvalSyntaxReq{Lang: "zh"})
+	if err != nil {
+		t.Fatalf("zh lang: %v", err)
+	}
+	if resp.Lang != "zh" || !strings.Contains(resp.Markdown, "sporescript 语言参考") {
+		t.Errorf("zh resp = lang %q; want zh reference", resp.Lang)
+	}
+
+	if _, err := a.handleEvalSyntax(nil, domain.AgentEvalSyntaxReq{Lang: "fr"}); err == nil {
+		t.Fatal("unsupported Lang must error")
+	}
+}
+
+func TestHandleEvalCallablesFiltersAndLimits(t *testing.T) {
+	a := &Actor{}
+	a.topo = &mockTopologyProvider{snapshot: []runtime.ActorNode{
+		{
+			ID: "toast-actor",
+			Callables: []domain.CallableInterface{
+				{Name: "toast.show", Description: "show a toast", ServiceName: "toast"},
+				{Name: "toast.read", Description: "read toast state", ServiceName: "toast"},
+			},
+		},
+		{
+			ID: "demo-actor",
+			Callables: []domain.CallableInterface{
+				{Name: "demo.ping", Description: "ping the demo actor", ServiceName: "demo"},
+			},
+		},
+	}}
+
+	// Query filter matches name and description, case-insensitively.
+	resp, err := a.handleEvalCallables(nil, domain.AgentEvalCallablesReq{Query: "TOAST"})
+	if err != nil {
+		t.Fatalf("search: %v", err)
+	}
+	if len(resp.Items) != 2 || resp.Total != 2 {
+		t.Fatalf("toast query = %d items (total %d), want 2/2", len(resp.Items), resp.Total)
+	}
+
+	// Description match across services.
+	resp, err = a.handleEvalCallables(nil, domain.AgentEvalCallablesReq{Query: "ping"})
+	if err != nil {
+		t.Fatalf("search: %v", err)
+	}
+	if len(resp.Items) != 1 || resp.Items[0].Name != "demo.ping" {
+		t.Fatalf("ping query items = %+v", resp.Items)
+	}
+
+	// Limit truncates Items but Total still counts every match.
+	resp, err = a.handleEvalCallables(nil, domain.AgentEvalCallablesReq{Limit: 1})
+	if err != nil {
+		t.Fatalf("search: %v", err)
+	}
+	if len(resp.Items) != 1 || resp.Total != 3 {
+		t.Fatalf("limited search = %d items (total %d), want 1/3", len(resp.Items), resp.Total)
+	}
+}
+
+func TestHandleEvalCallablesWithoutTopology(t *testing.T) {
+	if _, err := (&Actor{}).handleEvalCallables(nil, domain.AgentEvalCallablesReq{}); err == nil {
+		t.Fatal("missing topology provider must error")
 	}
 }
 

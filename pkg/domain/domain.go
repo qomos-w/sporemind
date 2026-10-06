@@ -1351,24 +1351,6 @@ type GitTagInfo = gen.GitTagInfo
 type WorkspaceAgentSpawnSchedulerReq = gen.WorkspaceAgentSpawnSchedulerReq
 type WorkspaceAgentSpawnSchedulerResp = gen.WorkspaceAgentSpawnSchedulerResp
 
-// WorkspaceHostCallReq/Resp are the protocol for workspace.host_call, the
-// generic host-callable relay behind the builtin:bundle:sporeeval bundle.
-type WorkspaceHostCallReq = gen.WorkspaceHostCallReq
-type WorkspaceHostCallResp = gen.WorkspaceHostCallResp
-
-// WorkspaceSporeSyntaxReq/Resp are the protocol for workspace.spore_syntax:
-// serve the spore language syntax reference (embedded copy of the upstream
-// ../spore SYNTAX.md, drift-gated by make check-spore-syntax).
-type WorkspaceSporeSyntaxReq = gen.WorkspaceSporeSyntaxReq
-type WorkspaceSporeSyntaxResp = gen.WorkspaceSporeSyntaxResp
-
-// WorkspaceSearchCallablesReq/Resp are the protocol for
-// workspace.search_callables: substring search over the live host callable
-// catalog (topology snapshot rows) so callers can discover callable IDs and
-// their request shapes.
-type WorkspaceSearchCallablesReq = gen.WorkspaceSearchCallablesReq
-type WorkspaceSearchCallablesResp = gen.WorkspaceSearchCallablesResp
-
 // AgentSchedulerBindReq/Resp + AgentSchedulerUnbindReq/Resp are the protocol
 // for the agent-side scheduler binding lifecycle callables
 // (agent.scheduler_bind / agent.scheduler_unbind, registered flat as
@@ -1971,6 +1953,19 @@ type AgentSkillUseResp = gen.AgentSkillUseResp
 // no host bindings) under a fixed budget envelope.
 type AgentEvalReq = gen.AgentEvalReq
 type AgentEvalResp = gen.AgentEvalResp
+
+// AgentEvalSyntaxReq/Resp are the protocol for the agent-local eval_syntax:
+// serve the spore language syntax reference (embedded copy of the upstream
+// ../spore SYNTAX.md, drift-gated by make check-spore-syntax).
+type AgentEvalSyntaxReq = gen.AgentEvalSyntaxReq
+type AgentEvalSyntaxResp = gen.AgentEvalSyntaxResp
+
+// AgentEvalCallablesReq/Resp are the protocol for the agent-local
+// eval_callables: substring search over the agent's topology snapshot of the
+// host callable catalog so scripts can discover callable IDs and their
+// request shapes before host.invoke.
+type AgentEvalCallablesReq = gen.AgentEvalCallablesReq
+type AgentEvalCallablesResp = gen.AgentEvalCallablesResp
 
 // ── fork child ──
 

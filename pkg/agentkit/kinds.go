@@ -172,13 +172,11 @@ func BaseKindConfigs() []domain.AgentKindConfig {
 	}
 
 	// spore is the code-invocation agent: its entire default surface is the
-	// sporeeval bundle — eval (agent-local pure spore evaluation),
-	// workspace.spore_syntax / search_callables (self-documentation and
-	// catalog discovery), and the three invoke relays (workspace.host_call,
-	// mcp.call_tool, appmanager.invoke). Capability closure comes from reach
-	// alone: file editing, wiki, catalog discovery are all direct host_call
-	// targets, so no bundle ever needs to be mounted. No AutoAllowTools: the
-	// bridge grants reach, not permission — target-side gates stay.
+	// sporeeval bundle — the agent-local eval family (eval with host.invoke
+	// reach, eval_syntax, eval_callables). Tasks are done by writing spore
+	// programs that orchestrate host callables; the caller role propagates
+	// and target-side gates stay in force (reach, not permission). No
+	// AutoAllowTools for the same reason.
 	spore := domain.AgentKindConfig{Kind: domain.AgentKindSpore}
 	spore.RolePromptRef = profile("project.spore")
 	spore.DefaultBundleIDs = []string{

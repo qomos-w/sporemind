@@ -1,5 +1,7 @@
 // agent.skill / agent.eval namespace — explicit skill use after component
-// availability mount, plus the agent-local ad-hoc spore evaluator.
+// availability mount, plus the agent-local eval family: spore evaluation
+// (with host.invoke reach), the language syntax reference, and the callable
+// catalog search.
 // @ts-export
 
 struct AgentSkillUseReq {
@@ -27,4 +29,23 @@ struct AgentEvalReq {
 struct AgentEvalResp {
     optional Result: any        // JSON-normalized return value of run()
     optional Error:  string     // compile / runtime / normalization failure diagnostics
+}
+
+struct AgentEvalSyntaxReq {
+    optional Lang: string            // "en" (default) | "zh"
+}
+
+struct AgentEvalSyntaxResp {
+    Lang:     string                 // resolved language tag
+    Markdown: string                 // full spore language syntax reference
+}
+
+struct AgentEvalCallablesReq {
+    optional Query: string           // case-insensitive substring on callable name or description
+    optional Limit: int              // max rows; default 200, cap 500
+}
+
+struct AgentEvalCallablesResp {
+    Items: array<CallableInterface>  // catalog rows (params, request fields, service)
+    Total: int                       // matched rows before the limit was applied
 }

@@ -451,8 +451,8 @@ lint: ensure-node-dists
 # ../spore copies (skipped when the sibling checkout is absent).
 check-spore-syntax:
 	@if [ -f ../spore/SYNTAX.md ]; then \
-		git diff --no-index --quiet ../spore/SYNTAX.md pkg/actor/workspace/sporedocs/SYNTAX.md || { echo "[check-spore-syntax] pkg/actor/workspace/sporedocs/SYNTAX.md differs from ../spore/SYNTAX.md. Re-copy it and commit."; exit 1; }; \
-		git diff --no-index --quiet ../spore/SYNTAX.zh-CN.md pkg/actor/workspace/sporedocs/SYNTAX.zh-CN.md || { echo "[check-spore-syntax] pkg/actor/workspace/sporedocs/SYNTAX.zh-CN.md differs from ../spore/SYNTAX.zh-CN.md. Re-copy it and commit."; exit 1; }; \
+		git diff --no-index --quiet ../spore/SYNTAX.md pkg/actor/agent/sporedocs/SYNTAX.md || { echo "[check-spore-syntax] pkg/actor/agent/sporedocs/SYNTAX.md differs from ../spore/SYNTAX.md. Re-copy it and commit."; exit 1; }; \
+		git diff --no-index --quiet ../spore/SYNTAX.zh-CN.md pkg/actor/agent/sporedocs/SYNTAX.zh-CN.md || { echo "[check-spore-syntax] pkg/actor/agent/sporedocs/SYNTAX.zh-CN.md differs from ../spore/SYNTAX.zh-CN.md. Re-copy it and commit."; exit 1; }; \
 	fi
 
 check: gen-static-fragment-check gen-schemas-check gen-schema-ts-check gen-icon-catalog-check gen-manifest-check gen-sdk-check check-spore-syntax lint test

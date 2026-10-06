@@ -631,6 +631,10 @@ export const SchemaIDs = {
   WorkspaceAgentSpawnSwarmResp: 1836,
   AgentEvalReq: 1842,
   AgentEvalResp: 1843,
+  AgentEvalSyntaxReq: 1844,
+  AgentEvalSyntaxResp: 1845,
+  AgentEvalCallablesReq: 1846,
+  AgentEvalCallablesResp: 1847,
   ProjectMount: 1872,
   ProjectRef: 1873,
   WorkspaceMountReq: 1874,
@@ -747,12 +751,6 @@ export const SchemaIDs = {
   WikiStarredEntry: 1988,
   WikiListStarredReq: 1989,
   WikiListStarredResp: 1990,
-  WorkspaceHostCallReq: 1991,
-  WorkspaceHostCallResp: 1992,
-  WorkspaceSporeSyntaxReq: 1995,
-  WorkspaceSporeSyntaxResp: 1996,
-  WorkspaceSearchCallablesReq: 1997,
-  WorkspaceSearchCallablesResp: 1998,
   AppSchemaRef: 2112,
   AppTypeDescriptor: 2113,
   AppFieldDescriptor: 2114,
@@ -33612,6 +33610,141 @@ export const schemaEntries: SchemaEntry[] = [
   },
   {
     namespace: "system",
+    schemaId: 1844,
+    name: "AgentEvalSyntaxReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalSyntaxReq",
+      className: "AgentEvalSyntaxReq",
+      classId: 1844
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalSyntaxReq",
+      fields: [
+        {
+          name: "Lang",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1845,
+    name: "AgentEvalSyntaxResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalSyntaxResp",
+      className: "AgentEvalSyntaxResp",
+      classId: 1845
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalSyntaxResp",
+      fields: [
+        {
+          name: "Lang",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        },
+        {
+          name: "Markdown",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1846,
+    name: "AgentEvalCallablesReq",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalCallablesReq",
+      className: "AgentEvalCallablesReq",
+      classId: 1846
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalCallablesReq",
+      fields: [
+        {
+          name: "Query",
+          type: {
+            kind: "scalar",
+            name: "string",
+            typeId: 12
+          },
+          optional: true
+        },
+        {
+          name: "Limit",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          },
+          optional: true
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
+    schemaId: 1847,
+    name: "AgentEvalCallablesResp",
+    visibility: "public",
+    type: {
+      kind: "struct",
+      name: "AgentEvalCallablesResp",
+      className: "AgentEvalCallablesResp",
+      classId: 1847
+    },
+    object: {
+      kind: "struct",
+      name: "AgentEvalCallablesResp",
+      fields: [
+        {
+          name: "Items",
+          type: {
+            kind: "array",
+            name: "array",
+            element: {
+              kind: "struct",
+              name: "struct",
+              className: "CallableInterface"
+            }
+          }
+        },
+        {
+          name: "Total",
+          type: {
+            kind: "scalar",
+            name: "int",
+            typeId: 6
+          }
+        }
+      ]
+    }
+  },
+  {
+    namespace: "system",
     schemaId: 1872,
     name: "ProjectMount",
     visibility: "public",
@@ -40367,221 +40500,6 @@ export const schemaEntries: SchemaEntry[] = [
               name: "struct",
               className: "WikiStarredEntry"
             }
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1991,
-    name: "WorkspaceHostCallReq",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "WorkspaceHostCallReq",
-      className: "WorkspaceHostCallReq",
-      classId: 1991
-    },
-    object: {
-      kind: "struct",
-      name: "WorkspaceHostCallReq",
-      fields: [
-        {
-          name: "CallId",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Payload",
-          type: {
-            kind: "map",
-            name: "map",
-            key: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            },
-            value: {
-              kind: "scalar",
-              name: "any",
-              typeId: 15
-            }
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1992,
-    name: "WorkspaceHostCallResp",
-    visibility: "admin",
-    type: {
-      kind: "struct",
-      name: "WorkspaceHostCallResp",
-      className: "WorkspaceHostCallResp",
-      classId: 1992
-    },
-    object: {
-      kind: "struct",
-      name: "WorkspaceHostCallResp",
-      fields: [
-        {
-          name: "Result",
-          type: {
-            kind: "map",
-            name: "map",
-            key: {
-              kind: "scalar",
-              name: "string",
-              typeId: 12
-            },
-            value: {
-              kind: "scalar",
-              name: "any",
-              typeId: 15
-            }
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1995,
-    name: "WorkspaceSporeSyntaxReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "WorkspaceSporeSyntaxReq",
-      className: "WorkspaceSporeSyntaxReq",
-      classId: 1995
-    },
-    object: {
-      kind: "struct",
-      name: "WorkspaceSporeSyntaxReq",
-      fields: [
-        {
-          name: "Lang",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1996,
-    name: "WorkspaceSporeSyntaxResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "WorkspaceSporeSyntaxResp",
-      className: "WorkspaceSporeSyntaxResp",
-      classId: 1996
-    },
-    object: {
-      kind: "struct",
-      name: "WorkspaceSporeSyntaxResp",
-      fields: [
-        {
-          name: "Lang",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        },
-        {
-          name: "Markdown",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          }
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1997,
-    name: "WorkspaceSearchCallablesReq",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "WorkspaceSearchCallablesReq",
-      className: "WorkspaceSearchCallablesReq",
-      classId: 1997
-    },
-    object: {
-      kind: "struct",
-      name: "WorkspaceSearchCallablesReq",
-      fields: [
-        {
-          name: "Query",
-          type: {
-            kind: "scalar",
-            name: "string",
-            typeId: 12
-          },
-          optional: true
-        },
-        {
-          name: "Limit",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
-          },
-          optional: true
-        }
-      ]
-    }
-  },
-  {
-    namespace: "system",
-    schemaId: 1998,
-    name: "WorkspaceSearchCallablesResp",
-    visibility: "public",
-    type: {
-      kind: "struct",
-      name: "WorkspaceSearchCallablesResp",
-      className: "WorkspaceSearchCallablesResp",
-      classId: 1998
-    },
-    object: {
-      kind: "struct",
-      name: "WorkspaceSearchCallablesResp",
-      fields: [
-        {
-          name: "Items",
-          type: {
-            kind: "array",
-            name: "array",
-            element: {
-              kind: "struct",
-              name: "struct",
-              className: "CallableInterface"
-            }
-          }
-        },
-        {
-          name: "Total",
-          type: {
-            kind: "scalar",
-            name: "int",
-            typeId: 6
           }
         }
       ]

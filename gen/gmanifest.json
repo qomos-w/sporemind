@@ -4964,6 +4964,68 @@
     },
     {
       "namespace": "system",
+      "schemaId": 1846,
+      "name": "AgentEvalCallablesReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalCallablesReq",
+        "fields": [
+          {
+            "name": "Query",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          },
+          {
+            "name": "Limit",
+            "type": {
+              "kind": "scalar",
+              "name": "int",
+              "typeId": 6
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1847,
+      "name": "AgentEvalCallablesResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalCallablesResp",
+        "fields": [
+          {
+            "name": "Items",
+            "type": {
+              "kind": "array",
+              "name": "array",
+              "element": {
+                "kind": "struct",
+                "name": "struct",
+                "className": "CallableInterface"
+              }
+            }
+          },
+          {
+            "name": "Total",
+            "type": {
+              "kind": "scalar",
+              "name": "int",
+              "typeId": 6
+            }
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
       "schemaId": 1842,
       "name": "AgentEvalReq",
       "visibility": "public",
@@ -5021,6 +5083,55 @@
               "typeId": 12
             },
             "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1844,
+      "name": "AgentEvalSyntaxReq",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalSyntaxReq",
+        "fields": [
+          {
+            "name": "Lang",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            },
+            "optional": true
+          }
+        ]
+      }
+    },
+    {
+      "namespace": "system",
+      "schemaId": 1845,
+      "name": "AgentEvalSyntaxResp",
+      "visibility": "public",
+      "object": {
+        "kind": "struct",
+        "name": "AgentEvalSyntaxResp",
+        "fields": [
+          {
+            "name": "Lang",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
+          },
+          {
+            "name": "Markdown",
+            "type": {
+              "kind": "scalar",
+              "name": "string",
+              "typeId": 12
+            }
           }
         ]
       }
@@ -66518,74 +66629,6 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1991,
-      "name": "WorkspaceHostCallReq",
-      "visibility": "admin",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceHostCallReq",
-        "fields": [
-          {
-            "name": "CallId",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            }
-          },
-          {
-            "name": "Payload",
-            "type": {
-              "kind": "map",
-              "name": "map",
-              "key": {
-                "kind": "scalar",
-                "name": "string",
-                "typeId": 12
-              },
-              "value": {
-                "kind": "scalar",
-                "name": "any",
-                "typeId": 15
-              }
-            },
-            "optional": true
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1992,
-      "name": "WorkspaceHostCallResp",
-      "visibility": "admin",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceHostCallResp",
-        "fields": [
-          {
-            "name": "Result",
-            "type": {
-              "kind": "map",
-              "name": "map",
-              "key": {
-                "kind": "scalar",
-                "name": "string",
-                "typeId": 12
-              },
-              "value": {
-                "kind": "scalar",
-                "name": "any",
-                "typeId": 15
-              }
-            },
-            "optional": true
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
       "schemaId": 1900,
       "name": "WorkspaceListAgentKindConfigsResp",
       "visibility": "public",
@@ -67509,68 +67552,6 @@
     },
     {
       "namespace": "system",
-      "schemaId": 1997,
-      "name": "WorkspaceSearchCallablesReq",
-      "visibility": "public",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceSearchCallablesReq",
-        "fields": [
-          {
-            "name": "Query",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            },
-            "optional": true
-          },
-          {
-            "name": "Limit",
-            "type": {
-              "kind": "scalar",
-              "name": "int",
-              "typeId": 6
-            },
-            "optional": true
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1998,
-      "name": "WorkspaceSearchCallablesResp",
-      "visibility": "public",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceSearchCallablesResp",
-        "fields": [
-          {
-            "name": "Items",
-            "type": {
-              "kind": "array",
-              "name": "array",
-              "element": {
-                "kind": "struct",
-                "name": "struct",
-                "className": "CallableInterface"
-              }
-            }
-          },
-          {
-            "name": "Total",
-            "type": {
-              "kind": "scalar",
-              "name": "int",
-              "typeId": 6
-            }
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
       "schemaId": 1912,
       "name": "WorkspaceShellLayout",
       "visibility": "public",
@@ -67625,55 +67606,6 @@
                 "name": "struct",
                 "className": "SlashCommand"
               }
-            }
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1995,
-      "name": "WorkspaceSporeSyntaxReq",
-      "visibility": "public",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceSporeSyntaxReq",
-        "fields": [
-          {
-            "name": "Lang",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            },
-            "optional": true
-          }
-        ]
-      }
-    },
-    {
-      "namespace": "system",
-      "schemaId": 1996,
-      "name": "WorkspaceSporeSyntaxResp",
-      "visibility": "public",
-      "object": {
-        "kind": "struct",
-        "name": "WorkspaceSporeSyntaxResp",
-        "fields": [
-          {
-            "name": "Lang",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
-            }
-          },
-          {
-            "name": "Markdown",
-            "type": {
-              "kind": "scalar",
-              "name": "string",
-              "typeId": 12
             }
           }
         ]
@@ -69726,7 +69658,7 @@
       "namespace": "",
       "name": "eval",
       "actorType": "agent",
-      "description": "Evaluate an ad-hoc spore script on this agent (pure computation, no host bindings; fixed 10s / 1M-instruction budget, 64KB output cap). The script must define the run() entry function; Args are passed positionally. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle.",
+      "description": "Evaluate an ad-hoc spore script on this agent. The script must define the run() entry function; Args are passed positionally. Inside the script, host.invoke(\"\u003cservice\u003e.\u003ccallable\u003e\", payload) reaches any host callable — the caller role propagates and the target's own policy applies (reach, not permission). Fixed budget: 10s, 1M instructions, 64 host calls, 64KB output. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle.",
       "visibility": "public",
       "mode": "unary",
       "reqSchemaId": 1842,
@@ -69740,6 +69672,46 @@
         "kind": "struct",
         "name": "AgentEvalResp",
         "className": "AgentEvalResp"
+      }
+    },
+    {
+      "namespace": "",
+      "name": "eval_callables",
+      "actorType": "agent",
+      "description": "Search the host callable catalog the agent can see: Query (case-insensitive substring on name or description), optional Limit (default 200, cap 500). Rows carry request params and service names so scripts know how to host.invoke them. Discovery only. Exposed by the builtin:bundle:sporeeval bundle.",
+      "visibility": "public",
+      "mode": "unary",
+      "reqSchemaId": 1846,
+      "finalSchemaId": 1847,
+      "req": {
+        "kind": "struct",
+        "name": "AgentEvalCallablesReq",
+        "className": "AgentEvalCallablesReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "AgentEvalCallablesResp",
+        "className": "AgentEvalCallablesResp"
+      }
+    },
+    {
+      "namespace": "",
+      "name": "eval_syntax",
+      "actorType": "agent",
+      "description": "Return the spore language syntax reference markdown. Lang: \"en\" (default) | \"zh\". Exposed by the builtin:bundle:sporeeval bundle.",
+      "visibility": "public",
+      "mode": "unary",
+      "reqSchemaId": 1844,
+      "finalSchemaId": 1845,
+      "req": {
+        "kind": "struct",
+        "name": "AgentEvalSyntaxReq",
+        "className": "AgentEvalSyntaxReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "AgentEvalSyntaxResp",
+        "className": "AgentEvalSyntaxResp"
       }
     },
     {
@@ -76246,7 +76218,7 @@
       "namespace": "mcp",
       "name": "call_tool",
       "actorType": "mcpmanager",
-      "description": "Invoke a tool on a configured MCP server: Id selects the server, Tool the tool name, Arguments carries the JSON arguments. Exposed by the builtin:bundle:sporeeval bundle.",
+      "description": "Invoke a tool on a configured MCP server: Id selects the server, Tool the tool name, Arguments carries the JSON arguments.",
       "visibility": "admin",
       "mode": "unary",
       "service": "mcp",
@@ -83865,27 +83837,6 @@
     },
     {
       "namespace": "workspace",
-      "name": "host_call",
-      "actorType": "workspace",
-      "description": "Invoke any host actor callable by dotted ID (\u003cservice\u003e.\u003ccallable\u003e), e.g. \"workspace.slashcommands_list\". The payload must match the target callable's request schema; the target's own policy still applies. Exposed by the builtin:bundle:sporeeval bundle.",
-      "visibility": "admin",
-      "mode": "unary",
-      "service": "workspace",
-      "reqSchemaId": 1991,
-      "finalSchemaId": 1992,
-      "req": {
-        "kind": "struct",
-        "name": "WorkspaceHostCallReq",
-        "className": "WorkspaceHostCallReq"
-      },
-      "final": {
-        "kind": "struct",
-        "name": "WorkspaceHostCallResp",
-        "className": "WorkspaceHostCallResp"
-      }
-    },
-    {
-      "namespace": "workspace",
       "name": "internal_deletion_finalize",
       "actorType": "workspace",
       "visibility": "internal",
@@ -84266,27 +84217,6 @@
     },
     {
       "namespace": "workspace",
-      "name": "search_callables",
-      "actorType": "workspace",
-      "description": "Search the live host callable catalog by case-insensitive substring on callable name or description; rows carry request params and service names so callers can discover how to invoke a callable (then relay via workspace.host_call). Exposed by the builtin:bundle:sporeeval bundle.",
-      "visibility": "public",
-      "mode": "unary",
-      "service": "workspace",
-      "reqSchemaId": 1997,
-      "finalSchemaId": 1998,
-      "req": {
-        "kind": "struct",
-        "name": "WorkspaceSearchCallablesReq",
-        "className": "WorkspaceSearchCallablesReq"
-      },
-      "final": {
-        "kind": "struct",
-        "name": "WorkspaceSearchCallablesResp",
-        "className": "WorkspaceSearchCallablesResp"
-      }
-    },
-    {
-      "namespace": "workspace",
       "name": "session",
       "actorType": "workspace",
       "visibility": "public",
@@ -84363,27 +84293,6 @@
         "kind": "struct",
         "name": "WorkspaceSlashCommandsListResp",
         "className": "WorkspaceSlashCommandsListResp"
-      }
-    },
-    {
-      "namespace": "workspace",
-      "name": "spore_syntax",
-      "actorType": "workspace",
-      "description": "Return the spore language syntax reference markdown. Lang: \"en\" (default) | \"zh\". Exposed by the builtin:bundle:sporeeval bundle.",
-      "visibility": "public",
-      "mode": "unary",
-      "service": "workspace",
-      "reqSchemaId": 1995,
-      "finalSchemaId": 1996,
-      "req": {
-        "kind": "struct",
-        "name": "WorkspaceSporeSyntaxReq",
-        "className": "WorkspaceSporeSyntaxReq"
-      },
-      "final": {
-        "kind": "struct",
-        "name": "WorkspaceSporeSyntaxResp",
-        "className": "WorkspaceSporeSyntaxResp"
       }
     },
     {
