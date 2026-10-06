@@ -184,9 +184,18 @@ func TestHandleEvalSyntax(t *testing.T) {
 
 func TestHandleEvalCallablesFiltersAndLimits(t *testing.T) {
 	a := &Actor{}
+	// Two actors of the same kind expose the same callable table — the
+	// catalog must dedup by Name (per-actor snapshot rows collapse).
 	a.topo = &mockTopologyProvider{snapshot: []runtime.ActorNode{
 		{
 			ID: "toast-actor",
+			Callables: []domain.CallableInterface{
+				{Name: "toast.show", Description: "show a toast", ServiceName: "toast"},
+				{Name: "toast.read", Description: "read toast state", ServiceName: "toast"},
+			},
+		},
+		{
+			ID: "toast-actor-2",
 			Callables: []domain.CallableInterface{
 				{Name: "toast.show", Description: "show a toast", ServiceName: "toast"},
 				{Name: "toast.read", Description: "read toast state", ServiceName: "toast"},
@@ -200,13 +209,14 @@ func TestHandleEvalCallablesFiltersAndLimits(t *testing.T) {
 		},
 	}}
 
-	// Query filter matches name and description, case-insensitively.
+	// Query filter matches name and description, case-insensitively, with
+	// per-actor duplicates collapsed.
 	resp, err := a.handleEvalCallables(nil, domain.AgentEvalCallablesReq{Query: "TOAST"})
 	if err != nil {
 		t.Fatalf("search: %v", err)
 	}
 	if len(resp.Items) != 2 || resp.Total != 2 {
-		t.Fatalf("toast query = %d items (total %d), want 2/2", len(resp.Items), resp.Total)
+		t.Fatalf("toast query = %d items (total %d), want 2/2 deduped", len(resp.Items), resp.Total)
 	}
 
 	// Description match across services.
@@ -218,13 +228,49 @@ func TestHandleEvalCallablesFiltersAndLimits(t *testing.T) {
 		t.Fatalf("ping query items = %+v", resp.Items)
 	}
 
-	// Limit truncates Items but Total still counts every match.
+	// Limit truncates Items but Total still counts every distinct match.
 	resp, err = a.handleEvalCallables(nil, domain.AgentEvalCallablesReq{Limit: 1})
 	if err != nil {
 		t.Fatalf("search: %v", err)
 	}
 	if len(resp.Items) != 1 || resp.Total != 3 {
 		t.Fatalf("limited search = %d items (total %d), want 1/3", len(resp.Items), resp.Total)
+	}
+}
+
+func TestHandleEvalCallablesNameMatchRanksBeforeDescriptionMatch(t *testing.T) {
+	a := &Actor{}
+	// shell.bash's description merely MENTIONS toast.read; toast.read is the
+	// callable itself. A query for "toast.read" must surface the real one
+	// first, not bury it under documentation mentions.
+	a.topo = &mockTopologyProvider{snapshot: []runtime.ActorNode{
+		{ID: "toast-actor", Callables: []domain.CallableInterface{
+			{Name: "toast.read", Description: "read toast state", ServiceName: "toast"},
+		}},
+		{ID: "shell-actor", Callables: []domain.CallableInterface{
+			{Name: "shell.bash", Description: "run bash; prefer toast.read for files", ServiceName: "shell"},
+		}},
+	}}
+
+	resp, err := a.handleEvalCallables(nil, domain.AgentEvalCallablesReq{Query: "toast.read"})
+	if err != nil {
+		t.Fatalf("search: %v", err)
+	}
+	if len(resp.Items) != 2 || resp.Total != 2 {
+		t.Fatalf("items = %d (total %d), want 2/2", len(resp.Items), resp.Total)
+	}
+	if resp.Items[0].Name != "toast.read" {
+		t.Fatalf("first item = %q, want the name match toast.read first (got %+v)", resp.Items[0].Name, resp.Items)
+	}
+
+	// Small limit keeps the ranked head: the name match survives, the
+	// description mention is cut first.
+	resp, err = a.handleEvalCallables(nil, domain.AgentEvalCallablesReq{Query: "toast.read", Limit: 1})
+	if err != nil {
+		t.Fatalf("search: %v", err)
+	}
+	if len(resp.Items) != 1 || resp.Items[0].Name != "toast.read" || resp.Total != 2 {
+		t.Fatalf("limited ranked search = %+v (total %d)", resp.Items, resp.Total)
 	}
 }
 

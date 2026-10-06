@@ -5,6 +5,7 @@ import (
 	_ "embed"
 	"encoding/json"
 	"fmt"
+	"sort"
 	"strings"
 
 	"github.com/qomos-w/gospore/actor"
@@ -156,9 +157,16 @@ const (
 // agent's topology snapshot of the host callable catalog and filters it by a
 // case-insensitive substring on name or description. Rows carry request
 // params and service names, so scripts can discover a callable's ID and
-// request shape before host.invoke. Total counts matches before the limit
-// applies. Discovery only — it never invokes anything. Stateless
-// (PureContext).
+// request shape before host.invoke.
+//
+// The snapshot is per-ACTOR and carries each actor-kind's full callable
+// table, so one callable appears once per actor of its kind (e.g. every
+// loaded project actor contributes project.read again); callablesMap dedups
+// by Name. Name matches rank before description matches — searching
+// "project.read" must surface the callable itself, not fifty other rows
+// whose documentation merely mentions it. Total counts distinct matched
+// rows before the limit applies. Discovery only — it never invokes
+// anything. Stateless (PureContext).
 func (a *Actor) handleEvalCallables(_ actor.PureContext, req domain.AgentEvalCallablesReq) (domain.AgentEvalCallablesResp, error) {
 	if a.topo == nil {
 		return domain.AgentEvalCallablesResp{}, fmt.Errorf("eval_callables: topology provider unavailable")
@@ -172,20 +180,36 @@ func (a *Actor) handleEvalCallables(_ actor.PureContext, req domain.AgentEvalCal
 		limit = evalCallablesMaxLimit
 	}
 
-	items := make([]domain.CallableInterface, 0, limit)
-	total := 0
-	for _, node := range a.topo.Snapshot() {
-		for _, ci := range node.Callables {
-			if query != "" &&
-				!strings.Contains(strings.ToLower(ci.Name), query) &&
-				!strings.Contains(strings.ToLower(ci.Description), query) {
+	byName := a.callablesMap()
+	nameMatches := make([]domain.CallableInterface, 0, len(byName))
+	descMatches := make([]domain.CallableInterface, 0)
+	for _, ci := range byName {
+		if query != "" {
+			switch {
+			case strings.Contains(strings.ToLower(ci.Name), query):
+			case strings.Contains(strings.ToLower(ci.Description), query):
+				descMatches = append(descMatches, ci)
+				continue
+			default:
 				continue
 			}
-			total++
-			if len(items) < int(limit) {
-				items = append(items, ci)
-			}
 		}
+		nameMatches = append(nameMatches, ci)
+	}
+	sortByName := func(rows []domain.CallableInterface) {
+		sort.Slice(rows, func(i, j int) bool { return rows[i].Name < rows[j].Name })
+	}
+	sortByName(nameMatches)
+	sortByName(descMatches)
+
+	total := len(nameMatches) + len(descMatches)
+	if len(nameMatches) > int(limit) {
+		nameMatches = nameMatches[:limit]
+	}
+	items := make([]domain.CallableInterface, 0, int(limit))
+	items = append(items, nameMatches...)
+	if len(items) < int(limit) {
+		items = append(items, descMatches[:min(len(descMatches), int(limit)-len(items))]...)
 	}
 	return domain.AgentEvalCallablesResp{Items: items, Total: int32(total)}, nil
 }
