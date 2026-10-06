@@ -1151,10 +1151,10 @@ func (a *Actor) OnStart(ctx actor.Context) error {
 	// PureContext: the script run executes on the forked goroutine, so a
 	// seconds-long snippet never blocks the owner lane nor serializes behind
 	// the skill_ops / agent_exec lanes.
-	if err := ctx.Register("eval", a.handleEval, actor.Public(),
+	if err := ctx.Register("eval_script", a.handleEval, actor.Public(),
 		actor.WithDescription("Evaluate an ad-hoc spore script on this agent. The script must define the run() entry function; Args are passed positionally. Inside the script, host.invoke(\"<service>.<callable>\", payload) reaches any host callable — the caller role propagates and the target's own policy applies (reach, not permission). Fixed budget: 10s, 1M instructions, 64 host calls, 64KB output. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle."),
 	); err != nil {
-		return fmt.Errorf("agent: register eval: %w", err)
+		return fmt.Errorf("agent: register eval_script: %w", err)
 	}
 	if err := ctx.Register("eval_syntax", a.handleEvalSyntax, actor.Public(),
 		actor.WithDescription("Return the spore language syntax reference markdown. Lang: \"en\" (default) | \"zh\". Exposed by the builtin:bundle:sporeeval bundle."),

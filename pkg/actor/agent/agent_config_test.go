@@ -1097,8 +1097,8 @@ func TestResolveTools_DebugBundleExposesListAgents(t *testing.T) {
 func TestResolveTools_SporeevalBundleExposesCodeInvocationTools(t *testing.T) {
 	a := &Actor{}
 	callables := map[string]domain.CallableInterface{
-		"eval": {
-			Name:        "eval",
+		"eval_script": {
+			Name:        "eval_script",
 			Description: "Evaluate a spore script",
 			Params:      []domain.CallableParam{{Name: "Script", Type: "string", Required: true}},
 		},
@@ -1123,7 +1123,7 @@ func TestResolveTools_SporeevalBundleExposesCodeInvocationTools(t *testing.T) {
 	// Mounted via component snapshot: all three callables surface.
 	a.componentSnapshot.Store(&domain.AgentComponentSnapshot{
 		Tools: []domain.ComponentToolContribution{
-			{ID: "eval", CardID: "builtin:bundle:sporeeval", CallableID: "eval"},
+			{ID: "eval_script", CardID: "builtin:bundle:sporeeval", CallableID: "eval_script"},
 			{ID: "eval_syntax", CardID: "builtin:bundle:sporeeval", CallableID: "eval_syntax"},
 			{ID: "eval_callables", CardID: "builtin:bundle:sporeeval", CallableID: "eval_callables"},
 		},
@@ -1133,7 +1133,7 @@ func TestResolveTools_SporeevalBundleExposesCodeInvocationTools(t *testing.T) {
 	for i, tool := range tools {
 		names[i] = tool.Name
 	}
-	for _, want := range []string{"eval", "eval_syntax", "eval_callables"} {
+	for _, want := range []string{"eval_script", "eval_syntax", "eval_callables"} {
 		if !slices.Contains(names, want) {
 			t.Errorf("sporeeval tool %q missing from %v", want, names)
 		}

@@ -32,7 +32,7 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 	a.topo = &mockTopologyProvider{
 		snapshot: []runtime.ActorNode{
 			{Kind: "agent", Callables: []domain.CallableInterface{
-				{Name: "eval", Description: "Evaluate an ad-hoc spore script."},
+				{Name: "eval_script", Description: "Evaluate an ad-hoc spore script."},
 				{Name: "eval_syntax", Description: "Spore language syntax reference."},
 				{Name: "eval_callables", Description: "Search the callable catalog."},
 				{Name: "component_mount"},
@@ -68,7 +68,7 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 	// infrastructure every kind gets (skill_use, forced image-recognition)
 	// — nothing else.
 	allowed := map[string]bool{
-		"eval":            true,
+		"eval_script":     true,
 		"eval_syntax":     true,
 		"eval_callables":  true,
 		"skill_use":       true,
@@ -83,7 +83,7 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 	for _, tl := range tools {
 		byID[tl.CallableID] = tl
 	}
-	for _, want := range []string{"eval", "eval_syntax", "eval_callables"} {
+	for _, want := range []string{"eval_script", "eval_syntax", "eval_callables"} {
 		tool, ok := byID[want]
 		if !ok {
 			t.Fatalf("sporeeval tool %q missing", want)
@@ -97,6 +97,7 @@ func TestSporeKind_PureBridgeSurface(t *testing.T) {
 	// tools, no work tools — even though the topology offers them all
 	// (relays remain reachable only via host.invoke inside eval scripts).
 	for _, forbidden := range []string{
+		"eval",
 		"workspace.host_call", "workspace.spore_syntax", "workspace.search_callables",
 		"mcp.call_tool", "appmanager.invoke",
 		"component_mount", "component_snapshot", "component_list",

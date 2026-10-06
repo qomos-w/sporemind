@@ -361,24 +361,6 @@ export const callableEntries: CallableEntry[] = [
   },
   {
     namespace: "local",
-    name: "eval",
-    visibility: "public",
-    mode: "unary",
-    reqSchemaId: 1842,
-    finalSchemaId: 1843,
-    req: {
-      kind: "struct",
-      name: "AgentEvalReq",
-      className: "AgentEvalReq"
-    },
-    final: {
-      kind: "struct",
-      name: "AgentEvalResp",
-      className: "AgentEvalResp"
-    }
-  },
-  {
-    namespace: "local",
     name: "eval_callables",
     visibility: "public",
     mode: "unary",
@@ -393,6 +375,24 @@ export const callableEntries: CallableEntry[] = [
       kind: "struct",
       name: "AgentEvalCallablesResp",
       className: "AgentEvalCallablesResp"
+    }
+  },
+  {
+    namespace: "local",
+    name: "eval_script",
+    visibility: "public",
+    mode: "unary",
+    reqSchemaId: 1842,
+    finalSchemaId: 1843,
+    req: {
+      kind: "struct",
+      name: "AgentEvalReq",
+      className: "AgentEvalReq"
+    },
+    final: {
+      kind: "struct",
+      name: "AgentEvalResp",
+      className: "AgentEvalResp"
     }
   },
   {

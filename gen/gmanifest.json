@@ -69656,26 +69656,6 @@
     },
     {
       "namespace": "",
-      "name": "eval",
-      "actorType": "agent",
-      "description": "Evaluate an ad-hoc spore script on this agent. The script must define the run() entry function; Args are passed positionally. Inside the script, host.invoke(\"\u003cservice\u003e.\u003ccallable\u003e\", payload) reaches any host callable — the caller role propagates and the target's own policy applies (reach, not permission). Fixed budget: 10s, 1M instructions, 64 host calls, 64KB output. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle.",
-      "visibility": "public",
-      "mode": "unary",
-      "reqSchemaId": 1842,
-      "finalSchemaId": 1843,
-      "req": {
-        "kind": "struct",
-        "name": "AgentEvalReq",
-        "className": "AgentEvalReq"
-      },
-      "final": {
-        "kind": "struct",
-        "name": "AgentEvalResp",
-        "className": "AgentEvalResp"
-      }
-    },
-    {
-      "namespace": "",
       "name": "eval_callables",
       "actorType": "agent",
       "description": "Search the host callable catalog the agent can see: Query (case-insensitive substring on name or description), optional Limit (default 200, cap 500). Rows carry request params and service names so scripts know how to host.invoke them. Discovery only. Exposed by the builtin:bundle:sporeeval bundle.",
@@ -69692,6 +69672,26 @@
         "kind": "struct",
         "name": "AgentEvalCallablesResp",
         "className": "AgentEvalCallablesResp"
+      }
+    },
+    {
+      "namespace": "",
+      "name": "eval_script",
+      "actorType": "agent",
+      "description": "Evaluate an ad-hoc spore script on this agent. The script must define the run() entry function; Args are passed positionally. Inside the script, host.invoke(\"\u003cservice\u003e.\u003ccallable\u003e\", payload) reaches any host callable — the caller role propagates and the target's own policy applies (reach, not permission). Fixed budget: 10s, 1M instructions, 64 host calls, 64KB output. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle.",
+      "visibility": "public",
+      "mode": "unary",
+      "reqSchemaId": 1842,
+      "finalSchemaId": 1843,
+      "req": {
+        "kind": "struct",
+        "name": "AgentEvalReq",
+        "className": "AgentEvalReq"
+      },
+      "final": {
+        "kind": "struct",
+        "name": "AgentEvalResp",
+        "className": "AgentEvalResp"
       }
     },
     {

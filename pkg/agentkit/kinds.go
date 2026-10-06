@@ -172,8 +172,8 @@ func BaseKindConfigs() []domain.AgentKindConfig {
 	}
 
 	// spore is the code-invocation agent: its entire default surface is the
-	// sporeeval bundle — the agent-local eval family (eval with host.invoke
-	// reach, eval_syntax, eval_callables). Tasks are done by writing spore
+	// sporeeval bundle — the agent-local eval family (eval_script with
+	// host.invoke reach, eval_syntax, eval_callables). Tasks are done by writing spore
 	// programs that orchestrate host callables; the caller role propagates
 	// and target-side gates stay in force (reach, not permission). No
 	// AutoAllowTools for the same reason.

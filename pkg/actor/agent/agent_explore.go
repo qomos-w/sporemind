@@ -872,10 +872,13 @@ func (a *Actor) onStartChild(ctx actor.Context) error {
 	); err != nil {
 		return fmt.Errorf("agent: register child skill.use: %w", err)
 	}
-	if err := ctx.Register("eval", a.handleEval, actor.Public(),
+	// eval_script carries the bundle's compute-and-reach surface; the name
+	// is eval_script, not eval, because bare "eval" is a strict-mode
+	// reserved binding identifier and would break the generated TS client.
+	if err := ctx.Register("eval_script", a.handleEval, actor.Public(),
 		actor.WithDescription("Evaluate an ad-hoc spore script on this agent. The script must define the run() entry function; Args are passed positionally. Inside the script, host.invoke(\"<service>.<callable>\", payload) reaches any host callable — the caller role propagates and the target's own policy applies (reach, not permission). Fixed budget: 10s, 1M instructions, 64 host calls, 64KB output. Compile/runtime failures return Error diagnostics you can fix and retry. Exposed by the builtin:bundle:sporeeval bundle."),
 	); err != nil {
-		return fmt.Errorf("agent: register child eval: %w", err)
+		return fmt.Errorf("agent: register child eval_script: %w", err)
 	}
 	if err := ctx.Register("eval_syntax", a.handleEvalSyntax, actor.Public(),
 		actor.WithDescription("Return the spore language syntax reference markdown. Lang: \"en\" (default) | \"zh\". Exposed by the builtin:bundle:sporeeval bundle."),

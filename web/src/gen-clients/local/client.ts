@@ -201,17 +201,6 @@ export const coordinatorGuidanceProfileUpdate_meta = {
   resSchemaId: 4422,
 } as const;
 
-export async function eval(client: GosporeClient, req: systemTypes.AgentEvalReq, opts?: InvokeOptions): Promise<systemTypes.AgentEvalResp> {
-  return client.invoke<systemTypes.AgentEvalReq, systemTypes.AgentEvalResp>("eval", req, { reqSchemaId: 1842, resSchemaId: 1843, ...opts });
-}
-
-export const eval_meta = {
-  callable: "eval",
-  name: "eval",
-  reqSchemaId: 1842,
-  resSchemaId: 1843,
-} as const;
-
 export async function evalCallables(client: GosporeClient, req: systemTypes.AgentEvalCallablesReq, opts?: InvokeOptions): Promise<systemTypes.AgentEvalCallablesResp> {
   return client.invoke<systemTypes.AgentEvalCallablesReq, systemTypes.AgentEvalCallablesResp>("eval_callables", req, { reqSchemaId: 1846, resSchemaId: 1847, ...opts });
 }
@@ -221,6 +210,17 @@ export const evalCallables_meta = {
   name: "eval_callables",
   reqSchemaId: 1846,
   resSchemaId: 1847,
+} as const;
+
+export async function evalScript(client: GosporeClient, req: systemTypes.AgentEvalReq, opts?: InvokeOptions): Promise<systemTypes.AgentEvalResp> {
+  return client.invoke<systemTypes.AgentEvalReq, systemTypes.AgentEvalResp>("eval_script", req, { reqSchemaId: 1842, resSchemaId: 1843, ...opts });
+}
+
+export const evalScript_meta = {
+  callable: "eval_script",
+  name: "eval_script",
+  reqSchemaId: 1842,
+  resSchemaId: 1843,
 } as const;
 
 export async function evalSyntax(client: GosporeClient, req: systemTypes.AgentEvalSyntaxReq, opts?: InvokeOptions): Promise<systemTypes.AgentEvalSyntaxResp> {
